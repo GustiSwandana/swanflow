@@ -168,6 +168,8 @@ class DashboardController extends Controller
             ->where('is_completed', false)
             ->count();
 
+        $storedFilesCount = $user->storedFiles()->count();
+
         return view('dashboard', [
             'user' => $user,
             'wallets' => $wallets,
@@ -182,6 +184,7 @@ class DashboardController extends Controller
             'categoryBudgets' => $categoryBudgets,
             'todayTodos' => $todayTodos,
             'pendingTodosCount' => $pendingTodosCount,
+            'storedFilesCount' => $storedFilesCount,
         ]);
     }
 }

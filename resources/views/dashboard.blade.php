@@ -148,23 +148,19 @@
             <span class="text-[10px] font-semibold text-slate-600 dark:text-slate-400 text-center leading-tight">Dompet</span>
         </a>
 
-        <!-- Kategori -->
-        <a href="{{ route('categories.index') }}" class="flex flex-col items-center gap-1.5 group shrink-0 w-14">
-            <div class="w-12 h-12 rounded-2xl bg-purple-100 text-purple-700 dark:bg-purple-950/40 dark:text-purple-400 flex items-center justify-center group-hover:bg-purple-200 dark:group-hover:bg-purple-900/50 active:scale-90 transition-all border border-purple-200 dark:border-purple-900/40 shadow-sm">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" /><path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z" /></svg>
-            </div>
-            <span class="text-[10px] font-semibold text-slate-600 dark:text-slate-400 text-center leading-tight">Kategori</span>
-        </a>
-
-        <!-- Anggaran -->
-        <a href="{{ route('budgets.index') }}" class="flex flex-col items-center gap-1.5 group shrink-0 w-14">
-            <div class="w-12 h-12 rounded-2xl bg-teal-100 text-teal-700 dark:bg-teal-950/40 dark:text-teal-400 flex items-center justify-center group-hover:bg-teal-200 dark:group-hover:bg-teal-900/50 active:scale-90 transition-all border border-teal-200 dark:border-teal-900/40 shadow-sm">
+        <!-- SwanDrive (File Storage & Portal Drop) -->
+        <a href="{{ route('drive.index') }}" class="flex flex-col items-center gap-1.5 group shrink-0 w-14 relative">
+            <div class="w-12 h-12 rounded-2xl bg-teal-100 text-teal-700 dark:bg-teal-950/40 dark:text-teal-400 flex items-center justify-center group-hover:bg-teal-200 dark:group-hover:bg-teal-900/50 active:scale-90 transition-all border border-teal-200 dark:border-teal-900/40 shadow-sm relative">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021 18V9.75" />
                 </svg>
+                @if(($storedFilesCount ?? 0) > 0)
+                    <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-teal-500 text-white text-[10px] font-extrabold flex items-center justify-center shadow-xs ring-2 ring-white dark:ring-slate-900 leading-none">
+                        {{ $storedFilesCount }}
+                    </span>
+                @endif
             </div>
-            <span class="text-[10px] font-semibold text-slate-600 dark:text-slate-400 text-center leading-tight">Anggaran</span>
+            <span class="text-[10px] font-bold text-teal-700 dark:text-teal-400 text-center leading-tight">Drive</span>
         </a>
 
         <!-- Aktivitas -->
@@ -192,14 +188,23 @@
             <span class="text-[10px] font-semibold text-slate-600 dark:text-slate-400 text-center leading-tight">Kalkulator</span>
         </a>
 
-        <!-- SwanDrive (File Storage & Transfer) -->
-        <a href="{{ route('drive.index') }}" class="flex flex-col items-center gap-1.5 group shrink-0 w-14">
+        <!-- Anggaran -->
+        <a href="{{ route('budgets.index') }}" class="flex flex-col items-center gap-1.5 group shrink-0 w-14">
             <div class="w-12 h-12 rounded-2xl bg-teal-100 text-teal-700 dark:bg-teal-950/40 dark:text-teal-400 flex items-center justify-center group-hover:bg-teal-200 dark:group-hover:bg-teal-900/50 active:scale-90 transition-all border border-teal-200 dark:border-teal-900/40 shadow-sm">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021 18V9.75" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z" />
                 </svg>
             </div>
-            <span class="text-[10px] font-semibold text-slate-600 dark:text-slate-400 text-center leading-tight">Drive</span>
+            <span class="text-[10px] font-semibold text-slate-600 dark:text-slate-400 text-center leading-tight">Anggaran</span>
+        </a>
+
+        <!-- Kategori -->
+        <a href="{{ route('categories.index') }}" class="flex flex-col items-center gap-1.5 group shrink-0 w-14">
+            <div class="w-12 h-12 rounded-2xl bg-purple-100 text-purple-700 dark:bg-purple-950/40 dark:text-purple-400 flex items-center justify-center group-hover:bg-purple-200 dark:group-hover:bg-purple-900/50 active:scale-90 transition-all border border-purple-200 dark:border-purple-900/40 shadow-sm">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" /><path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z" /></svg>
+            </div>
+            <span class="text-[10px] font-semibold text-slate-600 dark:text-slate-400 text-center leading-tight">Kategori</span>
         </a>
 
         <!-- Langganan -->
@@ -281,6 +286,47 @@
                 </div>
                 <span class="text-[10px] font-bold">+ Dompet</span>
             </button>
+        </div>
+    </div>
+
+    <!-- PINTASAN SWANDRIVE VAULT -->
+    <div class="bg-white dark:bg-slate-800/60 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-2.5 transition-colors">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-teal-500"></span>
+                <h2 class="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider">SwanDrive Vault</h2>
+            </div>
+            <a href="{{ route('drive.index') }}" class="text-xs font-semibold text-teal-600 dark:text-teal-400 hover:underline">
+                Buka Drive ➔
+            </a>
+        </div>
+        <div class="flex items-center justify-between p-3 rounded-xl bg-teal-50/70 dark:bg-teal-950/30 border border-teal-200/70 dark:border-teal-900/40">
+            <a href="{{ route('drive.index') }}" class="flex items-center gap-3 min-w-0 pr-2 group">
+                <div class="w-10 h-10 rounded-xl bg-teal-500/15 dark:bg-teal-500/25 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021 18V9.75" />
+                    </svg>
+                </div>
+                <div class="min-w-0">
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-xs font-bold text-slate-800 dark:text-white truncate">Penyimpanan Berkas</span>
+                        <span class="text-[9px] font-extrabold px-1.5 py-0.2 rounded-md bg-teal-500/20 text-teal-700 dark:text-teal-300 border border-teal-400/30 shrink-0">
+                            {{ $storedFilesCount ?? 0 }} Berkas
+                        </span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5">
+                        Simpan privat & kelola link terima file
+                    </p>
+                </div>
+            </a>
+            <div class="flex items-center gap-1.5 shrink-0">
+                <a href="{{ route('drive.index', ['tab' => 'drops']) }}" class="px-2.5 py-1.5 rounded-lg bg-teal-500/15 hover:bg-teal-500/25 text-teal-700 dark:text-teal-300 font-bold text-[11px] border border-teal-400/30 active:scale-95 transition-all" title="Kelola Link Drop">
+                    Link Drop
+                </a>
+                <a href="{{ route('drive.index') }}" class="px-3 py-1.5 rounded-lg bg-teal-500 hover:bg-teal-600 text-white font-bold text-[11px] shadow-xs active:scale-95 transition-all">
+                    Buka
+                </a>
+            </div>
         </div>
     </div>
 

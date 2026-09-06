@@ -58,6 +58,29 @@
         </div>
     </div>
 
+    <!-- Pintasan SwanDrive di Profil -->
+    <a href="{{ route('drive.index') }}" class="bg-white dark:bg-slate-900 rounded-3xl p-4 shadow-sm border border-slate-100 dark:border-slate-800 flex items-center justify-between group hover:border-teal-500/50 transition-all active:scale-[0.99]">
+        <div class="flex items-center gap-3 min-w-0 pr-2">
+            <div class="w-10 h-10 rounded-2xl bg-teal-50 dark:bg-teal-950/50 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0 border border-teal-200/60 dark:border-teal-900/50 shadow-2xs">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021 18V9.75" />
+                </svg>
+            </div>
+            <div class="min-w-0">
+                <div class="flex items-center gap-1.5">
+                    <h3 class="text-sm font-bold text-slate-800 dark:text-white truncate">SwanDrive Vault</h3>
+                    <span class="text-[9px] font-extrabold px-1.5 py-0.2 rounded-md bg-teal-500/15 text-teal-700 dark:text-teal-300 border border-teal-400/30 shrink-0">Penyimpanan</span>
+                </div>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate">Kelola berkas privat & portal terima file</p>
+            </div>
+        </div>
+        <div class="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-400 group-hover:text-teal-600 dark:group-hover:text-teal-400 flex items-center justify-center shrink-0 transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+            </svg>
+        </div>
+    </a>
+
     <!-- 2. FORM EDIT DATA PRIBADI -->
     <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 shadow-sm border border-slate-100 dark:border-slate-800 transition-colors">
         <div class="flex items-center gap-2 mb-4 pb-2 border-b border-slate-100 dark:border-slate-800">

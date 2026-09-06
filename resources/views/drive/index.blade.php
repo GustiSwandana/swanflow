@@ -10,35 +10,35 @@
         <div class="absolute -bottom-10 -left-10 w-44 h-44 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
 
         <!-- Top Navigation -->
-        <div class="relative z-10 flex items-center justify-between mb-4">
-            <div class="flex items-center gap-2.5">
-                <a href="{{ route('dashboard') }}" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 flex items-center justify-center transition-all border border-white/10" aria-label="Kembali ke Beranda">
+        <div class="relative z-10 flex items-center justify-between mb-4 gap-2">
+            <div class="flex items-center gap-2 min-w-0 flex-1">
+                <a href="{{ route('dashboard') }}" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 flex items-center justify-center transition-all border border-white/10 shrink-0" aria-label="Kembali ke Beranda">
                     <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
                     </svg>
                 </a>
-                <div>
-                    <h1 class="text-base font-extrabold tracking-tight flex items-center gap-1.5 text-white">
+                <div class="min-w-0">
+                    <h1 class="text-sm sm:text-base font-extrabold tracking-tight flex items-center gap-1.5 text-white truncate leading-tight">
                         <span>SwanDrive</span>
-                        <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-teal-500/30 text-teal-300 border border-teal-400/30">Vault</span>
+                        <span class="text-[9px] font-bold px-1.5 py-0.2 rounded-md bg-teal-500/30 text-teal-300 border border-teal-400/30 shrink-0">Vault</span>
                     </h1>
-                    <p class="text-[11px] text-teal-200/80 font-medium">Penyimpanan & Portal Terima Berkas</p>
+                    <p class="text-[10px] sm:text-[11px] text-teal-200/80 font-medium truncate mt-0.5">Penyimpanan & Terima Berkas</p>
                 </div>
             </div>
 
             <!-- Top Action Buttons -->
-            <div class="flex items-center gap-2">
-                <button type="button" onclick="openCreateDropModal()" class="px-3 py-1.5 rounded-xl bg-teal-500/20 hover:bg-teal-500/30 border border-teal-400/40 active:scale-95 text-teal-200 hover:text-white text-xs font-extrabold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer" title="Buat Link Terima File">
-                    <svg class="w-3.5 h-3.5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+            <div class="flex items-center gap-1.5 shrink-0">
+                <button type="button" onclick="openCreateDropModal()" class="h-8 px-2.5 sm:px-3 rounded-xl bg-teal-500/25 hover:bg-teal-500/35 border border-teal-400/50 active:scale-95 text-teal-100 hover:text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer whitespace-nowrap shrink-0" title="Buat Link Terima File">
+                    <svg class="w-3.5 h-3.5 text-teal-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
                     </svg>
-                    <span>+ Link Drop</span>
+                    <span class="whitespace-nowrap">Link Drop</span>
                 </button>
-                <button type="button" onclick="document.getElementById('upload-input').click()" class="px-3.5 py-1.5 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-95 text-white text-xs font-extrabold shadow-md shadow-teal-900/40 flex items-center gap-1.5 transition-all cursor-pointer">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                <button type="button" onclick="document.getElementById('upload-input').click()" class="h-8 px-3 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-95 text-white text-xs font-extrabold shadow-md shadow-teal-900/40 flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap shrink-0">
+                    <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
-                    <span>Upload</span>
+                    <span class="whitespace-nowrap">Upload</span>
                 </button>
             </div>
         </div>
@@ -180,11 +180,11 @@
                     </p>
                 </div>
             </div>
-            <button type="button" onclick="openCreateDropModal()" class="px-3 py-2 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-95 text-white text-xs font-extrabold shrink-0 shadow-xs transition-all flex items-center gap-1.5 cursor-pointer">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+            <button type="button" onclick="openCreateDropModal()" class="h-9 px-3.5 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-95 text-white text-xs font-extrabold shrink-0 shadow-xs transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap">
+                <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
-                <span>+ Link Drop</span>
+                <span class="whitespace-nowrap">Buat Link Drop</span>
             </button>
         </div>
 

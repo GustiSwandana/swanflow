@@ -60,6 +60,8 @@ class MobileDashboardTest extends TestCase
         // Quick Actions & Wallets
         $response->assertSee('Dompet & Rekening', false);
         $response->assertSee('Bank BCA', false);
+        $response->assertSee('SwanDrive Vault', false);
+        $response->assertSee(route('drive.index'), false);
 
         // Transaction list
         $response->assertSee('Transaksi Terakhir', false);
