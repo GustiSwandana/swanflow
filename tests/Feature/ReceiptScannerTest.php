@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Enums\TransactionType;
 use App\Models\Category;
 use App\Models\User;
+use App\Models\Wallet;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
@@ -36,6 +37,12 @@ class ReceiptScannerTest extends TestCase
             'type' => TransactionType::Expense,
             'user_id' => $user->id,
         ]);
+        Wallet::create([
+            'name' => 'Dompet Utama',
+            'type' => 'cash',
+            'balance' => 500000,
+            'user_id' => $user->id,
+        ]);
 
         $image = UploadedFile::fake()->image('struk_indomaret.jpg', 600, 800);
 
@@ -44,7 +51,7 @@ class ReceiptScannerTest extends TestCase
         ]);
 
         $response->assertStatus(200);
-        $response->assertJsonStructure(['success', 'source']);
+        $response->assertJsonStructure(['success', 'source', 'categories', 'wallets']);
     }
 
     public function test_user_can_parse_receipt_text_via_heuristic_parser(): void
@@ -72,7 +79,7 @@ class ReceiptScannerTest extends TestCase
             'category_id' => $cat->id,
             'category_name' => 'Makanan & Minuman',
         ]);
-        $this->assertStringContainsString('KOPI KENANGAN', $response->json('merchant'));
+        $this->assertStringContainsStringIgnoringCase('KOPI KENANGAN', $response->json('merchant'));
     }
 
     public function test_heuristic_parser_detects_transportation_category(): void
@@ -96,5 +103,71 @@ class ReceiptScannerTest extends TestCase
             'type' => 'expense',
             'category_id' => $cat->id,
         ]);
+    }
+
+    public function test_heuristic_parser_handles_trailing_sen_decimals(): void
+    {
+        $user = User::factory()->create();
+        Category::create([
+            'name' => 'Belanja Harian',
+            'type' => TransactionType::Expense,
+            'user_id' => $user->id,
+        ]);
+
+        $sampleText = "INDOMARET TEBET BARAT\n1 SUSU ULTRA 250ML 7.500\n1 ROTI TAWAR 15.000\n1 MINYAK GORENG 30.000\nTOTAL: Rp 52.500,00\nTUNAI: Rp 100.000,00\nKEMBALIAN: Rp 47.500,00";
+
+        $response = $this->actingAs($user)->postJson(route('transactions.scan-receipt.parse-text'), [
+            'text' => $sampleText,
+        ]);
+
+        $response->assertStatus(200);
+        // Ensure it doesn't inflate to 5250000
+        $this->assertEquals(52500, $response->json('amount'));
+        $this->assertEquals('Indomaret', $response->json('merchant'));
+    }
+
+    public function test_heuristic_parser_prefers_total_over_cash_and_change(): void
+    {
+        $user = User::factory()->create();
+
+        $sampleText = "RESTO BAKSO LAPANGAN TEMBAK\nBAKSO SPESIAL 45.000\nES TEH MANIS 10.000\nTOTAL HARGA: 55.000\nBAYAR CASH: 100.000\nKEMBALIAN: 45.000";
+
+        $response = $this->actingAs($user)->postJson(route('transactions.scan-receipt.parse-text'), [
+            'text' => $sampleText,
+        ]);
+
+        $response->assertStatus(200);
+        $this->assertEquals(55000, $response->json('amount'));
+    }
+
+    public function test_heuristic_parser_detects_indonesian_textual_date(): void
+    {
+        $user = User::factory()->create();
+
+        $sampleText = "ALFAMART PANGLIMA POLIM\n15 Agustus 2026 18:22\nTOTAL: Rp 32.000";
+
+        $response = $this->actingAs($user)->postJson(route('transactions.scan-receipt.parse-text'), [
+            'text' => $sampleText,
+        ]);
+
+        $response->assertStatus(200);
+        $this->assertEquals('2026-08-15', $response->json('date'));
+        $this->assertEquals(32000, $response->json('amount'));
+    }
+
+    public function test_heuristic_parser_detects_transfer_proof(): void
+    {
+        $user = User::factory()->create();
+
+        $sampleText = "BCA MOBILE\nTRANSFER BERHASIL\nTanggal: 06-09-2026 10:15:30\nPenerima: Budi Santoso\nNominal: Rp 250.000\nTotal Transaksi: Rp 250.000";
+
+        $response = $this->actingAs($user)->postJson(route('transactions.scan-receipt.parse-text'), [
+            'text' => $sampleText,
+        ]);
+
+        $response->assertStatus(200);
+        $this->assertEquals(250000, $response->json('amount'));
+        $this->assertEquals('2026-09-06', $response->json('date'));
+        $this->assertEquals('Transfer ke Budi Santoso', $response->json('merchant'));
     }
 }

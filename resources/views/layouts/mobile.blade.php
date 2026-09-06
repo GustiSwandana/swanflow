@@ -461,6 +461,15 @@
                         </button>
                     </div>
 
+                    <!-- Quick Scan Receipt Button for Edit -->
+                    <button type="button" onclick="openReceiptScannerModal('edit')" class="w-full mb-3 py-2.5 px-3 rounded-xl bg-teal-500/10 hover:bg-teal-500/15 border border-teal-500/20 text-teal-600 dark:text-teal-400 font-bold text-xs flex items-center justify-center gap-2 active:scale-98 transition-all cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
+                        </svg>
+                        <span>📸 Pindai Struk untuk Perbarui Data</span>
+                    </button>
+
                     <!-- Form -->
                     <form id="edit-transaction-form" action="" method="POST" class="space-y-4">
                         @csrf
@@ -672,54 +681,124 @@
                         </div>
                     </div>
 
-                    <!-- State 3: Result Card (Extracted Data Display) -->
-                    <div id="scanner-result-state" class="hidden space-y-3">
-                        <div class="p-4 bg-emerald-50/70 dark:bg-emerald-950/30 rounded-2xl border border-emerald-200 dark:border-emerald-800/60 space-y-3">
+                    <!-- State 3: Result Card (Interactive Review & Edit Mode) -->
+                    <div id="scanner-result-state" class="hidden space-y-3.5">
+                        <div class="p-3.5 bg-slate-50 dark:bg-slate-950/60 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3">
+                            <!-- Top Status & Actions -->
                             <div class="flex items-center justify-between">
-                                <span class="text-[11px] font-bold text-emerald-800 dark:text-emerald-300 flex items-center gap-1">
-                                    <span>✓ Data Berhasil Diekstrak</span>
-                                </span>
-                                <span id="scan-source-badge" class="px-2 py-0.5 rounded-md text-[9px] font-extrabold bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 uppercase">
-                                    AI Scan
-                                </span>
-                            </div>
-
-                            <!-- Nominal Display -->
-                            <div class="bg-white dark:bg-slate-900 rounded-xl p-3 border border-slate-200/80 dark:border-slate-800">
-                                <span class="text-[10px] text-slate-400 font-medium block">Total Nominal Terdeteksi</span>
-                                <div class="flex items-baseline gap-1 mt-0.5">
-                                    <span class="text-sm font-bold text-slate-400">Rp</span>
-                                    <span id="scan-res-amount" class="text-2xl font-black text-slate-900 dark:text-white">0</span>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                    <span class="text-xs font-bold text-slate-800 dark:text-slate-100">Hasil Pindai Bukti Bayar</span>
+                                </div>
+                                <div class="flex items-center gap-1.5">
+                                    <span id="scan-source-badge" class="px-2 py-0.5 rounded-md text-[9px] font-extrabold bg-teal-100 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 uppercase">
+                                        ⚡ Smart OCR
+                                    </span>
+                                    <button type="button" onclick="toggleScanReceiptImagePreview()" class="py-1 px-2 rounded-lg bg-slate-200/80 dark:bg-slate-800 text-[10px] font-bold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white flex items-center gap-1 active:scale-95 transition-all cursor-pointer">
+                                        <span>🔍</span>
+                                        <span id="scan-preview-btn-text">Lihat Foto</span>
+                                    </button>
                                 </div>
                             </div>
 
-                            <!-- Details Grid -->
-                            <div class="grid grid-cols-2 gap-2 text-xs">
-                                <div class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800">
-                                    <span class="text-[10px] text-slate-400 block">Toko / Penerima</span>
-                                    <span id="scan-res-merchant" class="font-bold text-slate-800 dark:text-slate-200 truncate block mt-0.5">-</span>
+                            <!-- Collapsible Receipt Photo Preview -->
+                            <div id="scanner-receipt-photo-container" class="hidden rounded-xl overflow-hidden bg-slate-900 border border-slate-700 max-h-48 flex items-center justify-center relative transition-all">
+                                <img id="scanner-result-photo-img" src="" alt="Foto Struk" class="max-h-48 max-w-full object-contain">
+                                <span class="absolute bottom-1 right-2 text-[9px] bg-black/60 text-white/80 px-1.5 py-0.5 rounded">Ketuk tombol lagi untuk menutup</span>
+                            </div>
+
+                            <!-- Editable Amount Field -->
+                            <div class="p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 focus-within:border-teal-500 dark:focus-within:border-teal-400 focus-within:ring-2 focus-within:ring-teal-500/20 transition-all">
+                                <div class="flex items-center justify-between mb-1">
+                                    <label for="scan-edit-amount" class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Nominal (Rp) <span class="text-rose-500">*</span></label>
+                                    <span id="scan-amount-formatted" class="text-[11px] font-extrabold text-teal-600 dark:text-teal-400">Rp 0</span>
                                 </div>
-                                <div class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800">
-                                    <span class="text-[10px] text-slate-400 block">Tanggal</span>
-                                    <span id="scan-res-date" class="font-bold text-slate-800 dark:text-slate-200 truncate block mt-0.5">-</span>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-lg font-bold text-slate-400">Rp</span>
+                                    <input id="scan-edit-amount" 
+                                           type="number" 
+                                           step="any" 
+                                           inputmode="decimal" 
+                                           placeholder="0" 
+                                           required 
+                                           oninput="updateScanAmountPreview(this.value)"
+                                           class="w-full text-2xl font-black text-slate-900 dark:text-white bg-transparent border-none outline-hidden focus:ring-0 p-0 placeholder-slate-300 dark:placeholder-slate-600">
                                 </div>
-                                <div class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800">
-                                    <span class="text-[10px] text-slate-400 block">Kategori Disarankan</span>
-                                    <span id="scan-res-category" class="font-bold text-teal-600 dark:text-teal-400 truncate block mt-0.5">-</span>
+                            </div>
+
+                            <!-- Toko / Penerima & Tanggal Grid -->
+                            <div class="grid grid-cols-2 gap-2">
+                                <div class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus-within:border-teal-500">
+                                    <label for="scan-edit-merchant" class="text-[10px] text-slate-400 font-semibold block mb-0.5">Toko / Penerima</label>
+                                    <input id="scan-edit-merchant" 
+                                           type="text" 
+                                           placeholder="Nama Toko..." 
+                                           class="w-full text-xs font-bold text-slate-800 dark:text-slate-100 bg-transparent border-none outline-hidden focus:ring-0 p-0 placeholder-slate-400">
                                 </div>
-                                <div class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800">
-                                    <span class="text-[10px] text-slate-400 block">Jenis Transaksi</span>
-                                    <span id="scan-res-type" class="font-bold text-rose-600 dark:text-rose-400 truncate block mt-0.5">Pengeluaran</span>
+                                <div class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus-within:border-teal-500">
+                                    <label for="scan-edit-date" class="text-[10px] text-slate-400 font-semibold block mb-0.5">Tanggal Transaksi</label>
+                                    <input id="scan-edit-date" 
+                                           type="date" 
+                                           class="w-full text-xs font-bold text-slate-800 dark:text-slate-100 bg-transparent border-none outline-hidden focus:ring-0 p-0">
                                 </div>
+                            </div>
+
+                            <!-- Type Switcher (Pemasukan vs Pengeluaran) -->
+                            <div>
+                                <label class="text-[10px] text-slate-400 font-semibold block mb-1">Jenis Transaksi</label>
+                                <div class="grid grid-cols-2 p-1 bg-slate-200/70 dark:bg-slate-800 rounded-xl gap-1">
+                                    <button type="button" id="scan-type-btn-expense" onclick="setScanResultType('expense')" class="py-2 px-2 rounded-lg text-xs font-bold transition-all bg-white dark:bg-slate-700 text-rose-600 dark:text-rose-400 shadow-xs cursor-pointer">
+                                        Pengeluaran
+                                    </button>
+                                    <button type="button" id="scan-type-btn-income" onclick="setScanResultType('income')" class="py-2 px-2 rounded-lg text-xs font-bold transition-all text-slate-500 dark:text-slate-400 cursor-pointer">
+                                        Pemasukan
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Kategori & Dompet Grid -->
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label for="scan-edit-category" class="text-[10px] text-slate-400 font-semibold block mb-1">Kategori</label>
+                                    <select id="scan-edit-category" class="w-full min-h-[42px] px-2.5 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 focus:outline-hidden focus:border-teal-500">
+                                        @foreach($modalCategories as $cat)
+                                            <option value="{{ $cat->id }}" data-type="{{ is_string($cat->type) ? $cat->type : $cat->type->value }}" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
+                                                {{ $cat->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="scan-edit-wallet" class="text-[10px] text-slate-400 font-semibold block mb-1">Dompet / Bayar Pakai</label>
+                                    <select id="scan-edit-wallet" class="w-full min-h-[42px] px-2.5 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 focus:outline-hidden focus:border-teal-500">
+                                        @foreach($modalWallets as $w)
+                                            <option value="{{ $w->id }}" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
+                                                {{ $w->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Catatan Tambahan (Opsional) -->
+                            <div>
+                                <label for="scan-edit-notes" class="text-[10px] text-slate-400 font-semibold block mb-1">Catatan Tambahan (Opsional)</label>
+                                <input id="scan-edit-notes" 
+                                       type="text" 
+                                       placeholder="Nomor referensi, rincian barang, dsb..." 
+                                       class="w-full min-h-[40px] px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-hidden focus:border-teal-500">
                             </div>
                         </div>
 
                         <!-- Action Buttons -->
                         <div class="flex items-center gap-2 pt-1">
-                            <button type="button" onclick="applyScannedReceiptToForm()" class="flex-1 py-3 px-4 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-[0.98] text-white text-xs font-extrabold shadow-md shadow-teal-500/25 flex items-center justify-center gap-2 transition-all cursor-pointer">
-                                <span>Terapkan ke Transaksi →</span>
+                            <button type="button" onclick="applyScannedReceiptToForm()" class="flex-1 py-3 px-2.5 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-[0.98] text-white text-xs font-extrabold shadow-md shadow-teal-500/25 flex items-center justify-center gap-1.5 transition-all cursor-pointer">
+                                <span>Terapkan ke Form →</span>
                             </button>
-                            <button type="button" onclick="resetReceiptScannerState()" class="py-3 px-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold active:scale-95 transition-all cursor-pointer">
+                            <button type="button" id="scan-quick-save-btn" onclick="quickSaveScannedReceipt()" class="py-3 px-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white text-xs font-extrabold shadow-md shadow-emerald-600/25 flex items-center justify-center gap-1 transition-all cursor-pointer">
+                                <span>⚡ Simpan Langsung</span>
+                            </button>
+                            <button type="button" onclick="resetReceiptScannerState()" class="py-3 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold active:scale-95 transition-all cursor-pointer">
                                 Ulangi
                             </button>
                         </div>
@@ -729,7 +808,7 @@
         </div>
 
         <script>
-            function openTransactionModal(defaultType = 'expense', defaultAmount = null, defaultDescription = null, defaultCategory = null, defaultDate = null) {
+            function openTransactionModal(defaultType = 'expense', defaultAmount = null, defaultDescription = null, defaultCategory = null, defaultDate = null, defaultWallet = null) {
                 const modal = document.getElementById('transaction-modal');
                 const backdrop = document.getElementById('modal-backdrop');
                 const panel = document.getElementById('modal-panel');
@@ -777,6 +856,14 @@
                     }
                 }
 
+                // Pre-fill wallet if provided
+                if (defaultWallet) {
+                    const walletSelect = document.getElementById('wallet-select');
+                    if (walletSelect) {
+                        walletSelect.value = defaultWallet;
+                    }
+                }
+
                 // Pre-fill category if provided
                 if (defaultCategory) {
                     const categorySelect = document.getElementById('category-select');
@@ -800,11 +887,20 @@
                 }, 300);
             }
 
-            // Receipt Scanner Handlers (AI Vision + Local OCR)
+            // Receipt Scanner State & Handlers
             let currentScannedReceipt = null;
+            let receiptScannerTarget = 'new'; // 'new' | 'edit'
+            let currentScanType = 'expense';
 
-            function openReceiptScannerModal() {
-                closeTransactionModal();
+            function openReceiptScannerModal(target = 'new') {
+                receiptScannerTarget = target;
+
+                if (target === 'edit') {
+                    const editModal = document.getElementById('edit-transaction-modal');
+                    if (editModal) editModal.classList.add('hidden');
+                } else {
+                    closeTransactionModal();
+                }
 
                 const modal = document.getElementById('receipt-scanner-modal');
                 const backdrop = document.getElementById('scanner-backdrop');
@@ -844,17 +940,128 @@
                 document.getElementById('scanner-camera-input').value = '';
                 document.getElementById('scanner-file-input').value = '';
                 document.getElementById('scanner-status-text').innerText = 'Memindai struk pembayaran...';
+                document.getElementById('scanner-substatus-text').innerText = 'Mempersiapkan gambar untuk analisis...';
                 document.getElementById('scanner-progress-fill').style.width = '20%';
+                document.getElementById('scanner-receipt-photo-container').classList.add('hidden');
+                document.getElementById('scan-preview-btn-text').innerText = 'Lihat Foto';
+            }
+
+            function toggleScanReceiptImagePreview() {
+                const container = document.getElementById('scanner-receipt-photo-container');
+                const btnText = document.getElementById('scan-preview-btn-text');
+                if (container.classList.contains('hidden')) {
+                    container.classList.remove('hidden');
+                    btnText.innerText = 'Tutup Foto';
+                } else {
+                    container.classList.add('hidden');
+                    btnText.innerText = 'Lihat Foto';
+                }
+            }
+
+            function updateScanAmountPreview(val) {
+                const num = Number(val || 0);
+                const el = document.getElementById('scan-amount-formatted');
+                if (el) {
+                    el.innerText = 'Rp ' + num.toLocaleString('id-ID');
+                }
+            }
+
+            function setScanResultType(type) {
+                currentScanType = type;
+                const expenseBtn = document.getElementById('scan-type-btn-expense');
+                const incomeBtn = document.getElementById('scan-type-btn-income');
+
+                if (type === 'income') {
+                    incomeBtn.className = 'py-2 px-2 rounded-lg text-xs font-bold transition-all bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-xs cursor-pointer';
+                    expenseBtn.className = 'py-2 px-2 rounded-lg text-xs font-bold transition-all text-slate-500 dark:text-slate-400 cursor-pointer';
+                } else {
+                    expenseBtn.className = 'py-2 px-2 rounded-lg text-xs font-bold transition-all bg-white dark:bg-slate-700 text-rose-600 dark:text-rose-400 shadow-xs cursor-pointer';
+                    incomeBtn.className = 'py-2 px-2 rounded-lg text-xs font-bold transition-all text-slate-500 dark:text-slate-400 cursor-pointer';
+                }
+
+                // Filter categories in dropdown
+                const catSelect = document.getElementById('scan-edit-category');
+                if (catSelect) {
+                    let firstMatched = false;
+                    for (let opt of catSelect.options) {
+                        const optType = opt.getAttribute('data-type');
+                        if (!optType || optType === type) {
+                            opt.hidden = false;
+                            opt.disabled = false;
+                            opt.style.display = '';
+                            if (!firstMatched && !opt.selected) {
+                                opt.selected = true;
+                                firstMatched = true;
+                            }
+                        } else {
+                            opt.hidden = true;
+                            opt.disabled = true;
+                            opt.style.display = 'none';
+                            if (opt.selected) opt.selected = false;
+                        }
+                    }
+                }
+            }
+
+            // Client-side Canvas Image Compression
+            function compressReceiptImage(file, maxDim = 1600, quality = 0.82) {
+                return new Promise((resolve) => {
+                    if (!file || !file.type || !file.type.startsWith('image/')) {
+                        return resolve({ file, dataUrl: null });
+                    }
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const img = new Image();
+                        img.onload = () => {
+                            let w = img.width;
+                            let h = img.height;
+                            if (w > maxDim || h > maxDim) {
+                                if (w > h) {
+                                    h = Math.round((h * maxDim) / w);
+                                    w = maxDim;
+                                } else {
+                                    w = Math.round((w * maxDim) / h);
+                                    h = maxDim;
+                                }
+                            }
+                            const canvas = document.createElement('canvas');
+                            canvas.width = w;
+                            canvas.height = h;
+                            const ctx = canvas.getContext('2d');
+                            ctx.imageSmoothingEnabled = true;
+                            ctx.imageSmoothingQuality = 'high';
+                            ctx.drawImage(img, 0, 0, w, h);
+                            const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+
+                            canvas.toBlob((blob) => {
+                                if (blob) {
+                                    const compressedFile = new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), {
+                                        type: 'image/jpeg',
+                                        lastModified: Date.now()
+                                    });
+                                    resolve({ file: compressedFile, dataUrl });
+                                } else {
+                                    resolve({ file, dataUrl: e.target.result });
+                                }
+                            }, 'image/jpeg', quality);
+                        };
+                        img.onerror = () => resolve({ file, dataUrl: e.target.result });
+                        img.src = e.target.result;
+                    };
+                    reader.onerror = () => resolve({ file, dataUrl: null });
+                    reader.readAsDataURL(file);
+                });
             }
 
             async function processReceiptFile(input) {
                 if (!input.files || !input.files[0]) return;
-                const file = input.files[0];
+                const rawFile = input.files[0];
 
                 const pickState = document.getElementById('scanner-pick-state');
                 const procState = document.getElementById('scanner-processing-state');
                 const resState = document.getElementById('scanner-result-state');
                 const previewImg = document.getElementById('scanner-preview-img');
+                const resultPhotoImg = document.getElementById('scanner-result-photo-img');
                 const statusText = document.getElementById('scanner-status-text');
                 const substatusText = document.getElementById('scanner-substatus-text');
                 const progressFill = document.getElementById('scanner-progress-fill');
@@ -863,12 +1070,23 @@
                 procState.classList.remove('hidden');
                 resState.classList.add('hidden');
 
-                const objectUrl = URL.createObjectURL(file);
-                previewImg.src = objectUrl;
+                statusText.innerText = 'Mengoptimalkan Resolusi Gambar...';
+                substatusText.innerText = 'Menyesuaikan ketajaman struk...';
+                progressFill.style.width = '25%';
 
-                statusText.innerText = 'Mengunggah & Menganalisis Bukti Bayar...';
-                substatusText.innerText = 'Mendeteksi nominal, tanggal, dan pedagang...';
-                progressFill.style.width = '40%';
+                const { file, dataUrl } = await compressReceiptImage(rawFile, 1600, 0.82);
+                if (dataUrl) {
+                    previewImg.src = dataUrl;
+                    resultPhotoImg.src = dataUrl;
+                } else {
+                    const objectUrl = URL.createObjectURL(file);
+                    previewImg.src = objectUrl;
+                    resultPhotoImg.src = objectUrl;
+                }
+
+                statusText.innerText = 'Menganalisis Bukti Pembayaran...';
+                substatusText.innerText = 'Mendeteksi total belanja, tanggal & pedagang...';
+                progressFill.style.width = '45%';
 
                 const formData = new FormData();
                 formData.append('image', file);
@@ -893,21 +1111,34 @@
                     }
 
                     // Fallback to client-side OCR
-                    statusText.innerText = 'Membaca Teks dengan OCR Pintar...';
-                    substatusText.innerText = 'Mengekstrak karakter dari struk...';
-                    progressFill.style.width = '65%';
+                    statusText.innerText = 'Membaca Teks Struk (OCR Pintar)...';
+                    substatusText.innerText = 'Mengekstrak karakter teks dari gambar...';
+                    progressFill.style.width = '60%';
 
                     if (typeof Tesseract !== 'undefined') {
-                        const ocrResult = await Tesseract.recognize(file, 'ind', {
-                            logger: m => {
-                                if (m.status === 'recognizing text') {
-                                    const pct = Math.round(m.progress * 30) + 65;
-                                    progressFill.style.width = pct + '%';
+                        let ocrResult = null;
+                        try {
+                            ocrResult = await Tesseract.recognize(file, 'ind+eng', {
+                                logger: m => {
+                                    if (m.status === 'recognizing text') {
+                                        const pct = Math.round(m.progress * 30) + 60;
+                                        progressFill.style.width = pct + '%';
+                                    }
                                 }
-                            }
-                        });
+                            });
+                        } catch (e1) {
+                            console.warn('ind+eng failed, trying eng:', e1);
+                            ocrResult = await Tesseract.recognize(file, 'eng', {
+                                logger: m => {
+                                    if (m.status === 'recognizing text') {
+                                        const pct = Math.round(m.progress * 30) + 60;
+                                        progressFill.style.width = pct + '%';
+                                    }
+                                }
+                            });
+                        }
 
-                        const recognizedText = ocrResult.data.text;
+                        const recognizedText = ocrResult?.data?.text || '';
                         progressFill.style.width = '95%';
 
                         const parseRes = await fetch('{{ route('transactions.scan-receipt.parse-text') }}', {
@@ -937,10 +1168,10 @@
                 } catch (err) {
                     console.error('Scan error:', err);
                     statusText.innerText = 'Gagal memindai otomatis.';
-                    substatusText.innerText = 'Silakan coba lagi atau catat manual.';
+                    substatusText.innerText = 'Silakan coba lagi atau isi rincian secara manual.';
                     setTimeout(() => {
                         resetReceiptScannerState();
-                    }, 2000);
+                    }, 2200);
                 }
             }
 
@@ -953,21 +1184,37 @@
                 procState.classList.add('hidden');
                 resState.classList.remove('hidden');
 
-                const formattedAmount = Number(data.amount || 0).toLocaleString('id-ID');
-                document.getElementById('scan-res-amount').innerText = formattedAmount;
-                document.getElementById('scan-res-merchant').innerText = data.merchant || 'Struk Pembelian';
-                document.getElementById('scan-res-date').innerText = data.date || new Date().toISOString().split('T')[0];
-                document.getElementById('scan-res-category').innerText = data.category_name || 'Belanja Harian';
+                // Populate Editable Inputs
+                const amountInput = document.getElementById('scan-edit-amount');
+                amountInput.value = data.amount || '';
+                updateScanAmountPreview(data.amount || 0);
 
-                const typeEl = document.getElementById('scan-res-type');
-                if (data.type === 'income') {
-                    typeEl.innerText = 'Pemasukan';
-                    typeEl.className = 'font-bold text-emerald-600 dark:text-emerald-400 truncate block mt-0.5';
-                } else {
-                    typeEl.innerText = 'Pengeluaran';
-                    typeEl.className = 'font-bold text-rose-600 dark:text-rose-400 truncate block mt-0.5';
+                const merchantInput = document.getElementById('scan-edit-merchant');
+                merchantInput.value = data.merchant || '';
+
+                const dateInput = document.getElementById('scan-edit-date');
+                dateInput.value = data.date || new Date().toISOString().split('T')[0];
+
+                const notesInput = document.getElementById('scan-edit-notes');
+                notesInput.value = data.notes || (data.items && data.items.length ? data.items.join(', ') : '');
+
+                // Set Type
+                setScanResultType(data.type === 'income' ? 'income' : 'expense');
+
+                // Select Category
+                const catSelect = document.getElementById('scan-edit-category');
+                if (catSelect && data.category_id) {
+                    catSelect.value = data.category_id;
+                } else if (catSelect && data.category_name) {
+                    for (let opt of catSelect.options) {
+                        if (opt.text.toLowerCase().includes(data.category_name.toLowerCase())) {
+                            opt.selected = true;
+                            break;
+                        }
+                    }
                 }
 
+                // Source Badge
                 const badge = document.getElementById('scan-source-badge');
                 if (data.source === 'gemini_ai') {
                     badge.innerText = '✨ AI Vision';
@@ -979,20 +1226,117 @@
             }
 
             function applyScannedReceiptToForm() {
-                if (!currentScannedReceipt) return;
+                const amount = document.getElementById('scan-edit-amount').value;
+                const merchant = document.getElementById('scan-edit-merchant').value;
+                const date = document.getElementById('scan-edit-date').value;
+                const categoryId = document.getElementById('scan-edit-category').value;
+                const walletId = document.getElementById('scan-edit-wallet').value;
+                const notes = document.getElementById('scan-edit-notes').value;
+                const type = currentScanType;
 
-                const receipt = { ...currentScannedReceipt };
+                const finalDesc = notes ? `${merchant} (${notes})` : merchant;
+
                 closeReceiptScannerModal();
 
                 setTimeout(() => {
-                    openTransactionModal(
-                        receipt.type || 'expense',
-                        receipt.amount || '',
-                        receipt.description || receipt.merchant || '',
-                        receipt.category_id || receipt.category_name || null,
-                        receipt.date || null
-                    );
+                    if (receiptScannerTarget === 'edit') {
+                        // Apply directly to Edit Modal
+                        const editAmount = document.getElementById('edit-amount-input');
+                        if (editAmount) editAmount.value = amount;
+                        const editDesc = document.getElementById('edit-desc-input');
+                        if (editDesc) editDesc.value = finalDesc;
+                        const editDate = document.getElementById('edit-date-input');
+                        if (editDate) editDate.value = date;
+                        const editCat = document.getElementById('edit-category-select');
+                        if (editCat && categoryId) editCat.value = categoryId;
+                        const editWallet = document.getElementById('edit-wallet-select');
+                        if (editWallet && walletId) editWallet.value = walletId;
+
+                        const radio = document.querySelector(`input[name="type"][id="edit-type-${type}"]`);
+                        if (radio) {
+                            radio.checked = true;
+                            updateEditModalType(type);
+                        }
+
+                        // Re-open edit modal
+                        const modal = document.getElementById('edit-transaction-modal');
+                        const backdrop = document.getElementById('edit-modal-backdrop');
+                        const panel = document.getElementById('edit-modal-panel');
+                        if (modal) {
+                            modal.classList.remove('hidden');
+                            setTimeout(() => {
+                                backdrop?.classList.remove('opacity-0');
+                                backdrop?.classList.add('opacity-100');
+                                panel?.classList.remove('translate-y-full');
+                                panel?.classList.add('translate-y-0');
+                            }, 10);
+                        }
+                    } else {
+                        openTransactionModal(type, amount, finalDesc, categoryId, date, walletId);
+                    }
                 }, 250);
+            }
+
+            async function quickSaveScannedReceipt() {
+                const amount = document.getElementById('scan-edit-amount').value;
+                const merchant = document.getElementById('scan-edit-merchant').value;
+                const date = document.getElementById('scan-edit-date').value;
+                const categoryId = document.getElementById('scan-edit-category').value;
+                const walletId = document.getElementById('scan-edit-wallet').value;
+                const notes = document.getElementById('scan-edit-notes').value;
+                const type = currentScanType;
+
+                if (!amount || Number(amount) <= 0) {
+                    alert('Harap isi nominal transaksi.');
+                    document.getElementById('scan-edit-amount').focus();
+                    return;
+                }
+                if (!walletId) {
+                    alert('Harap pilih dompet pembayaran.');
+                    return;
+                }
+
+                const saveBtn = document.getElementById('scan-quick-save-btn');
+                const originalHtml = saveBtn.innerHTML;
+                saveBtn.disabled = true;
+                saveBtn.innerHTML = '<svg class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg> Menyimpan...';
+
+                const finalDesc = notes ? `${merchant} (${notes})` : merchant;
+
+                const formData = new FormData();
+                formData.append('type', type);
+                formData.append('amount', amount);
+                formData.append('description', finalDesc);
+                formData.append('category_id', categoryId);
+                formData.append('wallet_id', walletId);
+                formData.append('date', date);
+                formData.append('_token', '{{ csrf_token() }}');
+
+                try {
+                    const res = await fetch('{{ route('transactions.store') }}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (res.ok) {
+                        closeReceiptScannerModal();
+                        window.location.reload();
+                    } else {
+                        const errData = await res.json().catch(() => ({}));
+                        alert(errData.message || 'Gagal menyimpan transaksi. Periksa kembali data transaksi.');
+                        saveBtn.disabled = false;
+                        saveBtn.innerHTML = originalHtml;
+                    }
+                } catch (err) {
+                    console.error('Save error:', err);
+                    alert('Terjadi kesalahan jaringan.');
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = originalHtml;
+                }
             }
 
             function closeTransactionModal() {

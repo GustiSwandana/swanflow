@@ -127,6 +127,13 @@ class TransactionController extends Controller
             ? 'Transfer saldo berhasil disimpan!'
             : 'Transaksi berhasil disimpan!';
 
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+            ]);
+        }
+
         return back()->with('success', $message);
     }
 
