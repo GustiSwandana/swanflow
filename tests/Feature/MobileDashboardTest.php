@@ -4,7 +4,9 @@ namespace Tests\Feature;
 
 use App\Enums\TransactionType;
 use App\Models\Category;
+use App\Models\StoredFile;
 use App\Models\Transaction;
+use App\Models\UploadLink;
 use App\Models\User;
 use App\Models\Wallet;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -192,5 +194,45 @@ class MobileDashboardTest extends TestCase
         $this->assertFileExists(public_path('icons/icon-512.png'));
         $this->assertFileExists(public_path('icons/apple-touch-icon.png'));
         $this->assertFileExists(public_path('sw.js'));
+    }
+
+    /**
+     * Test Drive shortcut displays badge ONLY when active links exist, not for stored files.
+     */
+    public function test_drive_shortcut_shows_badge_only_for_active_links(): void
+    {
+        $user = User::factory()->create();
+
+        // 1. User has 1 stored file, but 0 active links
+        StoredFile::create([
+            'user_id' => $user->id,
+            'title' => 'Test Doc',
+            'original_name' => 'doc.pdf',
+            'file_path' => 'test/doc.pdf',
+            'mime_type' => 'application/pdf',
+            'extension' => 'pdf',
+            'size_bytes' => 1024,
+            'category' => 'document',
+            'is_public' => false,
+        ]);
+
+        $response = $this->actingAs($user)->get('/');
+        $response->assertStatus(200);
+        // Should NOT display active link badge
+        $response->assertDontSee('Link Aktif', false);
+
+        // 2. User creates an active drop link
+        UploadLink::create([
+            'user_id' => $user->id,
+            'title' => 'Kirim File Project',
+            'token' => 'active-token-123',
+            'max_files' => 5,
+            'max_file_size_mb' => 25,
+            'is_active' => true,
+        ]);
+
+        $response2 = $this->actingAs($user)->get('/');
+        $response2->assertStatus(200);
+        $response2->assertSee('1 Link Aktif', false);
     }
 }

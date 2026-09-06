@@ -154,9 +154,9 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021 18V9.75" />
                 </svg>
-                @if(($storedFilesCount ?? 0) > 0)
-                    <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-teal-500 text-white text-[10px] font-extrabold flex items-center justify-center shadow-xs ring-2 ring-white dark:ring-slate-900 leading-none">
-                        {{ $storedFilesCount }}
+                @if(($activeLinksCount ?? 0) > 0)
+                    <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-emerald-500 text-white text-[10px] font-extrabold flex items-center justify-center shadow-xs ring-2 ring-white dark:ring-slate-900 leading-none" title="{{ $activeLinksCount }} Link Aktif">
+                        {{ $activeLinksCount }}
                     </span>
                 @endif
             </div>
@@ -310,12 +310,23 @@
                 <div class="min-w-0">
                     <div class="flex items-center gap-1.5">
                         <span class="text-xs font-bold text-slate-800 dark:text-white truncate">Penyimpanan Berkas</span>
-                        <span class="text-[9px] font-extrabold px-1.5 py-0.2 rounded-md bg-teal-500/20 text-teal-700 dark:text-teal-300 border border-teal-400/30 shrink-0">
-                            {{ $storedFilesCount ?? 0 }} Berkas
-                        </span>
+                        @if(($activeLinksCount ?? 0) > 0)
+                            <span class="text-[9px] font-extrabold px-1.5 py-0.2 rounded-md bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-400/30 shrink-0 flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                <span>{{ $activeLinksCount }} Link Aktif</span>
+                            </span>
+                        @else
+                            <span class="text-[9px] font-extrabold px-1.5 py-0.2 rounded-md bg-teal-500/20 text-teal-700 dark:text-teal-300 border border-teal-400/30 shrink-0">
+                                {{ $storedFilesCount ?? 0 }} Berkas
+                            </span>
+                        @endif
                     </div>
                     <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5">
-                        Simpan privat & kelola link terima file
+                        @if(($activeLinksCount ?? 0) > 0)
+                            Tautan terima / transfer berkas sedang aktif
+                        @else
+                            Simpan privat & kelola link terima file
+                        @endif
                     </p>
                 </div>
             </a>

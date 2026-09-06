@@ -169,6 +169,14 @@ class DashboardController extends Controller
             ->count();
 
         $storedFilesCount = $user->storedFiles()->count();
+        $activeDropLinksCount = $user->uploadLinks()
+            ->get()
+            ->filter(fn ($link) => $link->canAcceptUpload())
+            ->count();
+        $activePublicSharesCount = $user->storedFiles()
+            ->where('is_public', true)
+            ->count();
+        $activeLinksCount = $activeDropLinksCount + $activePublicSharesCount;
 
         return view('dashboard', [
             'user' => $user,
@@ -185,6 +193,7 @@ class DashboardController extends Controller
             'todayTodos' => $todayTodos,
             'pendingTodosCount' => $pendingTodosCount,
             'storedFilesCount' => $storedFilesCount,
+            'activeLinksCount' => $activeLinksCount,
         ]);
     }
 }
