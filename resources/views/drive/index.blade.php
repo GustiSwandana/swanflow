@@ -38,9 +38,9 @@
         <!-- Storage Summary Card with Clean Hierarchical Layout -->
         <div class="relative z-10 bg-white/10 backdrop-blur-md rounded-2xl p-3.5 sm:p-4 border border-white/15 shadow-inner space-y-2.5">
             <!-- Row 1: Label & Ubah Ukuran button -->
-            <div class="flex items-center justify-between gap-2">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-teal-200/90">Kapasitas Penyimpanan</span>
-                <button type="button" onclick="openQuotaModal()" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-teal-400/20 hover:bg-teal-400/35 text-teal-200 hover:text-white text-[10px] font-bold border border-teal-300/30 active:scale-95 transition-all cursor-pointer shadow-xs" title="Ubah Kapasitas Kuota">
+            <div class="flex items-center justify-between gap-2 min-w-0">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-teal-200/90 truncate">Kapasitas Penyimpanan</span>
+                <button type="button" onclick="openQuotaModal()" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-teal-400/20 hover:bg-teal-400/35 text-teal-200 hover:text-white text-[10px] font-bold border border-teal-300/30 active:scale-95 transition-all cursor-pointer shadow-xs shrink-0" title="Ubah Kapasitas Kuota">
                     <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
                     </svg>
@@ -49,12 +49,12 @@
             </div>
 
             <!-- Row 2: Numbers & Percentage Badge -->
-            <div class="flex items-baseline justify-between gap-2">
-                <div class="flex items-baseline gap-1.5">
-                    <span class="text-2xl sm:text-3xl font-black text-white tracking-tight">{{ $formattedTotalSize }}</span>
-                    <span class="text-xs font-semibold text-teal-200/80">/ {{ $formattedQuotaSize }}</span>
+            <div class="flex items-baseline justify-between gap-2 min-w-0">
+                <div class="flex items-baseline gap-1.5 min-w-0 truncate">
+                    <span class="text-2xl sm:text-3xl font-black text-white tracking-tight truncate">{{ $formattedTotalSize }}</span>
+                    <span class="text-xs font-semibold text-teal-200/80 shrink-0">/ {{ $formattedQuotaSize }}</span>
                 </div>
-                <div class="flex items-center gap-2 shrink-0">
+                <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
                     <span class="text-[10px] text-teal-200/70 font-medium">{{ $totalFiles }} Berkas</span>
                     <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full border shadow-2xs {{ $storagePercent >= 90 ? 'bg-rose-500/30 text-rose-200 border-rose-400/40' : ($storagePercent >= 75 ? 'bg-amber-500/30 text-amber-200 border-amber-400/40' : 'bg-teal-500/30 text-teal-200 border-teal-400/30') }}">
                         {{ $storagePercent }}%
@@ -277,7 +277,7 @@
                 <div class="bg-white dark:bg-slate-950 rounded-2xl p-4 border border-slate-200 dark:border-slate-800 shadow-xs space-y-3 transition-all hover:border-teal-500/50">
                     <div class="flex items-start justify-between gap-3">
                         <!-- Icon + Name (Click to preview) -->
-                        <div onclick="openPreviewModal('{{ $file->id }}', '{{ addslashes($file->title) }}', '{{ addslashes($file->original_name) }}', '{{ $file->formatted_size }}', '{{ strtolower($file->extension) }}', '{{ route('drive.preview', $file) }}', '{{ route('drive.download', $file) }}', '{{ $meta['label'] }}', '{{ addslashes($file->notes ?? '') }}', '{{ $file->created_at->format('d M Y, H:i') }}')"
+                        <div onclick="openPreviewModal('{{ $file->id }}', '{{ addslashes($file->title) }}', '{{ addslashes($file->original_name) }}', '{{ $file->formatted_size }}', '{{ strtolower($file->extension) }}', '{{ route('drive.preview', $file) }}', '{{ route('drive.download', $file) }}', '{{ $meta['label'] }}', '{{ addslashes($file->notes ?? '') }}', '{{ $file->created_at->format('d M Y, H:i') }}', '{{ route('drive.destroy', $file) }}', '{{ $file->share_url }}', {{ $file->is_public ? 'true' : 'false' }}, '{{ route('drive.share.toggle', $file) }}')"
                              class="flex items-start gap-3 min-w-0 flex-1 cursor-pointer group">
                             <div class="w-10 h-10 rounded-xl {{ $meta['bg'] }} {{ $meta['text'] }} border {{ $meta['border'] }} flex items-center justify-center shrink-0 font-extrabold text-xs uppercase shadow-2xs group-hover:scale-105 transition-transform">
                                 {{ substr($file->extension, 0, 4) }}
@@ -333,7 +333,7 @@
                         <!-- Left: View (Preview) & Download Buttons -->
                         <div class="flex items-center gap-1.5">
                             <button type="button"
-                                    onclick="openPreviewModal('{{ $file->id }}', '{{ addslashes($file->title) }}', '{{ addslashes($file->original_name) }}', '{{ $file->formatted_size }}', '{{ strtolower($file->extension) }}', '{{ route('drive.preview', $file) }}', '{{ route('drive.download', $file) }}', '{{ $meta['label'] }}', '{{ addslashes($file->notes ?? '') }}', '{{ $file->created_at->format('d M Y, H:i') }}', '{{ route('drive.destroy', $file) }}')"
+                                    onclick="openPreviewModal('{{ $file->id }}', '{{ addslashes($file->title) }}', '{{ addslashes($file->original_name) }}', '{{ $file->formatted_size }}', '{{ strtolower($file->extension) }}', '{{ route('drive.preview', $file) }}', '{{ route('drive.download', $file) }}', '{{ $meta['label'] }}', '{{ addslashes($file->notes ?? '') }}', '{{ $file->created_at->format('d M Y, H:i') }}', '{{ route('drive.destroy', $file) }}', '{{ $file->share_url }}', {{ $file->is_public ? 'true' : 'false' }}, '{{ route('drive.share.toggle', $file) }}')"
                                     class="px-3 py-1.5 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-95 text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
                                     title="Lihat Berkas Tanpa Mengunduh">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
@@ -954,12 +954,18 @@
                         <span>Hapus</span>
                     </button>
                 </div>
-                <div class="flex items-center gap-2">
-                    <a id="pv-download-btn" href="#" class="py-2.5 px-4 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-95 text-white text-xs font-extrabold shadow-md shadow-teal-500/25 flex items-center gap-1.5 transition-all cursor-pointer">
+                <div class="flex items-center gap-1.5 sm:gap-2">
+                    <button type="button" id="pv-share-btn" onclick="openShareFromPreview()" class="py-2.5 px-3 rounded-xl bg-teal-50 hover:bg-teal-100 dark:bg-teal-950/60 dark:hover:bg-teal-900/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/80 text-xs font-bold active:scale-95 transition-all cursor-pointer flex items-center gap-1.5 shadow-xs" title="Bagi / Transfer Berkas">
+                        <svg class="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
+                        </svg>
+                        <span>Transfer</span>
+                    </button>
+                    <a id="pv-download-btn" href="#" class="py-2.5 px-3.5 sm:px-4 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-95 text-white text-xs font-extrabold shadow-md shadow-teal-500/25 flex items-center gap-1.5 transition-all cursor-pointer">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
                         </svg>
-                        <span>Unduh Berkas</span>
+                        <span>Unduh</span>
                     </a>
                 </div>
             </div>
@@ -1361,11 +1367,16 @@
     // Generic Copy to Clipboard Helper
     function copyToClipboard(text, btnElement) {
         navigator.clipboard.writeText(text).then(() => {
-            const originalHtml = btnElement.innerHTML;
-            btnElement.innerText = 'Tersalin!';
-            setTimeout(() => {
-                btnElement.innerHTML = originalHtml;
-            }, 2000);
+            if (typeof showSwanToast === 'function') {
+                showSwanToast('Tautan berhasil disalin ke papan klip!');
+            }
+            if (btnElement) {
+                const originalHtml = btnElement.innerHTML;
+                btnElement.innerText = 'Tersalin!';
+                setTimeout(() => {
+                    btnElement.innerHTML = originalHtml;
+                }, 2000);
+            }
         }).catch(() => {
             prompt('Salin link ini:', text);
         });
@@ -1381,7 +1392,16 @@
         copyToClipboard(currentLoadedPreviewText, btn);
     }
 
-    function openPreviewModal(id, title, originalName, size, ext, previewUrl, downloadUrl, label, notes, date, deleteUrl) {
+    function openShareFromPreview() {
+        if (!currentPreviewFile || !currentPreviewFile.shareToggleUrl) return;
+        const file = { ...currentPreviewFile };
+        closePreviewModal();
+        setTimeout(() => {
+            openShareModal(file.id, file.title, file.size, file.shareUrl, file.isPublic, file.shareToggleUrl);
+        }, 250);
+    }
+
+    function openPreviewModal(id, title, originalName, size, ext, previewUrl, downloadUrl, label, notes, date, deleteUrl, shareUrl, isPublic, shareToggleUrl) {
         const modal = document.getElementById('preview-modal');
         const backdrop = document.getElementById('preview-backdrop');
         const panel = document.getElementById('preview-panel');
@@ -1390,12 +1410,20 @@
             id: id,
             title: title || originalName,
             size: size,
-            deleteUrl: deleteUrl || ''
+            deleteUrl: deleteUrl || '',
+            shareUrl: shareUrl || '',
+            isPublic: isPublic || false,
+            shareToggleUrl: shareToggleUrl || ''
         };
 
         const deleteBtn = document.getElementById('pv-delete-btn');
         if (deleteBtn) {
             deleteBtn.style.display = deleteUrl ? '' : 'none';
+        }
+
+        const shareBtn = document.getElementById('pv-share-btn');
+        if (shareBtn) {
+            shareBtn.style.display = shareToggleUrl ? '' : 'none';
         }
 
         // Populate header info

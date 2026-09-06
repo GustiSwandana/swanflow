@@ -351,9 +351,12 @@
                             </label>
                         </div>
 
-                        <!-- Nominal Input (Large Display) -->
+                        <!-- Nominal Input (Large Display + Quick Pills) -->
                         <div>
-                            <label for="amount-input" class="block text-xs font-medium text-slate-400 dark:text-slate-400 mb-1">Nominal (Rp)</label>
+                            <div class="flex items-center justify-between mb-1">
+                                <label for="amount-input" class="text-xs font-medium text-slate-400 dark:text-slate-400">Nominal (Rp) <span class="text-rose-500">*</span></label>
+                                <span id="amount-input-formatted" class="text-xs font-extrabold text-emerald-600 dark:text-emerald-400">Rp 0</span>
+                            </div>
                             <div class="relative rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 focus-within:border-emerald-500 dark:focus-within:border-emerald-400 focus-within:ring-2 focus-within:ring-emerald-500/20 p-3 transition-all">
                                 <span class="text-sm font-bold text-slate-400 mr-1">Rp</span>
                                 <input id="amount-input" 
@@ -363,7 +366,17 @@
                                        required 
                                        inputmode="decimal" 
                                        placeholder="0" 
+                                       oninput="updateInputAmountPreview('amount-input', 'amount-input-formatted')"
                                        class="w-4/5 text-2xl font-extrabold text-slate-900 dark:text-white bg-transparent border-none outline-hidden focus:ring-0 placeholder-slate-400 dark:placeholder-slate-600">
+                            </div>
+                            <!-- Quick Nominal Increment Pills -->
+                            <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 pt-2 -mx-0.5 px-0.5">
+                                <button type="button" onclick="adjustInputAmount('amount-input', 'amount-input-formatted', 10000)" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 hover:bg-emerald-50 dark:bg-slate-800 dark:hover:bg-emerald-950/50 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer shrink-0">+10rb</button>
+                                <button type="button" onclick="adjustInputAmount('amount-input', 'amount-input-formatted', 20000)" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 hover:bg-emerald-50 dark:bg-slate-800 dark:hover:bg-emerald-950/50 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer shrink-0">+20rb</button>
+                                <button type="button" onclick="adjustInputAmount('amount-input', 'amount-input-formatted', 50000)" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 hover:bg-emerald-50 dark:bg-slate-800 dark:hover:bg-emerald-950/50 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer shrink-0">+50rb</button>
+                                <button type="button" onclick="adjustInputAmount('amount-input', 'amount-input-formatted', 100000)" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 hover:bg-emerald-50 dark:bg-slate-800 dark:hover:bg-emerald-950/50 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer shrink-0">+100rb</button>
+                                <button type="button" onclick="roundInputAmount('amount-input', 'amount-input-formatted')" class="px-2 py-1 rounded-lg text-[11px] font-bold bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/60 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 active:scale-95 transition-all cursor-pointer shrink-0" title="Bulatkan nominal ke ribuan terdekat">Bulatkan</button>
+                                <button type="button" onclick="clearInputAmount('amount-input', 'amount-input-formatted')" class="px-2 py-1 rounded-lg text-[11px] font-bold bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900/50 active:scale-95 transition-all cursor-pointer shrink-0">✕ Reset</button>
                             </div>
                         </div>
 
@@ -406,7 +419,14 @@
                         <!-- Tanggal & Keterangan (Grid) -->
                         <div class="grid grid-cols-1 gap-3">
                             <div>
-                                <label for="date-input" class="block text-xs font-medium text-slate-400 dark:text-slate-400 mb-1">Tanggal</label>
+                                <div class="flex items-center justify-between mb-1">
+                                    <label for="date-input" class="text-xs font-medium text-slate-400 dark:text-slate-400">Tanggal</label>
+                                    <div class="flex items-center gap-1.5 text-[11px]">
+                                        <button type="button" onclick="setDatePreset('date-input', 'today')" class="font-bold text-emerald-600 dark:text-emerald-400 hover:underline cursor-pointer">Hari Ini</button>
+                                        <span class="text-slate-300 dark:text-slate-600">•</span>
+                                        <button type="button" onclick="setDatePreset('date-input', 'yesterday')" class="font-medium text-slate-500 hover:underline cursor-pointer">Kemarin</button>
+                                    </div>
+                                </div>
                                 <input id="date-input" 
                                        type="date" 
                                        name="date" 
@@ -499,7 +519,10 @@
 
                         <!-- Nominal Input -->
                         <div>
-                            <label for="edit-amount-input" class="block text-xs font-medium text-slate-400 dark:text-slate-400 mb-1">Nominal (Rp)</label>
+                            <div class="flex items-center justify-between mb-1">
+                                <label for="edit-amount-input" class="text-xs font-medium text-slate-400 dark:text-slate-400">Nominal (Rp) <span class="text-rose-500">*</span></label>
+                                <span id="edit-amount-formatted" class="text-xs font-extrabold text-emerald-600 dark:text-emerald-400">Rp 0</span>
+                            </div>
                             <div class="relative rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 focus-within:border-emerald-500 dark:focus-within:border-emerald-400 focus-within:ring-2 focus-within:ring-emerald-500/20 p-3 transition-all">
                                 <span class="text-sm font-bold text-slate-400 mr-1">Rp</span>
                                 <input id="edit-amount-input" 
@@ -509,7 +532,17 @@
                                        required 
                                        inputmode="decimal" 
                                        placeholder="0" 
+                                       oninput="updateInputAmountPreview('edit-amount-input', 'edit-amount-formatted')"
                                        class="w-4/5 text-2xl font-extrabold text-slate-900 dark:text-white bg-transparent border-none outline-hidden focus:ring-0 placeholder-slate-400 dark:placeholder-slate-600">
+                            </div>
+                            <!-- Quick Nominal Increment Pills -->
+                            <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 pt-2 -mx-0.5 px-0.5">
+                                <button type="button" onclick="adjustInputAmount('edit-amount-input', 'edit-amount-formatted', 10000)" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 hover:bg-emerald-50 dark:bg-slate-800 dark:hover:bg-emerald-950/50 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer shrink-0">+10rb</button>
+                                <button type="button" onclick="adjustInputAmount('edit-amount-input', 'edit-amount-formatted', 20000)" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 hover:bg-emerald-50 dark:bg-slate-800 dark:hover:bg-emerald-950/50 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer shrink-0">+20rb</button>
+                                <button type="button" onclick="adjustInputAmount('edit-amount-input', 'edit-amount-formatted', 50000)" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 hover:bg-emerald-50 dark:bg-slate-800 dark:hover:bg-emerald-950/50 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer shrink-0">+50rb</button>
+                                <button type="button" onclick="adjustInputAmount('edit-amount-input', 'edit-amount-formatted', 100000)" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 hover:bg-emerald-50 dark:bg-slate-800 dark:hover:bg-emerald-950/50 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer shrink-0">+100rb</button>
+                                <button type="button" onclick="roundInputAmount('edit-amount-input', 'edit-amount-formatted')" class="px-2 py-1 rounded-lg text-[11px] font-bold bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/60 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 active:scale-95 transition-all cursor-pointer shrink-0" title="Bulatkan nominal ke ribuan terdekat">Bulatkan</button>
+                                <button type="button" onclick="clearInputAmount('edit-amount-input', 'edit-amount-formatted')" class="px-2 py-1 rounded-lg text-[11px] font-bold bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900/50 active:scale-95 transition-all cursor-pointer shrink-0">✕ Reset</button>
                             </div>
                         </div>
 
@@ -552,7 +585,14 @@
                         <!-- Tanggal & Catatan -->
                         <div class="grid grid-cols-1 gap-3">
                             <div>
-                                <label for="edit-date-input" class="block text-xs font-medium text-slate-400 dark:text-slate-400 mb-1">Tanggal</label>
+                                <div class="flex items-center justify-between mb-1">
+                                    <label for="edit-date-input" class="text-xs font-medium text-slate-400 dark:text-slate-400">Tanggal</label>
+                                    <div class="flex items-center gap-1.5 text-[11px]">
+                                        <button type="button" onclick="setDatePreset('edit-date-input', 'today')" class="font-bold text-emerald-600 dark:text-emerald-400 hover:underline cursor-pointer">Hari Ini</button>
+                                        <span class="text-slate-300 dark:text-slate-600">•</span>
+                                        <button type="button" onclick="setDatePreset('edit-date-input', 'yesterday')" class="font-medium text-slate-500 hover:underline cursor-pointer">Kemarin</button>
+                                    </div>
+                                </div>
                                 <input id="edit-date-input" 
                                        type="date" 
                                        name="date" 
@@ -627,7 +667,7 @@
 
                     <!-- State 1: Upload / Capture Selection -->
                     <div id="scanner-pick-state" class="space-y-3">
-                        <div class="p-4 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800 text-center bg-slate-50/60 dark:bg-slate-950/40 space-y-2">
+                        <div id="scanner-dropzone" onclick="document.getElementById('scanner-file-input').click()" class="p-4 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800 text-center bg-slate-50/60 dark:bg-slate-950/40 space-y-2 cursor-pointer hover:border-teal-500 hover:bg-teal-50/40 dark:hover:bg-teal-950/20 active:scale-[0.99] transition-all">
                             <div class="w-12 h-12 rounded-2xl bg-teal-500/10 text-teal-600 dark:text-teal-400 mx-auto flex items-center justify-center">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
@@ -636,7 +676,7 @@
                             <div>
                                 <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Foto Struk atau Bukti Transfer</h4>
                                 <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-                                    Mendukung struk toko, QRIS, mutasi transfer BCA, Mandiri, BRI, GoPay, OVO, ShopeePay, dll.
+                                    Ketuk, seret gambar ke sini, atau tempel tangkapan layar (<span class="font-mono text-teal-600 dark:text-teal-400 font-bold">Ctrl+V</span>)
                                 </p>
                             </div>
                         </div>
@@ -721,8 +761,17 @@
                                            inputmode="decimal" 
                                            placeholder="0" 
                                            required 
-                                           oninput="updateScanAmountPreview(this.value)"
+                                           oninput="updateInputAmountPreview('scan-edit-amount', 'scan-amount-formatted')"
                                            class="w-full text-2xl font-black text-slate-900 dark:text-white bg-transparent border-none outline-hidden focus:ring-0 p-0 placeholder-slate-300 dark:placeholder-slate-600">
+                                </div>
+                                <!-- Quick Nominal Increment Pills -->
+                                <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 pt-2 -mx-0.5 px-0.5">
+                                    <button type="button" onclick="adjustInputAmount('scan-edit-amount', 'scan-amount-formatted', 10000)" class="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-100 hover:bg-teal-50 dark:bg-slate-800 dark:hover:bg-teal-950/50 text-slate-700 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer shrink-0">+10rb</button>
+                                    <button type="button" onclick="adjustInputAmount('scan-edit-amount', 'scan-amount-formatted', 20000)" class="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-100 hover:bg-teal-50 dark:bg-slate-800 dark:hover:bg-teal-950/50 text-slate-700 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer shrink-0">+20rb</button>
+                                    <button type="button" onclick="adjustInputAmount('scan-edit-amount', 'scan-amount-formatted', 50000)" class="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-100 hover:bg-teal-50 dark:bg-slate-800 dark:hover:bg-teal-950/50 text-slate-700 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer shrink-0">+50rb</button>
+                                    <button type="button" onclick="adjustInputAmount('scan-edit-amount', 'scan-amount-formatted', 100000)" class="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-100 hover:bg-teal-50 dark:bg-slate-800 dark:hover:bg-teal-950/50 text-slate-700 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer shrink-0">+100rb</button>
+                                    <button type="button" onclick="roundInputAmount('scan-edit-amount', 'scan-amount-formatted')" class="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-teal-50 hover:bg-teal-100 dark:bg-teal-950/60 dark:hover:bg-teal-900/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800 active:scale-95 transition-all cursor-pointer shrink-0" title="Bulatkan nominal">Bulatkan</button>
+                                    <button type="button" onclick="clearInputAmount('scan-edit-amount', 'scan-amount-formatted')" class="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900/50 active:scale-95 transition-all cursor-pointer shrink-0">✕ Reset</button>
                                 </div>
                             </div>
 
@@ -736,7 +785,14 @@
                                            class="w-full text-xs font-bold text-slate-800 dark:text-slate-100 bg-transparent border-none outline-hidden focus:ring-0 p-0 placeholder-slate-400">
                                 </div>
                                 <div class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus-within:border-teal-500">
-                                    <label for="scan-edit-date" class="text-[10px] text-slate-400 font-semibold block mb-0.5">Tanggal Transaksi</label>
+                                    <div class="flex items-center justify-between mb-0.5">
+                                        <label for="scan-edit-date" class="text-[10px] text-slate-400 font-semibold">Tanggal</label>
+                                        <div class="flex items-center gap-1 text-[10px]">
+                                            <button type="button" onclick="setDatePreset('scan-edit-date', 'today')" class="font-bold text-teal-600 dark:text-teal-400 hover:underline cursor-pointer">Hari Ini</button>
+                                            <span class="text-slate-300 dark:text-slate-600">•</span>
+                                            <button type="button" onclick="setDatePreset('scan-edit-date', 'yesterday')" class="font-medium text-slate-500 hover:underline cursor-pointer">Kemarin</button>
+                                        </div>
+                                    </div>
                                     <input id="scan-edit-date" 
                                            type="date" 
                                            class="w-full text-xs font-bold text-slate-800 dark:text-slate-100 bg-transparent border-none outline-hidden focus:ring-0 p-0">
@@ -792,13 +848,13 @@
 
                         <!-- Action Buttons -->
                         <div class="flex items-center gap-2 pt-1">
-                            <button type="button" onclick="applyScannedReceiptToForm()" class="flex-1 py-3 px-2.5 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-[0.98] text-white text-xs font-extrabold shadow-md shadow-teal-500/25 flex items-center justify-center gap-1.5 transition-all cursor-pointer">
-                                <span>Terapkan ke Form →</span>
+                            <button type="button" onclick="applyScannedReceiptToForm()" class="flex-1 py-3 px-2.5 rounded-xl bg-teal-50 hover:bg-teal-100 dark:bg-teal-950/50 dark:hover:bg-teal-900/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/80 active:scale-[0.98] text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs">
+                                <span>✏️ Ke Form</span>
                             </button>
-                            <button type="button" id="scan-quick-save-btn" onclick="quickSaveScannedReceipt()" class="py-3 px-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white text-xs font-extrabold shadow-md shadow-emerald-600/25 flex items-center justify-center gap-1 transition-all cursor-pointer">
+                            <button type="button" id="scan-quick-save-btn" onclick="quickSaveScannedReceipt()" class="flex-[1.5] py-3 px-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 active:scale-[0.98] text-white text-xs font-extrabold shadow-md shadow-emerald-600/30 flex items-center justify-center gap-1.5 transition-all cursor-pointer ring-2 ring-emerald-500/20">
                                 <span>⚡ Simpan Langsung</span>
                             </button>
-                            <button type="button" onclick="resetReceiptScannerState()" class="py-3 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold active:scale-95 transition-all cursor-pointer">
+                            <button type="button" onclick="resetReceiptScannerState()" class="py-3 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold active:scale-95 transition-all cursor-pointer" title="Pindai Ulang">
                                 Ulangi
                             </button>
                         </div>
@@ -808,6 +864,112 @@
         </div>
 
         <script>
+            // SwanFlow UI/UX Helper Functions
+            function formatRupiahDisplay(val) {
+                const num = Number(val || 0);
+                return 'Rp ' + Math.max(0, Math.round(num)).toLocaleString('id-ID');
+            }
+
+            function updateInputAmountPreview(inputId, previewId) {
+                const input = document.getElementById(inputId);
+                const prev = document.getElementById(previewId);
+                if (input && prev) {
+                    prev.innerText = formatRupiahDisplay(input.value);
+                }
+            }
+
+            function adjustInputAmount(inputId, previewId, delta) {
+                const el = document.getElementById(inputId);
+                if (!el) return;
+                const currentVal = Number(el.value || 0);
+                const newVal = Math.max(0, currentVal + delta);
+                el.value = newVal > 0 ? newVal : '';
+                const prev = document.getElementById(previewId);
+                if (prev) prev.innerText = formatRupiahDisplay(newVal);
+                if (navigator.vibrate) {
+                    try { navigator.vibrate(10); } catch(e) {}
+                }
+            }
+
+            function roundInputAmount(inputId, previewId) {
+                const el = document.getElementById(inputId);
+                if (!el) return;
+                const currentVal = Number(el.value || 0);
+                if (currentVal <= 0) return;
+                const rounded = Math.round(currentVal / 1000) * 1000;
+                el.value = rounded;
+                const prev = document.getElementById(previewId);
+                if (prev) prev.innerText = formatRupiahDisplay(rounded);
+                if (navigator.vibrate) {
+                    try { navigator.vibrate(10); } catch(e) {}
+                }
+            }
+
+            function clearInputAmount(inputId, previewId) {
+                const el = document.getElementById(inputId);
+                if (!el) return;
+                el.value = '';
+                const prev = document.getElementById(previewId);
+                if (prev) prev.innerText = 'Rp 0';
+                el.focus();
+            }
+
+            function setDatePreset(inputId, preset) {
+                const el = document.getElementById(inputId);
+                if (!el) return;
+                const d = new Date();
+                if (preset === 'yesterday') {
+                    d.setDate(d.getDate() - 1);
+                }
+                const yyyy = d.getFullYear();
+                const mm = String(d.getMonth() + 1).padStart(2, '0');
+                const dd = String(d.getDate()).padStart(2, '0');
+                el.value = `${yyyy}-${mm}-${dd}`;
+                if (navigator.vibrate) {
+                    try { navigator.vibrate(10); } catch(e) {}
+                }
+            }
+
+            function showSwanToast(message, type = 'success') {
+                const existing = document.getElementById('swan-toast-container');
+                if (existing) existing.remove();
+
+                const toast = document.createElement('div');
+                toast.id = 'swan-toast-container';
+                toast.className = 'fixed top-5 left-1/2 -translate-x-1/2 z-50 w-11/12 max-w-sm px-4 py-3 rounded-2xl shadow-2xl border flex items-center justify-between transition-all duration-300 transform -translate-y-4 opacity-0 pointer-events-auto ' +
+                    (type === 'error' 
+                        ? 'bg-rose-900/95 text-white border-rose-700 shadow-rose-950/40 backdrop-blur-md' 
+                        : 'bg-slate-900/95 dark:bg-slate-800/95 text-white border-slate-700/80 shadow-slate-950/40 backdrop-blur-md');
+
+                const iconHtml = type === 'error'
+                    ? '<span class="w-7 h-7 rounded-xl bg-rose-500/20 text-rose-300 flex items-center justify-center shrink-0 font-bold">!</span>'
+                    : '<span class="w-7 h-7 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg></span>';
+
+                toast.innerHTML = `
+                    <div class="flex items-center gap-2.5 min-w-0 pr-2">
+                        ${iconHtml}
+                        <span class="text-xs font-bold text-slate-100 truncate">${message}</span>
+                    </div>
+                    <button type="button" onclick="this.parentElement.remove()" class="text-slate-400 hover:text-white p-1 shrink-0">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                `;
+
+                document.body.appendChild(toast);
+                requestAnimationFrame(() => {
+                    toast.classList.remove('-translate-y-4', 'opacity-0');
+                    toast.classList.add('translate-y-0', 'opacity-100');
+                });
+
+                setTimeout(() => {
+                    if (toast && toast.parentElement) {
+                        toast.classList.remove('translate-y-0', 'opacity-100');
+                        toast.classList.add('-translate-y-4', 'opacity-0');
+                        setTimeout(() => toast.remove(), 300);
+                    }
+                }, 3200);
+            }
+
             function openTransactionModal(defaultType = 'expense', defaultAmount = null, defaultDescription = null, defaultCategory = null, defaultDate = null, defaultWallet = null) {
                 const modal = document.getElementById('transaction-modal');
                 const backdrop = document.getElementById('modal-backdrop');
@@ -836,6 +998,7 @@
                     } else {
                         amountInput.value = '';
                     }
+                    updateInputAmountPreview('amount-input', 'amount-input-formatted');
                 }
 
                 // Pre-fill description if provided
@@ -959,11 +1122,7 @@
             }
 
             function updateScanAmountPreview(val) {
-                const num = Number(val || 0);
-                const el = document.getElementById('scan-amount-formatted');
-                if (el) {
-                    el.innerText = 'Rp ' + num.toLocaleString('id-ID');
-                }
+                updateInputAmountPreview('scan-edit-amount', 'scan-amount-formatted');
             }
 
             function setScanResultType(type) {
@@ -1287,12 +1446,12 @@
                 const type = currentScanType;
 
                 if (!amount || Number(amount) <= 0) {
-                    alert('Harap isi nominal transaksi.');
+                    showSwanToast('Harap isi nominal transaksi.', 'error');
                     document.getElementById('scan-edit-amount').focus();
                     return;
                 }
                 if (!walletId) {
-                    alert('Harap pilih dompet pembayaran.');
+                    showSwanToast('Harap pilih dompet pembayaran.', 'error');
                     return;
                 }
 
@@ -1323,17 +1482,20 @@
                     });
 
                     if (res.ok) {
+                        showSwanToast('Transaksi berhasil dicatat!');
                         closeReceiptScannerModal();
-                        window.location.reload();
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 600);
                     } else {
                         const errData = await res.json().catch(() => ({}));
-                        alert(errData.message || 'Gagal menyimpan transaksi. Periksa kembali data transaksi.');
+                        showSwanToast(errData.message || 'Gagal menyimpan transaksi. Periksa kembali data transaksi.', 'error');
                         saveBtn.disabled = false;
                         saveBtn.innerHTML = originalHtml;
                     }
                 } catch (err) {
                     console.error('Save error:', err);
-                    alert('Terjadi kesalahan jaringan.');
+                    showSwanToast('Terjadi kesalahan jaringan.', 'error');
                     saveBtn.disabled = false;
                     saveBtn.innerHTML = originalHtml;
                 }
@@ -1460,7 +1622,10 @@
                 updateEditModalType(type);
 
                 const amountInput = document.getElementById('edit-amount-input');
-                if (amountInput) amountInput.value = data.amount;
+                if (amountInput) {
+                    amountInput.value = data.amount;
+                    updateInputAmountPreview('edit-amount-input', 'edit-amount-formatted');
+                }
 
                 const walletSelect = document.getElementById('edit-wallet-select');
                 if (walletSelect && data.wallet_id) walletSelect.value = data.wallet_id;
@@ -1502,6 +1667,111 @@
                     modal.classList.add('hidden');
                 }, 300);
             }
+
+            // Clipboard Paste Listener for Screenshots / Images
+            window.addEventListener('paste', (e) => {
+                const items = (e.clipboardData || e.originalEvent?.clipboardData)?.items;
+                if (!items) return;
+                for (let item of items) {
+                    if (item.type && item.type.indexOf('image') !== -1) {
+                        const file = item.getAsFile();
+                        if (file) {
+                            e.preventDefault();
+                            const scannerModal = document.getElementById('receipt-scanner-modal');
+                            if (scannerModal && scannerModal.classList.contains('hidden')) {
+                                openReceiptScannerModal('new');
+                            }
+                            processReceiptFile({ files: [file] });
+                            showSwanToast('Gambar struk dari papan klip berhasil dimuat!');
+                            break;
+                        }
+                    }
+                }
+            });
+
+            // Drag and Drop for Scanner Dropzone & Global Esc Key
+            document.addEventListener('DOMContentLoaded', () => {
+                const dropzone = document.getElementById('scanner-dropzone');
+                if (dropzone) {
+                    ['dragenter', 'dragover'].forEach(eventName => {
+                        dropzone.addEventListener(eventName, (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            dropzone.classList.add('border-teal-500', 'bg-teal-50/60', 'dark:bg-teal-950/40');
+                        }, false);
+                    });
+                    ['dragleave', 'drop'].forEach(eventName => {
+                        dropzone.addEventListener(eventName, (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            dropzone.classList.remove('border-teal-500', 'bg-teal-50/60', 'dark:bg-teal-950/40');
+                        }, false);
+                    });
+                    dropzone.addEventListener('drop', (e) => {
+                        const dt = e.dataTransfer;
+                        const files = dt?.files;
+                        if (files && files.length > 0) {
+                            processReceiptFile({ files });
+                        }
+                    }, false);
+                }
+
+                // Global Escape (Esc) key listener to dismiss open modals smoothly
+                window.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' || e.key === 'Esc') {
+                        const scannerModal = document.getElementById('receipt-scanner-modal');
+                        if (scannerModal && !scannerModal.classList.contains('hidden')) {
+                            closeReceiptScannerModal();
+                            return;
+                        }
+                        const txModal = document.getElementById('transaction-modal');
+                        if (txModal && !txModal.classList.contains('hidden')) {
+                            closeTransactionModal();
+                            return;
+                        }
+                        const editModal = document.getElementById('edit-transaction-modal');
+                        if (editModal && !editModal.classList.contains('hidden')) {
+                            closeEditTransactionModal();
+                            return;
+                        }
+                        if (typeof closePreviewModal === 'function') {
+                            const previewModal = document.getElementById('preview-modal');
+                            if (previewModal && !previewModal.classList.contains('hidden')) {
+                                closePreviewModal();
+                                return;
+                            }
+                        }
+                        if (typeof closeQuotaModal === 'function') {
+                            const quotaModal = document.getElementById('quota-modal');
+                            if (quotaModal && !quotaModal.classList.contains('hidden')) {
+                                closeQuotaModal();
+                                return;
+                            }
+                        }
+                        if (typeof closeShareModal === 'function') {
+                            const shareModal = document.getElementById('share-modal');
+                            if (shareModal && !shareModal.classList.contains('hidden')) {
+                                closeShareModal();
+                                return;
+                            }
+                        }
+                        if (typeof closeDeleteModal === 'function') {
+                            const deleteModal = document.getElementById('delete-modal');
+                            if (deleteModal && !deleteModal.classList.contains('hidden')) {
+                                closeDeleteModal();
+                                return;
+                            }
+                        }
+                        if (typeof closeCreateDropModal === 'function') {
+                            const dropModal = document.getElementById('create-drop-modal');
+                            if (dropModal && !dropModal.classList.contains('hidden')) {
+                                closeCreateDropModal();
+                                return;
+                            }
+                        }
+                    }
+                });
+            });
 
             // Auto-open modal if URL has ?action=...
             window.addEventListener('DOMContentLoaded', () => {
