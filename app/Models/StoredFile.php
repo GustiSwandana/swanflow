@@ -12,6 +12,7 @@ class StoredFile extends Model
 
     protected $fillable = [
         'user_id',
+        'upload_link_id',
         'title',
         'original_name',
         'file_path',
@@ -23,6 +24,7 @@ class StoredFile extends Model
         'is_public',
         'download_count',
         'notes',
+        'uploader_name',
     ];
 
     protected $casts = [
@@ -34,6 +36,11 @@ class StoredFile extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function uploadLink(): BelongsTo
+    {
+        return $this->belongsTo(UploadLink::class);
     }
 
     /**

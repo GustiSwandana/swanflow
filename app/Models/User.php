@@ -158,4 +158,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(StoredFile::class);
     }
+
+    /**
+     * Get the file drop upload links for the user.
+     *
+     * @return HasMany<UploadLink, $this>
+     */
+    public function uploadLinks(): HasMany
+    {
+        return $this->hasMany(UploadLink::class);
+    }
 }

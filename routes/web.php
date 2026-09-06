@@ -7,6 +7,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DebtController;
 use App\Http\Controllers\DriveController;
+use App\Http\Controllers\DropLinkController;
 use App\Http\Controllers\FaceIdController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
@@ -37,6 +38,10 @@ Route::get('/manifest.json', function () {
 // Public Share & File Transfer Routes (SwanDrive)
 Route::get('/share/{token}', [DriveController::class, 'sharedView'])->name('drive.shared.view');
 Route::get('/share/{token}/download', [DriveController::class, 'sharedDownload'])->name('drive.shared.download');
+
+// Public Drop Portal (Upload file request link)
+Route::get('/drop/{token}', [DropLinkController::class, 'show'])->name('drive.drop.view');
+Route::post('/drop/{token}', [DropLinkController::class, 'upload'])->name('drive.drop.upload');
 
 // Protected Application Routes (Requires Authentication)
 Route::middleware('auth')->group(function () {
@@ -94,6 +99,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/drive/{file}/download', [DriveController::class, 'download'])->name('drive.download');
     Route::patch('/drive/{file}/share', [DriveController::class, 'toggleShare'])->name('drive.share.toggle');
     Route::delete('/drive/{file}', [DriveController::class, 'destroy'])->name('drive.destroy');
+    Route::post('/drive/drop-links', [DropLinkController::class, 'store'])->name('drive.drop-links.store');
+    Route::patch('/drive/drop-links/{link}/toggle', [DropLinkController::class, 'toggle'])->name('drive.drop-links.toggle');
+    Route::delete('/drive/drop-links/{link}', [DropLinkController::class, 'destroy'])->name('drive.drop-links.destroy');
 
     // To-Do List / Activities
     Route::get('/todos', [TodoController::class, 'index'])->name('todos.index');

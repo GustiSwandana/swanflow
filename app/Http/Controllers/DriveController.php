@@ -60,6 +60,9 @@ class DriveController extends Controller
             $formattedTotalSize = $totalBytes.' B';
         }
 
+        $activeTab = $request->query('tab', 'files');
+        $uploadLinks = $user->uploadLinks()->latest()->get();
+
         return view('drive.index', compact(
             'files',
             'totalBytes',
@@ -67,7 +70,9 @@ class DriveController extends Controller
             'formattedTotalSize',
             'categoryCounts',
             'activeCategory',
-            'search'
+            'search',
+            'uploadLinks',
+            'activeTab'
         ));
     }
 
