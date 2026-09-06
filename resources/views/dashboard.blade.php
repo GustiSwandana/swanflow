@@ -2,7 +2,7 @@
 
 @section('custom_header')
     <!-- Fintech Full-Bleed Header (Emerald in Light Mode, Sleek Slate in Dark Mode) -->
-    <div class="bg-gradient-to-b from-emerald-600 via-emerald-600 to-emerald-700 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-white pt-[max(1rem,calc(var(--sat)+0.75rem))] px-5 pb-8 relative border-b border-emerald-700 dark:border-slate-800/80 overflow-hidden transition-colors">
+    <div class="bg-gradient-to-b from-emerald-600 via-emerald-600 to-emerald-700 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-white px-5 pb-8 relative border-b border-emerald-700 dark:border-slate-800/80 overflow-hidden transition-colors" style="padding-top: max(3rem, calc(var(--sat, 0px) + 0.75rem));">
         <!-- Subtle Glow & Mesh Highlights -->
         <div class="absolute -right-8 -top-8 w-44 h-44 bg-white/10 dark:bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
         <div class="absolute -left-8 top-20 w-40 h-40 bg-white/10 dark:bg-teal-500/10 rounded-full blur-2xl pointer-events-none"></div>
@@ -71,29 +71,61 @@
             </p>
         </div>
 
-        <!-- Floating Cards: Pemasukan ↗ & Pengeluaran ↘ -->
+        <!-- Floating Cards: Pemasukan ↗ & Pengeluaran ↘ (Clickable) -->
         <div class="relative z-10 grid grid-cols-2 gap-3 mb-5">
-            <!-- Pemasukan Card -->
-            <div class="bg-white/95 dark:bg-slate-900/90 rounded-2xl p-3.5 shadow-md border border-white/20 dark:border-slate-800 flex flex-col justify-between backdrop-blur-md">
+            <!-- Pemasukan Card (Click to view income transactions, or click (+) to add income) -->
+            <a href="{{ route('transactions.index', ['type' => 'income']) }}"
+               class="bg-white/95 dark:bg-slate-900/90 rounded-2xl p-3.5 shadow-md border border-white/20 dark:border-slate-800 flex flex-col justify-between backdrop-blur-md active:scale-95 transition-all group hover:border-emerald-500/40 hover:shadow-lg cursor-pointer block"
+               title="Klik untuk lihat riwayat pemasukan">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs text-slate-500 dark:text-slate-400 font-semibold">Pemasukan</span>
-                    <span class="text-emerald-600 dark:text-emerald-400 font-bold text-sm">↗</span>
+                    <span class="text-xs text-slate-500 dark:text-slate-400 font-semibold group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Pemasukan</span>
+                    <div class="flex items-center gap-1.5">
+                        <button type="button"
+                                onclick="event.preventDefault(); event.stopPropagation(); openTransactionModal('income')"
+                                class="w-6 h-6 rounded-full bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-950/80 dark:hover:bg-emerald-900 text-emerald-700 dark:text-emerald-300 flex items-center justify-center active:scale-90 transition-all shadow-2xs cursor-pointer"
+                                title="Catat Pemasukan Baru">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                        </button>
+                        <span class="text-emerald-600 dark:text-emerald-400 font-bold text-sm">↗</span>
+                    </div>
                 </div>
                 <p class="text-sm sm:text-base font-extrabold text-emerald-600 dark:text-emerald-400 truncate mt-1">
                     +Rp {{ number_format($thisMonthIncome ?? 0, 0, ',', '.') }}
                 </p>
-            </div>
+                <div class="flex items-center justify-between text-[10px] text-slate-400 dark:text-slate-500 mt-1 font-medium pt-1 border-t border-slate-100 dark:border-slate-800/60">
+                    <span>Lihat Rincian</span>
+                    <span class="group-hover:translate-x-0.5 transition-transform">→</span>
+                </div>
+            </a>
 
-            <!-- Pengeluaran Card -->
-            <div class="bg-white/95 dark:bg-slate-900/90 rounded-2xl p-3.5 shadow-md border border-white/20 dark:border-slate-800 flex flex-col justify-between backdrop-blur-md">
+            <!-- Pengeluaran Card (Click to view expense transactions, or click (+) to add expense) -->
+            <a href="{{ route('transactions.index', ['type' => 'expense']) }}"
+               class="bg-white/95 dark:bg-slate-900/90 rounded-2xl p-3.5 shadow-md border border-white/20 dark:border-slate-800 flex flex-col justify-between backdrop-blur-md active:scale-95 transition-all group hover:border-rose-500/40 hover:shadow-lg cursor-pointer block"
+               title="Klik untuk lihat riwayat pengeluaran">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs text-slate-500 dark:text-slate-400 font-semibold">Pengeluaran</span>
-                    <span class="text-rose-600 dark:text-rose-400 font-bold text-sm">↘</span>
+                    <span class="text-xs text-slate-500 dark:text-slate-400 font-semibold group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">Pengeluaran</span>
+                    <div class="flex items-center gap-1.5">
+                        <button type="button"
+                                onclick="event.preventDefault(); event.stopPropagation(); openTransactionModal('expense')"
+                                class="w-6 h-6 rounded-full bg-rose-100 hover:bg-rose-200 dark:bg-rose-950/80 dark:hover:bg-rose-900 text-rose-700 dark:text-rose-300 flex items-center justify-center active:scale-90 transition-all shadow-2xs cursor-pointer"
+                                title="Catat Pengeluaran Baru">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                        </button>
+                        <span class="text-rose-600 dark:text-rose-400 font-bold text-sm">↘</span>
+                    </div>
                 </div>
                 <p class="text-sm sm:text-base font-extrabold text-rose-600 dark:text-rose-400 truncate mt-1">
                     -Rp {{ number_format($thisMonthExpense ?? 0, 0, ',', '.') }}
                 </p>
-            </div>
+                <div class="flex items-center justify-between text-[10px] text-slate-400 dark:text-slate-500 mt-1 font-medium pt-1 border-t border-slate-100 dark:border-slate-800/60">
+                    <span>Lihat Rincian</span>
+                    <span class="group-hover:translate-x-0.5 transition-transform">→</span>
+                </div>
+            </a>
         </div>
 
         <!-- Anggaran Pengeluaran (Horizontal Donut Progress Cards matching Reference Screen 1) -->

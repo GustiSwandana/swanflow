@@ -4,43 +4,35 @@
 
 @section('custom_header')
     <!-- Top Header: Gradient SwanDrive Header -->
-    <div class="relative bg-gradient-to-br from-slate-900 via-teal-950 to-slate-900 px-4 pt-[max(0.75rem,calc(var(--sat)+0.5rem))] pb-7 text-white overflow-hidden shadow-lg border-b border-teal-900/40">
+    <div class="relative bg-gradient-to-br from-slate-900 via-teal-950 to-slate-900 px-4 pb-7 text-white overflow-hidden shadow-lg border-b border-teal-900/40" style="padding-top: max(3.5rem, calc(var(--sat, 0px) + 0.85rem));">
         <!-- Subtle Glow Effect (Emerald/Teal only) -->
         <div class="absolute -top-12 -right-12 w-48 h-48 bg-teal-500/15 rounded-full blur-3xl pointer-events-none"></div>
         <div class="absolute -bottom-10 -left-10 w-44 h-44 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
 
-        <!-- Top Navigation -->
-        <div class="relative z-10 flex items-center justify-between mb-3.5 gap-2">
-            <div class="flex items-center gap-2.5 min-w-0 flex-1">
-                <a href="{{ route('dashboard') }}" class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 active:scale-95 flex items-center justify-center transition-all border border-white/10 shrink-0" aria-label="Kembali ke Beranda">
-                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+        <!-- Top Navigation Bar (Spacious & iOS Status Bar Safe) -->
+        <div class="relative z-10 flex items-center justify-between mb-4">
+            <div class="flex items-center gap-3 min-w-0">
+                <a href="{{ route('dashboard') }}" class="w-10 h-10 rounded-2xl bg-white/10 hover:bg-white/20 active:scale-95 flex items-center justify-center transition-all border border-white/15 shrink-0 shadow-xs" aria-label="Kembali ke Beranda">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
                     </svg>
                 </a>
                 <div class="min-w-0">
-                    <div class="flex items-center gap-1.5">
-                        <h1 class="text-sm sm:text-base font-extrabold tracking-tight text-white leading-tight truncate">SwanDrive</h1>
-                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-teal-500/30 text-teal-300 border border-teal-400/30 shrink-0">Vault</span>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-base sm:text-lg font-black tracking-tight text-white leading-tight">SwanDrive</h1>
+                        <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-teal-500/30 text-teal-300 border border-teal-400/30 shadow-2xs">Vault</span>
                     </div>
-                    <p class="text-[10px] text-teal-200/70 font-medium truncate mt-0.5">Penyimpanan & Terima Berkas</p>
+                    <p class="text-[11px] text-teal-200/75 font-medium truncate mt-0.5">Penyimpanan & Terima Berkas</p>
                 </div>
             </div>
 
-            <!-- Top Action Buttons -->
-            <div class="flex items-center gap-1.5 shrink-0">
-                <button type="button" onclick="openCreateDropModal()" class="h-8 px-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 active:scale-95 text-teal-100 hover:text-white text-xs font-bold flex items-center gap-1 transition-all shadow-xs cursor-pointer whitespace-nowrap" title="Buat Link Terima File">
-                    <svg class="w-3.5 h-3.5 text-teal-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
-                    </svg>
-                    <span class="text-[11px]">Drop Link</span>
-                </button>
-                <button type="button" onclick="document.getElementById('upload-input').click()" class="h-8 px-3 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-95 text-white text-xs font-extrabold shadow-md shadow-teal-900/40 flex items-center gap-1 transition-all cursor-pointer whitespace-nowrap">
-                    <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                    </svg>
-                    <span class="text-[11px]">Upload</span>
-                </button>
-            </div>
+            <!-- Upload Primary Action Button -->
+            <button type="button" onclick="document.getElementById('upload-input').click()" class="h-9 px-3.5 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-95 text-white text-xs font-extrabold shadow-lg shadow-teal-950/40 flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap shrink-0">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                <span>Upload</span>
+            </button>
         </div>
 
         <!-- Storage Summary Card with Clean Hierarchical Layout -->

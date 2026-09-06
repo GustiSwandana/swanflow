@@ -73,7 +73,7 @@
 
         /* Dynamic iOS Safe Area Insets (iPhone 15, Dynamic Island & Home Indicator) */
         .header-safe {
-            padding-top: max(0.75rem, calc(var(--sat) + 0.5rem));
+            padding-top: max(3rem, calc(var(--sat, 0px) + 0.75rem));
             padding-left: max(1rem, calc(var(--sal) + 1rem));
             padding-right: max(1rem, calc(var(--sar) + 1rem));
         }
