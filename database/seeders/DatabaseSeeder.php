@@ -1,0 +1,34 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\User;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+
+class DatabaseSeeder extends Seeder
+{
+    use WithoutModelEvents;
+
+    /**
+     * Seed the application's database.
+     */
+    public function run(): void
+    {
+        // User::factory(10)->create();
+
+        $user = User::firstOrCreate(
+            ['email' => 'gustiswandana@swanflow.com'],
+            [
+                'name' => 'Gusti Swandana',
+                'password' => bcrypt('password'),
+            ]
+        );
+
+        $this->call([
+            CategorySeeder::class,
+            WalletSeeder::class,
+            TransactionSeeder::class,
+        ]);
+    }
+}
