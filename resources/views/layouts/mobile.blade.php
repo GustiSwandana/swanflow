@@ -206,7 +206,7 @@
 
         <!-- 2. MAIN CONTENT -->
         @hasSection('custom_header')
-            <main class="flex-1 pb-24">
+            <main class="flex-1 flex flex-col">
                 @yield('content')
             </main>
         @else
@@ -217,7 +217,7 @@
 
         <!-- 3. FIXED BOTTOM NAVIGATION BAR -->
         <nav class="fixed bottom-0 left-0 right-0 z-40 flex justify-center pointer-events-none">
-            <div class="w-full max-w-md pointer-events-auto bg-white/95 dark:bg-slate-950/95 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800/90 px-2 pt-1 bottom-nav-safe shadow-xl transition-colors">
+            <div class="w-full max-w-md pointer-events-auto bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-slate-200/80 dark:border-slate-800/80 px-2 pt-1 bottom-nav-safe shadow-xl transition-colors">
                 <div class="flex items-center justify-between">
 
                     <!-- Tab 1: Beranda -->

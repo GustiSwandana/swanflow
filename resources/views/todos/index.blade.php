@@ -66,7 +66,7 @@
 @endsection
 
 @section('content')
-<div class="bg-slate-100 dark:bg-slate-950 min-h-screen">
+<div class="bg-slate-100 dark:bg-slate-950 flex-1 flex flex-col min-h-full">
     {{-- Quick Add Card --}}
     <div class="px-4 pt-3 pb-1">
         <div class="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs flex items-center justify-between gap-3 transition-colors">

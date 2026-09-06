@@ -134,7 +134,7 @@
 
 @section('content')
 <!-- Bottom Sheet Container (rounded-t-[32px]) -->
-<div class="bg-slate-50 dark:bg-slate-900 rounded-t-[32px] pt-4 px-4 pb-12 shadow-2xl -mt-4 relative z-10 border-t border-slate-200 dark:border-slate-800/80 min-h-[500px] space-y-6 text-slate-800 dark:text-white transition-colors">
+<div class="bg-slate-50 dark:bg-slate-900 rounded-t-[32px] pt-4 px-4 pb-28 shadow-2xl -mt-4 relative z-10 border-t border-slate-200 dark:border-slate-800/80 flex-1 flex flex-col min-h-full space-y-6 text-slate-800 dark:text-white transition-colors">
     <!-- Drag Pill Indicator -->
     <div class="w-12 h-1 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-2"></div>
 
