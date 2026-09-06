@@ -149,15 +149,41 @@
                     </div>
 
                     <div class="flex items-center gap-2 pt-1">
-                        <button type="submit" id="btn-submit-upload" class="flex-1 py-2.5 px-4 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-[0.98] text-white text-xs font-bold shadow-md shadow-teal-500/20 flex items-center justify-center gap-1.5 transition-all">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                        <button type="submit" id="btn-submit-upload" class="flex-1 py-2.5 px-4 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-[0.98] text-white text-xs font-bold shadow-md shadow-teal-500/20 flex items-center justify-center gap-2 transition-all cursor-pointer">
+                            <svg id="btn-upload-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                             </svg>
-                            <span>Simpan ke SwanDrive</span>
+                            <svg id="btn-upload-spinner" class="hidden w-4 h-4 animate-spin text-white" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span id="btn-upload-text">Simpan ke SwanDrive</span>
                         </button>
-                        <button type="button" onclick="cancelUpload()" class="py-2.5 px-3 rounded-xl bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold active:scale-95 transition-all">
+                        <button type="button" id="btn-cancel-upload" onclick="cancelUpload()" class="py-2.5 px-3 rounded-xl bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold active:scale-95 transition-all">
                             Batal
                         </button>
+                    </div>
+
+                    <!-- Progress Bar & Loading Status Container -->
+                    <div id="upload-progress-container" class="hidden pt-2 space-y-2">
+                        <div class="flex items-center justify-between text-xs">
+                            <span id="upload-progress-status" class="font-bold text-teal-600 dark:text-teal-400 flex items-center gap-1.5">
+                                <svg class="w-3.5 h-3.5 animate-spin shrink-0" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                <span id="upload-status-text">Mengunggah berkas...</span>
+                            </span>
+                            <span id="upload-progress-percent" class="font-extrabold text-slate-800 dark:text-white">0%</span>
+                        </div>
+                        <!-- Progress Track -->
+                        <div class="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2.5 overflow-hidden p-0.5 border border-slate-300 dark:border-slate-700">
+                            <div id="upload-progress-bar" class="bg-gradient-to-r from-teal-500 via-emerald-400 to-teal-500 h-full rounded-full transition-all duration-150 ease-out" style="width: 0%"></div>
+                        </div>
+                        <div class="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+                            <span id="upload-progress-bytes">0 KB / 0 KB</span>
+                            <span>Mohon tidak menutup halaman</span>
+                        </div>
                     </div>
                 </div>
             </form>
@@ -777,9 +803,130 @@
     function cancelUpload() {
         document.getElementById('upload-input').value = '';
         document.getElementById('upload-details').classList.add('hidden');
+        const progressContainer = document.getElementById('upload-progress-container');
+        if (progressContainer) progressContainer.classList.add('hidden');
         document.getElementById('file-title').value = '';
         document.getElementById('file-notes').value = '';
         document.getElementById('dropzone').classList.remove('border-teal-500', 'bg-teal-50/90');
+    }
+
+    function formatBytes(bytes) {
+        if (bytes >= 1048576) return (bytes / 1048576).toFixed(1) + ' MB';
+        if (bytes >= 1024) return (bytes / 1024).toFixed(0) + ' KB';
+        return bytes + ' B';
+    }
+
+    // Interactive Upload with Progress Bar & Loading Indicator
+    const uploadForm = document.getElementById('upload-form');
+    if (uploadForm) {
+        uploadForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const fileInput = document.getElementById('upload-input');
+            if (!fileInput.files || !fileInput.files[0]) {
+                return;
+            }
+
+            const btnSubmit = document.getElementById('btn-submit-upload');
+            const btnCancel = document.getElementById('btn-cancel-upload');
+            const btnIcon = document.getElementById('btn-upload-icon');
+            const btnSpinner = document.getElementById('btn-upload-spinner');
+            const btnText = document.getElementById('btn-upload-text');
+            const progressContainer = document.getElementById('upload-progress-container');
+            const progressBar = document.getElementById('upload-progress-bar');
+            const progressPercent = document.getElementById('upload-progress-percent');
+            const progressBytes = document.getElementById('upload-progress-bytes');
+            const statusText = document.getElementById('upload-status-text');
+
+            // Disable buttons and show spinner
+            btnSubmit.disabled = true;
+            btnSubmit.classList.add('opacity-80', 'cursor-not-allowed');
+            if (btnCancel) {
+                btnCancel.disabled = true;
+                btnCancel.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+            if (btnIcon) btnIcon.classList.add('hidden');
+            if (btnSpinner) btnSpinner.classList.remove('hidden');
+            if (btnText) btnText.innerText = 'Mengunggah...';
+
+            // Show progress bar
+            if (progressContainer) {
+                progressContainer.classList.remove('hidden');
+                progressBar.style.width = '0%';
+                progressPercent.innerText = '0%';
+                statusText.innerText = 'Mengunggah berkas...';
+                progressBytes.innerText = `0 KB / ${formatBytes(fileInput.files[0].size)}`;
+            }
+
+            const formData = new FormData(uploadForm);
+            const xhr = new XMLHttpRequest();
+
+            xhr.open('POST', uploadForm.action, true);
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+                || document.querySelector('input[name="_token"]')?.value;
+            if (csrfToken) {
+                xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
+            }
+
+            xhr.upload.addEventListener('progress', function(event) {
+                if (event.lengthComputable) {
+                    const percent = Math.min(99, Math.round((event.loaded / event.total) * 100));
+                    if (progressBar) progressBar.style.width = percent + '%';
+                    if (progressPercent) progressPercent.innerText = percent + '%';
+                    if (progressBytes) progressBytes.innerText = `${formatBytes(event.loaded)} / ${formatBytes(event.total)}`;
+
+                    if (percent >= 98 && statusText) {
+                        statusText.innerText = 'Menyimpan & memproses berkas...';
+                    }
+                }
+            });
+
+            xhr.addEventListener('load', function() {
+                if (xhr.status >= 200 && xhr.status < 400) {
+                    if (progressBar) progressBar.style.width = '100%';
+                    if (progressPercent) progressPercent.innerText = '100%';
+                    if (statusText) statusText.innerText = 'Unggahan berhasil! Memuat...';
+
+                    setTimeout(() => {
+                        window.location.href = "{{ route('drive.index', ['tab' => 'files']) }}";
+                    }, 400);
+                } else {
+                    let errorMsg = 'Gagal mengunggah berkas. Silakan periksa ukuran file atau coba lagi.';
+                    try {
+                        const json = JSON.parse(xhr.responseText);
+                        if (json.message) errorMsg = json.message;
+                        if (json.errors) {
+                            const firstKey = Object.keys(json.errors)[0];
+                            if (json.errors[firstKey][0]) errorMsg = json.errors[firstKey][0];
+                        }
+                    } catch(e) {}
+
+                    alert(errorMsg);
+                    resetUploadState();
+                }
+            });
+
+            xhr.addEventListener('error', function() {
+                alert('Terjadi kendala jaringan saat mengunggah berkas.');
+                resetUploadState();
+            });
+
+            xhr.send(formData);
+
+            function resetUploadState() {
+                btnSubmit.disabled = false;
+                btnSubmit.classList.remove('opacity-80', 'cursor-not-allowed');
+                if (btnCancel) {
+                    btnCancel.disabled = false;
+                    btnCancel.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+                if (btnIcon) btnIcon.classList.remove('hidden');
+                if (btnSpinner) btnSpinner.classList.add('hidden');
+                if (btnText) btnText.innerText = 'Simpan ke SwanDrive';
+                if (progressContainer) progressContainer.classList.add('hidden');
+            }
+        });
     }
 
     // Drag and Drop support

@@ -166,11 +166,36 @@
                     <!-- Submit Button -->
                     <button type="submit" id="btn-submit"
                             class="w-full py-3.5 px-6 rounded-2xl bg-teal-500 hover:bg-teal-600 active:scale-[0.98] text-white font-extrabold text-xs sm:text-sm shadow-lg shadow-teal-500/25 flex items-center justify-center gap-2 transition-all cursor-pointer">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                        <svg id="btn-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                        </svg>
+                        <svg id="btn-spinner" class="hidden w-4 h-4 animate-spin text-white" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
                         <span id="btn-text">Kirim Berkas Sekarang</span>
                     </button>
+
+                    <!-- Upload Progress Bar Container -->
+                    <div id="drop-progress-container" class="hidden pt-1 space-y-2">
+                        <div class="flex items-center justify-between text-xs">
+                            <span id="drop-progress-status" class="font-bold text-teal-400 flex items-center gap-1.5">
+                                <svg class="w-3.5 h-3.5 animate-spin shrink-0" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                <span id="drop-status-text">Mengunggah berkas...</span>
+                            </span>
+                            <span id="drop-progress-percent" class="font-extrabold text-white">0%</span>
+                        </div>
+                        <div class="w-full bg-slate-950 rounded-full h-2.5 overflow-hidden p-0.5 border border-slate-800">
+                            <div id="drop-progress-bar" class="bg-gradient-to-r from-teal-500 via-emerald-400 to-teal-500 h-full rounded-full transition-all duration-150 ease-out" style="width: 0%"></div>
+                        </div>
+                        <div class="flex items-center justify-between text-[10px] text-slate-400 font-medium">
+                            <span id="drop-progress-bytes">0 KB / 0 KB</span>
+                            <span>Mohon tunggu sebentar</span>
+                        </div>
+                    </div>
                 </form>
             @else
                 <!-- Inactive or Expired State Card -->
@@ -206,6 +231,12 @@
     <script>
         const maxBytes = {{ $link->max_file_size_mb * 1024 * 1024 }};
 
+        function formatBytes(bytes) {
+            if (bytes >= 1048576) return (bytes / 1048576).toFixed(1) + ' MB';
+            if (bytes >= 1024) return (bytes / 1024).toFixed(0) + ' KB';
+            return bytes + ' B';
+        }
+
         function handleFileChange(input) {
             if (!input.files || !input.files[0]) return;
             const file = input.files[0];
@@ -218,11 +249,7 @@
             }
 
             document.getElementById('preview-name').innerText = file.name;
-            let sizeStr = (file.size / 1024).toFixed(0) + ' KB';
-            if (file.size >= 1048576) {
-                sizeStr = (file.size / 1048576).toFixed(1) + ' MB';
-            }
-            document.getElementById('preview-size').innerText = sizeStr;
+            document.getElementById('preview-size').innerText = formatBytes(file.size);
             document.getElementById('file-preview-card').classList.remove('hidden');
             document.getElementById('dropzone').classList.add('border-teal-400', 'bg-teal-950/20');
         }
@@ -231,6 +258,8 @@
             document.getElementById('drop-file-input').value = '';
             document.getElementById('file-preview-card').classList.add('hidden');
             document.getElementById('dropzone').classList.remove('border-teal-400', 'bg-teal-950/20');
+            const progressContainer = document.getElementById('drop-progress-container');
+            if (progressContainer) progressContainer.classList.add('hidden');
         }
 
         // Drag and drop handlers
@@ -264,12 +293,96 @@
 
         const uploadForm = document.getElementById('drop-upload-form');
         if (uploadForm) {
-            uploadForm.addEventListener('submit', () => {
+            uploadForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const fileInput = document.getElementById('drop-file-input');
+                if (!fileInput.files || !fileInput.files[0]) return;
+
                 const btn = document.getElementById('btn-submit');
-                const text = document.getElementById('btn-text');
+                const btnIcon = document.getElementById('btn-icon');
+                const btnSpinner = document.getElementById('btn-spinner');
+                const btnText = document.getElementById('btn-text');
+                const progressContainer = document.getElementById('drop-progress-container');
+                const progressBar = document.getElementById('drop-progress-bar');
+                const progressPercent = document.getElementById('drop-progress-percent');
+                const progressBytes = document.getElementById('drop-progress-bytes');
+                const statusText = document.getElementById('drop-status-text');
+
                 btn.disabled = true;
-                btn.classList.add('opacity-75', 'cursor-not-allowed');
-                text.innerText = 'Mengunggah berkas...';
+                btn.classList.add('opacity-80', 'cursor-not-allowed');
+                if (btnIcon) btnIcon.classList.add('hidden');
+                if (btnSpinner) btnSpinner.classList.remove('hidden');
+                btnText.innerText = 'Mengunggah berkas...';
+
+                if (progressContainer) {
+                    progressContainer.classList.remove('hidden');
+                    progressBar.style.width = '0%';
+                    progressPercent.innerText = '0%';
+                    statusText.innerText = 'Mengunggah berkas...';
+                    progressBytes.innerText = `0 KB / ${formatBytes(fileInput.files[0].size)}`;
+                }
+
+                const formData = new FormData(uploadForm);
+                const xhr = new XMLHttpRequest();
+
+                xhr.open('POST', uploadForm.action, true);
+                xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                const csrfToken = document.querySelector('input[name="_token"]')?.value;
+                if (csrfToken) {
+                    xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
+                }
+
+                xhr.upload.addEventListener('progress', function(event) {
+                    if (event.lengthComputable) {
+                        const percent = Math.min(99, Math.round((event.loaded / event.total) * 100));
+                        if (progressBar) progressBar.style.width = percent + '%';
+                        if (progressPercent) progressPercent.innerText = percent + '%';
+                        if (progressBytes) progressBytes.innerText = `${formatBytes(event.loaded)} / ${formatBytes(event.total)}`;
+
+                        if (percent >= 98 && statusText) {
+                            statusText.innerText = 'Menyimpan & memproses berkas...';
+                        }
+                    }
+                });
+
+                xhr.addEventListener('load', function() {
+                    if (xhr.status >= 200 && xhr.status < 400) {
+                        if (progressBar) progressBar.style.width = '100%';
+                        if (progressPercent) progressPercent.innerText = '100%';
+                        if (statusText) statusText.innerText = 'Unggahan berhasil!';
+
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 400);
+                    } else {
+                        let errorMsg = 'Gagal mengirim berkas. Silakan coba lagi.';
+                        try {
+                            const json = JSON.parse(xhr.responseText);
+                            if (json.message) errorMsg = json.message;
+                        } catch(e) {}
+
+                        alert(errorMsg);
+                        btn.disabled = false;
+                        btn.classList.remove('opacity-80', 'cursor-not-allowed');
+                        if (btnIcon) btnIcon.classList.remove('hidden');
+                        if (btnSpinner) btnSpinner.classList.add('hidden');
+                        btnText.innerText = 'Kirim Berkas Sekarang';
+                        if (progressContainer) progressContainer.classList.add('hidden');
+                    }
+                });
+
+                xhr.addEventListener('error', function() {
+                    alert('Terjadi kendala koneksi saat mengunggah berkas.');
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-80', 'cursor-not-allowed');
+                    if (btnIcon) btnIcon.classList.remove('hidden');
+                    if (btnSpinner) btnSpinner.classList.add('hidden');
+                    btnText.innerText = 'Kirim Berkas Sekarang';
+                    if (progressContainer) progressContainer.classList.add('hidden');
+                });
+
+                xhr.send(formData);
             });
         }
     </script>
