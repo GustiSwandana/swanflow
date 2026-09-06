@@ -241,4 +241,18 @@ class DriveTest extends TestCase
         $searchResponse->assertSee('Foto Bukti Transfer');
         $searchResponse->assertDontSee('Proposal Bisnis');
     }
+
+    public function test_user_can_update_storage_quota(): void
+    {
+        $user = User::factory()->create(['storage_quota_mb' => 500]);
+
+        $response = $this->actingAs($user)->patch(route('drive.quota.update'), [
+            'storage_quota_mb' => 2048,
+        ]);
+
+        $response->assertRedirect(route('drive.index', ['tab' => 'files']));
+        $response->assertSessionHas('success');
+
+        $this->assertEquals(2048, $user->fresh()->storage_quota_mb);
+    }
 }

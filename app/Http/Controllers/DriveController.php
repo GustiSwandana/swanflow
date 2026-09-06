@@ -49,6 +49,19 @@ class DriveController extends Controller
             'other' => $allFiles->where('category', 'other')->count(),
         ];
 
+        // Storage quota calculation
+        $quotaMb = (int) ($user->storage_quota_mb ?: 500);
+        $quotaBytes = $quotaMb * 1024 * 1024;
+        $storagePercent = min(100, max(0, round(($totalBytes / max(1, $quotaBytes)) * 100)));
+
+        if ($quotaBytes >= 1073741824) {
+            $formattedQuotaSize = number_format($quotaBytes / 1073741824, ($quotaBytes % 1073741824 === 0 ? 0 : 1), ',', '.').' GB';
+        } elseif ($quotaBytes >= 1048576) {
+            $formattedQuotaSize = number_format($quotaBytes / 1048576, 0, ',', '.').' MB';
+        } else {
+            $formattedQuotaSize = number_format($quotaBytes / 1024, 0, ',', '.').' KB';
+        }
+
         // Format total storage
         if ($totalBytes >= 1073741824) {
             $formattedTotalSize = number_format($totalBytes / 1073741824, 2, ',', '.').' GB';
@@ -68,12 +81,33 @@ class DriveController extends Controller
             'totalBytes',
             'totalFiles',
             'formattedTotalSize',
+            'quotaMb',
+            'quotaBytes',
+            'formattedQuotaSize',
+            'storagePercent',
             'categoryCounts',
             'activeCategory',
             'search',
             'uploadLinks',
             'activeTab'
         ));
+    }
+
+    /**
+     * Update user's storage quota limit.
+     */
+    public function updateQuota(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'storage_quota_mb' => ['required', 'integer', 'min:10', 'max:1048576'],
+        ]);
+
+        $request->user()->update([
+            'storage_quota_mb' => (int) $request->input('storage_quota_mb'),
+        ]);
+
+        return redirect()->route('drive.index', ['tab' => $request->input('tab', 'files')])
+            ->with('success', 'Kapasitas ruang penyimpanan berhasil diperbarui!');
     }
 
     /**

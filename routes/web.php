@@ -96,6 +96,7 @@ Route::middleware('auth')->group(function () {
     // SwanDrive (File Storage & Transfer)
     Route::get('/drive', [DriveController::class, 'index'])->name('drive.index');
     Route::post('/drive/upload', [DriveController::class, 'store'])->name('drive.store');
+    Route::patch('/drive/quota', [DriveController::class, 'updateQuota'])->name('drive.quota.update');
     Route::get('/drive/{file}/download', [DriveController::class, 'download'])->name('drive.download');
     Route::patch('/drive/{file}/share', [DriveController::class, 'toggleShare'])->name('drive.share.toggle');
     Route::delete('/drive/{file}', [DriveController::class, 'destroy'])->name('drive.destroy');
