@@ -27,11 +27,14 @@
             </div>
 
             <!-- Top Action Buttons -->
-            <div class="flex items-center gap-1.5">
-                <button type="button" onclick="openCreateDropModal()" class="px-2.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 active:scale-95 text-teal-200 text-xs font-bold flex items-center gap-1 transition-all cursor-pointer" title="Buat Link Terima File">
+            <div class="flex items-center gap-2">
+                <button type="button" onclick="openCreateDropModal()" class="px-3 py-1.5 rounded-xl bg-teal-500/20 hover:bg-teal-500/30 border border-teal-400/40 active:scale-95 text-teal-200 hover:text-white text-xs font-extrabold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer" title="Buat Link Terima File">
+                    <svg class="w-3.5 h-3.5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
+                    </svg>
                     <span>+ Link Drop</span>
                 </button>
-                <button type="button" onclick="document.getElementById('upload-input').click()" class="px-3 py-1.5 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-95 text-white text-xs font-bold shadow-md shadow-teal-900/40 flex items-center gap-1.5 transition-all cursor-pointer">
+                <button type="button" onclick="document.getElementById('upload-input').click()" class="px-3.5 py-1.5 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-95 text-white text-xs font-extrabold shadow-md shadow-teal-900/40 flex items-center gap-1.5 transition-all cursor-pointer">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
@@ -78,16 +81,22 @@
     <div class="w-12 h-1 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-1"></div>
 
     <!-- TAB SWITCHER: Berkas Saya vs Link Terima File -->
-    <div class="flex p-1 bg-slate-200/80 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800">
+    <div class="flex p-1 bg-slate-200/80 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-inner">
         <a href="{{ route('drive.index', ['tab' => 'files']) }}"
-           class="flex-1 py-2 rounded-xl text-xs font-extrabold text-center transition-all flex items-center justify-center gap-1.5 {{ $activeTab !== 'drops' ? 'bg-white dark:bg-slate-800 text-teal-600 dark:text-teal-400 shadow-sm' : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200' }}">
-            <span>📁 Berkas Saya</span>
-            <span class="text-[10px] px-1.5 py-0.2 rounded-full {{ $activeTab !== 'drops' ? 'bg-teal-100 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300' : 'bg-slate-300 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">{{ $totalFiles }}</span>
+           class="flex-1 py-2.5 rounded-xl text-xs font-extrabold text-center transition-all flex items-center justify-center gap-1.5 {{ $activeTab !== 'drops' ? 'bg-white dark:bg-slate-800 text-teal-600 dark:text-teal-400 shadow-xs ring-1 ring-slate-200/50 dark:ring-slate-700/50' : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200' }}">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021 18V9.75" />
+            </svg>
+            <span>Berkas Saya</span>
+            <span class="text-[10px] px-2 py-0.5 rounded-full font-bold {{ $activeTab !== 'drops' ? 'bg-teal-100 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300' : 'bg-slate-300 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">{{ $totalFiles }}</span>
         </a>
         <a href="{{ route('drive.index', ['tab' => 'drops']) }}"
-           class="flex-1 py-2 rounded-xl text-xs font-extrabold text-center transition-all flex items-center justify-center gap-1.5 {{ $activeTab === 'drops' ? 'bg-white dark:bg-slate-800 text-teal-600 dark:text-teal-400 shadow-sm' : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200' }}">
-            <span>📥 Link Terima File</span>
-            <span class="text-[10px] px-1.5 py-0.2 rounded-full {{ $activeTab === 'drops' ? 'bg-teal-100 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300' : 'bg-slate-300 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">{{ $uploadLinks->count() }}</span>
+           class="flex-1 py-2.5 rounded-xl text-xs font-extrabold text-center transition-all flex items-center justify-center gap-1.5 {{ $activeTab === 'drops' ? 'bg-white dark:bg-slate-800 text-teal-600 dark:text-teal-400 shadow-xs ring-1 ring-slate-200/50 dark:ring-slate-700/50' : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200' }}">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
+            </svg>
+            <span>Link Terima File</span>
+            <span class="text-[10px] px-2 py-0.5 rounded-full font-bold {{ $activeTab === 'drops' ? 'bg-teal-100 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300' : 'bg-slate-300 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">{{ $uploadLinks->count() }}</span>
         </a>
     </div>
 
@@ -152,6 +161,31 @@
                     </div>
                 </div>
             </form>
+        </div>
+
+        <!-- Quick Drop Link Banner -->
+        <div class="flex items-center justify-between p-3.5 rounded-2xl bg-teal-50/80 dark:bg-teal-950/25 border border-teal-200/80 dark:border-teal-800/60 shadow-xs">
+            <div class="flex items-center gap-3 min-w-0 pr-2">
+                <div class="w-9 h-9 rounded-xl bg-teal-500/15 dark:bg-teal-500/25 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0 shadow-2xs">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
+                    </svg>
+                </div>
+                <div class="min-w-0">
+                    <p class="text-xs font-bold text-slate-800 dark:text-slate-200 leading-tight truncate">
+                        Minta file dari orang lain?
+                    </p>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5">
+                        Buat link khusus dengan batas waktu & ukuran file
+                    </p>
+                </div>
+            </div>
+            <button type="button" onclick="openCreateDropModal()" class="px-3 py-2 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-95 text-white text-xs font-extrabold shrink-0 shadow-xs transition-all flex items-center gap-1.5 cursor-pointer">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                <span>+ Link Drop</span>
+            </button>
         </div>
 
         <!-- 2. SEARCH & FILTER BAR -->
@@ -323,17 +357,20 @@
     @else
         <!-- TAB 2: LINK TERIMA FILE (DROP LINKS) -->
         <div class="space-y-4">
-            <div class="flex items-center justify-between">
-                <div>
+            <div class="flex items-center justify-between bg-white dark:bg-slate-950 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs">
+                <div class="min-w-0 pr-2">
                     <h2 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                        Tautan Pengumpulan Berkas ({{ $uploadLinks->count() }})
+                        Link Terima Berkas ({{ $uploadLinks->count() }})
                     </h2>
                     <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-                        Orang lain bisa mengunggah berkas langsung ke drive Anda via tautan ini.
+                        Tautan publik agar orang lain bisa mengunggah berkas ke drive Anda.
                     </p>
                 </div>
-                <button type="button" onclick="openCreateDropModal()" class="px-3 py-1.5 rounded-xl bg-teal-500 hover:bg-teal-600 text-white text-xs font-extrabold shadow-sm active:scale-95 transition-all">
-                    + Buat Tautan Baru
+                <button type="button" onclick="openCreateDropModal()" class="px-3.5 py-2 rounded-xl bg-teal-500 hover:bg-teal-600 text-white text-xs font-extrabold shadow-sm active:scale-95 transition-all shrink-0 flex items-center gap-1.5 cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                    <span>+ Buat Link</span>
                 </button>
             </div>
 
@@ -381,53 +418,75 @@
                     </div>
 
                     <!-- Actions -->
-                    <div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800/80 gap-2">
-                        <!-- Left Group: Salin Link & WA -->
-                        <div class="flex items-center gap-2">
+                    <div class="pt-2 border-t border-slate-100 dark:border-slate-800/80 space-y-2">
+                        <!-- URL Input Display + Copy Button -->
+                        <div class="flex items-center gap-1.5">
+                            <div class="relative flex-1 min-w-0">
+                                <input type="text" readonly value="{{ $link->public_url }}"
+                                       onclick="this.select(); copyToClipboard('{{ $link->public_url }}', this)"
+                                       class="w-full pl-7 pr-3 py-2 text-[11px] font-mono rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 truncate cursor-pointer focus:outline-none focus:ring-1 focus:ring-teal-500"
+                                       title="Klik untuk memilih tautan">
+                                <span class="absolute left-2.5 top-2.5 text-slate-400 pointer-events-none">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
+                                    </svg>
+                                </span>
+                            </div>
                             <button type="button"
                                     onclick="copyToClipboard('{{ $link->public_url }}', this)"
-                                    class="px-2.5 py-1.5 rounded-xl bg-teal-50 hover:bg-teal-100 dark:bg-teal-950/40 dark:hover:bg-teal-900/60 text-teal-700 dark:text-teal-300 text-xs font-bold border border-teal-200 dark:border-teal-800/60 flex items-center gap-1 active:scale-95 transition-all">
+                                    class="px-3.5 py-2 rounded-xl bg-teal-500 hover:bg-teal-600 text-white text-xs font-bold shrink-0 flex items-center gap-1.5 shadow-xs active:scale-95 transition-all cursor-pointer"
+                                    title="Salin tautan ke papan klip">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" />
                                 </svg>
-                                <span>Salin Link</span>
+                                <span>Salin</span>
                             </button>
-                            
-                            @php
-                                $waMsg = urlencode("Halo, silakan unggah berkas '{$link->title}' melalui tautan aman ini (Maksimal {$link->max_file_size_mb} MB):\n{$link->public_url}");
-                            @endphp
-                            <a href="https://api.whatsapp.com/send?text={{ $waMsg }}" target="_blank"
-                               class="p-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 active:scale-95 transition-all" title="Bagikan via WhatsApp">
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.025 3.284l-.707 2.582 2.658-.697c1.002.581 1.777.832 2.792.832 3.182 0 5.767-2.587 5.768-5.766 0-3.182-2.586-5.768-5.768-5.768zm3.364 8.169c-.145.408-.847.784-1.173.834-.325.051-.735.083-2.164-.509-1.428-.592-2.339-2.029-2.41-2.124-.071-.095-.572-.761-.572-1.451 0-.691.362-1.03.491-1.173.129-.143.282-.179.376-.179.094 0 .188.001.27.006.088.005.206-.033.322.247.123.298.421 1.027.458 1.102.037.075.061.163.012.261-.049.098-.073.159-.146.244-.073.085-.154.19-.22.256-.073.073-.149.153-.064.299.085.146.377.621.808 1.005.556.495 1.025.648 1.171.721.146.073.232.061.318-.037.086-.098.368-.428.466-.575.098-.147.196-.123.328-.074.132.049.837.395.981.467.144.072.24.108.276.17.036.062.036.357-.109.765z"/>
-                                </svg>
-                            </a>
-
-                            <a href="{{ $link->public_url }}" target="_blank"
-                               class="p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white active:scale-95 transition-all text-xs font-bold" title="Lihat Tampilan Pengunggah">
-                                ↗
-                            </a>
                         </div>
 
-                        <!-- Right Group: Toggle & Delete -->
-                        <div class="flex items-center gap-1.5">
-                            <form action="{{ route('drive.drop-links.toggle', $link) }}" method="POST">
-                                @csrf
-                                @method('PATCH')
-                                <button type="submit" class="px-2.5 py-1 rounded-xl text-xs font-bold border active:scale-95 transition-all {{ $link->is_active ? 'bg-slate-100 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200' : 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 text-emerald-600 dark:text-emerald-400' }}">
-                                    {{ $link->is_active ? 'Tutup Link' : 'Buka Link' }}
-                                </button>
-                            </form>
-
-                            <form action="{{ route('drive.drop-links.destroy', $link) }}" method="POST" onsubmit="return confirm('Hapus tautan pengumpulan file ini?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="p-1.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/30 active:scale-90 transition-all">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                        <!-- Secondary Row: WhatsApp, Buka Preview, Status Toggle, Hapus -->
+                        <div class="flex items-center justify-between gap-2 pt-0.5">
+                            <div class="flex items-center gap-1.5">
+                                @php
+                                    $waMsg = urlencode("Halo, silakan unggah berkas '{$link->title}' melalui tautan aman ini (Maksimal {$link->max_file_size_mb} MB):\n{$link->public_url}");
+                                @endphp
+                                <a href="https://api.whatsapp.com/send?text={{ $waMsg }}" target="_blank"
+                                   class="px-2.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 text-xs font-bold flex items-center gap-1.5 active:scale-95 transition-all cursor-pointer"
+                                   title="Bagikan via WhatsApp">
+                                    <svg class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.025 3.284l-.707 2.582 2.658-.697c1.002.581 1.777.832 2.792.832 3.182 0 5.767-2.587 5.768-5.768 0-3.182-2.586-5.768-5.768-5.768zm3.364 8.169c-.145.408-.847.784-1.173.834-.325.051-.735.083-2.164-.509-1.428-.592-2.339-2.029-2.41-2.124-.071-.095-.572-.761-.572-1.451 0-.691.362-1.03.491-1.173.129-.143.282-.179.376-.179.094 0 .188.001.27.006.088.005.206-.033.322.247.123.298.421 1.027.458 1.102.037.075.061.163.012.261-.049.098-.073.159-.146.244-.073.085-.154.19-.22.256-.073.073-.149.153-.064.299.085.146.377.621.808 1.005.556.495 1.025.648 1.171.721.146.073.232.061.318-.037.086-.098.368-.428.466-.575.098-.147.196-.123.328-.074.132.049.837.395.981.467.144.072.24.108.276.17.036.062.036.357-.109.765z"/>
                                     </svg>
-                                </button>
-                            </form>
+                                    <span>WhatsApp</span>
+                                </a>
+
+                                <a href="{{ $link->public_url }}" target="_blank"
+                                   class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold flex items-center gap-1 active:scale-95 transition-all cursor-pointer"
+                                   title="Lihat Tampilan Pengunggah">
+                                    <span>Buka</span>
+                                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                                    </svg>
+                                </a>
+                            </div>
+
+                            <div class="flex items-center gap-1.5">
+                                <form action="{{ route('drive.drop-links.toggle', $link) }}" method="POST">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit" class="px-2.5 py-1.5 rounded-xl text-xs font-bold border active:scale-95 transition-all cursor-pointer {{ $link->is_active ? 'bg-slate-100 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200' : 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400' }}">
+                                        {{ $link->is_active ? 'Tutup Link' : 'Aktifkan' }}
+                                    </button>
+                                </form>
+
+                                <form action="{{ route('drive.drop-links.destroy', $link) }}" method="POST" onsubmit="return confirm('Hapus tautan pengumpulan berkas ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="p-1.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/30 active:scale-90 transition-all cursor-pointer" title="Hapus Link Drop">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                        </svg>
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -444,8 +503,11 @@
                             Buat link khusus dengan batas waktu dan ukuran berkas agar orang lain bisa mengunggah berkas langsung ke drive Anda.
                         </p>
                     </div>
-                    <button type="button" onclick="openCreateDropModal()" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-95 text-white text-xs font-bold shadow-md shadow-teal-500/20 transition-all">
-                        + Buat Tautan Terima Berkas
+                    <button type="button" onclick="openCreateDropModal()" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-95 text-white text-xs font-extrabold shadow-md shadow-teal-500/20 transition-all cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        <span>+ Buat Tautan Terima Berkas</span>
                     </button>
                 </div>
             @endforelse
@@ -670,8 +732,11 @@
 
                 <!-- Submit Button -->
                 <div class="pt-2 flex items-center gap-2">
-                    <button type="submit" class="flex-1 py-3 px-4 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-[0.98] text-white text-xs font-extrabold shadow-md shadow-teal-500/20 transition-all cursor-pointer">
-                        Buat & Dapatkan Tautan
+                    <button type="submit" class="flex-1 py-3 px-4 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-[0.98] text-white text-xs font-extrabold shadow-md shadow-teal-500/20 transition-all cursor-pointer flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
+                        </svg>
+                        <span>Buat & Dapatkan Tautan</span>
                     </button>
                     <button type="button" onclick="closeCreateDropModal()" class="py-3 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold active:scale-95 transition-all cursor-pointer">
                         Batal
