@@ -68,17 +68,57 @@
                 </div>
             @endif
 
-            <!-- Direct Download Button -->
+            @php
+                $cleanExt = strtolower($file->extension);
+                $isImage = in_array($cleanExt, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp', 'ico']);
+                $isAudio = in_array($cleanExt, ['mp3', 'wav', 'ogg', 'm4a', 'aac']);
+                $isVideo = in_array($cleanExt, ['mp4', 'webm', 'ogg', 'mov']);
+                $isPdf = $cleanExt === 'pdf';
+            @endphp
+
+            @if($isImage)
+                <div class="rounded-2xl overflow-hidden border border-slate-800 bg-slate-950 max-h-72 flex items-center justify-center p-1.5 shadow-inner">
+                    <img src="{{ route('drive.shared.preview', ['token' => $file->share_token]) }}" alt="{{ $file->title }}" class="max-h-64 max-w-full rounded-xl object-contain">
+                </div>
+            @elseif($isAudio)
+                <div class="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 shadow-inner">
+                    <audio controls class="w-full rounded-xl" src="{{ route('drive.shared.preview', ['token' => $file->share_token]) }}">
+                        Browser Anda tidak mendukung audio player.
+                    </audio>
+                </div>
+            @elseif($isVideo)
+                <div class="rounded-2xl overflow-hidden border border-slate-800 bg-black max-h-72 flex items-center justify-center shadow-inner">
+                    <video controls playsinline class="max-h-68 w-full object-contain" src="{{ route('drive.shared.preview', ['token' => $file->share_token]) }}">
+                        Browser Anda tidak mendukung pemutar video.
+                    </video>
+                </div>
+            @elseif($isPdf)
+                <div class="rounded-2xl overflow-hidden border border-slate-800 bg-white h-72 shadow-inner">
+                    <iframe src="{{ route('drive.shared.preview', ['token' => $file->share_token]) }}#toolbar=0" class="w-full h-full" title="PDF Preview"></iframe>
+                </div>
+            @endif
+
+            <!-- Action Buttons -->
             <div class="space-y-2 pt-2">
                 <a href="{{ route('drive.shared.download', ['token' => $file->share_token]) }}"
-                   class="w-full py-3.5 px-6 rounded-2xl bg-teal-500 hover:bg-teal-600 active:scale-[0.98] text-white font-extrabold text-sm shadow-lg shadow-teal-500/25 flex items-center justify-center gap-2 transition-all">
+                   class="w-full py-3.5 px-6 rounded-2xl bg-teal-500 hover:bg-teal-600 active:scale-[0.98] text-white font-extrabold text-sm shadow-lg shadow-teal-500/25 flex items-center justify-center gap-2 transition-all cursor-pointer">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
                     </svg>
                     <span>Unduh Berkas Sekarang</span>
                 </a>
+
+                <a href="{{ route('drive.shared.preview', ['token' => $file->share_token]) }}" target="_blank"
+                   class="w-full py-2.5 px-4 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white text-xs font-bold border border-slate-700/80 flex items-center justify-center gap-1.5 active:scale-95 transition-all cursor-pointer">
+                    <svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span>Lihat Berkas di Tab Baru</span>
+                </a>
+
                 <p class="text-[11px] text-slate-500">
-                    File aman, diunduh langsung dari server pribadi SwanDrive.
+                    File aman, diakses langsung dari server pribadi SwanDrive.
                 </p>
             </div>
 

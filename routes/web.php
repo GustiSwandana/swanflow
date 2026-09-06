@@ -37,6 +37,7 @@ Route::get('/manifest.json', function () {
 
 // Public Share & File Transfer Routes (SwanDrive)
 Route::get('/share/{token}', [DriveController::class, 'sharedView'])->name('drive.shared.view');
+Route::get('/share/{token}/preview', [DriveController::class, 'sharedPreview'])->name('drive.shared.preview');
 Route::get('/share/{token}/download', [DriveController::class, 'sharedDownload'])->name('drive.shared.download');
 
 // Public Drop Portal (Upload file request link)
@@ -97,6 +98,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/drive', [DriveController::class, 'index'])->name('drive.index');
     Route::post('/drive/upload', [DriveController::class, 'store'])->name('drive.store');
     Route::patch('/drive/quota', [DriveController::class, 'updateQuota'])->name('drive.quota.update');
+    Route::get('/drive/{file}/preview', [DriveController::class, 'preview'])->name('drive.preview');
     Route::get('/drive/{file}/download', [DriveController::class, 'download'])->name('drive.download');
     Route::patch('/drive/{file}/share', [DriveController::class, 'toggleShare'])->name('drive.share.toggle');
     Route::delete('/drive/{file}', [DriveController::class, 'destroy'])->name('drive.destroy');

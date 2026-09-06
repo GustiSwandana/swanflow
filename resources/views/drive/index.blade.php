@@ -4,86 +4,81 @@
 
 @section('custom_header')
     <!-- Top Header: Gradient SwanDrive Header -->
-    <div class="relative bg-gradient-to-br from-slate-900 via-teal-950 to-slate-900 px-5 pt-8 pb-10 text-white overflow-hidden shadow-lg border-b border-teal-900/40">
+    <div class="relative bg-gradient-to-br from-slate-900 via-teal-950 to-slate-900 px-4 pt-[max(0.75rem,calc(var(--sat)+0.5rem))] pb-7 text-white overflow-hidden shadow-lg border-b border-teal-900/40">
         <!-- Subtle Glow Effect (Emerald/Teal only) -->
         <div class="absolute -top-12 -right-12 w-48 h-48 bg-teal-500/15 rounded-full blur-3xl pointer-events-none"></div>
         <div class="absolute -bottom-10 -left-10 w-44 h-44 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
 
         <!-- Top Navigation -->
-        <div class="relative z-10 flex items-center justify-between mb-4 gap-2">
-            <div class="flex items-center gap-2 min-w-0 flex-1">
-                <a href="{{ route('dashboard') }}" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 flex items-center justify-center transition-all border border-white/10 shrink-0" aria-label="Kembali ke Beranda">
+        <div class="relative z-10 flex items-center justify-between mb-3.5 gap-2">
+            <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                <a href="{{ route('dashboard') }}" class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 active:scale-95 flex items-center justify-center transition-all border border-white/10 shrink-0" aria-label="Kembali ke Beranda">
                     <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
                     </svg>
                 </a>
                 <div class="min-w-0">
-                    <h1 class="text-sm sm:text-base font-extrabold tracking-tight flex items-center gap-1.5 text-white truncate leading-tight">
-                        <span>SwanDrive</span>
-                        <span class="text-[9px] font-bold px-1.5 py-0.2 rounded-md bg-teal-500/30 text-teal-300 border border-teal-400/30 shrink-0">Vault</span>
-                    </h1>
-                    <p class="text-[10px] sm:text-[11px] text-teal-200/80 font-medium truncate mt-0.5">Penyimpanan & Terima Berkas</p>
+                    <div class="flex items-center gap-1.5">
+                        <h1 class="text-sm sm:text-base font-extrabold tracking-tight text-white leading-tight truncate">SwanDrive</h1>
+                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-teal-500/30 text-teal-300 border border-teal-400/30 shrink-0">Vault</span>
+                    </div>
+                    <p class="text-[10px] text-teal-200/70 font-medium truncate mt-0.5">Penyimpanan & Terima Berkas</p>
                 </div>
             </div>
 
             <!-- Top Action Buttons -->
             <div class="flex items-center gap-1.5 shrink-0">
-                <button type="button" onclick="openCreateDropModal()" class="h-8 px-2.5 sm:px-3 rounded-xl bg-teal-500/25 hover:bg-teal-500/35 border border-teal-400/50 active:scale-95 text-teal-100 hover:text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer whitespace-nowrap shrink-0" title="Buat Link Terima File">
+                <button type="button" onclick="openCreateDropModal()" class="h-8 px-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 active:scale-95 text-teal-100 hover:text-white text-xs font-bold flex items-center gap-1 transition-all shadow-xs cursor-pointer whitespace-nowrap" title="Buat Link Terima File">
                     <svg class="w-3.5 h-3.5 text-teal-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
                     </svg>
-                    <span class="whitespace-nowrap">Link Drop</span>
+                    <span class="text-[11px]">Drop Link</span>
                 </button>
-                <button type="button" onclick="document.getElementById('upload-input').click()" class="h-8 px-3 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-95 text-white text-xs font-extrabold shadow-md shadow-teal-900/40 flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap shrink-0">
+                <button type="button" onclick="document.getElementById('upload-input').click()" class="h-8 px-3 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-95 text-white text-xs font-extrabold shadow-md shadow-teal-900/40 flex items-center gap-1 transition-all cursor-pointer whitespace-nowrap">
                     <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
-                    <span class="whitespace-nowrap">Upload</span>
+                    <span class="text-[11px]">Upload</span>
                 </button>
             </div>
         </div>
 
-        <!-- Storage Summary Card with Edit Quota Button -->
-        <div class="relative z-10 bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/15 shadow-inner space-y-3">
-            <div class="flex items-start justify-between gap-3">
-                <div class="min-w-0">
-                    <div class="flex items-center gap-1.5 flex-wrap">
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-teal-200/90">Ruang Penyimpanan Terpakai</span>
-                        <button type="button" onclick="openQuotaModal()" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-teal-400/20 hover:bg-teal-400/35 text-teal-200 hover:text-white text-[10px] font-bold border border-teal-300/30 active:scale-95 transition-all cursor-pointer shadow-xs" title="Ubah Kapasitas Kuota">
-                            <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
-                            </svg>
-                            <span>Ubah Ukuran</span>
-                        </button>
-                    </div>
-                    <div class="flex items-baseline gap-1.5 mt-1">
-                        <span class="text-2xl sm:text-3xl font-black text-white tracking-tight">{{ $formattedTotalSize }}</span>
-                        <span class="text-xs font-semibold text-teal-200/80">/ {{ $formattedQuotaSize }}</span>
-                    </div>
+        <!-- Storage Summary Card with Clean Hierarchical Layout -->
+        <div class="relative z-10 bg-white/10 backdrop-blur-md rounded-2xl p-3.5 sm:p-4 border border-white/15 shadow-inner space-y-2.5">
+            <!-- Row 1: Label & Ubah Ukuran button -->
+            <div class="flex items-center justify-between gap-2">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-teal-200/90">Kapasitas Penyimpanan</span>
+                <button type="button" onclick="openQuotaModal()" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-teal-400/20 hover:bg-teal-400/35 text-teal-200 hover:text-white text-[10px] font-bold border border-teal-300/30 active:scale-95 transition-all cursor-pointer shadow-xs" title="Ubah Kapasitas Kuota">
+                    <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
+                    </svg>
+                    <span>Ubah Ukuran</span>
+                </button>
+            </div>
+
+            <!-- Row 2: Numbers & Percentage Badge -->
+            <div class="flex items-baseline justify-between gap-2">
+                <div class="flex items-baseline gap-1.5">
+                    <span class="text-2xl sm:text-3xl font-black text-white tracking-tight">{{ $formattedTotalSize }}</span>
+                    <span class="text-xs font-semibold text-teal-200/80">/ {{ $formattedQuotaSize }}</span>
                 </div>
-                <div class="text-right shrink-0">
-                    <span class="text-[11px] font-extrabold px-2.5 py-1 rounded-full border shadow-2xs {{ $storagePercent >= 90 ? 'bg-rose-500/30 text-rose-200 border-rose-400/40' : ($storagePercent >= 75 ? 'bg-amber-500/30 text-amber-200 border-amber-400/40' : 'bg-teal-500/30 text-teal-200 border-teal-400/30') }}">
-                        {{ $storagePercent }}% Terpakai
+                <div class="flex items-center gap-2 shrink-0">
+                    <span class="text-[10px] text-teal-200/70 font-medium">{{ $totalFiles }} Berkas</span>
+                    <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full border shadow-2xs {{ $storagePercent >= 90 ? 'bg-rose-500/30 text-rose-200 border-rose-400/40' : ($storagePercent >= 75 ? 'bg-amber-500/30 text-amber-200 border-amber-400/40' : 'bg-teal-500/30 text-teal-200 border-teal-400/30') }}">
+                        {{ $storagePercent }}%
                     </span>
-                    <p class="text-[10px] text-teal-200/70 mt-1 font-medium">{{ $totalFiles }} Berkas</p>
                 </div>
             </div>
 
-            <!-- Dynamic Color Visual Bar -->
+            <!-- Row 3: Visual Progress Track -->
             <div>
-                <div class="w-full bg-slate-900/80 rounded-full h-2.5 overflow-hidden p-0.5 border border-white/10">
+                <div class="w-full bg-slate-900/80 rounded-full h-2 overflow-hidden p-0.5 border border-white/10">
                     <div class="h-full rounded-full transition-all duration-500 {{ $storagePercent >= 90 ? 'bg-gradient-to-r from-rose-500 to-amber-500' : ($storagePercent >= 75 ? 'bg-gradient-to-r from-amber-400 to-yellow-400' : 'bg-gradient-to-r from-teal-400 via-emerald-400 to-teal-300') }}"
                          style="width: {{ max(3, $storagePercent) }}%"></div>
                 </div>
-                <div class="flex items-center justify-between text-[10px] text-teal-200/70 mt-1.5 font-medium">
+                <div class="flex items-center justify-between text-[10px] text-teal-200/70 mt-1 font-medium">
                     <span>{{ $totalBytes >= $quotaBytes ? 'Kapasitas Penuh' : 'Tersisa ' . number_format(max(0, ($quotaBytes - $totalBytes)) / 1048576, 1, ',', '.') . ' MB' }}</span>
-                    <button type="button" onclick="openQuotaModal()" class="text-teal-300 hover:text-white hover:underline cursor-pointer flex items-center gap-1 font-bold">
-                        <span>Batas Kuota: {{ $formattedQuotaSize }}</span>
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 011.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.56.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.893.149c-.425.07-.765.383-.93.78-.165.398-.143.854.107 1.204l.527.738c.32.447.27.1.06-.12 1.45l-.774.773a1.125 1.125 0 01-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.397.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.27-1.45-.12l-.773-.774a1.125 1.125 0 01-.12-1.45l.527-.737c.25-.35.273-.806.108-1.204-.165-.397-.505-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.107-1.204l-.527-.738a1.125 1.125 0 01.12-1.45l.773-.773a1.125 1.125 0 011.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                    </button>
+                    <span>Batas: {{ $formattedQuotaSize }}</span>
                 </div>
             </div>
         </div>
@@ -289,13 +284,14 @@
                 @endphp
                 <div class="bg-white dark:bg-slate-950 rounded-2xl p-4 border border-slate-200 dark:border-slate-800 shadow-xs space-y-3 transition-all hover:border-teal-500/50">
                     <div class="flex items-start justify-between gap-3">
-                        <!-- Icon + Name -->
-                        <div class="flex items-start gap-3 min-w-0">
-                            <div class="w-10 h-10 rounded-xl {{ $meta['bg'] }} {{ $meta['text'] }} border {{ $meta['border'] }} flex items-center justify-center shrink-0 font-extrabold text-xs uppercase shadow-2xs">
+                        <!-- Icon + Name (Click to preview) -->
+                        <div onclick="openPreviewModal('{{ $file->id }}', '{{ addslashes($file->title) }}', '{{ addslashes($file->original_name) }}', '{{ $file->formatted_size }}', '{{ strtolower($file->extension) }}', '{{ route('drive.preview', $file) }}', '{{ route('drive.download', $file) }}', '{{ $meta['label'] }}', '{{ addslashes($file->notes ?? '') }}', '{{ $file->created_at->format('d M Y, H:i') }}')"
+                             class="flex items-start gap-3 min-w-0 flex-1 cursor-pointer group">
+                            <div class="w-10 h-10 rounded-xl {{ $meta['bg'] }} {{ $meta['text'] }} border {{ $meta['border'] }} flex items-center justify-center shrink-0 font-extrabold text-xs uppercase shadow-2xs group-hover:scale-105 transition-transform">
                                 {{ substr($file->extension, 0, 4) }}
                             </div>
                             <div class="min-w-0">
-                                <h3 class="text-sm font-bold text-slate-900 dark:text-white truncate leading-tight" title="{{ $file->title }}">
+                                <h3 class="text-sm font-bold text-slate-900 dark:text-white truncate leading-tight group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors" title="{{ $file->title }}">
                                     {{ $file->title }}
                                 </h3>
                                 <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5" title="{{ $file->original_name }}">
@@ -342,21 +338,36 @@
 
                     <!-- Action Bar -->
                     <div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800/80 gap-2">
-                        <!-- Left: Download Button -->
-                        <a href="{{ route('drive.download', $file) }}"
-                           class="px-3 py-1.5 rounded-xl bg-teal-50 hover:bg-teal-100 dark:bg-teal-950/40 dark:hover:bg-teal-900/60 text-teal-700 dark:text-teal-300 text-xs font-bold border border-teal-200 dark:border-teal-800/60 flex items-center gap-1.5 active:scale-95 transition-all">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                            </svg>
-                            <span>Unduh</span>
-                        </a>
+                        <!-- Left: View (Preview) & Download Buttons -->
+                        <div class="flex items-center gap-1.5">
+                            <button type="button"
+                                    onclick="openPreviewModal('{{ $file->id }}', '{{ addslashes($file->title) }}', '{{ addslashes($file->original_name) }}', '{{ $file->formatted_size }}', '{{ strtolower($file->extension) }}', '{{ route('drive.preview', $file) }}', '{{ route('drive.download', $file) }}', '{{ $meta['label'] }}', '{{ addslashes($file->notes ?? '') }}', '{{ $file->created_at->format('d M Y, H:i') }}')"
+                                    class="px-3 py-1.5 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-95 text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
+                                    title="Lihat Berkas Tanpa Mengunduh">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                <span>Lihat</span>
+                            </button>
+
+                            <a href="{{ route('drive.download', $file) }}"
+                               class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold border border-slate-200 dark:border-slate-800 flex items-center gap-1 active:scale-95 transition-all"
+                               title="Unduh ke Perangkat">
+                                <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                                </svg>
+                                <span>Unduh</span>
+                            </a>
+                        </div>
 
                         <!-- Right Group: Share Transfer & Delete -->
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-1.5">
                             <!-- Transfer / Share Trigger Button -->
                             <button type="button"
                                     onclick="openShareModal('{{ $file->id }}', '{{ addslashes($file->title) }}', '{{ $file->formatted_size }}', '{{ $file->share_url }}', {{ $file->is_public ? 'true' : 'false' }}, '{{ route('drive.share.toggle', $file) }}')"
-                                    class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-800 flex items-center gap-1.5 active:scale-95 transition-all">
+                                    class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-800 flex items-center gap-1 active:scale-95 transition-all cursor-pointer"
+                                    title="Bagi / Transfer">
                                 <svg class="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
                                 </svg>
@@ -367,7 +378,7 @@
                             <form action="{{ route('drive.destroy', $file) }}" method="POST" onsubmit="return confirm('Hapus file {{ addslashes($file->title) }} dari SwanDrive?')">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="p-1.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/30 active:scale-90 transition-all" title="Hapus Berkas">
+                                <button type="submit" class="p-1.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/30 active:scale-90 transition-all cursor-pointer" title="Hapus Berkas">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                                     </svg>
@@ -880,6 +891,84 @@
     </div>
 </div>
 
+<!-- MODAL 4: LIHAT BERKAS (PREVIEW FILE TANPA DOWNLOAD) -->
+<div id="preview-modal" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true" role="dialog">
+    <!-- Backdrop -->
+    <div id="preview-backdrop" onclick="closePreviewModal()" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm transition-opacity duration-300 opacity-0"></div>
+
+    <!-- Panel Bottom-Sheet (High-fidelity SwanFlow Mobile Sheet) -->
+    <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
+        <div id="preview-panel" class="w-full max-w-lg bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-4 sm:p-5 modal-sheet-safe border-t border-slate-100 dark:border-slate-800 pointer-events-auto transform translate-y-full transition-transform duration-300 flex flex-col max-h-[92vh] text-slate-800 dark:text-white">
+            <!-- Drag Handle -->
+            <div class="w-12 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-2 cursor-pointer shrink-0" onclick="closePreviewModal()"></div>
+
+            <!-- Header -->
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800 shrink-0 gap-3">
+                <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                    <div id="pv-ext-badge" class="w-10 h-10 rounded-xl bg-teal-500/15 text-teal-600 dark:text-teal-400 border border-teal-500/20 flex items-center justify-center font-black text-xs uppercase shrink-0 shadow-2xs">
+                        TXT
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <h2 id="pv-title" class="text-sm sm:text-base font-bold text-slate-900 dark:text-white truncate leading-tight">
+                            Nama Berkas
+                        </h2>
+                        <div class="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5 font-medium">
+                            <span id="pv-size">0 KB</span>
+                            <span>•</span>
+                            <span id="pv-ext-label">Dokumen</span>
+                            <span>•</span>
+                            <span id="pv-date">Tanggal</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-1.5 shrink-0">
+                    <a id="pv-open-tab" href="#" target="_blank" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center justify-center active:scale-95 transition-all" title="Buka di Tab Baru">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                        </svg>
+                    </a>
+                    <button type="button" onclick="closePreviewModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center justify-center active:scale-95 transition-all">
+                        ✕
+                    </button>
+                </div>
+            </div>
+
+            <!-- Optional File Note Box -->
+            <div id="pv-notes-box" class="hidden my-2.5 p-2.5 rounded-xl bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800/60 text-xs text-teal-800 dark:text-teal-300 italic shrink-0">
+                <span class="font-bold not-italic mr-1">Catatan:</span>
+                <span id="pv-notes-text"></span>
+            </div>
+
+            <!-- Preview Content Area (Flexible scrolling body) -->
+            <div id="pv-content-container" class="flex-1 my-3 overflow-y-auto overflow-x-hidden min-h-[220px] max-h-[58vh] rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800/80 flex items-center justify-center relative p-2">
+                <!-- Content will be injected dynamically: Image, PDF viewer, Audio, Video, Text/Code viewer, or fallback card -->
+                <div id="pv-loading" class="flex flex-col items-center justify-center gap-2 p-6 text-slate-400">
+                    <svg class="w-8 h-8 animate-spin text-teal-500" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                    </svg>
+                    <span class="text-xs font-semibold">Memuat Pratinjau Berkas...</span>
+                </div>
+            </div>
+
+            <!-- Footer Action Bar -->
+            <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2 shrink-0">
+                <button type="button" onclick="closePreviewModal()" class="py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold active:scale-95 transition-all cursor-pointer">
+                    Tutup
+                </button>
+                <div class="flex items-center gap-2">
+                    <a id="pv-download-btn" href="#" class="py-2.5 px-4 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-95 text-white text-xs font-extrabold shadow-md shadow-teal-500/25 flex items-center gap-1.5 transition-all cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                        </svg>
+                        <span>Unduh Berkas</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     // Handle File Selection
     function handleFileSelect(input) {
@@ -1227,6 +1316,210 @@
         }).catch(() => {
             prompt('Salin link ini:', text);
         });
+    }
+
+    // Preview Modal Handlers
+    let currentPreviewAbortController = null;
+    let currentLoadedPreviewText = '';
+
+    function copyPreviewText(btn) {
+        if (!currentLoadedPreviewText) return;
+        copyToClipboard(currentLoadedPreviewText, btn);
+    }
+
+    function openPreviewModal(id, title, originalName, size, ext, previewUrl, downloadUrl, label, notes, date) {
+        const modal = document.getElementById('preview-modal');
+        const backdrop = document.getElementById('preview-backdrop');
+        const panel = document.getElementById('preview-panel');
+
+        // Populate header info
+        document.getElementById('pv-title').innerText = title || originalName;
+        document.getElementById('pv-size').innerText = size;
+        document.getElementById('pv-ext-badge').innerText = (ext || 'FILE').toUpperCase().substring(0, 4);
+        document.getElementById('pv-ext-label').innerText = label || (ext ? ext.toUpperCase() : 'BERKAS');
+        document.getElementById('pv-date').innerText = date || '';
+        document.getElementById('pv-open-tab').href = previewUrl;
+        document.getElementById('pv-download-btn').href = downloadUrl;
+
+        // Notes
+        const notesBox = document.getElementById('pv-notes-box');
+        const notesText = document.getElementById('pv-notes-text');
+        if (notes && notes.trim().length > 0) {
+            notesText.innerText = notes;
+            notesBox.classList.remove('hidden');
+        } else {
+            notesBox.classList.add('hidden');
+        }
+
+        // Reset container and show loader
+        const container = document.getElementById('pv-content-container');
+        container.innerHTML = `
+            <div id="pv-loading" class="flex flex-col items-center justify-center gap-2 p-6 text-slate-400">
+                <svg class="w-8 h-8 animate-spin text-teal-500" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                </svg>
+                <span class="text-xs font-semibold">Memuat Pratinjau Berkas...</span>
+            </div>
+        `;
+
+        // Open bottom-sheet animation
+        modal.classList.remove('hidden');
+        requestAnimationFrame(() => {
+            backdrop.classList.remove('opacity-0');
+            backdrop.classList.add('opacity-100');
+            panel.classList.remove('translate-y-full');
+            panel.classList.add('translate-y-0');
+        });
+
+        // Cancel any previous fetch
+        if (currentPreviewAbortController) {
+            currentPreviewAbortController.abort();
+        }
+        currentPreviewAbortController = new AbortController();
+
+        const cleanExt = (ext || '').toLowerCase().trim();
+        const imageExts = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp', 'ico', 'avif'];
+        const audioExts = ['mp3', 'wav', 'ogg', 'm4a', 'aac', 'flac'];
+        const videoExts = ['mp4', 'webm', 'ogg', 'mov'];
+        const textExts = ['txt', 'csv', 'json', 'md', 'html', 'js', 'css', 'xml', 'log', 'php', 'py', 'sql', 'sh', 'env', 'yaml', 'yml'];
+
+        if (imageExts.includes(cleanExt)) {
+            // IMAGE PREVIEW
+            const img = new Image();
+            img.src = previewUrl;
+            img.alt = title || originalName;
+            img.className = 'max-h-[55vh] max-w-full object-contain rounded-xl shadow-xs transition-opacity duration-300 opacity-0';
+            img.onload = () => {
+                container.innerHTML = '';
+                container.appendChild(img);
+                requestAnimationFrame(() => img.classList.remove('opacity-0'));
+            };
+            img.onerror = () => {
+                renderFallbackPreview(container, ext, originalName, downloadUrl, 'Gagal memuat gambar secara langsung');
+            };
+        } else if (cleanExt === 'pdf') {
+            // PDF PREVIEW
+            container.innerHTML = `
+                <div class="w-full h-[55vh] flex flex-col">
+                    <iframe src="${previewUrl}#toolbar=0" class="w-full h-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white" title="PDF Preview"></iframe>
+                </div>
+            `;
+        } else if (audioExts.includes(cleanExt)) {
+            // AUDIO PREVIEW
+            container.innerHTML = `
+                <div class="w-full p-4 flex flex-col items-center justify-center gap-4 text-center">
+                    <div class="w-20 h-20 rounded-2xl bg-teal-500/10 text-teal-600 dark:text-teal-400 flex items-center justify-center border border-teal-500/20 shadow-inner">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a.75.75 0 00.532-.72v-4.52m-9.5 4.5v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66A.75.75 0 008.25 15V9" />
+                        </svg>
+                    </div>
+                    <div class="w-full max-w-sm">
+                        <audio controls class="w-full rounded-xl focus:outline-none" src="${previewUrl}">
+                            Browser Anda tidak mendukung audio player.
+                        </audio>
+                    </div>
+                </div>
+            `;
+        } else if (videoExts.includes(cleanExt)) {
+            // VIDEO PREVIEW
+            container.innerHTML = `
+                <div class="w-full flex items-center justify-center bg-black/90 rounded-xl overflow-hidden shadow-inner">
+                    <video controls playsinline class="max-h-[55vh] w-full object-contain focus:outline-none" src="${previewUrl}">
+                        Browser Anda tidak mendukung pemutar video.
+                    </video>
+                </div>
+            `;
+        } else if (textExts.includes(cleanExt)) {
+            // TEXT / CODE PREVIEW (Async fetch inline)
+            fetch(previewUrl, { signal: currentPreviewAbortController.signal })
+                .then(res => {
+                    if (!res.ok) throw new Error('Gagal memuat teks');
+                    return res.text();
+                })
+                .then(text => {
+                    currentLoadedPreviewText = text;
+                    const escaped = escapeHtml(text);
+                    const lineCount = text.split('\n').length;
+                    container.innerHTML = `
+                        <div class="w-full h-full flex flex-col text-left">
+                            <div class="flex items-center justify-between px-3 py-1.5 bg-slate-200/70 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 rounded-t-xl text-[10px] font-mono text-slate-600 dark:text-slate-400">
+                                <span>.${cleanExt} (${lineCount} baris)</span>
+                                <button type="button" onclick="copyPreviewText(this)" class="px-2 py-0.5 rounded bg-teal-500 hover:bg-teal-600 text-white font-sans font-bold active:scale-95 transition-all cursor-pointer">Salin Teks</button>
+                            </div>
+                            <pre class="flex-1 p-3 font-mono text-xs text-slate-800 dark:text-slate-200 overflow-auto whitespace-pre leading-relaxed select-text select-all bg-white dark:bg-slate-950 rounded-b-xl border border-slate-200 dark:border-slate-800">${escaped}</pre>
+                        </div>
+                    `;
+                })
+                .catch(err => {
+                    if (err.name === 'AbortError') return;
+                    renderFallbackPreview(container, ext, originalName, downloadUrl, 'Format berkas teks terlalu besar atau gagal dibaca.');
+                });
+        } else {
+            // FALLBACK FOR OTHER FILE TYPES (ZIP, DOCX, XLSX, APK, etc.)
+            renderFallbackPreview(container, ext, originalName, downloadUrl);
+        }
+    }
+
+    function renderFallbackPreview(container, ext, originalName, downloadUrl, customMsg) {
+        container.innerHTML = `
+            <div class="flex flex-col items-center justify-center p-6 text-center space-y-3">
+                <div class="w-16 h-16 rounded-2xl bg-teal-500/10 text-teal-600 dark:text-teal-400 flex items-center justify-center font-black text-lg uppercase border border-teal-500/20 shadow-xs">
+                    ${(ext || 'FILE').toUpperCase().substring(0, 4)}
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">Pratinjau Langsung Tidak Tersedia</h4>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-xs mx-auto">
+                        ${customMsg || 'Format berkas ini tidak dapat dipratinjau langsung di browser, silakan unduh untuk membukanya.'}
+                    </p>
+                </div>
+                <a href="${downloadUrl}" class="px-4 py-2 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-95 text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                    </svg>
+                    <span>Unduh Berkas Ini</span>
+                </a>
+            </div>
+        `;
+    }
+
+    function escapeHtml(str) {
+        if (typeof str !== 'string') return '';
+        return str
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    function closePreviewModal() {
+        if (currentPreviewAbortController) {
+            currentPreviewAbortController.abort();
+        }
+        const modal = document.getElementById('preview-modal');
+        const backdrop = document.getElementById('preview-backdrop');
+        const panel = document.getElementById('preview-panel');
+        const container = document.getElementById('pv-content-container');
+
+        // Pause any active audio/video immediately to prevent background playback
+        if (container) {
+            const audio = container.querySelector('audio');
+            if (audio) audio.pause();
+            const video = container.querySelector('video');
+            if (video) video.pause();
+        }
+
+        backdrop.classList.remove('opacity-100');
+        backdrop.classList.add('opacity-0');
+        panel.classList.remove('translate-y-0');
+        panel.classList.add('translate-y-full');
+
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            if (container) container.innerHTML = '';
+            currentLoadedPreviewText = '';
+        }, 300);
     }
 </script>
 @endsection

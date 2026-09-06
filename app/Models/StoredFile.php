@@ -71,6 +71,22 @@ class StoredFile extends Model
     }
 
     /**
+     * Get the inline preview URL for the owner.
+     */
+    public function getPreviewUrlAttribute(): string
+    {
+        return route('drive.preview', $this);
+    }
+
+    /**
+     * Get the public shared preview URL.
+     */
+    public function getSharedPreviewUrlAttribute(): string
+    {
+        return route('drive.shared.preview', ['token' => $this->share_token]);
+    }
+
+    /**
      * Auto-detect category based on extension and mime type.
      */
     public static function detectCategory(string $extension, ?string $mimeType = null): string

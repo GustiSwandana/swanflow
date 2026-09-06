@@ -152,6 +152,28 @@ class DriveController extends Controller
     }
 
     /**
+     * Preview / view the file inline without downloading.
+     */
+    public function preview(Request $request, StoredFile $file): StreamedResponse
+    {
+        if ($file->user_id !== $request->user()->id) {
+            abort(403, 'Akses ditolak.');
+        }
+
+        if (! Storage::disk('local')->exists($file->file_path)) {
+            abort(404, 'File fisik tidak ditemukan pada server.');
+        }
+
+        $mimeType = $file->mime_type ?: Storage::disk('local')->mimeType($file->file_path) ?: 'application/octet-stream';
+
+        return Storage::disk('local')->response($file->file_path, $file->original_name, [
+            'Content-Type' => $mimeType,
+            'Content-Disposition' => 'inline; filename="'.addslashes($file->original_name).'"',
+            'Cache-Control' => 'private, max-age=3600',
+        ]);
+    }
+
+    /**
      * Download the file for the owner.
      */
     public function download(Request $request, StoredFile $file): StreamedResponse
@@ -222,6 +244,30 @@ class DriveController extends Controller
         }
 
         return view('drive.share', compact('file'));
+    }
+
+    /**
+     * Preview the shared file inline publicly.
+     */
+    public function sharedPreview(string $token): StreamedResponse
+    {
+        $file = StoredFile::where('share_token', $token)->firstOrFail();
+
+        if (! $file->is_public) {
+            abort(404, 'Tautan transfer ini tidak aktif.');
+        }
+
+        if (! Storage::disk('local')->exists($file->file_path)) {
+            abort(404, 'File fisik tidak ditemukan pada server.');
+        }
+
+        $mimeType = $file->mime_type ?: Storage::disk('local')->mimeType($file->file_path) ?: 'application/octet-stream';
+
+        return Storage::disk('local')->response($file->file_path, $file->original_name, [
+            'Content-Type' => $mimeType,
+            'Content-Disposition' => 'inline; filename="'.addslashes($file->original_name).'"',
+            'Cache-Control' => 'public, max-age=3600',
+        ]);
     }
 
     /**

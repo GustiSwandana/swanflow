@@ -29,7 +29,7 @@ class DriveTest extends TestCase
         $response->assertStatus(200);
         $response->assertViewIs('drive.index');
         $response->assertSee('SwanDrive');
-        $response->assertSee('Ruang Penyimpanan Terpakai');
+        $response->assertSee('Kapasitas Penyimpanan');
     }
 
     public function test_user_can_upload_file_to_private_storage(): void
@@ -113,6 +113,45 @@ class DriveTest extends TestCase
         $response->assertStatus(403);
     }
 
+    public function test_user_can_preview_their_own_file(): void
+    {
+        Storage::fake('local');
+        $user = User::factory()->create();
+
+        $fakeFile = UploadedFile::fake()->create('dokumen.pdf', 500);
+        $path = $fakeFile->store('drive/'.$user->id, 'local');
+
+        $storedFile = StoredFile::factory()->create([
+            'user_id' => $user->id,
+            'original_name' => 'dokumen.pdf',
+            'file_path' => $path,
+        ]);
+
+        $response = $this->actingAs($user)->get(route('drive.preview', $storedFile));
+
+        $response->assertStatus(200);
+        $this->assertStringContainsString('inline', (string) $response->headers->get('content-disposition'));
+    }
+
+    public function test_user_cannot_preview_another_users_file(): void
+    {
+        Storage::fake('local');
+        $user1 = User::factory()->create();
+        $user2 = User::factory()->create();
+
+        $fakeFile = UploadedFile::fake()->create('rahasia.pdf', 500);
+        $path = $fakeFile->store('drive/'.$user1->id, 'local');
+
+        $storedFile = StoredFile::factory()->create([
+            'user_id' => $user1->id,
+            'file_path' => $path,
+        ]);
+
+        $response = $this->actingAs($user2)->get(route('drive.preview', $storedFile));
+
+        $response->assertStatus(403);
+    }
+
     public function test_user_can_toggle_share_status(): void
     {
         $user = User::factory()->create();
@@ -161,6 +200,11 @@ class DriveTest extends TestCase
         $downloadResponse = $this->get(route('drive.shared.download', ['token' => 'test-unique-share-token-12345']));
         $downloadResponse->assertStatus(200);
         $this->assertEquals(1, $storedFile->fresh()->download_count);
+
+        // Unauthenticated guest can also preview inline
+        $previewResponse = $this->get(route('drive.shared.preview', ['token' => 'test-unique-share-token-12345']));
+        $previewResponse->assertStatus(200);
+        $this->assertStringContainsString('inline', (string) $previewResponse->headers->get('content-disposition'));
     }
 
     public function test_public_user_cannot_access_shared_file_when_inactive(): void
