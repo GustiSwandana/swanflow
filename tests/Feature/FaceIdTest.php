@@ -154,4 +154,33 @@ class FaceIdTest extends TestCase
         $response->assertStatus(403);
         $this->assertDatabaseHas('biometric_credentials', ['id' => $credB->id]);
     }
+
+    public function test_login_verify_succeeds_with_base64url_client_data_challenge(): void
+    {
+        $user = User::factory()->create();
+        BiometricCredential::create([
+            'user_id' => $user->id,
+            'credential_id' => 'webauthn_test_cred',
+        ]);
+
+        $challengeRes = $this->postJson('/face-id/login/challenge');
+        $rawChallengeHex = $challengeRes->json('challenge');
+        $rawChallengeBin = hex2bin($rawChallengeHex);
+        $base64urlChallenge = rtrim(strtr(base64_encode($rawChallengeBin), '+/', '-_'), '=');
+
+        $clientDataJson = base64_encode(json_encode([
+            'type' => 'webauthn.get',
+            'challenge' => $base64urlChallenge,
+            'origin' => 'http://localhost',
+        ]));
+
+        $response = $this->postJson('/face-id/login/verify', [
+            'credential_id' => 'webauthn_test_cred',
+            'client_data_json' => $clientDataJson,
+        ]);
+
+        $response->assertStatus(200);
+        $response->assertJson(['success' => true]);
+        $this->assertAuthenticatedAs($user);
+    }
 }

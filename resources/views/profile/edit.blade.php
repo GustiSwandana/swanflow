@@ -438,12 +438,15 @@
                         displayName: data.user.displayName
                     },
                     pubKeyCredParams: [
-                        { type: 'public-key', alg: -7 },
-                        { type: 'public-key', alg: -257 }
+                        { type: 'public-key', alg: -7 },   // ES256 (NIST P-256)
+                        { type: 'public-key', alg: -257 }, // RS256
+                        { type: 'public-key', alg: -8 },   // Ed25519
+                        { type: 'public-key', alg: -37 }   // PS256
                     ],
                     authenticatorSelection: {
                         authenticatorAttachment: 'platform',
-                        userVerification: 'required'
+                        residentKey: 'preferred',
+                        userVerification: 'preferred'
                     },
                     timeout: 60000
                 }

@@ -784,95 +784,99 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
 </div>
 
-<!-- MODAL: UBAH KAPASITAS RUANG PENYIMPANAN -->
-<div id="quota-modal" class="fixed inset-0 z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+<!-- MODAL 3: UBAH KAPASITAS RUANG PENYIMPANAN -->
+<div id="quota-modal" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true" role="dialog">
     <!-- Backdrop -->
-    <div id="quota-backdrop" onclick="closeQuotaModal()" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm opacity-0 transition-opacity duration-300"></div>
+    <div id="quota-backdrop" onclick="closeQuotaModal()" class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity duration-300 opacity-0"></div>
 
-    <!-- Panel Bottom-Sheet -->
-    <div id="quota-panel" class="relative z-10 w-full max-w-md bg-white dark:bg-slate-900 rounded-t-[32px] sm:rounded-3xl p-6 shadow-2xl border-t sm:border border-slate-200 dark:border-slate-800 translate-y-full sm:translate-y-0 transition-transform duration-300 max-h-[90vh] overflow-y-auto space-y-5 text-slate-800 dark:text-white">
-        <!-- Drag Handle for Mobile -->
-        <div class="w-12 h-1 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto sm:hidden"></div>
+    <!-- Panel Bottom-Sheet (Matches SwanFlow Mobile Sheet) -->
+    <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
+        <div id="quota-panel" class="w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-100 dark:border-slate-800 pointer-events-auto transform translate-y-full transition-transform duration-300 space-y-4 max-h-[90vh] overflow-y-auto no-scrollbar text-slate-800 dark:text-white">
+            <!-- Drag Handle -->
+            <div class="w-12 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-2 cursor-pointer" onclick="closeQuotaModal()"></div>
 
-        <!-- Header -->
-        <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2.5">
-                <div class="w-9 h-9 rounded-xl bg-teal-500/15 text-teal-600 dark:text-teal-400 flex items-center justify-center font-bold">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 5.625c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125m16.5 5.625c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
-                    </svg>
+            <!-- Header -->
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-teal-500/15 text-teal-600 dark:text-teal-400 flex items-center justify-center font-bold">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125M16.5 5.625c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125m16.5 5.625c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-sm font-bold text-slate-900 dark:text-white leading-tight">Ubah Batas Kapasitas</h2>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400">Atur kuota ruang penyimpanan SwanDrive</p>
+                    </div>
                 </div>
+                <button type="button" onclick="closeQuotaModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center justify-center active:scale-95 transition-all">
+                    ✕
+                </button>
+            </div>
+
+            <!-- Form Update Quota -->
+            <form action="{{ route('drive.quota.update') }}" method="POST" class="space-y-4">
+                @csrf
+                @method('PATCH')
+                <input type="hidden" name="tab" value="{{ $activeTab }}">
+
+                <!-- Quick Presets Grid -->
                 <div>
-                    <h3 class="text-base font-extrabold text-slate-900 dark:text-white leading-tight">Ubah Batas Kapasitas</h3>
-                    <p class="text-xs text-slate-500 dark:text-slate-400">Atur kuota ruang penyimpanan SwanDrive</p>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Pilih Kapasitas Cepat:</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button type="button" onclick="setQuotaValue(250, event)" class="quota-preset-btn py-2 px-3 rounded-xl border text-xs font-bold transition-all text-center cursor-pointer {{ $quotaMb == 250 ? 'bg-teal-500 text-white border-teal-500 shadow-xs' : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-teal-500' }}">
+                            250 MB
+                        </button>
+                        <button type="button" onclick="setQuotaValue(500, event)" class="quota-preset-btn py-2 px-3 rounded-xl border text-xs font-bold transition-all text-center cursor-pointer {{ $quotaMb == 500 ? 'bg-teal-500 text-white border-teal-500 shadow-xs' : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-teal-500' }}">
+                            500 MB
+                        </button>
+                        <button type="button" onclick="setQuotaValue(1024, event)" class="quota-preset-btn py-2 px-3 rounded-xl border text-xs font-bold transition-all text-center cursor-pointer {{ $quotaMb == 1024 ? 'bg-teal-500 text-white border-teal-500 shadow-xs' : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-teal-500' }}">
+                            1 GB
+                        </button>
+                        <button type="button" onclick="setQuotaValue(2048, event)" class="quota-preset-btn py-2 px-3 rounded-xl border text-xs font-bold transition-all text-center cursor-pointer {{ $quotaMb == 2048 ? 'bg-teal-500 text-white border-teal-500 shadow-xs' : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-teal-500' }}">
+                            2 GB
+                        </button>
+                        <button type="button" onclick="setQuotaValue(5120, event)" class="quota-preset-btn py-2 px-3 rounded-xl border text-xs font-bold transition-all text-center cursor-pointer {{ $quotaMb == 5120 ? 'bg-teal-500 text-white border-teal-500 shadow-xs' : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-teal-500' }}">
+                            5 GB
+                        </button>
+                        <button type="button" onclick="setQuotaValue(10240, event)" class="quota-preset-btn py-2 px-3 rounded-xl border text-xs font-bold transition-all text-center cursor-pointer {{ $quotaMb == 10240 ? 'bg-teal-500 text-white border-teal-500 shadow-xs' : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-teal-500' }}">
+                            10 GB
+                        </button>
+                    </div>
                 </div>
-            </div>
-            <button type="button" onclick="closeQuotaModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 flex items-center justify-center transition-all cursor-pointer">
-                ✕
-            </button>
+
+                <!-- Custom Input -->
+                <div class="space-y-1.5">
+                    <label for="quota-input-mb" class="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                        Atau Masukkan Kapasitas Khusus (MB):
+                    </label>
+                    <div class="relative">
+                        <input type="number" id="quota-input-mb" name="storage_quota_mb" value="{{ $quotaMb }}" min="10" max="1048576" required
+                               oninput="updateQuotaPreview(this.value)"
+                               class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white font-extrabold text-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
+                        <span class="absolute right-3.5 top-3 text-xs font-bold text-slate-400">MB</span>
+                    </div>
+                    <p class="text-[11px] text-teal-600 dark:text-teal-400 font-semibold" id="quota-preview-text">
+                        Setara dengan {{ $formattedQuotaSize }}
+                    </p>
+                </div>
+
+                <div class="flex items-center gap-2 pt-2">
+                    <button type="submit" class="flex-1 py-3 px-4 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-[0.98] text-white text-xs font-extrabold shadow-md shadow-teal-500/20 flex items-center justify-center gap-1.5 transition-all cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                        </svg>
+                        <span>Simpan Kapasitas Baru</span>
+                    </button>
+                    <button type="button" onclick="closeQuotaModal()" class="py-3 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold active:scale-95 transition-all cursor-pointer">
+                        Batal
+                    </button>
+                </div>
+            </form>
         </div>
-
-        <!-- Form Update Quota -->
-        <form action="{{ route('drive.quota.update') }}" method="POST" class="space-y-4">
-            @csrf
-            @method('PATCH')
-            <input type="hidden" name="tab" value="{{ $activeTab }}">
-
-            <!-- Quick Presets Grid -->
-            <div>
-                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Pilih Kapasitas Cepat:</label>
-                <div class="grid grid-cols-3 gap-2">
-                    <button type="button" onclick="setQuotaValue(250)" class="quota-preset-btn py-2 px-3 rounded-xl border text-xs font-bold transition-all text-center cursor-pointer {{ $quotaMb == 250 ? 'bg-teal-500 text-white border-teal-500 shadow-xs' : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-teal-500' }}">
-                        250 MB
-                    </button>
-                    <button type="button" onclick="setQuotaValue(500)" class="quota-preset-btn py-2 px-3 rounded-xl border text-xs font-bold transition-all text-center cursor-pointer {{ $quotaMb == 500 ? 'bg-teal-500 text-white border-teal-500 shadow-xs' : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-teal-500' }}">
-                        500 MB
-                    </button>
-                    <button type="button" onclick="setQuotaValue(1024)" class="quota-preset-btn py-2 px-3 rounded-xl border text-xs font-bold transition-all text-center cursor-pointer {{ $quotaMb == 1024 ? 'bg-teal-500 text-white border-teal-500 shadow-xs' : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-teal-500' }}">
-                        1 GB
-                    </button>
-                    <button type="button" onclick="setQuotaValue(2048)" class="quota-preset-btn py-2 px-3 rounded-xl border text-xs font-bold transition-all text-center cursor-pointer {{ $quotaMb == 2048 ? 'bg-teal-500 text-white border-teal-500 shadow-xs' : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-teal-500' }}">
-                        2 GB
-                    </button>
-                    <button type="button" onclick="setQuotaValue(5120)" class="quota-preset-btn py-2 px-3 rounded-xl border text-xs font-bold transition-all text-center cursor-pointer {{ $quotaMb == 5120 ? 'bg-teal-500 text-white border-teal-500 shadow-xs' : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-teal-500' }}">
-                        5 GB
-                    </button>
-                    <button type="button" onclick="setQuotaValue(10240)" class="quota-preset-btn py-2 px-3 rounded-xl border text-xs font-bold transition-all text-center cursor-pointer {{ $quotaMb == 10240 ? 'bg-teal-500 text-white border-teal-500 shadow-xs' : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-teal-500' }}">
-                        10 GB
-                    </button>
-                </div>
-            </div>
-
-            <!-- Custom Input -->
-            <div class="space-y-1.5">
-                <label for="quota-input-mb" class="block text-xs font-bold text-slate-700 dark:text-slate-300">
-                    Atau Masukkan Kapasitas Khusus (MB):
-                </label>
-                <div class="relative">
-                    <input type="number" id="quota-input-mb" name="storage_quota_mb" value="{{ $quotaMb }}" min="10" max="1048576" required
-                           oninput="updateQuotaPreview(this.value)"
-                           class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white font-extrabold text-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
-                    <span class="absolute right-3.5 top-3.5 text-xs font-bold text-slate-400">MB</span>
-                </div>
-                <p class="text-[11px] text-teal-600 dark:text-teal-400 font-semibold" id="quota-preview-text">
-                    Setara dengan {{ $formattedQuotaSize }}
-                </p>
-            </div>
-
-            <div class="flex items-center gap-2 pt-2">
-                <button type="submit" class="flex-1 py-3 px-4 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-[0.98] text-white text-xs font-extrabold shadow-md shadow-teal-500/20 flex items-center justify-center gap-1.5 transition-all cursor-pointer">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                    </svg>
-                    <span>Simpan Kapasitas Baru</span>
-                </button>
-                <button type="button" onclick="closeQuotaModal()" class="py-3 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold active:scale-95 transition-all cursor-pointer">
-                    Batal
-                </button>
-            </div>
-        </form>
     </div>
 </div>
 
@@ -1175,19 +1179,22 @@
         }, 300);
     }
 
-    function setQuotaValue(mb) {
+    function setQuotaValue(mb, e) {
         const input = document.getElementById('quota-input-mb');
-        input.value = mb;
-        updateQuotaPreview(mb);
+        if (input) {
+            input.value = mb;
+            updateQuotaPreview(mb);
+        }
 
         // Update active styling on preset buttons
         document.querySelectorAll('.quota-preset-btn').forEach(btn => {
             btn.classList.remove('bg-teal-500', 'text-white', 'border-teal-500', 'shadow-xs');
             btn.classList.add('bg-slate-50', 'dark:bg-slate-800/80', 'border-slate-200', 'dark:border-slate-700', 'text-slate-700', 'dark:text-slate-300');
         });
-        if (event && event.currentTarget) {
-            event.currentTarget.classList.remove('bg-slate-50', 'dark:bg-slate-800/80', 'border-slate-200', 'dark:border-slate-700', 'text-slate-700', 'dark:text-slate-300');
-            event.currentTarget.classList.add('bg-teal-500', 'text-white', 'border-teal-500', 'shadow-xs');
+        const target = (e && e.currentTarget) || (typeof event !== 'undefined' && event && event.currentTarget);
+        if (target) {
+            target.classList.remove('bg-slate-50', 'dark:bg-slate-800/80', 'border-slate-200', 'dark:border-slate-700', 'text-slate-700', 'dark:text-slate-300');
+            target.classList.add('bg-teal-500', 'text-white', 'border-teal-500', 'shadow-xs');
         }
     }
 

@@ -447,6 +447,20 @@
             }
         }
 
+        function base64UrlToUint8Array(base64Url) {
+            if (!base64Url) return new Uint8Array(0);
+            let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            while (base64.length % 4 !== 0) {
+                base64 += '=';
+            }
+            const binary = atob(base64);
+            const bytes = new Uint8Array(binary.length);
+            for (let i = 0; i < binary.length; i++) {
+                bytes[i] = binary.charCodeAt(i);
+            }
+            return bytes;
+        }
+
         function hexToBytes(hex) {
             const bytes = new Uint8Array(hex.length / 2);
             for (let i = 0; i < hex.length; i += 2) {
@@ -500,7 +514,7 @@
                 if (!data.registered || !data.credentials || data.credentials.length === 0) {
                     if (pulse) pulse.classList.add('hidden');
                     statusTitle.textContent = 'Face ID Belum Aktif';
-                    statusText.textContent = 'Face ID belum didaftarkan pada akun ini. Silakan masuk terlebih dahulu dengan email & password, lalu aktifkan Face ID di menu Profil.';
+                    statusText.textContent = 'Face ID belum didaftarkan pada akun ini. Silakan masuk terlebih dahulu dengan email & password atau PIN, lalu aktifkan Face ID di menu Profil.';
                     return;
                 }
 
@@ -520,8 +534,7 @@
                 const allowCredentials = data.credentials.map(credId => {
                     let idBytes;
                     try {
-                        const bin = atob(credId.replace(/-/g, '+').replace(/_/g, '/'));
-                        idBytes = Uint8Array.from(bin, c => c.charCodeAt(0));
+                        idBytes = base64UrlToUint8Array(credId);
                     } catch (e) {
                         idBytes = new TextEncoder().encode(credId);
                     }
@@ -536,7 +549,7 @@
                         challenge: challengeBytes,
                         rpId: data.rpId || window.location.hostname,
                         allowCredentials: allowCredentials,
-                        userVerification: 'required',
+                        userVerification: 'preferred',
                         timeout: 60000
                     }
                 });
