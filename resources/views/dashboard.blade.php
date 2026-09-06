@@ -192,6 +192,16 @@
             <span class="text-[10px] font-semibold text-slate-600 dark:text-slate-400 text-center leading-tight">Kalkulator</span>
         </a>
 
+        <!-- SwanDrive (File Storage & Transfer) -->
+        <a href="{{ route('drive.index') }}" class="flex flex-col items-center gap-1.5 group shrink-0 w-14">
+            <div class="w-12 h-12 rounded-2xl bg-teal-100 text-teal-700 dark:bg-teal-950/40 dark:text-teal-400 flex items-center justify-center group-hover:bg-teal-200 dark:group-hover:bg-teal-900/50 active:scale-90 transition-all border border-teal-200 dark:border-teal-900/40 shadow-sm">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021 18V9.75" />
+                </svg>
+            </div>
+            <span class="text-[10px] font-semibold text-slate-600 dark:text-slate-400 text-center leading-tight">Drive</span>
+        </a>
+
         <!-- Langganan -->
         <a href="{{ route('subscriptions.index') }}" class="flex flex-col items-center gap-1.5 group shrink-0 w-14">
             <div class="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-400 flex items-center justify-center group-hover:bg-indigo-200 dark:group-hover:bg-indigo-900/50 active:scale-90 transition-all border border-indigo-200 dark:border-indigo-900/40 shadow-sm">

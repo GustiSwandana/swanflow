@@ -6,6 +6,7 @@ use App\Http\Controllers\CalculatorController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DebtController;
+use App\Http\Controllers\DriveController;
 use App\Http\Controllers\FaceIdController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
@@ -32,6 +33,10 @@ Route::get('/manifest.json', function () {
         'Content-Type' => 'application/manifest+json; charset=UTF-8',
     ]);
 });
+
+// Public Share & File Transfer Routes (SwanDrive)
+Route::get('/share/{token}', [DriveController::class, 'sharedView'])->name('drive.shared.view');
+Route::get('/share/{token}/download', [DriveController::class, 'sharedDownload'])->name('drive.shared.download');
 
 // Protected Application Routes (Requires Authentication)
 Route::middleware('auth')->group(function () {
@@ -82,6 +87,13 @@ Route::middleware('auth')->group(function () {
 
     // Financial Calculator & Split Bill (Patungan)
     Route::get('/calculator', [CalculatorController::class, 'index'])->name('calculator.index');
+
+    // SwanDrive (File Storage & Transfer)
+    Route::get('/drive', [DriveController::class, 'index'])->name('drive.index');
+    Route::post('/drive/upload', [DriveController::class, 'store'])->name('drive.store');
+    Route::get('/drive/{file}/download', [DriveController::class, 'download'])->name('drive.download');
+    Route::patch('/drive/{file}/share', [DriveController::class, 'toggleShare'])->name('drive.share.toggle');
+    Route::delete('/drive/{file}', [DriveController::class, 'destroy'])->name('drive.destroy');
 
     // To-Do List / Activities
     Route::get('/todos', [TodoController::class, 'index'])->name('todos.index');

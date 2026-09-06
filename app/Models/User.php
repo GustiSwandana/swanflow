@@ -148,4 +148,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Todo::class);
     }
+
+    /**
+     * Get the stored files in SwanDrive for the user.
+     *
+     * @return HasMany<StoredFile, $this>
+     */
+    public function storedFiles(): HasMany
+    {
+        return $this->hasMany(StoredFile::class);
+    }
 }
