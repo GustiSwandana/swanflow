@@ -306,6 +306,25 @@
                         </button>
                     </div>
 
+                    <!-- Quick Receipt Scanner Trigger Banner -->
+                    <button type="button" onclick="openReceiptScannerModal()" class="w-full py-2.5 px-3 mb-3 rounded-2xl bg-gradient-to-r from-teal-500/10 via-emerald-500/15 to-teal-500/10 hover:from-teal-500/20 hover:to-emerald-500/20 text-teal-700 dark:text-teal-300 border border-teal-200/70 dark:border-teal-800/70 flex items-center justify-between active:scale-[0.99] transition-all cursor-pointer shadow-2xs group">
+                        <div class="flex items-center gap-2">
+                            <div class="w-7 h-7 rounded-xl bg-teal-500/20 text-teal-600 dark:text-teal-400 flex items-center justify-center font-bold">
+                                <svg class="w-4 h-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
+                                </svg>
+                            </div>
+                            <div class="text-left">
+                                <span class="text-xs font-bold text-teal-800 dark:text-teal-200 block leading-tight">📸 Pindai Struk / Bukti Bayar Otomatis</span>
+                                <span class="text-[10px] text-teal-600 dark:text-teal-400">Ekstrak otomatis nominal, tanggal & kategori</span>
+                            </div>
+                        </div>
+                        <span class="text-xs font-extrabold text-teal-600 dark:text-teal-400 group-hover:translate-x-0.5 transition-transform">
+                            Scan →
+                        </span>
+                    </button>
+
                     <!-- Form -->
                     <form action="{{ route('transactions.store') }}" method="POST" class="space-y-4">
                         @csrf
@@ -555,8 +574,162 @@
             </div>
         </div>
 
+        <!-- 6. SCAN STRUK & BUKTI PEMBAYARAN BOTTOM SHEET MODAL (AI + OCR) -->
+        <style>
+            @keyframes scannerLaser {
+                0% { top: 4%; opacity: 0.8; }
+                50% { top: 92%; opacity: 1; }
+                100% { top: 4%; opacity: 0.8; }
+            }
+            .scanner-laser-bar {
+                animation: scannerLaser 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            }
+        </style>
+        <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+        <div id="receipt-scanner-modal" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true" role="dialog">
+            <div id="scanner-backdrop" onclick="closeReceiptScannerModal()" class="fixed inset-0 bg-slate-950/75 backdrop-blur-xs transition-opacity duration-300 opacity-0"></div>
+            <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
+                <div id="scanner-panel" class="w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-100 dark:border-slate-800 pointer-events-auto transform translate-y-full transition-transform duration-300 space-y-4 max-h-[90vh] overflow-y-auto no-scrollbar text-slate-800 dark:text-white">
+                    <div class="w-12 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-2 cursor-pointer" onclick="closeReceiptScannerModal()"></div>
+
+                    <!-- Modal Header -->
+                    <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-9 h-9 rounded-2xl bg-teal-500/15 text-teal-600 dark:text-teal-400 border border-teal-500/20 flex items-center justify-center font-bold shadow-2xs">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h2 class="text-sm font-bold text-slate-900 dark:text-white">Pindai Struk / Bukti Bayar</h2>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400">Deteksi otomatis nominal, tanggal & kategori</p>
+                            </div>
+                        </div>
+                        <button type="button" onclick="closeReceiptScannerModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center justify-center active:scale-95 transition-all">
+                            ✕
+                        </button>
+                    </div>
+
+                    <!-- Hidden Inputs for Camera and File Picker -->
+                    <input type="file" id="scanner-camera-input" accept="image/*" capture="environment" class="hidden" onchange="processReceiptFile(this)">
+                    <input type="file" id="scanner-file-input" accept="image/*" class="hidden" onchange="processReceiptFile(this)">
+
+                    <!-- State 1: Upload / Capture Selection -->
+                    <div id="scanner-pick-state" class="space-y-3">
+                        <div class="p-4 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800 text-center bg-slate-50/60 dark:bg-slate-950/40 space-y-2">
+                            <div class="w-12 h-12 rounded-2xl bg-teal-500/10 text-teal-600 dark:text-teal-400 mx-auto flex items-center justify-center">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Foto Struk atau Bukti Transfer</h4>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                                    Mendukung struk toko, QRIS, mutasi transfer BCA, Mandiri, BRI, GoPay, OVO, ShopeePay, dll.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <button type="button" onclick="document.getElementById('scanner-camera-input').click()" class="py-3 px-3 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs flex flex-col items-center justify-center gap-1.5 active:scale-95 shadow-md shadow-emerald-500/20 transition-all cursor-pointer">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
+                                </svg>
+                                <span>Buka Kamera</span>
+                            </button>
+                            <button type="button" onclick="document.getElementById('scanner-file-input').click()" class="py-3 px-3 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs flex flex-col items-center justify-center gap-1.5 active:scale-95 border border-slate-200 dark:border-slate-700 transition-all cursor-pointer">
+                                <svg class="w-5 h-5 text-teal-600 dark:text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                                </svg>
+                                <span>Galeri / Berkas</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- State 2: Scanning & Processing State (With Laser Beam Animation) -->
+                    <div id="scanner-processing-state" class="hidden space-y-3">
+                        <div class="relative w-full h-56 rounded-2xl overflow-hidden bg-slate-900 border border-slate-700 flex items-center justify-center">
+                            <img id="scanner-preview-img" src="" alt="Struk Preview" class="max-h-full max-w-full object-contain opacity-75">
+                            <!-- Laser Scanning Bar -->
+                            <div class="scanner-laser-bar absolute left-0 right-0 h-1 bg-gradient-to-r from-teal-400 via-emerald-400 to-teal-400 shadow-[0_0_15px_#10b981]"></div>
+                        </div>
+
+                        <div class="text-center p-3 space-y-2 bg-slate-50 dark:bg-slate-950/60 rounded-2xl border border-slate-200 dark:border-slate-800">
+                            <div class="flex items-center justify-center gap-2 text-teal-600 dark:text-teal-400 font-bold text-xs">
+                                <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                                </svg>
+                                <span id="scanner-status-text">Memindai struk pembayaran...</span>
+                            </div>
+                            <div class="w-full bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                                <div id="scanner-progress-fill" class="bg-teal-500 h-full w-1/3 transition-all duration-300"></div>
+                            </div>
+                            <p class="text-[10px] text-slate-400" id="scanner-substatus-text">Membaca nominal, tanggal, dan nama toko...</p>
+                        </div>
+                    </div>
+
+                    <!-- State 3: Result Card (Extracted Data Display) -->
+                    <div id="scanner-result-state" class="hidden space-y-3">
+                        <div class="p-4 bg-emerald-50/70 dark:bg-emerald-950/30 rounded-2xl border border-emerald-200 dark:border-emerald-800/60 space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[11px] font-bold text-emerald-800 dark:text-emerald-300 flex items-center gap-1">
+                                    <span>✓ Data Berhasil Diekstrak</span>
+                                </span>
+                                <span id="scan-source-badge" class="px-2 py-0.5 rounded-md text-[9px] font-extrabold bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 uppercase">
+                                    AI Scan
+                                </span>
+                            </div>
+
+                            <!-- Nominal Display -->
+                            <div class="bg-white dark:bg-slate-900 rounded-xl p-3 border border-slate-200/80 dark:border-slate-800">
+                                <span class="text-[10px] text-slate-400 font-medium block">Total Nominal Terdeteksi</span>
+                                <div class="flex items-baseline gap-1 mt-0.5">
+                                    <span class="text-sm font-bold text-slate-400">Rp</span>
+                                    <span id="scan-res-amount" class="text-2xl font-black text-slate-900 dark:text-white">0</span>
+                                </div>
+                            </div>
+
+                            <!-- Details Grid -->
+                            <div class="grid grid-cols-2 gap-2 text-xs">
+                                <div class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800">
+                                    <span class="text-[10px] text-slate-400 block">Toko / Penerima</span>
+                                    <span id="scan-res-merchant" class="font-bold text-slate-800 dark:text-slate-200 truncate block mt-0.5">-</span>
+                                </div>
+                                <div class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800">
+                                    <span class="text-[10px] text-slate-400 block">Tanggal</span>
+                                    <span id="scan-res-date" class="font-bold text-slate-800 dark:text-slate-200 truncate block mt-0.5">-</span>
+                                </div>
+                                <div class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800">
+                                    <span class="text-[10px] text-slate-400 block">Kategori Disarankan</span>
+                                    <span id="scan-res-category" class="font-bold text-teal-600 dark:text-teal-400 truncate block mt-0.5">-</span>
+                                </div>
+                                <div class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800">
+                                    <span class="text-[10px] text-slate-400 block">Jenis Transaksi</span>
+                                    <span id="scan-res-type" class="font-bold text-rose-600 dark:text-rose-400 truncate block mt-0.5">Pengeluaran</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex items-center gap-2 pt-1">
+                            <button type="button" onclick="applyScannedReceiptToForm()" class="flex-1 py-3 px-4 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-[0.98] text-white text-xs font-extrabold shadow-md shadow-teal-500/25 flex items-center justify-center gap-2 transition-all cursor-pointer">
+                                <span>Terapkan ke Transaksi →</span>
+                            </button>
+                            <button type="button" onclick="resetReceiptScannerState()" class="py-3 px-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold active:scale-95 transition-all cursor-pointer">
+                                Ulangi
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script>
-            function openTransactionModal(defaultType = 'expense', defaultAmount = null, defaultDescription = null) {
+            function openTransactionModal(defaultType = 'expense', defaultAmount = null, defaultDescription = null, defaultCategory = null, defaultDate = null) {
                 const modal = document.getElementById('transaction-modal');
                 const backdrop = document.getElementById('modal-backdrop');
                 const panel = document.getElementById('modal-panel');
@@ -596,6 +769,27 @@
                     }
                 }
 
+                // Pre-fill date if provided
+                if (defaultDate) {
+                    const dateInput = document.querySelector('input[name="date"]');
+                    if (dateInput) {
+                        dateInput.value = defaultDate;
+                    }
+                }
+
+                // Pre-fill category if provided
+                if (defaultCategory) {
+                    const categorySelect = document.getElementById('category-select');
+                    if (categorySelect) {
+                        for (let opt of categorySelect.options) {
+                            if (opt.value == defaultCategory || opt.text.toLowerCase().includes(String(defaultCategory).toLowerCase())) {
+                                opt.selected = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+
                 // Focus amount or desc input
                 setTimeout(() => {
                     if (defaultAmount !== null && defaultAmount !== undefined && defaultAmount !== '') {
@@ -604,6 +798,201 @@
                         document.getElementById('amount-input')?.focus();
                     }
                 }, 300);
+            }
+
+            // Receipt Scanner Handlers (AI Vision + Local OCR)
+            let currentScannedReceipt = null;
+
+            function openReceiptScannerModal() {
+                closeTransactionModal();
+
+                const modal = document.getElementById('receipt-scanner-modal');
+                const backdrop = document.getElementById('scanner-backdrop');
+                const panel = document.getElementById('scanner-panel');
+
+                resetReceiptScannerState();
+
+                modal.classList.remove('hidden');
+                requestAnimationFrame(() => {
+                    backdrop.classList.remove('opacity-0');
+                    backdrop.classList.add('opacity-100');
+                    panel.classList.remove('translate-y-full');
+                    panel.classList.add('translate-y-0');
+                });
+            }
+
+            function closeReceiptScannerModal() {
+                const modal = document.getElementById('receipt-scanner-modal');
+                const backdrop = document.getElementById('scanner-backdrop');
+                const panel = document.getElementById('scanner-panel');
+
+                backdrop.classList.remove('opacity-100');
+                backdrop.classList.add('opacity-0');
+                panel.classList.remove('translate-y-0');
+                panel.classList.add('translate-y-full');
+
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            }
+
+            function resetReceiptScannerState() {
+                currentScannedReceipt = null;
+                document.getElementById('scanner-pick-state').classList.remove('hidden');
+                document.getElementById('scanner-processing-state').classList.add('hidden');
+                document.getElementById('scanner-result-state').classList.add('hidden');
+                document.getElementById('scanner-camera-input').value = '';
+                document.getElementById('scanner-file-input').value = '';
+                document.getElementById('scanner-status-text').innerText = 'Memindai struk pembayaran...';
+                document.getElementById('scanner-progress-fill').style.width = '20%';
+            }
+
+            async function processReceiptFile(input) {
+                if (!input.files || !input.files[0]) return;
+                const file = input.files[0];
+
+                const pickState = document.getElementById('scanner-pick-state');
+                const procState = document.getElementById('scanner-processing-state');
+                const resState = document.getElementById('scanner-result-state');
+                const previewImg = document.getElementById('scanner-preview-img');
+                const statusText = document.getElementById('scanner-status-text');
+                const substatusText = document.getElementById('scanner-substatus-text');
+                const progressFill = document.getElementById('scanner-progress-fill');
+
+                pickState.classList.add('hidden');
+                procState.classList.remove('hidden');
+                resState.classList.add('hidden');
+
+                const objectUrl = URL.createObjectURL(file);
+                previewImg.src = objectUrl;
+
+                statusText.innerText = 'Mengunggah & Menganalisis Bukti Bayar...';
+                substatusText.innerText = 'Mendeteksi nominal, tanggal, dan pedagang...';
+                progressFill.style.width = '40%';
+
+                const formData = new FormData();
+                formData.append('image', file);
+                formData.append('_token', '{{ csrf_token() }}');
+
+                try {
+                    const response = await fetch('{{ route('transactions.scan-receipt') }}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success && data.source === 'gemini_ai') {
+                        progressFill.style.width = '100%';
+                        showScanResults(data);
+                        return;
+                    }
+
+                    // Fallback to client-side OCR
+                    statusText.innerText = 'Membaca Teks dengan OCR Pintar...';
+                    substatusText.innerText = 'Mengekstrak karakter dari struk...';
+                    progressFill.style.width = '65%';
+
+                    if (typeof Tesseract !== 'undefined') {
+                        const ocrResult = await Tesseract.recognize(file, 'ind', {
+                            logger: m => {
+                                if (m.status === 'recognizing text') {
+                                    const pct = Math.round(m.progress * 30) + 65;
+                                    progressFill.style.width = pct + '%';
+                                }
+                            }
+                        });
+
+                        const recognizedText = ocrResult.data.text;
+                        progressFill.style.width = '95%';
+
+                        const parseRes = await fetch('{{ route('transactions.scan-receipt.parse-text') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({ text: recognizedText })
+                        });
+
+                        const parsedData = await parseRes.json();
+                        parsedData.source = 'ocr_local';
+                        showScanResults(parsedData);
+                    } else {
+                        showScanResults({
+                            amount: 0,
+                            merchant: file.name.substring(0, file.name.lastIndexOf('.')) || 'Struk Belanja',
+                            description: 'Pembayaran Struk',
+                            date: new Date().toISOString().split('T')[0],
+                            type: 'expense',
+                            source: 'manual_assist'
+                        });
+                    }
+                } catch (err) {
+                    console.error('Scan error:', err);
+                    statusText.innerText = 'Gagal memindai otomatis.';
+                    substatusText.innerText = 'Silakan coba lagi atau catat manual.';
+                    setTimeout(() => {
+                        resetReceiptScannerState();
+                    }, 2000);
+                }
+            }
+
+            function showScanResults(data) {
+                currentScannedReceipt = data;
+
+                const procState = document.getElementById('scanner-processing-state');
+                const resState = document.getElementById('scanner-result-state');
+
+                procState.classList.add('hidden');
+                resState.classList.remove('hidden');
+
+                const formattedAmount = Number(data.amount || 0).toLocaleString('id-ID');
+                document.getElementById('scan-res-amount').innerText = formattedAmount;
+                document.getElementById('scan-res-merchant').innerText = data.merchant || 'Struk Pembelian';
+                document.getElementById('scan-res-date').innerText = data.date || new Date().toISOString().split('T')[0];
+                document.getElementById('scan-res-category').innerText = data.category_name || 'Belanja Harian';
+
+                const typeEl = document.getElementById('scan-res-type');
+                if (data.type === 'income') {
+                    typeEl.innerText = 'Pemasukan';
+                    typeEl.className = 'font-bold text-emerald-600 dark:text-emerald-400 truncate block mt-0.5';
+                } else {
+                    typeEl.innerText = 'Pengeluaran';
+                    typeEl.className = 'font-bold text-rose-600 dark:text-rose-400 truncate block mt-0.5';
+                }
+
+                const badge = document.getElementById('scan-source-badge');
+                if (data.source === 'gemini_ai') {
+                    badge.innerText = '✨ AI Vision';
+                    badge.className = 'px-2 py-0.5 rounded-md text-[9px] font-extrabold bg-teal-100 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 uppercase';
+                } else {
+                    badge.innerText = '⚡ Smart OCR';
+                    badge.className = 'px-2 py-0.5 rounded-md text-[9px] font-extrabold bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 uppercase';
+                }
+            }
+
+            function applyScannedReceiptToForm() {
+                if (!currentScannedReceipt) return;
+
+                const receipt = { ...currentScannedReceipt };
+                closeReceiptScannerModal();
+
+                setTimeout(() => {
+                    openTransactionModal(
+                        receipt.type || 'expense',
+                        receipt.amount || '',
+                        receipt.description || receipt.merchant || '',
+                        receipt.category_id || receipt.category_name || null,
+                        receipt.date || null
+                    );
+                }, 250);
             }
 
             function closeTransactionModal() {

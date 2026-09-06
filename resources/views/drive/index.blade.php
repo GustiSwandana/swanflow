@@ -333,7 +333,7 @@
                         <!-- Left: View (Preview) & Download Buttons -->
                         <div class="flex items-center gap-1.5">
                             <button type="button"
-                                    onclick="openPreviewModal('{{ $file->id }}', '{{ addslashes($file->title) }}', '{{ addslashes($file->original_name) }}', '{{ $file->formatted_size }}', '{{ strtolower($file->extension) }}', '{{ route('drive.preview', $file) }}', '{{ route('drive.download', $file) }}', '{{ $meta['label'] }}', '{{ addslashes($file->notes ?? '') }}', '{{ $file->created_at->format('d M Y, H:i') }}')"
+                                    onclick="openPreviewModal('{{ $file->id }}', '{{ addslashes($file->title) }}', '{{ addslashes($file->original_name) }}', '{{ $file->formatted_size }}', '{{ strtolower($file->extension) }}', '{{ route('drive.preview', $file) }}', '{{ route('drive.download', $file) }}', '{{ $meta['label'] }}', '{{ addslashes($file->notes ?? '') }}', '{{ $file->created_at->format('d M Y, H:i') }}', '{{ route('drive.destroy', $file) }}')"
                                     class="px-3 py-1.5 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-95 text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
                                     title="Lihat Berkas Tanpa Mengunduh">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
@@ -366,16 +366,15 @@
                                 <span>Transfer</span>
                             </button>
 
-                            <!-- Delete Button -->
-                            <form action="{{ route('drive.destroy', $file) }}" method="POST" onsubmit="return confirm('Hapus file {{ addslashes($file->title) }} dari SwanDrive?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="p-1.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/30 active:scale-90 transition-all cursor-pointer" title="Hapus Berkas">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                                    </svg>
-                                </button>
-                            </form>
+                            <!-- Safe In-App Delete Button -->
+                            <button type="button"
+                                    onclick="confirmDeleteFile('{{ $file->id }}', '{{ addslashes($file->title) }}', '{{ $file->formatted_size }}', '{{ route('drive.destroy', $file) }}')"
+                                    class="p-1.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/30 active:scale-90 transition-all cursor-pointer"
+                                    title="Hapus Berkas">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                </svg>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -521,15 +520,14 @@
                                     </button>
                                 </form>
 
-                                <form action="{{ route('drive.drop-links.destroy', $link) }}" method="POST" onsubmit="return confirm('Hapus tautan pengumpulan berkas ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="p-1.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/30 active:scale-90 transition-all cursor-pointer" title="Hapus Link Drop">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                                        </svg>
-                                    </button>
-                                </form>
+                                <button type="button"
+                                        onclick="confirmDeleteDropLink('{{ $link->id }}', '{{ addslashes($link->title) }}', '{{ route('drive.drop-links.destroy', $link) }}')"
+                                        class="p-1.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/30 active:scale-90 transition-all cursor-pointer"
+                                        title="Hapus Link Drop">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                    </svg>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -945,9 +943,17 @@
 
             <!-- Footer Action Bar -->
             <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2 shrink-0">
-                <button type="button" onclick="closePreviewModal()" class="py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold active:scale-95 transition-all cursor-pointer">
-                    Tutup
-                </button>
+                <div class="flex items-center gap-1.5">
+                    <button type="button" onclick="closePreviewModal()" class="py-2.5 px-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold active:scale-95 transition-all cursor-pointer">
+                        Tutup
+                    </button>
+                    <button type="button" id="pv-delete-btn" onclick="openDeleteModalFromPreview()" class="py-2.5 px-3 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-400 border border-rose-200/80 dark:border-rose-900/50 text-xs font-bold active:scale-95 transition-all cursor-pointer flex items-center gap-1.5" title="Hapus Berkas Ini">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                        </svg>
+                        <span>Hapus</span>
+                    </button>
+                </div>
                 <div class="flex items-center gap-2">
                     <a id="pv-download-btn" href="#" class="py-2.5 px-4 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-95 text-white text-xs font-extrabold shadow-md shadow-teal-500/25 flex items-center gap-1.5 transition-all cursor-pointer">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
@@ -957,6 +963,61 @@
                     </a>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL 5: KONFIRMASI HAPUS BERKAS / DROP LINK (IN-APP NATIVE BOTTOM-SHEET) -->
+<div id="delete-modal" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true" role="dialog">
+    <div id="delete-backdrop" onclick="closeDeleteModal()" class="fixed inset-0 bg-slate-950/75 backdrop-blur-xs transition-opacity duration-300 opacity-0"></div>
+    <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
+        <div id="delete-panel" class="w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-100 dark:border-slate-800 pointer-events-auto transform translate-y-full transition-transform duration-300 space-y-4 text-slate-800 dark:text-white">
+            <div class="w-12 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-2 cursor-pointer" onclick="closeDeleteModal()"></div>
+            
+            <div class="flex items-start gap-3">
+                <div class="w-11 h-11 rounded-2xl bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 border border-rose-200/80 dark:border-rose-900/60 flex items-center justify-center shrink-0 shadow-xs">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                    </svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h3 class="text-sm font-extrabold text-slate-900 dark:text-white" id="delete-modal-title">Hapus Berkas dari SwanDrive?</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed" id="delete-modal-desc">
+                        Berkas ini akan dihapus secara permanen dari server dan ruang penyimpanan Anda.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Target Item Summary Card -->
+            <div class="p-3 bg-slate-50 dark:bg-slate-950/70 rounded-2xl border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                <div class="min-w-0 flex-1 mr-2">
+                    <span class="text-xs font-bold text-slate-800 dark:text-slate-200 block truncate" id="delete-target-name">nama-file.pdf</span>
+                    <span class="text-[10px] text-slate-400 font-medium" id="delete-target-info">0 KB</span>
+                </div>
+                <span class="px-2 py-0.5 rounded-lg bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 text-[10px] font-bold shrink-0">
+                    Permanen
+                </span>
+            </div>
+
+            <form id="delete-form" method="POST" action="" onsubmit="handleDeleteSubmit(event)">
+                @csrf
+                @method('DELETE')
+                <div class="flex items-center gap-2 pt-1">
+                    <button type="submit" id="btn-confirm-delete" class="flex-1 py-3 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 active:scale-[0.98] text-white text-xs font-extrabold shadow-md shadow-rose-600/25 flex items-center justify-center gap-1.5 transition-all cursor-pointer">
+                        <svg class="w-4 h-4" id="delete-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                        </svg>
+                        <svg class="w-4 h-4 animate-spin hidden" id="delete-spinner" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                        </svg>
+                        <span id="delete-btn-text">Ya, Hapus File</span>
+                    </button>
+                    <button type="button" onclick="closeDeleteModal()" class="py-3 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold active:scale-95 transition-all cursor-pointer">
+                        Batal
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -1313,16 +1374,29 @@
     // Preview Modal Handlers
     let currentPreviewAbortController = null;
     let currentLoadedPreviewText = '';
+    let currentPreviewFile = null;
 
     function copyPreviewText(btn) {
         if (!currentLoadedPreviewText) return;
         copyToClipboard(currentLoadedPreviewText, btn);
     }
 
-    function openPreviewModal(id, title, originalName, size, ext, previewUrl, downloadUrl, label, notes, date) {
+    function openPreviewModal(id, title, originalName, size, ext, previewUrl, downloadUrl, label, notes, date, deleteUrl) {
         const modal = document.getElementById('preview-modal');
         const backdrop = document.getElementById('preview-backdrop');
         const panel = document.getElementById('preview-panel');
+
+        currentPreviewFile = {
+            id: id,
+            title: title || originalName,
+            size: size,
+            deleteUrl: deleteUrl || ''
+        };
+
+        const deleteBtn = document.getElementById('pv-delete-btn');
+        if (deleteBtn) {
+            deleteBtn.style.display = deleteUrl ? '' : 'none';
+        }
 
         // Populate header info
         document.getElementById('pv-title').innerText = title || originalName;
@@ -1512,6 +1586,98 @@
             if (container) container.innerHTML = '';
             currentLoadedPreviewText = '';
         }, 300);
+    }
+
+    // In-App Safe Deletion Handlers
+    function openDeleteModalFromPreview() {
+        if (!currentPreviewFile || !currentPreviewFile.deleteUrl) return;
+        const file = { ...currentPreviewFile };
+        closePreviewModal();
+        setTimeout(() => {
+            confirmDeleteFile(file.id, file.title, file.size, file.deleteUrl);
+        }, 250);
+    }
+
+    function confirmDeleteFile(id, title, size, url) {
+        const modal = document.getElementById('delete-modal');
+        const backdrop = document.getElementById('delete-backdrop');
+        const panel = document.getElementById('delete-panel');
+        const titleEl = document.getElementById('delete-modal-title');
+        const descEl = document.getElementById('delete-modal-desc');
+        const nameEl = document.getElementById('delete-target-name');
+        const infoEl = document.getElementById('delete-target-info');
+        const form = document.getElementById('delete-form');
+        const btnText = document.getElementById('delete-btn-text');
+
+        form.action = url;
+        titleEl.innerText = 'Hapus Berkas dari SwanDrive?';
+        descEl.innerText = 'Berkas ini akan dihapus secara permanen dari server dan ruang penyimpanan Anda.';
+        nameEl.innerText = title;
+        infoEl.innerText = size || '';
+        btnText.innerText = 'Ya, Hapus File';
+
+        modal.classList.remove('hidden');
+        requestAnimationFrame(() => {
+            backdrop.classList.remove('opacity-0');
+            backdrop.classList.add('opacity-100');
+            panel.classList.remove('translate-y-full');
+            panel.classList.add('translate-y-0');
+        });
+    }
+
+    function confirmDeleteDropLink(id, title, url) {
+        const modal = document.getElementById('delete-modal');
+        const backdrop = document.getElementById('delete-backdrop');
+        const panel = document.getElementById('delete-panel');
+        const titleEl = document.getElementById('delete-modal-title');
+        const descEl = document.getElementById('delete-modal-desc');
+        const nameEl = document.getElementById('delete-target-name');
+        const infoEl = document.getElementById('delete-target-info');
+        const form = document.getElementById('delete-form');
+        const btnText = document.getElementById('delete-btn-text');
+
+        form.action = url;
+        titleEl.innerText = 'Hapus Tautan Terima Berkas?';
+        descEl.innerText = 'Tautan pengumpulan ini akan dihapus permanen. Siapapun yang membuka link ini tidak akan bisa mengirim berkas lagi.';
+        nameEl.innerText = title;
+        infoEl.innerText = 'Tautan Drop Box';
+        btnText.innerText = 'Ya, Hapus Tautan';
+
+        modal.classList.remove('hidden');
+        requestAnimationFrame(() => {
+            backdrop.classList.remove('opacity-0');
+            backdrop.classList.add('opacity-100');
+            panel.classList.remove('translate-y-full');
+            panel.classList.add('translate-y-0');
+        });
+    }
+
+    function closeDeleteModal() {
+        const modal = document.getElementById('delete-modal');
+        const backdrop = document.getElementById('delete-backdrop');
+        const panel = document.getElementById('delete-panel');
+
+        backdrop.classList.remove('opacity-100');
+        backdrop.classList.add('opacity-0');
+        panel.classList.remove('translate-y-0');
+        panel.classList.add('translate-y-full');
+
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300);
+    }
+
+    function handleDeleteSubmit(e) {
+        const btn = document.getElementById('btn-confirm-delete');
+        const icon = document.getElementById('delete-icon');
+        const spinner = document.getElementById('delete-spinner');
+        const btnText = document.getElementById('delete-btn-text');
+
+        btn.disabled = true;
+        btn.classList.add('opacity-80', 'cursor-not-allowed');
+        if (icon) icon.classList.add('hidden');
+        if (spinner) spinner.classList.remove('hidden');
+        if (btnText) btnText.innerText = 'Menghapus...';
     }
 </script>
 @endsection

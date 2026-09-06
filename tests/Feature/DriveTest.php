@@ -245,6 +245,26 @@ class DriveTest extends TestCase
         Storage::disk('local')->assertMissing($path);
     }
 
+    public function test_user_can_delete_file_via_json_request(): void
+    {
+        Storage::fake('local');
+        $user = User::factory()->create();
+
+        $fakeFile = UploadedFile::fake()->create('hapus_ajax.png', 100);
+        $path = $fakeFile->store('drive/'.$user->id, 'local');
+
+        $storedFile = StoredFile::factory()->create([
+            'user_id' => $user->id,
+            'file_path' => $path,
+        ]);
+
+        $response = $this->actingAs($user)->deleteJson(route('drive.destroy', $storedFile));
+
+        $response->assertStatus(200);
+        $response->assertJson(['success' => true]);
+        $this->assertDatabaseMissing('stored_files', ['id' => $storedFile->id]);
+    }
+
     public function test_user_cannot_delete_another_users_file(): void
     {
         $user1 = User::factory()->create();

@@ -172,6 +172,21 @@
 
     <!-- 1. Quick Navigation Shortcuts (scrollable horizontal) -->
     <div class="flex gap-3 overflow-x-auto no-scrollbar pb-1 pt-1 -mx-1 px-1">
+        <!-- Scan Struk (AI / OCR) -->
+        <button type="button" onclick="openReceiptScannerModal()" class="flex flex-col items-center gap-1.5 group shrink-0 w-14 cursor-pointer" title="Pindai Struk / Bukti Transfer">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-500/20 via-emerald-500/25 to-teal-500/20 text-teal-700 dark:text-teal-300 flex items-center justify-center group-hover:from-teal-500/30 group-hover:to-emerald-500/40 active:scale-90 transition-all border border-teal-500/30 dark:border-teal-700/50 shadow-xs relative ring-2 ring-teal-500/20">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
+                </svg>
+                <span class="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-teal-500"></span>
+                </span>
+            </div>
+            <span class="text-[10px] font-bold text-teal-600 dark:text-teal-400 text-center leading-tight">Scan Struk</span>
+        </button>
+
         <!-- Dompet -->
         <a href="{{ route('wallets.index') }}" class="flex flex-col items-center gap-1.5 group shrink-0 w-14">
             <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 flex items-center justify-center group-hover:bg-emerald-200 dark:group-hover:bg-emerald-900/50 active:scale-90 transition-all border border-emerald-200 dark:border-emerald-900/40 shadow-sm">
@@ -266,8 +281,29 @@
         </a>
     </div>
 
-
-
+    <!-- BANNER SCAN STRUK & BUKTI PEMBAYARAN -->
+    <div onclick="openReceiptScannerModal()" class="bg-gradient-to-r from-teal-500/15 via-emerald-500/10 to-teal-500/15 dark:from-teal-950/50 dark:via-emerald-950/30 dark:to-teal-950/50 rounded-2xl p-3.5 border border-teal-300/70 dark:border-teal-800/70 shadow-2xs flex items-center justify-between cursor-pointer active:scale-98 transition-all group">
+        <div class="flex items-center gap-3 min-w-0">
+            <div class="w-10 h-10 rounded-2xl bg-teal-500 text-white flex items-center justify-center shrink-0 shadow-md shadow-teal-500/30 group-hover:scale-105 transition-transform">
+                <svg class="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
+                </svg>
+            </div>
+            <div class="min-w-0">
+                <div class="flex items-center gap-1.5">
+                    <h3 class="text-xs font-bold text-slate-900 dark:text-white truncate">Pindai Struk & Bukti Transfer</h3>
+                    <span class="text-[9px] font-extrabold px-1.5 py-0.2 rounded-md bg-teal-500/20 text-teal-700 dark:text-teal-300">AI</span>
+                </div>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5">
+                    Foto nota belanja atau bukti transfer untuk pencatatan otomatis
+                </p>
+            </div>
+        </div>
+        <span class="px-2.5 py-1.5 rounded-xl bg-teal-500 hover:bg-teal-600 text-white font-bold text-xs shadow-xs active:scale-95 transition-all shrink-0 ml-2">
+            Pindai ➔
+        </span>
+    </div>
 
     <!-- 2. DOMPET & REKENING (Dynamic Wallets List) -->
     <div class="space-y-2.5 pt-2 border-t border-slate-200 dark:border-slate-800/80">

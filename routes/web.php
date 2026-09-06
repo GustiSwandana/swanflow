@@ -10,6 +10,7 @@ use App\Http\Controllers\DriveController;
 use App\Http\Controllers\DropLinkController;
 use App\Http\Controllers\FaceIdController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReceiptScannerController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\TodoController;
@@ -53,6 +54,8 @@ Route::middleware('auth')->group(function () {
     // Transactions (CRUD)
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
     Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
+    Route::post('/transactions/scan-receipt', [ReceiptScannerController::class, 'scan'])->name('transactions.scan-receipt');
+    Route::post('/transactions/scan-receipt/parse-text', [ReceiptScannerController::class, 'parseText'])->name('transactions.scan-receipt.parse-text');
     Route::put('/transactions/{transaction}', [TransactionController::class, 'update'])->name('transactions.update');
     Route::delete('/transactions/{transaction}', [TransactionController::class, 'destroy'])->name('transactions.destroy');
 

@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\StoredFile;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -217,19 +219,40 @@ class DriveController extends Controller
     /**
      * Delete a file from disk and database.
      */
-    public function destroy(Request $request, StoredFile $file): RedirectResponse
+    public function destroy(Request $request, StoredFile $file): RedirectResponse|JsonResponse
     {
         if ($file->user_id !== $request->user()->id) {
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'Akses ditolak.'], 403);
+            }
             abort(403, 'Akses ditolak.');
         }
 
-        if (Storage::disk('local')->exists($file->file_path)) {
-            Storage::disk('local')->delete($file->file_path);
+        try {
+            if (Storage::disk('local')->exists($file->file_path)) {
+                Storage::disk('local')->delete($file->file_path);
+            }
+        } catch (\Throwable $e) {
+            Log::warning('Gagal menghapus file fisik di SwanDrive: '.$e->getMessage(), [
+                'file_id' => $file->id,
+                'file_path' => $file->file_path,
+            ]);
         }
 
         $file->delete();
 
-        return redirect()->route('drive.index')->with('success', 'File berhasil dihapus dari SwanDrive.');
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'File berhasil dihapus dari SwanDrive.',
+            ]);
+        }
+
+        $redirect = $request->filled('tab')
+            ? route('drive.index', ['tab' => $request->input('tab')])
+            : route('drive.index');
+
+        return redirect($redirect)->with('success', 'File berhasil dihapus dari SwanDrive.');
     }
 
     /**
