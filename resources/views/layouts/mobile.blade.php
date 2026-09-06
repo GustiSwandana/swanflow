@@ -645,7 +645,7 @@
                     <!-- Modal Header -->
                     <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
                         <div class="flex items-center gap-2.5">
-                            <div class="w-9 h-9 rounded-2xl bg-teal-500/15 text-teal-600 dark:text-teal-400 border border-teal-500/20 flex items-center justify-center font-bold shadow-2xs">
+                            <div class="w-9 h-9 rounded-2xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center justify-center font-bold shadow-2xs">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
@@ -667,30 +667,30 @@
 
                     <!-- State 1: Upload / Capture Selection -->
                     <div id="scanner-pick-state" class="space-y-3">
-                        <div id="scanner-dropzone" onclick="document.getElementById('scanner-file-input').click()" class="p-4 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800 text-center bg-slate-50/60 dark:bg-slate-950/40 space-y-2 cursor-pointer hover:border-teal-500 hover:bg-teal-50/40 dark:hover:bg-teal-950/20 active:scale-[0.99] transition-all">
-                            <div class="w-12 h-12 rounded-2xl bg-teal-500/10 text-teal-600 dark:text-teal-400 mx-auto flex items-center justify-center">
+                        <div id="scanner-dropzone" onclick="document.getElementById('scanner-file-input').click()" class="p-4 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 text-center bg-slate-50 dark:bg-slate-800/40 space-y-2 cursor-pointer hover:border-emerald-500 dark:hover:border-emerald-400 active:scale-[0.99] transition-all">
+                            <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 mx-auto flex items-center justify-center">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                                 </svg>
                             </div>
                             <div>
-                                <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Foto Struk atau Bukti Transfer</h4>
+                                <h4 class="text-xs font-bold text-slate-800 dark:text-slate-100">Foto Struk atau Bukti Transfer</h4>
                                 <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-                                    Ketuk, seret gambar ke sini, atau tempel tangkapan layar (<span class="font-mono text-teal-600 dark:text-teal-400 font-bold">Ctrl+V</span>)
+                                    Ketuk, seret gambar ke sini, atau tempel tangkapan layar (<span class="font-mono text-emerald-600 dark:text-emerald-400 font-bold">Ctrl+V</span>)
                                 </p>
                             </div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-2.5">
-                            <button type="button" onclick="document.getElementById('scanner-camera-input').click()" class="py-3 px-3 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs flex flex-col items-center justify-center gap-1.5 active:scale-95 shadow-md shadow-emerald-500/20 transition-all cursor-pointer">
+                            <button type="button" onclick="document.getElementById('scanner-camera-input').click()" class="py-3 px-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 text-white font-bold text-xs flex flex-col items-center justify-center gap-1.5 active:scale-95 shadow-md shadow-emerald-600/30 transition-all cursor-pointer">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
                                 </svg>
                                 <span>Buka Kamera</span>
                             </button>
-                            <button type="button" onclick="document.getElementById('scanner-file-input').click()" class="py-3 px-3 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs flex flex-col items-center justify-center gap-1.5 active:scale-95 border border-slate-200 dark:border-slate-700 transition-all cursor-pointer">
-                                <svg class="w-5 h-5 text-teal-600 dark:text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <button type="button" onclick="document.getElementById('scanner-file-input').click()" class="py-3 px-3 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 font-bold text-xs flex flex-col items-center justify-center gap-1.5 active:scale-95 border border-slate-200 dark:border-slate-700 transition-all cursor-pointer">
+                                <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
                                 </svg>
                                 <span>Galeri / Berkas</span>
@@ -703,158 +703,156 @@
                         <div class="relative w-full h-56 rounded-2xl overflow-hidden bg-slate-900 border border-slate-700 flex items-center justify-center">
                             <img id="scanner-preview-img" src="" alt="Struk Preview" class="max-h-full max-w-full object-contain opacity-75">
                             <!-- Laser Scanning Bar -->
-                            <div class="scanner-laser-bar absolute left-0 right-0 h-1 bg-gradient-to-r from-teal-400 via-emerald-400 to-teal-400 shadow-[0_0_15px_#10b981]"></div>
+                            <div class="scanner-laser-bar absolute left-0 right-0 h-1 bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-400 shadow-[0_0_15px_#10b981]"></div>
                         </div>
 
-                        <div class="text-center p-3 space-y-2 bg-slate-50 dark:bg-slate-950/60 rounded-2xl border border-slate-200 dark:border-slate-800">
-                            <div class="flex items-center justify-center gap-2 text-teal-600 dark:text-teal-400 font-bold text-xs">
+                        <div class="text-center p-3 space-y-2 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700">
+                            <div class="flex items-center justify-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold text-xs">
                                 <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
                                 </svg>
                                 <span id="scanner-status-text">Memindai struk pembayaran...</span>
                             </div>
-                            <div class="w-full bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                                <div id="scanner-progress-fill" class="bg-teal-500 h-full w-1/3 transition-all duration-300"></div>
+                            <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
+                                <div id="scanner-progress-fill" class="bg-emerald-500 h-full w-1/3 transition-all duration-300"></div>
                             </div>
                             <p class="text-[10px] text-slate-400" id="scanner-substatus-text">Membaca nominal, tanggal, dan nama toko...</p>
                         </div>
                     </div>
 
                     <!-- State 3: Result Card (Interactive Review & Edit Mode) -->
-                    <div id="scanner-result-state" class="hidden space-y-3.5">
-                        <div class="p-3.5 bg-slate-50 dark:bg-slate-950/60 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3">
-                            <!-- Top Status & Actions -->
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center gap-1.5">
-                                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                                    <span class="text-xs font-bold text-slate-800 dark:text-slate-100">Hasil Pindai Bukti Bayar</span>
-                                </div>
-                                <div class="flex items-center gap-1.5">
-                                    <span id="scan-source-badge" class="px-2 py-0.5 rounded-md text-[9px] font-extrabold bg-teal-100 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 uppercase">
-                                        ⚡ Smart OCR
-                                    </span>
-                                    <button type="button" onclick="toggleScanReceiptImagePreview()" class="py-1 px-2 rounded-lg bg-slate-200/80 dark:bg-slate-800 text-[10px] font-bold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white flex items-center gap-1 active:scale-95 transition-all cursor-pointer">
-                                        <span>🔍</span>
-                                        <span id="scan-preview-btn-text">Lihat Foto</span>
-                                    </button>
-                                </div>
+                    <div id="scanner-result-state" class="hidden space-y-4">
+                        <!-- Top Status & Actions -->
+                        <div class="flex items-center justify-between pb-1">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                <span class="text-xs font-bold text-slate-800 dark:text-slate-100">Hasil Pindai Bukti Bayar</span>
                             </div>
-
-                            <!-- Collapsible Receipt Photo Preview -->
-                            <div id="scanner-receipt-photo-container" class="hidden rounded-xl overflow-hidden bg-slate-900 border border-slate-700 max-h-48 flex items-center justify-center relative transition-all">
-                                <img id="scanner-result-photo-img" src="" alt="Foto Struk" class="max-h-48 max-w-full object-contain">
-                                <span class="absolute bottom-1 right-2 text-[9px] bg-black/60 text-white/80 px-1.5 py-0.5 rounded">Ketuk tombol lagi untuk menutup</span>
-                            </div>
-
-                            <!-- Editable Amount Field -->
-                            <div class="p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 focus-within:border-teal-500 dark:focus-within:border-teal-400 focus-within:ring-2 focus-within:ring-teal-500/20 transition-all">
-                                <div class="flex items-center justify-between mb-1">
-                                    <label for="scan-edit-amount" class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Nominal (Rp) <span class="text-rose-500">*</span></label>
-                                    <span id="scan-amount-formatted" class="text-[11px] font-extrabold text-teal-600 dark:text-teal-400">Rp 0</span>
-                                </div>
-                                <div class="flex items-center gap-1.5">
-                                    <span class="text-lg font-bold text-slate-400">Rp</span>
-                                    <input id="scan-edit-amount" 
-                                           type="number" 
-                                           step="any" 
-                                           inputmode="decimal" 
-                                           placeholder="0" 
-                                           required 
-                                           oninput="updateInputAmountPreview('scan-edit-amount', 'scan-amount-formatted')"
-                                           class="w-full text-2xl font-black text-slate-900 dark:text-white bg-transparent border-none outline-hidden focus:ring-0 p-0 placeholder-slate-300 dark:placeholder-slate-600">
-                                </div>
-                                <!-- Quick Nominal Increment Pills -->
-                                <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 pt-2 -mx-0.5 px-0.5">
-                                    <button type="button" onclick="adjustInputAmount('scan-edit-amount', 'scan-amount-formatted', 10000)" class="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-100 hover:bg-teal-50 dark:bg-slate-800 dark:hover:bg-teal-950/50 text-slate-700 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer shrink-0">+10rb</button>
-                                    <button type="button" onclick="adjustInputAmount('scan-edit-amount', 'scan-amount-formatted', 20000)" class="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-100 hover:bg-teal-50 dark:bg-slate-800 dark:hover:bg-teal-950/50 text-slate-700 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer shrink-0">+20rb</button>
-                                    <button type="button" onclick="adjustInputAmount('scan-edit-amount', 'scan-amount-formatted', 50000)" class="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-100 hover:bg-teal-50 dark:bg-slate-800 dark:hover:bg-teal-950/50 text-slate-700 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer shrink-0">+50rb</button>
-                                    <button type="button" onclick="adjustInputAmount('scan-edit-amount', 'scan-amount-formatted', 100000)" class="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-100 hover:bg-teal-50 dark:bg-slate-800 dark:hover:bg-teal-950/50 text-slate-700 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer shrink-0">+100rb</button>
-                                    <button type="button" onclick="roundInputAmount('scan-edit-amount', 'scan-amount-formatted')" class="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-teal-50 hover:bg-teal-100 dark:bg-teal-950/60 dark:hover:bg-teal-900/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800 active:scale-95 transition-all cursor-pointer shrink-0" title="Bulatkan nominal">Bulatkan</button>
-                                    <button type="button" onclick="clearInputAmount('scan-edit-amount', 'scan-amount-formatted')" class="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900/50 active:scale-95 transition-all cursor-pointer shrink-0">✕ Reset</button>
-                                </div>
-                            </div>
-
-                            <!-- Toko / Penerima & Tanggal Grid -->
-                            <div class="grid grid-cols-2 gap-2">
-                                <div class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus-within:border-teal-500">
-                                    <label for="scan-edit-merchant" class="text-[10px] text-slate-400 font-semibold block mb-0.5">Toko / Penerima</label>
-                                    <input id="scan-edit-merchant" 
-                                           type="text" 
-                                           placeholder="Nama Toko..." 
-                                           class="w-full text-xs font-bold text-slate-800 dark:text-slate-100 bg-transparent border-none outline-hidden focus:ring-0 p-0 placeholder-slate-400">
-                                </div>
-                                <div class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus-within:border-teal-500">
-                                    <div class="flex items-center justify-between mb-0.5">
-                                        <label for="scan-edit-date" class="text-[10px] text-slate-400 font-semibold">Tanggal</label>
-                                        <div class="flex items-center gap-1 text-[10px]">
-                                            <button type="button" onclick="setDatePreset('scan-edit-date', 'today')" class="font-bold text-teal-600 dark:text-teal-400 hover:underline cursor-pointer">Hari Ini</button>
-                                            <span class="text-slate-300 dark:text-slate-600">•</span>
-                                            <button type="button" onclick="setDatePreset('scan-edit-date', 'yesterday')" class="font-medium text-slate-500 hover:underline cursor-pointer">Kemarin</button>
-                                        </div>
-                                    </div>
-                                    <input id="scan-edit-date" 
-                                           type="date" 
-                                           class="w-full text-xs font-bold text-slate-800 dark:text-slate-100 bg-transparent border-none outline-hidden focus:ring-0 p-0">
-                                </div>
-                            </div>
-
-                            <!-- Type Switcher (Pemasukan vs Pengeluaran) -->
-                            <div>
-                                <label class="text-[10px] text-slate-400 font-semibold block mb-1">Jenis Transaksi</label>
-                                <div class="grid grid-cols-2 p-1 bg-slate-200/70 dark:bg-slate-800 rounded-xl gap-1">
-                                    <button type="button" id="scan-type-btn-expense" onclick="setScanResultType('expense')" class="py-2 px-2 rounded-lg text-xs font-bold transition-all bg-white dark:bg-slate-700 text-rose-600 dark:text-rose-400 shadow-xs cursor-pointer">
-                                        Pengeluaran
-                                    </button>
-                                    <button type="button" id="scan-type-btn-income" onclick="setScanResultType('income')" class="py-2 px-2 rounded-lg text-xs font-bold transition-all text-slate-500 dark:text-slate-400 cursor-pointer">
-                                        Pemasukan
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Kategori & Dompet Grid -->
-                            <div class="grid grid-cols-2 gap-2">
-                                <div>
-                                    <label for="scan-edit-category" class="text-[10px] text-slate-400 font-semibold block mb-1">Kategori</label>
-                                    <select id="scan-edit-category" class="w-full min-h-[42px] px-2.5 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 focus:outline-hidden focus:border-teal-500">
-                                        @foreach($modalCategories as $cat)
-                                            <option value="{{ $cat->id }}" data-type="{{ is_string($cat->type) ? $cat->type : $cat->type->value }}" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
-                                                {{ $cat->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div>
-                                    <label for="scan-edit-wallet" class="text-[10px] text-slate-400 font-semibold block mb-1">Dompet / Bayar Pakai</label>
-                                    <select id="scan-edit-wallet" class="w-full min-h-[42px] px-2.5 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 focus:outline-hidden focus:border-teal-500">
-                                        @foreach($modalWallets as $w)
-                                            <option value="{{ $w->id }}" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
-                                                {{ $w->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-
-                            <!-- Catatan Tambahan (Opsional) -->
-                            <div>
-                                <label for="scan-edit-notes" class="text-[10px] text-slate-400 font-semibold block mb-1">Catatan Tambahan (Opsional)</label>
-                                <input id="scan-edit-notes" 
-                                       type="text" 
-                                       placeholder="Nomor referensi, rincian barang, dsb..." 
-                                       class="w-full min-h-[40px] px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-hidden focus:border-teal-500">
+                            <div class="flex items-center gap-1.5">
+                                <span id="scan-source-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 uppercase border border-emerald-200/60 dark:border-emerald-800/60">
+                                    ⚡ Smart OCR
+                                </span>
+                                <button type="button" onclick="toggleScanReceiptImagePreview()" class="py-1 px-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-[10px] font-bold text-slate-700 dark:text-slate-200 flex items-center gap-1 active:scale-95 transition-all cursor-pointer border border-slate-200 dark:border-slate-700">
+                                    <span>🔍</span>
+                                    <span id="scan-preview-btn-text">Lihat Foto</span>
+                                </button>
                             </div>
                         </div>
 
+                        <!-- Collapsible Receipt Photo Preview -->
+                        <div id="scanner-receipt-photo-container" class="hidden rounded-2xl overflow-hidden bg-slate-950 border border-slate-700 max-h-48 flex items-center justify-center relative transition-all">
+                            <img id="scanner-result-photo-img" src="" alt="Foto Struk" class="max-h-48 max-w-full object-contain">
+                            <span class="absolute bottom-1 right-2 text-[9px] bg-black/70 text-white/90 px-2 py-0.5 rounded-md">Ketuk tombol lagi untuk menutup</span>
+                        </div>
+
+                        <!-- Editable Amount Field -->
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <label for="scan-edit-amount" class="text-xs font-medium text-slate-400 dark:text-slate-400">Nominal (Rp) <span class="text-rose-500">*</span></label>
+                                <span id="scan-amount-formatted" class="text-xs font-extrabold text-emerald-600 dark:text-emerald-400">Rp 0</span>
+                            </div>
+                            <div class="relative rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 focus-within:border-emerald-500 dark:focus-within:border-emerald-400 focus-within:ring-2 focus-within:ring-emerald-500/20 p-3 transition-all">
+                                <span class="text-sm font-bold text-slate-400 mr-1">Rp</span>
+                                <input id="scan-edit-amount" 
+                                       type="number" 
+                                       step="any" 
+                                       inputmode="decimal" 
+                                       placeholder="0" 
+                                       required 
+                                       oninput="updateInputAmountPreview('scan-edit-amount', 'scan-amount-formatted')"
+                                       class="w-4/5 text-2xl font-extrabold text-slate-900 dark:text-white bg-transparent border-none outline-hidden focus:ring-0 placeholder-slate-400 dark:placeholder-slate-600">
+                            </div>
+                            <!-- Quick Nominal Increment Pills -->
+                            <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 pt-2 -mx-0.5 px-0.5">
+                                <button type="button" onclick="adjustInputAmount('scan-edit-amount', 'scan-amount-formatted', 10000)" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 hover:bg-emerald-50 dark:bg-slate-800 dark:hover:bg-emerald-950/50 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer shrink-0">+10rb</button>
+                                <button type="button" onclick="adjustInputAmount('scan-edit-amount', 'scan-amount-formatted', 20000)" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 hover:bg-emerald-50 dark:bg-slate-800 dark:hover:bg-emerald-950/50 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer shrink-0">+20rb</button>
+                                <button type="button" onclick="adjustInputAmount('scan-edit-amount', 'scan-amount-formatted', 50000)" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 hover:bg-emerald-50 dark:bg-slate-800 dark:hover:bg-emerald-950/50 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer shrink-0">+50rb</button>
+                                <button type="button" onclick="adjustInputAmount('scan-edit-amount', 'scan-amount-formatted', 100000)" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 hover:bg-emerald-50 dark:bg-slate-800 dark:hover:bg-emerald-950/50 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer shrink-0">+100rb</button>
+                                <button type="button" onclick="roundInputAmount('scan-edit-amount', 'scan-amount-formatted')" class="px-2 py-1 rounded-lg text-[11px] font-bold bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/60 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 active:scale-95 transition-all cursor-pointer shrink-0" title="Bulatkan nominal">Bulatkan</button>
+                                <button type="button" onclick="clearInputAmount('scan-edit-amount', 'scan-amount-formatted')" class="px-2 py-1 rounded-lg text-[11px] font-bold bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900/50 active:scale-95 transition-all cursor-pointer shrink-0">✕ Reset</button>
+                            </div>
+                        </div>
+
+                        <!-- Type Switcher (Pemasukan vs Pengeluaran) -->
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 dark:text-slate-400 mb-1">Jenis Transaksi</label>
+                            <div class="grid grid-cols-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl gap-1">
+                                <button type="button" id="scan-type-btn-expense" onclick="setScanResultType('expense')" class="min-h-[42px] flex items-center justify-center text-xs font-bold rounded-lg transition-all bg-white dark:bg-slate-700 text-rose-600 dark:text-rose-400 shadow-xs cursor-pointer">
+                                    Pengeluaran
+                                </button>
+                                <button type="button" id="scan-type-btn-income" onclick="setScanResultType('income')" class="min-h-[42px] flex items-center justify-center text-xs font-bold rounded-lg transition-all text-slate-500 dark:text-slate-400 cursor-pointer">
+                                    Pemasukan
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Toko / Penerima & Tanggal Grid -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label for="scan-edit-merchant" class="block text-xs font-medium text-slate-400 dark:text-slate-400 mb-1">Toko / Penerima</label>
+                                <input id="scan-edit-merchant" 
+                                       type="text" 
+                                       placeholder="Nama Toko atau Penerima..." 
+                                       class="w-full min-h-[44px] px-3 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
+                            </div>
+                            <div>
+                                <div class="flex items-center justify-between mb-1">
+                                    <label for="scan-edit-date" class="text-xs font-medium text-slate-400 dark:text-slate-400">Tanggal</label>
+                                    <div class="flex items-center gap-1.5 text-[11px]">
+                                        <button type="button" onclick="setDatePreset('scan-edit-date', 'today')" class="font-bold text-emerald-600 dark:text-emerald-400 hover:underline cursor-pointer">Hari Ini</button>
+                                        <span class="text-slate-300 dark:text-slate-600">•</span>
+                                        <button type="button" onclick="setDatePreset('scan-edit-date', 'yesterday')" class="font-medium text-slate-500 hover:underline cursor-pointer">Kemarin</button>
+                                    </div>
+                                </div>
+                                <input id="scan-edit-date" 
+                                       type="date" 
+                                       class="w-full min-h-[44px] px-3 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-800 dark:text-slate-100 focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
+                            </div>
+                        </div>
+
+                        <!-- Kategori & Dompet Grid -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label for="scan-edit-category" class="block text-xs font-medium text-slate-400 dark:text-slate-400 mb-1">Kategori</label>
+                                <select id="scan-edit-category" class="w-full min-h-[48px] px-3 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-800 dark:text-slate-100 focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
+                                    @foreach($modalCategories as $cat)
+                                        <option value="{{ $cat->id }}" data-type="{{ is_string($cat->type) ? $cat->type : $cat->type->value }}" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
+                                            {{ $cat->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label for="scan-edit-wallet" class="block text-xs font-medium text-slate-400 dark:text-slate-400 mb-1">Dompet / Bayar Pakai</label>
+                                <select id="scan-edit-wallet" class="w-full min-h-[48px] px-3 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-800 dark:text-slate-100 focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
+                                    @foreach($modalWallets as $w)
+                                        <option value="{{ $w->id }}" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
+                                            {{ $w->name }} (Rp {{ number_format($w->balance, 0, ',', '.') }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Catatan Tambahan (Opsional) -->
+                        <div>
+                            <label for="scan-edit-notes" class="block text-xs font-medium text-slate-400 dark:text-slate-400 mb-1">Catatan Tambahan (Opsional)</label>
+                            <input id="scan-edit-notes" 
+                                   type="text" 
+                                   placeholder="Rincian barang, nomor referensi, dsb..." 
+                                   class="w-full min-h-[44px] px-3 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
+                        </div>
+
                         <!-- Action Buttons -->
-                        <div class="flex items-center gap-2 pt-1">
-                            <button type="button" onclick="applyScannedReceiptToForm()" class="flex-1 py-3 px-2.5 rounded-xl bg-teal-50 hover:bg-teal-100 dark:bg-teal-950/50 dark:hover:bg-teal-900/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/80 active:scale-[0.98] text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs">
+                        <div class="pt-2 flex items-center gap-2">
+                            <button type="button" onclick="applyScannedReceiptToForm()" class="flex-1 min-h-[48px] py-3 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs border border-slate-200 dark:border-slate-700 active:scale-98 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs">
                                 <span>✏️ Ke Form</span>
                             </button>
-                            <button type="button" id="scan-quick-save-btn" onclick="quickSaveScannedReceipt()" class="flex-[1.5] py-3 px-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 active:scale-[0.98] text-white text-xs font-extrabold shadow-md shadow-emerald-600/30 flex items-center justify-center gap-1.5 transition-all cursor-pointer ring-2 ring-emerald-500/20">
+                            <button type="button" id="scan-quick-save-btn" onclick="quickSaveScannedReceipt()" class="flex-[1.6] min-h-[48px] py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 text-white font-bold text-xs shadow-md shadow-emerald-600/30 dark:shadow-emerald-500/20 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer">
                                 <span>⚡ Simpan Langsung</span>
                             </button>
-                            <button type="button" onclick="resetReceiptScannerState()" class="py-3 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold active:scale-95 transition-all cursor-pointer" title="Pindai Ulang">
+                            <button type="button" onclick="resetReceiptScannerState()" class="min-h-[48px] py-3 px-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 text-xs font-semibold active:scale-95 transition-all cursor-pointer" title="Pindai Ulang">
                                 Ulangi
                             </button>
                         </div>
@@ -1131,11 +1129,11 @@
                 const incomeBtn = document.getElementById('scan-type-btn-income');
 
                 if (type === 'income') {
-                    incomeBtn.className = 'py-2 px-2 rounded-lg text-xs font-bold transition-all bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-xs cursor-pointer';
-                    expenseBtn.className = 'py-2 px-2 rounded-lg text-xs font-bold transition-all text-slate-500 dark:text-slate-400 cursor-pointer';
+                    incomeBtn.className = 'min-h-[42px] flex items-center justify-center text-xs font-bold rounded-lg transition-all bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-xs cursor-pointer';
+                    expenseBtn.className = 'min-h-[42px] flex items-center justify-center text-xs font-bold rounded-lg transition-all text-slate-500 dark:text-slate-400 cursor-pointer';
                 } else {
-                    expenseBtn.className = 'py-2 px-2 rounded-lg text-xs font-bold transition-all bg-white dark:bg-slate-700 text-rose-600 dark:text-rose-400 shadow-xs cursor-pointer';
-                    incomeBtn.className = 'py-2 px-2 rounded-lg text-xs font-bold transition-all text-slate-500 dark:text-slate-400 cursor-pointer';
+                    expenseBtn.className = 'min-h-[42px] flex items-center justify-center text-xs font-bold rounded-lg transition-all bg-white dark:bg-slate-700 text-rose-600 dark:text-rose-400 shadow-xs cursor-pointer';
+                    incomeBtn.className = 'min-h-[42px] flex items-center justify-center text-xs font-bold rounded-lg transition-all text-slate-500 dark:text-slate-400 cursor-pointer';
                 }
 
                 // Filter categories in dropdown
@@ -1375,12 +1373,14 @@
 
                 // Source Badge
                 const badge = document.getElementById('scan-source-badge');
-                if (data.source === 'gemini_ai') {
-                    badge.innerText = '✨ AI Vision';
-                    badge.className = 'px-2 py-0.5 rounded-md text-[9px] font-extrabold bg-teal-100 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 uppercase';
-                } else {
-                    badge.innerText = '⚡ Smart OCR';
-                    badge.className = 'px-2 py-0.5 rounded-md text-[9px] font-extrabold bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 uppercase';
+                if (badge) {
+                    if (data.source === 'gemini_ai') {
+                        badge.innerText = '✨ AI Vision';
+                        badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 uppercase border border-emerald-200/60 dark:border-emerald-800/60';
+                    } else {
+                        badge.innerText = '⚡ Smart OCR';
+                        badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 uppercase border border-slate-200 dark:border-slate-700';
+                    }
                 }
             }
 
