@@ -146,9 +146,12 @@
 
     </div>
 </div>
+@endsection
 
+@push('modals')
 {{-- ===== MODAL TAMBAH AKTIVITAS ===== --}}
 <div id="addModal" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true">
+
     {{-- Backdrop --}}
     <div class="modal-backdrop fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity duration-300 opacity-0" onclick="closeAddModal()"></div>
 
@@ -387,8 +390,11 @@
     </div>
     </div>
 </div>
+@endpush
 
+@push('scripts')
 <script>
+
 function openAddModal() {
     window.openSheetModal('addModal');
 }
@@ -452,4 +458,5 @@ if (new URLSearchParams(window.location.search).has('open_add')) {
     openAddModal();
 }
 </script>
-@endsection
+@endpush
+

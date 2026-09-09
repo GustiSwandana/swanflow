@@ -113,9 +113,10 @@
         }
     </style>
 </head>
-<body class="min-h-full bg-slate-100 dark:bg-slate-950 flex justify-center text-slate-800 dark:text-slate-100 antialiased selection:bg-emerald-500 selection:text-white transition-colors duration-200">
+<body class="min-h-full min-h-[100dvh] bg-slate-100 dark:bg-slate-950 flex flex-col items-center text-slate-800 dark:text-slate-100 antialiased selection:bg-emerald-500 selection:text-white transition-colors duration-200">
     <!-- Mobile Frame Container (Fluid 100% on iPhones, Max-W-MD for desktop preview) -->
-    <div class="w-full max-w-md min-h-full min-h-[100dvh] bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 relative flex flex-col shadow-2xl border-x border-slate-200/80 dark:border-slate-800/80 overflow-x-hidden transition-colors duration-200">
+    <div class="w-full max-w-md flex-1 min-h-full min-h-[100dvh] bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 relative flex flex-col shadow-2xl border-x border-slate-200/80 dark:border-slate-800/80 transition-colors duration-200">
+
 
         <!-- 1. TOP HEADER -->
         @hasSection('custom_header')
@@ -231,9 +232,12 @@
                 @yield('content')
             </main>
         @endif
+    </div>
+    <!-- End Mobile Frame Container -->
 
-        <!-- 3. FLOATING DOCK BOTTOM NAVIGATION BAR (Sleek Unified Capsule) -->
-        <nav class="fixed inset-x-0 bottom-0 z-40 flex justify-center pointer-events-none px-4 pb-[max(0.75rem,calc(env(safe-area-inset-bottom,0px)+0.25rem))]">
+    <!-- 3. FLOATING DOCK BOTTOM NAVIGATION BAR (Sleek Unified Capsule) -->
+    <nav class="fixed inset-x-0 bottom-0 z-40 flex justify-center pointer-events-none px-4 pb-[max(0.75rem,calc(env(safe-area-inset-bottom,0px)+0.25rem))]">
+
             <div class="w-full max-w-[364px] pointer-events-auto bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800 shadow-[0_10px_32px_rgba(0,0,0,0.12),0_2px_6px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.55)] rounded-full px-2 py-1.5 transition-all duration-300">
                 <div class="flex items-center justify-between">
 
@@ -1982,9 +1986,11 @@
             </div>
         </div>
 
-    </div>
+    <!-- Dynamic Modal Stacks from Child Views -->
+    @stack('modals')
 </body>
 
 {{-- Allow child views to inject additional scripts --}}
 @stack('scripts')
 </html>
+
