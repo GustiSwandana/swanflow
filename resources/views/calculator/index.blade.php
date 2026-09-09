@@ -77,7 +77,7 @@
 
 @section('content')
 <!-- Main Sheet Container (rounded-t-[32px]) -->
-<div class="bg-slate-50 dark:bg-slate-900 rounded-t-[32px] pt-5 px-4 pb-[max(8.5rem,calc(7.5rem+var(--sab)))] shadow-2xl -mt-4 relative z-10 border-t border-slate-200 dark:border-slate-800/80 flex-1 flex flex-col min-h-full space-y-5 text-slate-800 dark:text-white transition-colors animate-swan-in">
+<div class="bg-slate-50 dark:bg-slate-900 rounded-t-[32px] pt-5 px-4 pb-[max(5.5rem,calc(4.75rem+var(--sab)))] shadow-2xl -mt-4 relative z-10 border-t border-slate-200 dark:border-slate-800/80 flex-1 flex flex-col min-h-full space-y-5 text-slate-800 dark:text-white transition-colors animate-swan-in">
     <!-- ========================================== -->
     <!-- TAB 1: SIMULASI SKENARIO FINANSIAL        -->
     <!-- ========================================== -->
