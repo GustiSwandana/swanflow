@@ -233,19 +233,19 @@
         @endif
 
         <!-- 3. FLOATING DOCK BOTTOM NAVIGATION BAR (Sleek Unified Capsule) -->
-        <nav class="fixed inset-x-0 bottom-0 z-40 flex justify-center pointer-events-none px-4 pb-[max(0.75rem,calc(env(safe-area-inset-bottom,0px)+0.35rem))]">
-            <div class="w-full max-w-[380px] pointer-events-auto bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800 shadow-[0_8px_32px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.5)] rounded-full px-2 py-1.5 transition-all duration-300">
+        <nav class="fixed inset-x-0 bottom-0 z-40 flex justify-center pointer-events-none px-4 pb-[max(0.75rem,calc(env(safe-area-inset-bottom,0px)+0.25rem))]">
+            <div class="w-full max-w-[364px] pointer-events-auto bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800 shadow-[0_10px_32px_rgba(0,0,0,0.12),0_2px_6px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.55)] rounded-full px-2 py-1.5 transition-all duration-300">
                 <div class="flex items-center justify-between">
 
                     <!-- Tab 1: Beranda -->
                     <a href="{{ route('dashboard') }}"
-                       class="flex-1 flex flex-col items-center justify-center py-1 px-1 rounded-full transition-all duration-200 group relative active:scale-95 {{ request()->routeIs('dashboard') ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200' }}"
+                       class="h-11 flex-1 flex flex-col items-center justify-center rounded-full transition-all duration-200 group relative active:scale-95 {{ request()->routeIs('dashboard') ? 'text-emerald-600 dark:text-emerald-400 font-extrabold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 font-semibold' }}"
                        aria-label="Beranda">
                         @if(request()->routeIs('dashboard'))
                             <span class="absolute inset-0 rounded-full bg-emerald-500/12 dark:bg-emerald-400/15 pointer-events-none"></span>
                         @endif
                         <div class="relative z-10 flex flex-col items-center gap-0.5">
-                            <svg class="w-5 h-5 transition-transform duration-200 {{ request()->routeIs('dashboard') ? 'scale-105' : 'group-hover:scale-105' }}" fill="{{ request()->routeIs('dashboard') ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24" stroke-width="{{ request()->routeIs('dashboard') ? '0' : '2' }}">
+                            <svg class="w-5 h-5 transition-transform duration-200 {{ request()->routeIs('dashboard') ? 'scale-105' : 'group-hover:scale-105' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="{{ request()->routeIs('dashboard') ? '2.5' : '1.8' }}">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
                             </svg>
                             <span class="text-[10px] tracking-tight leading-none">Beranda</span>
@@ -254,13 +254,13 @@
 
                     <!-- Tab 2: Laporan -->
                     <a href="{{ route('reports.index') }}"
-                       class="flex-1 flex flex-col items-center justify-center py-1 px-1 rounded-full transition-all duration-200 group relative active:scale-95 {{ request()->routeIs('reports.*') ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200' }}"
+                       class="h-11 flex-1 flex flex-col items-center justify-center rounded-full transition-all duration-200 group relative active:scale-95 {{ request()->routeIs('reports.*') ? 'text-emerald-600 dark:text-emerald-400 font-extrabold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 font-semibold' }}"
                        aria-label="Laporan">
                         @if(request()->routeIs('reports.*'))
                             <span class="absolute inset-0 rounded-full bg-emerald-500/12 dark:bg-emerald-400/15 pointer-events-none"></span>
                         @endif
                         <div class="relative z-10 flex flex-col items-center gap-0.5">
-                            <svg class="w-5 h-5 transition-transform duration-200 {{ request()->routeIs('reports.*') ? 'scale-105' : 'group-hover:scale-105' }}" fill="{{ request()->routeIs('reports.*') ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24" stroke-width="{{ request()->routeIs('reports.*') ? '0' : '2' }}">
+                            <svg class="w-5 h-5 transition-transform duration-200 {{ request()->routeIs('reports.*') ? 'scale-105' : 'group-hover:scale-105' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="{{ request()->routeIs('reports.*') ? '2.5' : '1.8' }}">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z" />
                             </svg>
@@ -269,10 +269,10 @@
                     </a>
 
                     <!-- Tab 3: Action Button (+) Tambah Transaksi -->
-                    <div class="flex-1 flex items-center justify-center">
+                    <div class="h-11 flex-1 flex items-center justify-center">
                         <button type="button"
                                 onclick="openTransactionModal('expense')"
-                                class="w-11 h-11 rounded-full bg-gradient-to-tr from-emerald-600 via-emerald-500 to-teal-500 text-white flex items-center justify-center shadow-md shadow-emerald-500/35 hover:shadow-emerald-500/50 active:scale-90 hover:scale-105 transition-all duration-200 cursor-pointer"
+                                class="w-11 h-11 rounded-full bg-gradient-to-tr from-emerald-600 via-emerald-500 to-teal-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/35 hover:shadow-emerald-500/50 active:scale-90 hover:scale-105 transition-all duration-200 cursor-pointer"
                                 aria-label="Tambah Transaksi Cepat">
                             <svg class="w-5 h-5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -282,13 +282,13 @@
 
                     <!-- Tab 4: Riwayat Transaksi -->
                     <a href="{{ route('transactions.index') }}"
-                       class="flex-1 flex flex-col items-center justify-center py-1 px-1 rounded-full transition-all duration-200 group relative active:scale-95 {{ request()->routeIs('transactions.*') ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200' }}"
+                       class="h-11 flex-1 flex flex-col items-center justify-center rounded-full transition-all duration-200 group relative active:scale-95 {{ request()->routeIs('transactions.*') ? 'text-emerald-600 dark:text-emerald-400 font-extrabold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 font-semibold' }}"
                        aria-label="Riwayat Transaksi">
                         @if(request()->routeIs('transactions.*'))
                             <span class="absolute inset-0 rounded-full bg-emerald-500/12 dark:bg-emerald-400/15 pointer-events-none"></span>
                         @endif
                         <div class="relative z-10 flex flex-col items-center gap-0.5">
-                            <svg class="w-5 h-5 transition-transform duration-200 {{ request()->routeIs('transactions.*') ? 'scale-105' : 'group-hover:scale-105' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="{{ request()->routeIs('transactions.*') ? '2.5' : '2' }}">
+                            <svg class="w-5 h-5 transition-transform duration-200 {{ request()->routeIs('transactions.*') ? 'scale-105' : 'group-hover:scale-105' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="{{ request()->routeIs('transactions.*') ? '2.5' : '1.8' }}">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
                             <span class="text-[10px] tracking-tight leading-none">Riwayat</span>
@@ -297,13 +297,13 @@
 
                     <!-- Tab 5: Profil -->
                     <a href="{{ route('profile.edit') }}"
-                       class="flex-1 flex flex-col items-center justify-center py-1 px-1 rounded-full transition-all duration-200 group relative active:scale-95 {{ request()->routeIs('profile.*') ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200' }}"
+                       class="h-11 flex-1 flex flex-col items-center justify-center rounded-full transition-all duration-200 group relative active:scale-95 {{ request()->routeIs('profile.*') ? 'text-emerald-600 dark:text-emerald-400 font-extrabold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 font-semibold' }}"
                        aria-label="Profil">
                         @if(request()->routeIs('profile.*'))
                             <span class="absolute inset-0 rounded-full bg-emerald-500/12 dark:bg-emerald-400/15 pointer-events-none"></span>
                         @endif
                         <div class="relative z-10 flex flex-col items-center gap-0.5">
-                            <svg class="w-5 h-5 transition-transform duration-200 {{ request()->routeIs('profile.*') ? 'scale-105' : 'group-hover:scale-105' }}" fill="{{ request()->routeIs('profile.*') ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24" stroke-width="{{ request()->routeIs('profile.*') ? '0' : '2' }}">
+                            <svg class="w-5 h-5 transition-transform duration-200 {{ request()->routeIs('profile.*') ? 'scale-105' : 'group-hover:scale-105' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="{{ request()->routeIs('profile.*') ? '2.5' : '1.8' }}">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                             </svg>
                             <span class="text-[10px] tracking-tight leading-none">Profil</span>
