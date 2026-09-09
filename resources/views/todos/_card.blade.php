@@ -44,8 +44,7 @@
     };
 @endphp
 
-<!-- Elevated Card Surface with Inner Accent Indicator -->
-<div class="relative bg-white dark:bg-slate-800/95 rounded-2xl p-4 pl-4.5 border border-slate-200/80 dark:border-slate-700/80 shadow-xs hover:shadow-md transition-all space-y-3 overflow-hidden {{ $todo->is_completed ? 'opacity-70 bg-slate-50/60 dark:bg-slate-850' : '' }}">
+<div class="relative bg-white dark:bg-slate-800/95 rounded-2xl p-4 pl-4.5 border border-slate-200/80 dark:border-slate-700/80 shadow-xs hover:shadow-md transition-all space-y-3 overflow-hidden {{ $todo->is_completed ? 'opacity-70 bg-slate-50/60 dark:bg-slate-800/60' : '' }}">
     <!-- Vertical Accent Bar on the left -->
     <span class="absolute left-0 top-3.5 bottom-3.5 w-1 rounded-r-full {{ $accentColor }}" aria-hidden="true"></span>
 

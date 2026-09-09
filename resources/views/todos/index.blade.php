@@ -3,13 +3,13 @@
 @section('title', 'Aktivitas')
 
 @section('custom_header')
-{{-- Emerald gradient header (konsisten dengan halaman lain) --}}
-<div class="relative overflow-hidden bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 pb-4" style="padding-top: max(3.5rem, calc(var(--sat, 0px) + 0.75rem));">
-    <div class="absolute inset-0 opacity-10">
-        <div class="absolute top-0 right-0 w-48 h-48 bg-white rounded-full -translate-y-24 translate-x-24"></div>
-        <div class="absolute bottom-0 left-0 w-32 h-32 bg-white rounded-full translate-y-16 -translate-x-16"></div>
-    </div>
-    <div class="relative px-5 pb-2">
+{{-- Fintech Full-Bleed Header (Emerald in Light Mode, Sleek Slate in Dark Mode, matching Dashboard) --}}
+<div class="bg-gradient-to-b from-emerald-600 via-emerald-600 to-emerald-700 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-white px-5 pb-8 relative border-b border-emerald-700 dark:border-slate-800/80 overflow-hidden transition-colors" style="padding-top: max(3.5rem, calc(var(--sat, 0px) + 0.75rem));">
+    <!-- Subtle Glow & Mesh Highlights (matching Dashboard) -->
+    <div class="absolute -right-8 -top-8 w-44 h-44 bg-white/10 dark:bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -left-8 top-20 w-40 h-40 bg-white/10 dark:bg-teal-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+    <div class="relative z-10 pb-1">
         <div class="flex items-center justify-between mb-4">
             <div class="flex items-center gap-2.5">
                 <a href="{{ route('dashboard') }}" 
@@ -21,7 +21,7 @@
                 </a>
                 <div>
                     <h1 class="text-xl font-extrabold text-white tracking-tight leading-tight">Aktivitas & Tugas</h1>
-                    <p class="text-xs text-white/70 dark:text-slate-400">Catatan kegiatan & to-do list</p>
+                    <p class="text-xs text-white/75 dark:text-slate-400">Catatan kegiatan & to-do list</p>
                 </div>
             </div>
 
@@ -37,10 +37,10 @@
             </button>
         </div>
 
-        {{-- Summary badges (Interactive Filter Cards) --}}
+        {{-- Summary badges (Interactive Filter Cards with Apple Frosted Glass Effect) --}}
         <div class="grid grid-cols-3 gap-2">
             <a href="{{ route('todos.index', ['tab' => 'today']) }}"
-               class="rounded-2xl p-2.5 sm:p-3 border transition-all duration-200 flex flex-col justify-between active:scale-95 {{ $tab === 'today' ? 'bg-white/30 border-white/60 shadow-md ring-2 ring-white/40' : 'bg-white/15 hover:bg-white/20 border-white/20' }}">
+               class="rounded-2xl p-2.5 sm:p-3 border backdrop-blur-md transition-all duration-200 flex flex-col justify-between active:scale-95 {{ $tab === 'today' ? 'bg-white/30 border-white/60 shadow-md ring-2 ring-white/40' : 'bg-white/15 hover:bg-white/20 border-white/20' }}">
                 <div class="flex items-center justify-between">
                     <span class="text-[11px] font-bold text-white/90">Hari Ini</span>
                     <span class="w-2 h-2 rounded-full bg-amber-400 {{ $todayTodos->count() > 0 ? 'animate-pulse' : '' }}"></span>
@@ -49,7 +49,7 @@
             </a>
 
             <a href="{{ route('todos.index', ['tab' => 'upcoming']) }}"
-               class="rounded-2xl p-2.5 sm:p-3 border transition-all duration-200 flex flex-col justify-between active:scale-95 {{ $tab === 'upcoming' ? 'bg-white/30 border-white/60 shadow-md ring-2 ring-white/40' : 'bg-white/15 hover:bg-white/20 border-white/20' }}">
+               class="rounded-2xl p-2.5 sm:p-3 border backdrop-blur-md transition-all duration-200 flex flex-col justify-between active:scale-95 {{ $tab === 'upcoming' ? 'bg-white/30 border-white/60 shadow-md ring-2 ring-white/40' : 'bg-white/15 hover:bg-white/20 border-white/20' }}">
                 <div class="flex items-center justify-between">
                     <span class="text-[11px] font-bold text-white/90">Mendatang</span>
                     <span class="w-2 h-2 rounded-full bg-sky-400"></span>
@@ -58,7 +58,7 @@
             </a>
 
             <a href="{{ route('todos.index', ['tab' => 'completed']) }}"
-               class="rounded-2xl p-2.5 sm:p-3 border transition-all duration-200 flex flex-col justify-between active:scale-95 {{ $tab === 'completed' ? 'bg-white/30 border-white/60 shadow-md ring-2 ring-white/40' : 'bg-white/15 hover:bg-white/20 border-white/20' }}">
+               class="rounded-2xl p-2.5 sm:p-3 border backdrop-blur-md transition-all duration-200 flex flex-col justify-between active:scale-95 {{ $tab === 'completed' ? 'bg-white/30 border-white/60 shadow-md ring-2 ring-white/40' : 'bg-white/15 hover:bg-white/20 border-white/20' }}">
                 <div class="flex items-center justify-between">
                     <span class="text-[11px] font-bold text-white/90">Selesai</span>
                     <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
@@ -72,6 +72,8 @@
 
 @section('content')
 <div class="bg-slate-50 dark:bg-slate-900 rounded-t-[32px] pt-4 px-4 pb-[max(6rem,calc(5.25rem+var(--sab,0px)))] shadow-2xl -mt-4 relative z-10 border-t border-slate-200 dark:border-slate-800/80 flex-1 flex flex-col min-h-full space-y-4 text-slate-800 dark:text-white transition-colors animate-swan-in">
+    <!-- Pull handle indicator for authentic iOS sheet aesthetic -->
+    <div class="w-10 h-1 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-1"></div>
     {{-- Quick Add Card --}}
     <div>
         <div class="p-3.5 rounded-2xl bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 shadow-xs flex items-center justify-between gap-3 transition-colors">
