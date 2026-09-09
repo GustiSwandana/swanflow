@@ -203,14 +203,18 @@
 
 <!-- MODAL TAMBAH UTANG / PIUTANG -->
 <div id="modal-add-debt" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true">
-    <div class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs" onclick="closeAddDebtModal()"></div>
+    <div class="modal-backdrop fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity duration-300 opacity-0" onclick="closeAddDebtModal()"></div>
     <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
-        <div class="w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-100 dark:border-slate-800/80 pointer-events-auto overflow-y-auto no-scrollbar">
+        <div class="modal-panel w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-100 dark:border-slate-800/80 pointer-events-auto transform translate-y-full transition-transform duration-300 overflow-y-auto no-scrollbar">
             <div class="w-12 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-4 cursor-pointer" onclick="closeAddDebtModal()"></div>
             
             <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800 mb-4">
                 <h3 class="text-sm font-bold text-slate-800 dark:text-white">Catat Utang / Piutang Baru</h3>
-                <button type="button" onclick="closeAddDebtModal()" class="text-slate-400 hover:text-slate-600 p-1">✕</button>
+                <button type="button" onclick="closeAddDebtModal()" aria-label="Tutup modal" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 flex items-center justify-center active:scale-95 transition-all cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
             </div>
 
             <form action="{{ route('debts.store') }}" method="POST" class="space-y-3.5">
@@ -281,9 +285,9 @@
 
 <!-- MODAL CATAT PEMBAYARAN / CICILAN -->
 <div id="modal-repay-debt" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true">
-    <div class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs" onclick="closeRepayDebtModal()"></div>
+    <div class="modal-backdrop fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity duration-300 opacity-0" onclick="closeRepayDebtModal()"></div>
     <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
-        <div class="w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-100 dark:border-slate-800/80 pointer-events-auto overflow-y-auto no-scrollbar">
+        <div class="modal-panel w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-100 dark:border-slate-800/80 pointer-events-auto transform translate-y-full transition-transform duration-300 overflow-y-auto no-scrollbar">
             <div class="w-12 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-4 cursor-pointer" onclick="closeRepayDebtModal()"></div>
             
             <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800 mb-4">
@@ -291,7 +295,11 @@
                     <h3 id="repay-title" class="text-sm font-bold text-slate-800 dark:text-white">Catat Pembayaran Cicilan</h3>
                     <p id="repay-person-display" class="text-xs text-emerald-600 dark:text-emerald-400 font-semibold mt-0.5"></p>
                 </div>
-                <button type="button" onclick="closeRepayDebtModal()" class="text-slate-400 hover:text-slate-600 p-1">✕</button>
+                <button type="button" onclick="closeRepayDebtModal()" aria-label="Tutup modal" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 flex items-center justify-center active:scale-95 transition-all cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
             </div>
 
             <form id="form-repay-debt" method="POST" class="space-y-4">
@@ -333,14 +341,18 @@
 
 <!-- MODAL EDIT UTANG / PIUTANG -->
 <div id="modal-edit-debt" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true">
-    <div class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs" onclick="closeEditDebtModal()"></div>
+    <div class="modal-backdrop fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity duration-300 opacity-0" onclick="closeEditDebtModal()"></div>
     <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
-        <div class="w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-100 dark:border-slate-800/80 pointer-events-auto overflow-y-auto no-scrollbar">
+        <div class="modal-panel w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-100 dark:border-slate-800/80 pointer-events-auto transform translate-y-full transition-transform duration-300 overflow-y-auto no-scrollbar">
             <div class="w-12 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-4 cursor-pointer" onclick="closeEditDebtModal()"></div>
             
             <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800 mb-4">
                 <h3 class="text-sm font-bold text-slate-800 dark:text-white">Edit Catatan Utang / Piutang</h3>
-                <button type="button" onclick="closeEditDebtModal()" class="text-slate-400 hover:text-slate-600 p-1">✕</button>
+                <button type="button" onclick="closeEditDebtModal()" aria-label="Tutup modal" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 flex items-center justify-center active:scale-95 transition-all cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
             </div>
 
             <form id="form-edit-debt" method="POST" class="space-y-3.5">
@@ -406,10 +418,10 @@
     }
 
     function openAddDebtModal() {
-        document.getElementById('modal-add-debt').classList.remove('hidden');
+        window.openSheetModal('modal-add-debt');
     }
     function closeAddDebtModal() {
-        document.getElementById('modal-add-debt').classList.add('hidden');
+        window.closeSheetModal('modal-add-debt');
     }
     function openEditDebtModal(item) {
         document.getElementById('form-edit-debt').action = '/debts/' + item.id;
@@ -420,10 +432,10 @@
             document.getElementById('edit-debt-wallet').value = item.wallet_id;
         }
         document.getElementById('edit-debt-notes').value = item.notes || '';
-        document.getElementById('modal-edit-debt').classList.remove('hidden');
+        window.openSheetModal('modal-edit-debt');
     }
     function closeEditDebtModal() {
-        document.getElementById('modal-edit-debt').classList.add('hidden');
+        window.closeSheetModal('modal-edit-debt');
     }
     function openRepayDebtModal(item) {
         document.getElementById('form-repay-debt').action = '/debts/' + item.id + '/repay';
@@ -439,10 +451,10 @@
         const input = document.getElementById('repay-amount-input');
         input.max = remaining;
         input.value = remaining;
-        document.getElementById('modal-repay-debt').classList.remove('hidden');
+        window.openSheetModal('modal-repay-debt');
     }
     function closeRepayDebtModal() {
-        document.getElementById('modal-repay-debt').classList.add('hidden');
+        window.closeSheetModal('modal-repay-debt');
     }
 </script>
 @endsection

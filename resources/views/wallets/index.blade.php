@@ -143,14 +143,18 @@
 
 <!-- MODAL TAMBAH DOMPET -->
 <div id="modal-add-wallet" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true">
-    <div class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs" onclick="closeAddWalletModal()"></div>
+    <div class="modal-backdrop fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity duration-300 opacity-0" onclick="closeAddWalletModal()"></div>
     <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
-        <div class="w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-100 dark:border-slate-800/80 pointer-events-auto overflow-y-auto no-scrollbar">
+        <div class="modal-panel w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-100 dark:border-slate-800/80 pointer-events-auto transform translate-y-full transition-transform duration-300 overflow-y-auto no-scrollbar">
             <div class="w-12 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-4 cursor-pointer" onclick="closeAddWalletModal()"></div>
             
             <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800 mb-4">
                 <h3 class="text-sm font-bold text-slate-800 dark:text-white">Tambah Rekening / Dompet Baru</h3>
-                <button type="button" onclick="closeAddWalletModal()" class="text-slate-400 hover:text-slate-600 p-1">✕</button>
+                <button type="button" onclick="closeAddWalletModal()" aria-label="Tutup modal" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 flex items-center justify-center active:scale-95 transition-all cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
             </div>
 
             <form action="{{ route('wallets.store') }}" method="POST" class="space-y-4">
@@ -188,14 +192,18 @@
 
 <!-- MODAL EDIT DOMPET -->
 <div id="modal-edit-wallet" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true">
-    <div class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs" onclick="closeEditWalletModal()"></div>
+    <div class="modal-backdrop fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity duration-300 opacity-0" onclick="closeEditWalletModal()"></div>
     <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
-        <div class="w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-100 dark:border-slate-800/80 pointer-events-auto overflow-y-auto no-scrollbar">
+        <div class="modal-panel w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-100 dark:border-slate-800/80 pointer-events-auto transform translate-y-full transition-transform duration-300 overflow-y-auto no-scrollbar">
             <div class="w-12 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-4 cursor-pointer" onclick="closeEditWalletModal()"></div>
             
             <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800 mb-4">
                 <h3 class="text-sm font-bold text-slate-800 dark:text-white">Edit Rekening / Dompet</h3>
-                <button type="button" onclick="closeEditWalletModal()" class="text-slate-400 hover:text-slate-600 p-1">✕</button>
+                <button type="button" onclick="closeEditWalletModal()" aria-label="Tutup modal" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 flex items-center justify-center active:scale-95 transition-all cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
             </div>
 
             <form id="form-edit-wallet" method="POST" class="space-y-4">
@@ -234,20 +242,20 @@
 
 <script>
     function openAddWalletModal() {
-        document.getElementById('modal-add-wallet').classList.remove('hidden');
+        window.openSheetModal('modal-add-wallet');
     }
     function closeAddWalletModal() {
-        document.getElementById('modal-add-wallet').classList.add('hidden');
+        window.closeSheetModal('modal-add-wallet');
     }
     function openEditWalletModal(wallet) {
         document.getElementById('form-edit-wallet').action = '/wallets/' + wallet.id;
         document.getElementById('edit-wallet-name').value = wallet.name;
         document.getElementById('edit-wallet-type').value = wallet.type;
         document.getElementById('edit-wallet-balance').value = wallet.balance;
-        document.getElementById('modal-edit-wallet').classList.remove('hidden');
+        window.openSheetModal('modal-edit-wallet');
     }
     function closeEditWalletModal() {
-        document.getElementById('modal-edit-wallet').classList.add('hidden');
+        window.closeSheetModal('modal-edit-wallet');
     }
 </script>
 @endsection

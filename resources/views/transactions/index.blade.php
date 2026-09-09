@@ -20,61 +20,73 @@
 <div class="space-y-4">
 
     <!-- Screen 2: Top Bar with Month Filter & Quick Search -->
-    <div class="flex items-center justify-between gap-2">
-        <!-- Month Picker Dropdown/Input Button -->
-        <form method="GET" action="{{ route('transactions.index') }}" class="flex items-center" id="month-form">
-            @if(request('type'))
-                <input type="hidden" name="type" value="{{ request('type') }}">
-            @endif
-            @if(request('category_id'))
-                <input type="hidden" name="category_id" value="{{ request('category_id') }}">
-            @endif
-            @if(request('wallet_id'))
-                <input type="hidden" name="wallet_id" value="{{ request('wallet_id') }}">
-            @endif
-            <div class="relative flex items-center">
-                <input type="month" 
-                       name="month" 
-                       value="{{ request('month', now()->format('Y-m')) }}" 
-                       onchange="document.getElementById('month-form').submit()" 
-                       class="min-h-[42px] pl-9 pr-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-xs font-bold text-slate-800 dark:text-slate-100 shadow-2xs focus:outline-hidden focus:border-emerald-500 cursor-pointer">
-                <svg class="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-3 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
-                </svg>
-            </div>
-        </form>
+    <div class="space-y-2.5">
+        <div class="grid grid-cols-2 gap-2">
+            <!-- Month Picker Dropdown/Input Button -->
+            <form method="GET" action="{{ route('transactions.index') }}" class="flex items-center" id="month-form">
+                @if(request('type'))
+                    <input type="hidden" name="type" value="{{ request('type') }}">
+                @endif
+                @if(request('category_id'))
+                    <input type="hidden" name="category_id" value="{{ request('category_id') }}">
+                @endif
+                @if(request('wallet_id'))
+                    <input type="hidden" name="wallet_id" value="{{ request('wallet_id') }}">
+                @endif
+                <div class="relative w-full flex items-center">
+                    <input type="month" 
+                           name="month" 
+                           value="{{ request('month', now()->format('Y-m')) }}" 
+                           onchange="document.getElementById('month-form').submit()" 
+                           class="w-full min-h-[42px] pl-9 pr-2 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-xs font-bold text-slate-800 dark:text-slate-100 shadow-2xs focus:outline-hidden focus:border-emerald-500 cursor-pointer">
+                    <svg class="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-3 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                    </svg>
+                </div>
+            </form>
 
-        <!-- Wallet Filter Dropdown -->
-        <form method="GET" action="{{ route('transactions.index') }}" class="flex items-center">
-            @if(request('type'))
-                <input type="hidden" name="type" value="{{ request('type') }}">
-            @endif
-            @if(request('category_id'))
-                <input type="hidden" name="category_id" value="{{ request('category_id') }}">
-            @endif
-            @if(request('month'))
-                <input type="hidden" name="month" value="{{ request('month') }}">
-            @endif
-            <select name="wallet_id" onchange="this.form.submit()" class="min-h-[42px] text-xs font-bold text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl px-3 py-2 shadow-2xs focus:outline-hidden focus:border-emerald-500">
-                <option value="">Semua Dompet</option>
-                @foreach($wallets as $w)
-                    <option value="{{ $w->id }}" {{ $currentWalletId == $w->id ? 'selected' : '' }}>
-                        {{ $w->name }}
-                    </option>
-                @endforeach
-            </select>
-        </form>
+            <!-- Wallet Filter Dropdown -->
+            <form method="GET" action="{{ route('transactions.index') }}" class="flex items-center">
+                @if(request('type'))
+                    <input type="hidden" name="type" value="{{ request('type') }}">
+                @endif
+                @if(request('category_id'))
+                    <input type="hidden" name="category_id" value="{{ request('category_id') }}">
+                @endif
+                @if(request('month'))
+                    <input type="hidden" name="month" value="{{ request('month') }}">
+                @endif
+                <select name="wallet_id" onchange="this.form.submit()" class="w-full min-h-[42px] text-xs font-bold text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl px-3 py-2 shadow-2xs focus:outline-hidden focus:border-emerald-500 truncate">
+                    <option value="">Semua Dompet</option>
+                    @foreach($wallets as $w)
+                        <option value="{{ $w->id }}" {{ $currentWalletId == $w->id ? 'selected' : '' }}>
+                            {{ $w->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </form>
+        </div>
 
-        <!-- Quick Scan Struk Trigger Button -->
+        <!-- Quick AI Scan Struk Trigger Banner -->
         <button type="button" 
                 onclick="openReceiptScannerModal()" 
-                class="min-h-[42px] px-3 py-2 bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-white rounded-2xl text-xs font-bold shadow-xs active:scale-95 transition-all flex items-center gap-1.5 shrink-0 cursor-pointer" 
-                title="Pindai Struk / Bukti Bayar">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
-                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
-            </svg>
-            <span class="hidden sm:inline">Scan Struk</span>
+                class="w-full py-2.5 px-3 rounded-2xl bg-gradient-to-r from-teal-500/10 via-emerald-500/15 to-teal-500/10 hover:from-teal-500/20 hover:to-emerald-500/20 text-teal-700 dark:text-teal-300 border border-teal-200/70 dark:border-teal-800/70 flex items-center justify-between active:scale-[0.99] transition-all cursor-pointer shadow-2xs group"
+                title="Pindai Struk / Bukti Bayar Otomatis">
+            <div class="flex items-center gap-2.5 min-w-0">
+                <div class="w-7 h-7 rounded-xl bg-teal-500/20 text-teal-600 dark:text-teal-400 flex items-center justify-center font-bold shrink-0">
+                    <svg class="w-4 h-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
+                    </svg>
+                </div>
+                <div class="text-left min-w-0">
+                    <span class="text-xs font-bold text-teal-800 dark:text-teal-200 block leading-tight truncate">📸 Pindai Struk / Bukti Bayar Otomatis</span>
+                    <span class="text-[10px] text-teal-600 dark:text-teal-400 block truncate">Ekstrak otomatis nominal, tanggal & kategori</span>
+                </div>
+            </div>
+            <span class="text-xs font-extrabold text-teal-600 dark:text-teal-400 group-hover:translate-x-0.5 transition-transform shrink-0 ml-2">
+                Scan AI ➔
+            </span>
         </button>
     </div>
 

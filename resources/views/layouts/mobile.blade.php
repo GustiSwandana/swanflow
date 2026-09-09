@@ -52,15 +52,17 @@
         html {
             height: 100%;
             height: -webkit-fill-available;
+            scroll-behavior: smooth;
         }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', system-ui, sans-serif;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
             -webkit-tap-highlight-color: transparent;
             -webkit-touch-callout: none;
             min-height: 100%;
             min-height: 100dvh;
             min-height: -webkit-fill-available;
             overscroll-behavior-y: none;
+            -webkit-overflow-scrolling: touch;
         }
         /* Custom scrollbar reset */
         .no-scrollbar::-webkit-scrollbar {
@@ -83,7 +85,7 @@
             padding-right: max(0.5rem, calc(var(--sar) + 0.5rem));
         }
         .content-safe {
-            padding-bottom: max(7.5rem, calc(6.75rem + var(--sab)));
+            padding-bottom: max(8rem, calc(7.25rem + var(--sab)));
             padding-left: max(1rem, calc(var(--sal) + 1rem));
             padding-right: max(1rem, calc(var(--sar) + 1rem));
         }
@@ -93,6 +95,21 @@
         }
         .banner-safe {
             bottom: max(5.25rem, calc(4.75rem + var(--sab)));
+        }
+
+        /* Fluent entrance animation */
+        @keyframes swanFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animate-swan-in {
+            animation: swanFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
     </style>
 </head>
@@ -210,44 +227,55 @@
                 @yield('content')
             </main>
         @else
-            <main class="flex-1 pt-3 content-safe">
+            <main class="flex-1 pt-3 content-safe animate-swan-in">
                 @yield('content')
             </main>
         @endif
 
-        <!-- 3. FIXED BOTTOM NAVIGATION BAR -->
-        <nav class="fixed bottom-0 left-0 right-0 z-40 flex justify-center pointer-events-none">
-            <div class="w-full max-w-md pointer-events-auto bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-slate-200/80 dark:border-slate-800/80 px-2 pt-1 bottom-nav-safe shadow-xl transition-colors">
-                <div class="flex items-center justify-between">
+        <!-- 3. FLOATING DOCK BOTTOM NAVIGATION BAR -->
+        <nav class="fixed left-0 right-0 z-40 flex justify-center pointer-events-none px-4"
+             style="bottom: max(0.85rem, calc(var(--sab, 0px) + 0.65rem));">
+            <div class="w-full max-w-[420px] pointer-events-auto bg-white/85 dark:bg-slate-900/85 backdrop-blur-2xl border border-white/60 dark:border-slate-700/60 rounded-[28px] shadow-[0_12px_36px_-6px_rgba(0,0,0,0.12),0_4px_16px_-2px_rgba(0,0,0,0.06)] dark:shadow-[0_16px_48px_-8px_rgba(0,0,0,0.65),0_4px_16px_rgba(0,0,0,0.4)] px-2.5 py-1.5 transition-all duration-300">
+                <div class="flex items-center justify-between relative">
 
                     <!-- Tab 1: Beranda -->
                     <a href="{{ route('dashboard') }}"
-                       class="flex-1 flex flex-col items-center justify-center py-1.5 gap-0.5 rounded-xl transition-all {{ request()->routeIs('dashboard') ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500' }}"
-                       aria-label="Home">
-                        <svg class="w-5 h-5" fill="{{ request()->routeIs('dashboard') ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24" stroke-width="{{ request()->routeIs('dashboard') ? '0' : '1.8' }}">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-                        </svg>
-                        <span class="text-[9px] font-semibold leading-none">Beranda</span>
+                       class="flex-1 flex flex-col items-center justify-center py-1.5 px-1 rounded-2xl transition-all duration-200 group relative active:scale-95 {{ request()->routeIs('dashboard') ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-400 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200' }}"
+                       aria-label="Beranda">
+                        @if(request()->routeIs('dashboard'))
+                            <span class="absolute inset-0 rounded-2xl bg-emerald-500/10 dark:bg-emerald-400/10 scale-95 pointer-events-none transition-all"></span>
+                        @endif
+                        <div class="relative z-10 flex flex-col items-center gap-0.5">
+                            <svg class="w-5 h-5 transition-transform duration-200 {{ request()->routeIs('dashboard') ? 'scale-110' : 'group-hover:scale-105' }}" fill="{{ request()->routeIs('dashboard') ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24" stroke-width="{{ request()->routeIs('dashboard') ? '0' : '1.8' }}">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                            </svg>
+                            <span class="text-[10px] tracking-tight leading-none {{ request()->routeIs('dashboard') ? 'font-bold' : 'font-medium' }}">Beranda</span>
+                        </div>
                     </a>
 
                     <!-- Tab 2: Laporan -->
                     <a href="{{ route('reports.index') }}"
-                       class="flex-1 flex flex-col items-center justify-center py-1.5 gap-0.5 rounded-xl transition-all {{ request()->routeIs('reports.*') ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500' }}"
+                       class="flex-1 flex flex-col items-center justify-center py-1.5 px-1 rounded-2xl transition-all duration-200 group relative active:scale-95 {{ request()->routeIs('reports.*') ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-400 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200' }}"
                        aria-label="Laporan">
-                        <svg class="w-5 h-5" fill="{{ request()->routeIs('reports.*') ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24" stroke-width="{{ request()->routeIs('reports.*') ? '0' : '1.8' }}">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z" />
-                        </svg>
-                        <span class="text-[9px] font-semibold leading-none">Laporan</span>
+                        @if(request()->routeIs('reports.*'))
+                            <span class="absolute inset-0 rounded-2xl bg-emerald-500/10 dark:bg-emerald-400/10 scale-95 pointer-events-none transition-all"></span>
+                        @endif
+                        <div class="relative z-10 flex flex-col items-center gap-0.5">
+                            <svg class="w-5 h-5 transition-transform duration-200 {{ request()->routeIs('reports.*') ? 'scale-110' : 'group-hover:scale-105' }}" fill="{{ request()->routeIs('reports.*') ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24" stroke-width="{{ request()->routeIs('reports.*') ? '0' : '1.8' }}">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z" />
+                            </svg>
+                            <span class="text-[10px] tracking-tight leading-none {{ request()->routeIs('reports.*') ? 'font-bold' : 'font-medium' }}">Laporan</span>
+                        </div>
                     </a>
 
                     <!-- Tab 3: Tombol (+) Tambah Transaksi -->
-                    <div class="flex-1 flex justify-center relative -mt-4">
+                    <div class="flex-1 flex justify-center relative -mt-5">
                         <button type="button"
                                 onclick="openTransactionModal('expense')"
-                                class="w-12 h-12 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30 hover:bg-emerald-600 active:scale-90 transition-all cursor-pointer ring-4 ring-white dark:ring-slate-950"
+                                class="w-12 h-12 rounded-full bg-gradient-to-tr from-emerald-600 via-emerald-500 to-teal-400 text-white flex items-center justify-center shadow-lg shadow-emerald-500/35 hover:shadow-emerald-500/50 active:scale-90 hover:scale-105 transition-all duration-200 cursor-pointer ring-4 ring-white/95 dark:ring-slate-900/95"
                                 aria-label="Tambah Transaksi Cepat">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                            <svg class="w-6 h-6 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                             </svg>
                         </button>
@@ -255,22 +283,32 @@
 
                     <!-- Tab 4: Riwayat Transaksi -->
                     <a href="{{ route('transactions.index') }}"
-                       class="flex-1 flex flex-col items-center justify-center py-1.5 gap-0.5 rounded-xl transition-all {{ request()->routeIs('transactions.*') ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500' }}"
+                       class="flex-1 flex flex-col items-center justify-center py-1.5 px-1 rounded-2xl transition-all duration-200 group relative active:scale-95 {{ request()->routeIs('transactions.*') ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-400 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200' }}"
                        aria-label="Riwayat Transaksi">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="{{ request()->routeIs('transactions.*') ? '2.2' : '1.8' }}">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        <span class="text-[9px] font-semibold leading-none">Riwayat</span>
+                        @if(request()->routeIs('transactions.*'))
+                            <span class="absolute inset-0 rounded-2xl bg-emerald-500/10 dark:bg-emerald-400/10 scale-95 pointer-events-none transition-all"></span>
+                        @endif
+                        <div class="relative z-10 flex flex-col items-center gap-0.5">
+                            <svg class="w-5 h-5 transition-transform duration-200 {{ request()->routeIs('transactions.*') ? 'scale-110' : 'group-hover:scale-105' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="{{ request()->routeIs('transactions.*') ? '2.2' : '1.8' }}">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <span class="text-[10px] tracking-tight leading-none {{ request()->routeIs('transactions.*') ? 'font-bold' : 'font-medium' }}">Riwayat</span>
+                        </div>
                     </a>
 
                     <!-- Tab 5: Profil -->
                     <a href="{{ route('profile.edit') }}"
-                       class="flex-1 flex flex-col items-center justify-center py-1.5 gap-0.5 rounded-xl transition-all {{ request()->routeIs('profile.*') ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500' }}"
+                       class="flex-1 flex flex-col items-center justify-center py-1.5 px-1 rounded-2xl transition-all duration-200 group relative active:scale-95 {{ request()->routeIs('profile.*') ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-400 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200' }}"
                        aria-label="Profil">
-                        <svg class="w-5 h-5" fill="{{ request()->routeIs('profile.*') ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24" stroke-width="{{ request()->routeIs('profile.*') ? '0' : '1.8' }}">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                        </svg>
-                        <span class="text-[9px] font-semibold leading-none">Profil</span>
+                        @if(request()->routeIs('profile.*'))
+                            <span class="absolute inset-0 rounded-2xl bg-emerald-500/10 dark:bg-emerald-400/10 scale-95 pointer-events-none transition-all"></span>
+                        @endif
+                        <div class="relative z-10 flex flex-col items-center gap-0.5">
+                            <svg class="w-5 h-5 transition-transform duration-200 {{ request()->routeIs('profile.*') ? 'scale-110' : 'group-hover:scale-105' }}" fill="{{ request()->routeIs('profile.*') ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24" stroke-width="{{ request()->routeIs('profile.*') ? '0' : '1.8' }}">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                            </svg>
+                            <span class="text-[10px] tracking-tight leading-none {{ request()->routeIs('profile.*') ? 'font-bold' : 'font-medium' }}">Profil</span>
+                        </div>
                     </a>
 
                 </div>
@@ -308,20 +346,20 @@
 
                     <!-- Quick Receipt Scanner Trigger Banner -->
                     <button type="button" onclick="openReceiptScannerModal()" class="w-full py-2.5 px-3 mb-3 rounded-2xl bg-gradient-to-r from-teal-500/10 via-emerald-500/15 to-teal-500/10 hover:from-teal-500/20 hover:to-emerald-500/20 text-teal-700 dark:text-teal-300 border border-teal-200/70 dark:border-teal-800/70 flex items-center justify-between active:scale-[0.99] transition-all cursor-pointer shadow-2xs group">
-                        <div class="flex items-center gap-2">
-                            <div class="w-7 h-7 rounded-xl bg-teal-500/20 text-teal-600 dark:text-teal-400 flex items-center justify-center font-bold">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <div class="w-7 h-7 rounded-xl bg-teal-500/20 text-teal-600 dark:text-teal-400 flex items-center justify-center font-bold shrink-0">
                                 <svg class="w-4 h-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
                                 </svg>
                             </div>
-                            <div class="text-left">
-                                <span class="text-xs font-bold text-teal-800 dark:text-teal-200 block leading-tight">📸 Pindai Struk / Bukti Bayar Otomatis</span>
-                                <span class="text-[10px] text-teal-600 dark:text-teal-400">Ekstrak otomatis nominal, tanggal & kategori</span>
+                            <div class="text-left min-w-0">
+                                <span class="text-xs font-bold text-teal-800 dark:text-teal-200 block leading-tight truncate">📸 Pindai Struk / Bukti Bayar Otomatis</span>
+                                <span class="text-[10px] text-teal-600 dark:text-teal-400 block truncate">Ekstrak otomatis nominal, tanggal & kategori</span>
                             </div>
                         </div>
-                        <span class="text-xs font-extrabold text-teal-600 dark:text-teal-400 group-hover:translate-x-0.5 transition-transform">
-                            Scan →
+                        <span class="text-xs font-extrabold text-teal-600 dark:text-teal-400 group-hover:translate-x-0.5 transition-transform shrink-0 ml-2">
+                            Scan AI ➔
                         </span>
                     </button>
 
@@ -380,68 +418,67 @@
                             </div>
                         </div>
 
-                        <!-- Pilihan Dompet (Asal) -->
+                        <!-- Pilihan Dompet (Asal) & Kategori / Dompet Tujuan (Grid 2-Kolom Kompak) -->
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <!-- Dompet (Asal) -->
+                            <div>
+                                <label id="wallet-label" for="wallet-select" class="block text-xs font-medium text-slate-400 dark:text-slate-400 mb-1 truncate">Dompet / Rekening</label>
+                                <select id="wallet-select" name="wallet_id" required class="w-full min-h-[44px] px-2.5 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
+                                    @foreach($modalWallets as $w)
+                                        <option value="{{ $w->id }}" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
+                                            {{ $w->name }} (Rp {{ number_format($w->balance, 0, ',', '.') }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <!-- Pilihan Dompet Tujuan (Khusus Transfer) -->
+                            <div id="target-wallet-container" class="hidden">
+                                <label for="target-wallet-select" class="block text-xs font-medium text-slate-400 dark:text-slate-400 mb-1 truncate">Dompet Tujuan (Ke)</label>
+                                <select id="target-wallet-select" name="target_wallet_id" class="w-full min-h-[44px] px-2.5 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
+                                    @foreach($modalWallets as $index => $w)
+                                        <option value="{{ $w->id }}" {{ $index === 1 ? 'selected' : '' }} class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
+                                            {{ $w->name }} (Rp {{ number_format($w->balance, 0, ',', '.') }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <!-- Pilihan Kategori (Untuk Pengeluaran & Pemasukan) -->
+                            <div id="category-container">
+                                <label for="category-select" class="block text-xs font-medium text-slate-400 dark:text-slate-400 mb-1 truncate">Kategori</label>
+                                <select id="category-select" name="category_id" required class="w-full min-h-[44px] px-2.5 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
+                                    @foreach($modalCategories as $cat)
+                                        <option value="{{ $cat->id }}" data-type="{{ is_string($cat->type) ? $cat->type : $cat->type->value }}" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
+                                            {{ $cat->name }} ({{ is_string($cat->type) ? ucfirst($cat->type) : $cat->type->label() }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Tanggal (Full Width) -->
                         <div>
-                            <label id="wallet-label" for="wallet-select" class="block text-xs font-medium text-slate-400 dark:text-slate-400 mb-1">Dompet / Rekening</label>
-                            <select id="wallet-select" name="wallet_id" required class="w-full min-h-[48px] px-3 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-800 dark:text-slate-100 focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
-                                @foreach($modalWallets as $w)
-                                    <option value="{{ $w->id }}" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
-                                        {{ $w->name }} (Rp {{ number_format($w->balance, 0, ',', '.') }})
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <!-- Pilihan Dompet Tujuan (Khusus Transfer) -->
-                        <div id="target-wallet-container" class="hidden">
-                            <label for="target-wallet-select" class="block text-xs font-medium text-slate-400 dark:text-slate-400 mb-1">Dompet Tujuan (Ke)</label>
-                            <select id="target-wallet-select" name="target_wallet_id" class="w-full min-h-[48px] px-3 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-800 dark:text-slate-100 focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
-                                @foreach($modalWallets as $index => $w)
-                                    <option value="{{ $w->id }}" {{ $index === 1 ? 'selected' : '' }} class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
-                                        {{ $w->name }} (Rp {{ number_format($w->balance, 0, ',', '.') }})
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <!-- Pilihan Kategori (Untuk Pengeluaran & Pemasukan) -->
-                        <div id="category-container">
-                            <label for="category-select" class="block text-xs font-medium text-slate-400 dark:text-slate-400 mb-1">Kategori</label>
-                            <select id="category-select" name="category_id" required class="w-full min-h-[48px] px-3 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-800 dark:text-slate-100 focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
-                                @foreach($modalCategories as $cat)
-                                    <option value="{{ $cat->id }}" data-type="{{ is_string($cat->type) ? $cat->type : $cat->type->value }}" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
-                                        {{ $cat->name }} ({{ is_string($cat->type) ? ucfirst($cat->type) : $cat->type->label() }})
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <!-- Tanggal & Keterangan (Grid) -->
-                        <div class="grid grid-cols-1 gap-3">
-                            <div>
-                                <div class="flex items-center justify-between mb-1">
-                                    <label for="date-input" class="text-xs font-medium text-slate-400 dark:text-slate-400">Tanggal</label>
-                                    <div class="flex items-center gap-1.5 text-[11px]">
-                                        <button type="button" onclick="setDatePreset('date-input', 'today')" class="font-bold text-emerald-600 dark:text-emerald-400 hover:underline cursor-pointer">Hari Ini</button>
-                                        <span class="text-slate-300 dark:text-slate-600">•</span>
-                                        <button type="button" onclick="setDatePreset('date-input', 'yesterday')" class="font-medium text-slate-500 hover:underline cursor-pointer">Kemarin</button>
-                                    </div>
-                                </div>
-                                <input id="date-input" 
-                                       type="date" 
-                                       name="date" 
-                                       value="{{ date('Y-m-d') }}" 
-                                       required 
-                                       class="w-full min-h-[44px] px-3 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-800 dark:text-slate-100 focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
+                            <div class="flex items-center justify-between mb-1">
+                                <label for="date-input" class="text-xs font-semibold text-slate-500 dark:text-slate-400">Tanggal</label>
+                                <button type="button" onclick="setDatePreset('date-input', 'today')" class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline cursor-pointer">Hari Ini</button>
                             </div>
-                            <div>
-                                <label for="desc-input" class="block text-xs font-medium text-slate-400 dark:text-slate-400 mb-1">Catatan (Opsional)</label>
-                                <input id="desc-input" 
-                                       type="text" 
-                                       name="description" 
-                                       placeholder="Contoh: Makan siang bareng rekan kerja" 
-                                       class="w-full min-h-[44px] px-3 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
-                            </div>
+                            <input id="date-input" 
+                                   type="date" 
+                                   name="date" 
+                                   value="{{ date('Y-m-d') }}" 
+                                   required 
+                                   class="block w-full max-w-full min-w-0 box-border min-h-[44px] px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-medium text-slate-800 dark:text-slate-100 focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
+                        </div>
+
+                        <!-- Catatan (Full Width) -->
+                        <div>
+                            <label for="desc-input" class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Catatan (Opsional)</label>
+                            <input id="desc-input" 
+                                   type="text" 
+                                   name="description" 
+                                   placeholder="Contoh: Makan siang" 
+                                   class="block w-full max-w-full min-w-0 box-border min-h-[44px] px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
                         </div>
 
                         <!-- Submit Button (Touch friendly min 48px) -->
@@ -482,12 +519,22 @@
                     </div>
 
                     <!-- Quick Scan Receipt Button for Edit -->
-                    <button type="button" onclick="openReceiptScannerModal('edit')" class="w-full mb-3 py-2.5 px-3 rounded-xl bg-teal-500/10 hover:bg-teal-500/15 border border-teal-500/20 text-teal-600 dark:text-teal-400 font-bold text-xs flex items-center justify-center gap-2 active:scale-98 transition-all cursor-pointer">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
-                        </svg>
-                        <span>📸 Pindai Struk untuk Perbarui Data</span>
+                    <button type="button" onclick="openReceiptScannerModal('edit')" class="w-full mb-3 py-2.5 px-3 rounded-2xl bg-gradient-to-r from-teal-500/10 via-emerald-500/15 to-teal-500/10 hover:from-teal-500/20 hover:to-emerald-500/20 text-teal-700 dark:text-teal-300 border border-teal-200/70 dark:border-teal-800/70 flex items-center justify-between active:scale-[0.99] transition-all cursor-pointer shadow-2xs group">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <div class="w-7 h-7 rounded-xl bg-teal-500/20 text-teal-600 dark:text-teal-400 flex items-center justify-center font-bold shrink-0">
+                                <svg class="w-4 h-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
+                                </svg>
+                            </div>
+                            <div class="text-left min-w-0">
+                                <span class="text-xs font-bold text-teal-800 dark:text-teal-200 block leading-tight truncate">📸 Pindai Struk untuk Perbarui Data</span>
+                                <span class="text-[10px] text-teal-600 dark:text-teal-400 block truncate">Perbarui otomatis nominal, tanggal & kategori</span>
+                            </div>
+                        </div>
+                        <span class="text-xs font-extrabold text-teal-600 dark:text-teal-400 group-hover:translate-x-0.5 transition-transform shrink-0 ml-2">
+                            Scan AI ➔
+                        </span>
                     </button>
 
                     <!-- Form -->
@@ -546,67 +593,66 @@
                             </div>
                         </div>
 
-                        <!-- Dompet Asal -->
+                        <!-- Dompet Asal & Kategori / Dompet Tujuan (Grid 2-Kolom Kompak) -->
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <!-- Dompet Asal -->
+                            <div>
+                                <label id="edit-wallet-label" for="edit-wallet-select" class="block text-xs font-medium text-slate-400 dark:text-slate-400 mb-1 truncate">Dompet / Rekening</label>
+                                <select id="edit-wallet-select" name="wallet_id" required class="w-full min-h-[44px] px-2.5 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
+                                    @foreach($modalWallets as $w)
+                                        <option value="{{ $w->id }}" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
+                                            {{ $w->name }} (Rp {{ number_format($w->balance, 0, ',', '.') }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <!-- Dompet Tujuan (Khusus Transfer) -->
+                            <div id="edit-target-wallet-container" class="hidden">
+                                <label for="edit-target-wallet-select" class="block text-xs font-medium text-slate-400 dark:text-slate-400 mb-1 truncate">Dompet Tujuan (Ke)</label>
+                                <select id="edit-target-wallet-select" name="target_wallet_id" class="w-full min-h-[44px] px-2.5 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
+                                    @foreach($modalWallets as $index => $w)
+                                        <option value="{{ $w->id }}" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
+                                            {{ $w->name }} (Rp {{ number_format($w->balance, 0, ',', '.') }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <!-- Kategori -->
+                            <div id="edit-category-container">
+                                <label for="edit-category-select" class="block text-xs font-medium text-slate-400 dark:text-slate-400 mb-1 truncate">Kategori</label>
+                                <select id="edit-category-select" name="category_id" required class="w-full min-h-[44px] px-2.5 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
+                                    @foreach($modalCategories as $cat)
+                                        <option value="{{ $cat->id }}" data-type="{{ is_string($cat->type) ? $cat->type : $cat->type->value }}" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
+                                            {{ $cat->name }} ({{ is_string($cat->type) ? ucfirst($cat->type) : $cat->type->label() }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Tanggal (Full Width) -->
                         <div>
-                            <label id="edit-wallet-label" for="edit-wallet-select" class="block text-xs font-medium text-slate-400 dark:text-slate-400 mb-1">Dompet / Rekening</label>
-                            <select id="edit-wallet-select" name="wallet_id" required class="w-full min-h-[48px] px-3 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-800 dark:text-slate-100 focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
-                                @foreach($modalWallets as $w)
-                                    <option value="{{ $w->id }}" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
-                                        {{ $w->name }} (Rp {{ number_format($w->balance, 0, ',', '.') }})
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <!-- Dompet Tujuan (Khusus Transfer) -->
-                        <div id="edit-target-wallet-container" class="hidden">
-                            <label for="edit-target-wallet-select" class="block text-xs font-medium text-slate-400 dark:text-slate-400 mb-1">Dompet Tujuan (Ke)</label>
-                            <select id="edit-target-wallet-select" name="target_wallet_id" class="w-full min-h-[48px] px-3 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-800 dark:text-slate-100 focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
-                                @foreach($modalWallets as $index => $w)
-                                    <option value="{{ $w->id }}" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
-                                        {{ $w->name }} (Rp {{ number_format($w->balance, 0, ',', '.') }})
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <!-- Kategori -->
-                        <div id="edit-category-container">
-                            <label for="edit-category-select" class="block text-xs font-medium text-slate-400 dark:text-slate-400 mb-1">Kategori</label>
-                            <select id="edit-category-select" name="category_id" required class="w-full min-h-[48px] px-3 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-800 dark:text-slate-100 focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
-                                @foreach($modalCategories as $cat)
-                                    <option value="{{ $cat->id }}" data-type="{{ is_string($cat->type) ? $cat->type : $cat->type->value }}" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
-                                        {{ $cat->name }} ({{ is_string($cat->type) ? ucfirst($cat->type) : $cat->type->label() }})
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <!-- Tanggal & Catatan -->
-                        <div class="grid grid-cols-1 gap-3">
-                            <div>
-                                <div class="flex items-center justify-between mb-1">
-                                    <label for="edit-date-input" class="text-xs font-medium text-slate-400 dark:text-slate-400">Tanggal</label>
-                                    <div class="flex items-center gap-1.5 text-[11px]">
-                                        <button type="button" onclick="setDatePreset('edit-date-input', 'today')" class="font-bold text-emerald-600 dark:text-emerald-400 hover:underline cursor-pointer">Hari Ini</button>
-                                        <span class="text-slate-300 dark:text-slate-600">•</span>
-                                        <button type="button" onclick="setDatePreset('edit-date-input', 'yesterday')" class="font-medium text-slate-500 hover:underline cursor-pointer">Kemarin</button>
-                                    </div>
-                                </div>
-                                <input id="edit-date-input" 
-                                       type="date" 
-                                       name="date" 
-                                       required 
-                                       class="w-full min-h-[44px] px-3 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-800 dark:text-slate-100 focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
+                            <div class="flex items-center justify-between mb-1">
+                                <label for="edit-date-input" class="text-xs font-semibold text-slate-500 dark:text-slate-400">Tanggal</label>
+                                <button type="button" onclick="setDatePreset('edit-date-input', 'today')" class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline cursor-pointer">Hari Ini</button>
                             </div>
-                            <div>
-                                <label for="edit-desc-input" class="block text-xs font-medium text-slate-400 dark:text-slate-400 mb-1">Catatan (Opsional)</label>
-                                <input id="edit-desc-input" 
-                                       type="text" 
-                                       name="description" 
-                                       placeholder="Catatan transaksi..." 
-                                       class="w-full min-h-[44px] px-3 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
-                            </div>
+                            <input id="edit-date-input" 
+                                   type="date" 
+                                   name="date" 
+                                   required 
+                                   class="block w-full max-w-full min-w-0 box-border min-h-[44px] px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-medium text-slate-800 dark:text-slate-100 focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
+                        </div>
+
+                        <!-- Catatan (Full Width) -->
+                        <div>
+                            <label for="edit-desc-input" class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Catatan (Opsional)</label>
+                            <input id="edit-desc-input" 
+                                   type="text" 
+                                   name="description" 
+                                   placeholder="Catatan transaksi..." 
+                                   class="block w-full max-w-full min-w-0 box-border min-h-[44px] px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
                         </div>
 
                         <!-- Submit Button -->
@@ -639,25 +685,27 @@
         <div id="receipt-scanner-modal" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true" role="dialog">
             <div id="scanner-backdrop" onclick="closeReceiptScannerModal()" class="fixed inset-0 bg-slate-950/75 backdrop-blur-xs transition-opacity duration-300 opacity-0"></div>
             <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
-                <div id="scanner-panel" class="w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-4 pt-3 modal-sheet-safe border-t border-slate-100 dark:border-slate-800 pointer-events-auto transform translate-y-full transition-transform duration-300 space-y-2.5 max-h-[92vh] overflow-y-auto no-scrollbar text-slate-800 dark:text-white">
-                    <div class="w-12 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-1 cursor-pointer" onclick="closeReceiptScannerModal()"></div>
+                <div id="scanner-panel" class="w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-4 pt-3 modal-sheet-safe border-t border-slate-100 dark:border-slate-800 pointer-events-auto transform translate-y-full transition-transform duration-300 space-y-3 max-h-[92vh] overflow-y-auto no-scrollbar text-slate-800 dark:text-white">
+                    <div class="w-10 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-1 cursor-pointer" onclick="closeReceiptScannerModal()"></div>
 
                     <!-- Modal Header -->
-                    <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
-                        <div class="flex items-center gap-2">
-                            <div class="w-8 h-8 rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center justify-center font-bold shadow-2xs shrink-0">
+                    <div class="flex items-center justify-between pb-2.5 border-b border-slate-100 dark:border-slate-800">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-emerald-500/20 to-teal-500/30 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 flex items-center justify-center font-bold shadow-2xs shrink-0">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
                                 </svg>
                             </div>
                             <div>
-                                <h2 class="text-sm font-bold text-slate-900 dark:text-white leading-tight">Pindai Struk / Bukti Bayar</h2>
+                                <h2 class="text-sm font-bold text-slate-900 dark:text-white leading-tight">Pindai Struk & Bukti Bayar</h2>
                                 <p class="text-[10px] text-slate-500 dark:text-slate-400">Deteksi otomatis nominal, tanggal & kategori</p>
                             </div>
                         </div>
-                        <button type="button" onclick="closeReceiptScannerModal()" aria-label="Tutup" class="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center justify-center active:scale-95 transition-all text-xs">
-                            ✕
+                        <button type="button" onclick="closeReceiptScannerModal()" aria-label="Tutup modal pindai" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 flex items-center justify-center active:scale-95 transition-all cursor-pointer">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
                         </button>
                     </div>
 
@@ -666,92 +714,125 @@
                     <input type="file" id="scanner-file-input" accept="image/*" class="hidden" onchange="processReceiptFile(this)">
 
                     <!-- State 1: Upload / Capture Selection -->
-                    <div id="scanner-pick-state" class="space-y-2.5">
-                        <div id="scanner-dropzone" onclick="document.getElementById('scanner-file-input').click()" class="p-3.5 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 text-center bg-slate-50 dark:bg-slate-800/40 space-y-1.5 cursor-pointer hover:border-emerald-500 dark:hover:border-emerald-400 active:scale-[0.99] transition-all">
-                            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 mx-auto flex items-center justify-center">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                    <div id="scanner-pick-state" class="space-y-3">
+                        <!-- Guidance Info Card -->
+                        <div class="p-3.5 rounded-2xl bg-gradient-to-br from-emerald-500/10 via-teal-500/10 to-emerald-500/5 dark:from-emerald-950/40 dark:via-teal-950/30 dark:to-emerald-950/20 border border-emerald-500/20 dark:border-emerald-800/40 flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
                                 </svg>
                             </div>
-                            <div>
-                                <h4 class="text-xs font-bold text-slate-800 dark:text-slate-100">Foto Struk atau Bukti Transfer</h4>
-                                <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
-                                    Ketuk atau tempel tangkapan layar (<span class="font-mono text-emerald-600 dark:text-emerald-400 font-bold">Ctrl+V</span>)
+                            <div class="min-w-0">
+                                <h4 class="text-xs font-bold text-emerald-900 dark:text-emerald-200">Pindai Struk & Bukti Bayar Otomatis</h4>
+                                <p class="text-[11px] text-emerald-700/90 dark:text-emerald-300/80 mt-0.5 leading-relaxed">
+                                    Foto struk belanja atau unggah tangkapan layar m-Banking. AI akan mendeteksi total belanja, tanggal, dan nama toko dalam hitungan detik.
                                 </p>
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-2">
-                            <button type="button" onclick="document.getElementById('scanner-camera-input').click()" class="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 text-white font-bold text-xs flex items-center justify-center gap-1.5 active:scale-95 shadow-sm shadow-emerald-600/30 transition-all cursor-pointer">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
-                                </svg>
-                                <span>Buka Kamera</span>
+                        <!-- Dual Interactive Action Cards -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <!-- Option 1: Ambil Foto Kamera -->
+                            <button type="button" 
+                                    onclick="document.getElementById('scanner-camera-input').click()" 
+                                    class="p-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-3 active:scale-[0.98] shadow-md shadow-emerald-600/25 transition-all text-left cursor-pointer group">
+                                <div class="w-10 h-10 rounded-xl bg-white/20 text-white flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
+                                    </svg>
+                                </div>
+                                <div class="min-w-0">
+                                    <span class="text-xs font-black block text-white leading-tight">Buka Kamera</span>
+                                    <span class="text-[10px] text-emerald-100 block mt-0.5">Foto fisik struk langsung</span>
+                                </div>
                             </button>
-                            <button type="button" onclick="document.getElementById('scanner-file-input').click()" class="py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 font-bold text-xs flex items-center justify-center gap-1.5 active:scale-95 border border-slate-200 dark:border-slate-700 transition-all cursor-pointer">
-                                <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                                </svg>
-                                <span>Galeri / File</span>
+
+                            <!-- Option 2: Unggah dari Galeri -->
+                            <button type="button" 
+                                    id="scanner-dropzone"
+                                    onclick="document.getElementById('scanner-file-input').click()" 
+                                    class="p-3.5 rounded-2xl bg-white dark:bg-slate-800/90 border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-400 text-slate-800 dark:text-slate-100 flex items-center gap-3 active:scale-[0.98] transition-all text-left cursor-pointer group">
+                                <div class="w-10 h-10 rounded-xl bg-teal-500/10 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                                    </svg>
+                                </div>
+                                <div class="min-w-0">
+                                    <span class="text-xs font-black block text-slate-900 dark:text-white leading-tight">Galeri / File</span>
+                                    <span class="text-[10px] text-slate-500 dark:text-slate-400 block mt-0.5">Pilih screenshot transfer</span>
+                                </div>
                             </button>
+                        </div>
+
+                        <!-- Supported Brands Pill Bar -->
+                        <div class="pt-1 text-center">
+                            <p class="text-[10px] text-slate-400 dark:text-slate-500">
+                                Mendukung: QRIS · Struk Kasir · BCA · Mandiri · BRI · GoPay · OVO · ShopeePay · DANA
+                            </p>
                         </div>
                     </div>
 
                     <!-- State 2: Scanning & Processing State (With Laser Beam Animation) -->
-                    <div id="scanner-processing-state" class="hidden space-y-2.5">
-                        <div class="relative w-full h-48 rounded-2xl overflow-hidden bg-slate-900 border border-slate-700 flex items-center justify-center">
-                            <img id="scanner-preview-img" src="" alt="Struk Preview" class="max-h-full max-w-full object-contain opacity-75">
+                    <div id="scanner-processing-state" class="hidden space-y-3">
+                        <div class="relative w-full h-44 rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 flex items-center justify-center shadow-inner">
+                            <img id="scanner-preview-img" src="" alt="Struk Preview" class="max-h-full max-w-full object-contain opacity-80">
                             <!-- Laser Scanning Bar -->
                             <div class="scanner-laser-bar absolute left-0 right-0 h-1 bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-400 shadow-[0_0_15px_#10b981]"></div>
                         </div>
 
-                        <div class="text-center p-2.5 space-y-1.5 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
+                        <div class="text-center p-3 space-y-2 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80">
                             <div class="flex items-center justify-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold text-xs">
-                                <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 animate-spin shrink-0" fill="none" viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
                                 </svg>
                                 <span id="scanner-status-text">Memindai struk pembayaran...</span>
                             </div>
                             <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
-                                <div id="scanner-progress-fill" class="bg-emerald-500 h-full w-1/3 transition-all duration-300"></div>
+                                <div id="scanner-progress-fill" class="bg-gradient-to-r from-teal-500 to-emerald-500 h-full w-1/3 transition-all duration-300"></div>
                             </div>
-                            <p class="text-[10px] text-slate-400" id="scanner-substatus-text">Membaca nominal, tanggal, dan nama toko...</p>
+                            <p class="text-[10px] text-slate-400 dark:text-slate-400" id="scanner-substatus-text">Membaca nominal, tanggal, dan nama toko...</p>
                         </div>
+
+                        <button type="button" onclick="resetReceiptScannerState()" class="w-full py-2 text-xs font-semibold text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 active:scale-95 transition-all cursor-pointer">
+                            Batal Pindai
+                        </button>
                     </div>
 
                     <!-- State 3: Result Card (Interactive Review & Edit Mode) -->
                     <div id="scanner-result-state" class="hidden space-y-2.5">
-                        <!-- Top Status & Actions -->
-                        <div class="flex items-center justify-between pb-0.5">
-                            <div class="flex items-center gap-1.5 min-w-0">
+                        <!-- Top Status & Actions Banner -->
+                        <div class="flex items-center justify-between pb-1 border-b border-slate-100 dark:border-slate-800/60">
+                            <div class="flex items-center gap-2 min-w-0">
                                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
-                                <span class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate">Hasil Pindai</span>
-                                <span id="scan-source-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 uppercase border border-slate-200 dark:border-slate-700 shrink-0">
+                                <span class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate">Rincian Terdeteksi</span>
+                                <span id="scan-source-badge" class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 uppercase border border-slate-200 dark:border-slate-700 shrink-0">
                                     ⚡ Smart OCR
                                 </span>
                             </div>
                             <button type="button" onclick="toggleScanReceiptImagePreview()" class="py-1 px-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-[11px] font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-1 active:scale-95 transition-all cursor-pointer border border-slate-200 dark:border-slate-700 shrink-0">
-                                <span>🔍</span>
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                                </svg>
                                 <span id="scan-preview-btn-text">Lihat Foto</span>
                             </button>
                         </div>
 
                         <!-- Collapsible Receipt Photo Preview -->
-                        <div id="scanner-receipt-photo-container" class="hidden rounded-xl overflow-hidden bg-slate-950 border border-slate-700 max-h-40 flex items-center justify-center relative transition-all">
+                        <div id="scanner-receipt-photo-container" class="hidden rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 max-h-40 flex items-center justify-center relative transition-all shadow-inner">
                             <img id="scanner-result-photo-img" src="" alt="Foto Struk" class="max-h-40 max-w-full object-contain">
-                            <span class="absolute bottom-1 right-2 text-[9px] bg-black/70 text-white/90 px-2 py-0.5 rounded-md">Ketuk tombol lagi untuk menutup</span>
+                            <span class="absolute bottom-1 right-2 text-[9px] bg-black/70 text-white/90 px-2 py-0.5 rounded-md">Ketuk lagi untuk menutup</span>
                         </div>
 
-                        <!-- Editable Amount Field -->
-                        <div>
-                            <div class="flex items-center justify-between mb-0.5">
-                                <label for="scan-edit-amount" class="text-[11px] font-medium text-slate-400 dark:text-slate-400">Nominal (Rp) <span class="text-rose-500">*</span></label>
-                                <span id="scan-amount-formatted" class="text-xs font-extrabold text-emerald-600 dark:text-emerald-400">Rp 0</span>
+                        <!-- Editable Total Nominal Card -->
+                        <div class="rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 p-2.5 space-y-1.5">
+                            <div class="flex items-center justify-between">
+                                <label for="scan-edit-amount" class="text-[10px] font-bold tracking-wider text-slate-400 dark:text-slate-400 uppercase">Total Nominal (Rp) <span class="text-rose-500">*</span></label>
+                                <span id="scan-amount-formatted" class="text-xs font-black text-emerald-600 dark:text-emerald-400">Rp 0</span>
                             </div>
-                            <div class="relative rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 focus-within:border-emerald-500 dark:focus-within:border-emerald-400 focus-within:ring-2 focus-within:ring-emerald-500/20 px-3 py-1.5 transition-all flex items-center">
-                                <span class="text-xs font-bold text-slate-400 mr-1.5">Rp</span>
+                            <div class="relative flex items-center bg-white dark:bg-slate-900/90 rounded-xl px-3 py-1 border border-slate-200/80 dark:border-slate-700 focus-within:border-emerald-500 dark:focus-within:border-emerald-400 focus-within:ring-2 focus-within:ring-emerald-500/20">
+                                <span class="text-sm font-extrabold text-slate-400 dark:text-slate-500 mr-1.5 shrink-0">Rp</span>
                                 <input id="scan-edit-amount" 
                                        type="number" 
                                        step="any" 
@@ -759,56 +840,51 @@
                                        placeholder="0" 
                                        required 
                                        oninput="updateInputAmountPreview('scan-edit-amount', 'scan-amount-formatted')"
-                                       class="w-full text-lg font-extrabold text-slate-900 dark:text-white bg-transparent border-none outline-hidden focus:ring-0 placeholder-slate-400 dark:placeholder-slate-600">
+                                       class="w-full text-xl font-black text-slate-900 dark:text-white bg-transparent border-none outline-hidden focus:ring-0 placeholder-slate-300 dark:placeholder-slate-600 p-0">
                             </div>
-                            <!-- Quick Nominal Increment Pills -->
-                            <div class="flex items-center gap-1 overflow-x-auto no-scrollbar py-1 pt-1 -mx-0.5 px-0.5">
-                                <button type="button" onclick="adjustInputAmount('scan-edit-amount', 'scan-amount-formatted', 10000)" class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-slate-100 hover:bg-emerald-50 dark:bg-slate-800 dark:hover:bg-emerald-950/50 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer shrink-0">+10rb</button>
-                                <button type="button" onclick="adjustInputAmount('scan-edit-amount', 'scan-amount-formatted', 20000)" class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-slate-100 hover:bg-emerald-50 dark:bg-slate-800 dark:hover:bg-emerald-950/50 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer shrink-0">+20rb</button>
-                                <button type="button" onclick="adjustInputAmount('scan-edit-amount', 'scan-amount-formatted', 50000)" class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-slate-100 hover:bg-emerald-50 dark:bg-slate-800 dark:hover:bg-emerald-950/50 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer shrink-0">+50rb</button>
-                                <button type="button" onclick="adjustInputAmount('scan-edit-amount', 'scan-amount-formatted', 100000)" class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-slate-100 hover:bg-emerald-50 dark:bg-slate-800 dark:hover:bg-emerald-950/50 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer shrink-0">+100rb</button>
-                                <button type="button" onclick="roundInputAmount('scan-edit-amount', 'scan-amount-formatted')" class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/60 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 active:scale-95 transition-all cursor-pointer shrink-0" title="Bulatkan nominal">Bulatkan</button>
-                                <button type="button" onclick="clearInputAmount('scan-edit-amount', 'scan-amount-formatted')" class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900/50 active:scale-95 transition-all cursor-pointer shrink-0">✕ Reset</button>
+                            <!-- Balanced 4-chip grid: Fits comfortably without cutting off -->
+                            <div class="grid grid-cols-4 gap-1 pt-0.5">
+                                <button type="button" onclick="adjustInputAmount('scan-edit-amount', 'scan-amount-formatted', 10000)" class="h-6 rounded-md text-[10px] font-bold bg-white dark:bg-slate-700/70 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200/80 dark:border-slate-600 active:scale-95 transition-all cursor-pointer flex items-center justify-center">+10rb</button>
+                                <button type="button" onclick="adjustInputAmount('scan-edit-amount', 'scan-amount-formatted', 50000)" class="h-6 rounded-md text-[10px] font-bold bg-white dark:bg-slate-700/70 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200/80 dark:border-slate-600 active:scale-95 transition-all cursor-pointer flex items-center justify-center">+50rb</button>
+                                <button type="button" onclick="adjustInputAmount('scan-edit-amount', 'scan-amount-formatted', 100000)" class="h-6 rounded-md text-[10px] font-bold bg-white dark:bg-slate-700/70 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200/80 dark:border-slate-600 active:scale-95 transition-all cursor-pointer flex items-center justify-center">+100rb</button>
+                                <button type="button" onclick="roundInputAmount('scan-edit-amount', 'scan-amount-formatted')" class="h-6 rounded-md text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800 active:scale-95 transition-all cursor-pointer flex items-center justify-center" title="Bulatkan nominal">Bulatkan</button>
                             </div>
                         </div>
 
-                        <!-- Type Switcher (Pemasukan vs Pengeluaran) -->
+                        <!-- Jenis Transaksi (Full-width Segmented Bar) -->
                         <div>
-                            <div class="grid grid-cols-2 p-0.5 bg-slate-100 dark:bg-slate-800 rounded-lg gap-1">
-                                <button type="button" id="scan-type-btn-expense" onclick="setScanResultType('expense')" class="py-1.5 flex items-center justify-center text-xs font-bold rounded-md transition-all bg-white dark:bg-slate-700 text-rose-600 dark:text-rose-400 shadow-xs cursor-pointer">
+                            <div class="grid grid-cols-2 p-0.5 bg-slate-100 dark:bg-slate-800/90 rounded-xl gap-0.5 h-8.5 items-center border border-slate-200/60 dark:border-slate-700/60">
+                                <button type="button" id="scan-type-btn-expense" onclick="setScanResultType('expense')" class="h-7.5 flex items-center justify-center text-xs font-bold rounded-lg transition-all bg-white dark:bg-slate-700 text-rose-600 dark:text-rose-400 shadow-xs cursor-pointer">
                                     Pengeluaran
                                 </button>
-                                <button type="button" id="scan-type-btn-income" onclick="setScanResultType('income')" class="py-1.5 flex items-center justify-center text-xs font-bold rounded-md transition-all text-slate-500 dark:text-slate-400 cursor-pointer">
+                                <button type="button" id="scan-type-btn-income" onclick="setScanResultType('income')" class="h-7.5 flex items-center justify-center text-xs font-bold rounded-lg transition-all text-slate-500 dark:text-slate-400 cursor-pointer">
                                     Pemasukan
                                 </button>
                             </div>
                         </div>
 
-                        <!-- Toko / Penerima & Tanggal Grid (2 Columns on Mobile) -->
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <label for="scan-edit-merchant" class="block text-[11px] font-medium text-slate-400 dark:text-slate-400 mb-0.5">Toko / Penerima</label>
-                                <input id="scan-edit-merchant" 
-                                       type="text" 
-                                       placeholder="Nama Toko..." 
-                                       class="w-full h-10 px-2.5 py-1 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-1 focus:ring-emerald-500/20">
-                            </div>
-                            <div>
-                                <div class="flex items-center justify-between mb-0.5">
-                                    <label for="scan-edit-date" class="text-[11px] font-medium text-slate-400 dark:text-slate-400">Tanggal</label>
-                                    <button type="button" onclick="setDatePreset('scan-edit-date', 'today')" class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline cursor-pointer">Hari Ini</button>
-                                </div>
-                                <input id="scan-edit-date" 
-                                       type="date" 
-                                       class="w-full h-10 px-2.5 py-1 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-800 dark:text-slate-100 focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-1 focus:ring-emerald-500/20">
-                            </div>
+                        <!-- Toko / Penerima (Full Width) -->
+                        <div>
+                            <label for="scan-edit-merchant" class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-0.5">Toko / Penerima</label>
+                            <input id="scan-edit-merchant" 
+                                   type="text" 
+                                   placeholder="Nama Toko atau Penerima (e.g. Bank, Supermarket)..." 
+                                   class="w-full h-9 px-3 py-1 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-1 focus:ring-emerald-500/20">
                         </div>
 
-                        <!-- Kategori & Dompet Grid (2 Columns on Mobile) -->
+                        <!-- Tanggal (Full Width) -->
+                        <div>
+                            <label for="scan-edit-date" class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-0.5">Tanggal</label>
+                            <input id="scan-edit-date" 
+                                   type="date" 
+                                   class="block w-full max-w-full min-w-0 box-border h-9 px-3 py-1 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-1 focus:ring-emerald-500/20">
+                        </div>
+
+                        <!-- Kategori & Dompet Grid (2 Columns) -->
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label for="scan-edit-category" class="block text-[11px] font-medium text-slate-400 dark:text-slate-400 mb-0.5">Kategori</label>
-                                <select id="scan-edit-category" class="w-full h-10 px-2.5 py-1 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 truncate focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-1 focus:ring-emerald-500/20">
+                                <label for="scan-edit-category" class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-0.5 truncate">Kategori</label>
+                                <select id="scan-edit-category" class="w-full h-9 px-2.5 py-1 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 truncate focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-1 focus:ring-emerald-500/20">
                                     @foreach($modalCategories as $cat)
                                         <option value="{{ $cat->id }}" data-type="{{ is_string($cat->type) ? $cat->type : $cat->type->value }}" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
                                             {{ $cat->name }}
@@ -817,8 +893,8 @@
                                 </select>
                             </div>
                             <div>
-                                <label for="scan-edit-wallet" class="block text-[11px] font-medium text-slate-400 dark:text-slate-400 mb-0.5">Dompet</label>
-                                <select id="scan-edit-wallet" class="w-full h-10 px-2.5 py-1 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 truncate focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-1 focus:ring-emerald-500/20">
+                                <label for="scan-edit-wallet" class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-0.5 truncate">Bayar Pakai (Dompet)</label>
+                                <select id="scan-edit-wallet" class="w-full h-9 px-2.5 py-1 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 truncate focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-1 focus:ring-emerald-500/20">
                                     @foreach($modalWallets as $w)
                                         <option value="{{ $w->id }}" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
                                             {{ $w->name }} (Rp {{ number_format($w->balance, 0, ',', '.') }})
@@ -828,25 +904,33 @@
                             </div>
                         </div>
 
-                        <!-- Catatan Tambahan (Opsional) -->
+                        <!-- Catatan Tambahan (Full Width) -->
                         <div>
-                            <label for="scan-edit-notes" class="block text-[11px] font-medium text-slate-400 dark:text-slate-400 mb-0.5">Catatan Tambahan (Opsional)</label>
+                            <label for="scan-edit-notes" class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-0.5">Catatan Tambahan (Opsional)</label>
                             <input id="scan-edit-notes" 
                                    type="text" 
                                    placeholder="Rincian barang, nomor referensi, dsb..." 
-                                   class="w-full h-9 px-2.5 py-1 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-1 focus:ring-emerald-500/20">
+                                   class="w-full h-9 px-3 py-1 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-1 focus:ring-emerald-500/20">
                         </div>
 
-                        <!-- Action Buttons -->
-                        <div class="pt-1.5 flex items-center gap-2">
-                            <button type="button" onclick="applyScannedReceiptToForm()" class="flex-1 h-11 py-2 px-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs border border-slate-200 dark:border-slate-700 active:scale-98 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs">
-                                <span>✏️ Ke Form</span>
+                        <!-- Bottom Action Buttons: Guaranteed Visible & Proportionally Balanced -->
+                        <div class="pt-1 flex items-center gap-2">
+                            <button type="button" onclick="applyScannedReceiptToForm()" class="flex-1 min-h-[44px] py-2 px-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs border border-slate-200 dark:border-slate-700 active:scale-98 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs">
+                                <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                                </svg>
+                                <span>Buka di Form</span>
                             </button>
-                            <button type="button" id="scan-quick-save-btn" onclick="quickSaveScannedReceipt()" class="flex-[1.6] h-11 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 text-white font-bold text-xs shadow-md shadow-emerald-600/30 dark:shadow-emerald-500/20 active:scale-98 transition-all flex items-center justify-center gap-1.5 cursor-pointer">
-                                <span>⚡ Simpan Langsung</span>
+                            <button type="button" id="scan-quick-save-btn" onclick="quickSaveScannedReceipt()" class="flex-[1.8] min-h-[44px] py-2 px-3 rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-xs sm:text-sm shadow-md shadow-emerald-600/30 dark:shadow-emerald-500/20 active:scale-98 transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+                                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                </svg>
+                                <span>Simpan Transaksi</span>
                             </button>
-                            <button type="button" onclick="resetReceiptScannerState()" class="h-11 py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 text-xs font-semibold active:scale-95 transition-all cursor-pointer" title="Pindai Ulang">
-                                Ulangi
+                            <button type="button" onclick="resetReceiptScannerState()" class="w-11 min-h-[44px] rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 active:scale-95 transition-all flex items-center justify-center cursor-pointer border border-slate-200 dark:border-slate-700 shrink-0" title="Pindai Ulang">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                </svg>
                             </button>
                         </div>
                     </div>
@@ -1660,6 +1744,45 @@
                     modal.classList.add('hidden');
                 }, 300);
             }
+
+            // Universal Bottom-Sheet Modal Animation Helpers
+            window.openSheetModal = function(modalId) {
+                const modal = typeof modalId === 'string' ? document.getElementById(modalId) : modalId;
+                if (!modal) return;
+                const backdrop = modal.querySelector('.modal-backdrop') || modal.querySelector('[data-backdrop]') || modal.children[0];
+                const panel = modal.querySelector('.modal-sheet-safe') || modal.querySelector('.modal-panel') || (modal.children[1] ? (modal.children[1].firstElementChild || modal.children[1]) : null);
+                
+                modal.classList.remove('hidden');
+                requestAnimationFrame(() => {
+                    if (backdrop) {
+                        backdrop.classList.remove('opacity-0');
+                        backdrop.classList.add('opacity-100');
+                    }
+                    if (panel) {
+                        panel.classList.remove('translate-y-full');
+                        panel.classList.add('translate-y-0');
+                    }
+                });
+            };
+
+            window.closeSheetModal = function(modalId) {
+                const modal = typeof modalId === 'string' ? document.getElementById(modalId) : modalId;
+                if (!modal) return;
+                const backdrop = modal.querySelector('.modal-backdrop') || modal.querySelector('[data-backdrop]') || modal.children[0];
+                const panel = modal.querySelector('.modal-sheet-safe') || modal.querySelector('.modal-panel') || (modal.children[1] ? (modal.children[1].firstElementChild || modal.children[1]) : null);
+                
+                if (backdrop) {
+                    backdrop.classList.remove('opacity-100');
+                    backdrop.classList.add('opacity-0');
+                }
+                if (panel) {
+                    panel.classList.remove('translate-y-0');
+                    panel.classList.add('translate-y-full');
+                }
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            };
 
             // Clipboard Paste Listener for Screenshots / Images
             window.addEventListener('paste', (e) => {

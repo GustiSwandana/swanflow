@@ -4,12 +4,12 @@
 
 @section('custom_header')
 {{-- Emerald gradient header (konsisten dengan halaman lain) --}}
-<div class="relative overflow-hidden bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 pt-safe pb-4">
+<div class="relative overflow-hidden bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 pb-4" style="padding-top: max(3rem, calc(var(--sat, 0px) + 0.75rem));">
     <div class="absolute inset-0 opacity-10">
         <div class="absolute top-0 right-0 w-48 h-48 bg-white rounded-full -translate-y-24 translate-x-24"></div>
         <div class="absolute bottom-0 left-0 w-32 h-32 bg-white rounded-full translate-y-16 -translate-x-16"></div>
     </div>
-    <div class="relative px-5 pt-4 pb-2">
+    <div class="relative px-5 pb-2">
         <div class="flex items-center justify-between mb-4">
             <div class="flex items-center gap-2.5">
                 <a href="{{ route('dashboard') }}" 
@@ -66,7 +66,7 @@
 @endsection
 
 @section('content')
-<div class="bg-slate-100 dark:bg-slate-950 flex-1 flex flex-col min-h-full">
+<div class="bg-slate-100 dark:bg-slate-950 flex-1 flex flex-col min-h-full pb-[max(8.5rem,calc(7.5rem+var(--sab)))] animate-swan-in">
     {{-- Quick Add Card --}}
     <div class="px-4 pt-3 pb-1">
         <div class="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs flex items-center justify-between gap-3 transition-colors">
@@ -115,7 +115,7 @@
     </div>
 
     {{-- Content area --}}
-    <div class="px-4 pb-28 pt-2 space-y-3">
+    <div class="px-4 pb-[max(7rem,calc(6.5rem+var(--sab)))] pt-2 space-y-3">
 
         @if($tab === 'today')
             @forelse($todayTodos as $todo)
@@ -143,12 +143,13 @@
 </div>
 
 {{-- ===== MODAL TAMBAH AKTIVITAS ===== --}}
-<div id="addModal" class="fixed inset-0 z-50 flex flex-col justify-end items-center" style="display:none">
+<div id="addModal" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true">
     {{-- Backdrop --}}
-    <div class="fixed inset-0 bg-black/65 backdrop-blur-xs transition-opacity" onclick="closeAddModal()"></div>
+    <div class="modal-backdrop fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity duration-300 opacity-0" onclick="closeAddModal()"></div>
 
     {{-- Sheet Container --}}
-    <div class="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-t-[32px] shadow-2xl max-h-[92vh] overflow-y-auto z-10 border-t border-slate-200 dark:border-slate-800 transition-colors">
+    <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
+        <div class="modal-panel w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl modal-sheet-safe border-t border-slate-100 dark:border-slate-800 pointer-events-auto transform translate-y-full transition-transform duration-300 overflow-y-auto no-scrollbar">
         {{-- Drag handle --}}
         <div class="flex justify-center pt-3 pb-1 cursor-pointer" onclick="closeAddModal()">
             <div class="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full"></div>
@@ -265,13 +266,15 @@
             </button>
         </form>
     </div>
+    </div>
 </div>
 
 {{-- ===== MODAL EDIT AKTIVITAS ===== --}}
-<div id="editModal" class="fixed inset-0 z-50 flex flex-col justify-end items-center" style="display:none">
-    <div class="fixed inset-0 bg-black/65 backdrop-blur-xs transition-opacity" onclick="closeEditModal()"></div>
+<div id="editModal" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true">
+    <div class="modal-backdrop fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity duration-300 opacity-0" onclick="closeEditModal()"></div>
 
-    <div class="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-t-[32px] shadow-2xl max-h-[92vh] overflow-y-auto z-10 border-t border-slate-200 dark:border-slate-800 transition-colors">
+    <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
+        <div class="modal-panel w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl modal-sheet-safe border-t border-slate-100 dark:border-slate-800 pointer-events-auto transform translate-y-full transition-transform duration-300 overflow-y-auto no-scrollbar">
         <div class="flex justify-center pt-3 pb-1 cursor-pointer" onclick="closeEditModal()">
             <div class="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full"></div>
         </div>
@@ -377,14 +380,15 @@
             </button>
         </form>
     </div>
+    </div>
 </div>
 
 <script>
 function openAddModal() {
-    document.getElementById('addModal').style.display = 'flex';
+    window.openSheetModal('addModal');
 }
 function closeAddModal() {
-    document.getElementById('addModal').style.display = 'none';
+    window.closeSheetModal('addModal');
 }
 
 function openEditModal(target) {
@@ -406,10 +410,10 @@ function openEditModal(target) {
         document.getElementById('editDueDate').value = dueDate || '';
         document.getElementById('editDescription').value = description || '';
     }
-    document.getElementById('editModal').style.display = 'flex';
+    window.openSheetModal('editModal');
 }
 function closeEditModal() {
-    document.getElementById('editModal').style.display = 'none';
+    window.closeSheetModal('editModal');
 }
 
 function setQuickDate(inputId, type) {

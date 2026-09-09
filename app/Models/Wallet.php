@@ -66,4 +66,14 @@ class Wallet extends Model
     {
         return $this->hasMany(Debt::class);
     }
+
+    /**
+     * Get the investments funded by or associated with this wallet.
+     *
+     * @return HasMany<Investment, $this>
+     */
+    public function investments(): HasMany
+    {
+        return $this->hasMany(Investment::class);
+    }
 }

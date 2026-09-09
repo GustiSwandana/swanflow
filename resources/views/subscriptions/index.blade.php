@@ -149,14 +149,18 @@
 
 <!-- MODAL TAMBAH LANGGANAN -->
 <div id="modal-add-subscription" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true">
-    <div class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs" onclick="closeAddSubscriptionModal()"></div>
+    <div class="modal-backdrop fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity duration-300 opacity-0" onclick="closeAddSubscriptionModal()"></div>
     <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
-        <div class="w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-100 dark:border-slate-800/80 pointer-events-auto overflow-y-auto no-scrollbar">
+        <div class="modal-panel w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-100 dark:border-slate-800/80 pointer-events-auto transform translate-y-full transition-transform duration-300 overflow-y-auto no-scrollbar">
             <div class="w-12 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-4 cursor-pointer" onclick="closeAddSubscriptionModal()"></div>
             
             <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800 mb-4">
                 <h3 class="text-sm font-bold text-slate-800 dark:text-white">Tambah Tagihan Rutin / Langganan</h3>
-                <button type="button" onclick="closeAddSubscriptionModal()" class="text-slate-400 hover:text-slate-600 p-1">✕</button>
+                <button type="button" onclick="closeAddSubscriptionModal()" aria-label="Tutup modal" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 flex items-center justify-center active:scale-95 transition-all cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
             </div>
 
             <form action="{{ route('subscriptions.store') }}" method="POST" class="space-y-3.5">
@@ -225,14 +229,18 @@
 
 <!-- MODAL EDIT LANGGANAN -->
 <div id="modal-edit-subscription" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true">
-    <div class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs" onclick="closeEditSubscriptionModal()"></div>
+    <div class="modal-backdrop fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity duration-300 opacity-0" onclick="closeEditSubscriptionModal()"></div>
     <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
-        <div class="w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-100 dark:border-slate-800/80 pointer-events-auto overflow-y-auto no-scrollbar">
+        <div class="modal-panel w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-100 dark:border-slate-800/80 pointer-events-auto transform translate-y-full transition-transform duration-300 overflow-y-auto no-scrollbar">
             <div class="w-12 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-4 cursor-pointer" onclick="closeEditSubscriptionModal()"></div>
             
             <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800 mb-4">
                 <h3 class="text-sm font-bold text-slate-800 dark:text-white">Edit Langganan / Tagihan</h3>
-                <button type="button" onclick="closeEditSubscriptionModal()" class="text-slate-400 hover:text-slate-600 p-1">✕</button>
+                <button type="button" onclick="closeEditSubscriptionModal()" aria-label="Tutup modal" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 flex items-center justify-center active:scale-95 transition-all cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
             </div>
 
             <form id="form-edit-subscription" method="POST" class="space-y-3.5">
@@ -300,9 +308,9 @@
 
 <!-- MODAL BAYAR SEKARANG -->
 <div id="modal-pay-subscription" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true">
-    <div class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs" onclick="closePaySubscriptionModal()"></div>
+    <div class="modal-backdrop fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity duration-300 opacity-0" onclick="closePaySubscriptionModal()"></div>
     <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
-        <div class="w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-100 dark:border-slate-800/80 pointer-events-auto overflow-y-auto no-scrollbar">
+        <div class="modal-panel w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-100 dark:border-slate-800/80 pointer-events-auto transform translate-y-full transition-transform duration-300 overflow-y-auto no-scrollbar">
             <div class="w-12 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-4 cursor-pointer" onclick="closePaySubscriptionModal()"></div>
             
             <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800 mb-4">
@@ -310,7 +318,11 @@
                     <h3 class="text-sm font-bold text-slate-800 dark:text-white">Konfirmasi Pembayaran Tagihan</h3>
                     <p id="pay-sub-name-display" class="text-xs text-indigo-600 dark:text-indigo-400 font-semibold mt-0.5"></p>
                 </div>
-                <button type="button" onclick="closePaySubscriptionModal()" class="text-slate-400 hover:text-slate-600 p-1">✕</button>
+                <button type="button" onclick="closePaySubscriptionModal()" aria-label="Tutup modal" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 flex items-center justify-center active:scale-95 transition-all cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
             </div>
 
             <form id="form-pay-subscription" method="POST" class="space-y-4">
@@ -348,10 +360,10 @@
 
 <script>
     function openAddSubscriptionModal() {
-        document.getElementById('modal-add-subscription').classList.remove('hidden');
+        window.openSheetModal('modal-add-subscription');
     }
     function closeAddSubscriptionModal() {
-        document.getElementById('modal-add-subscription').classList.add('hidden');
+        window.closeSheetModal('modal-add-subscription');
     }
     function openEditSubscriptionModal(sub) {
         document.getElementById('form-edit-subscription').action = '/subscriptions/' + sub.id;
@@ -362,10 +374,10 @@
         document.getElementById('edit-sub-next-due-date').value = sub.next_due_date ? sub.next_due_date.substring(0, 10) : '';
         document.getElementById('edit-sub-wallet-id').value = sub.wallet_id || '';
         document.getElementById('edit-sub-status').value = sub.status || 'active';
-        document.getElementById('modal-edit-subscription').classList.remove('hidden');
+        window.openSheetModal('modal-edit-subscription');
     }
     function closeEditSubscriptionModal() {
-        document.getElementById('modal-edit-subscription').classList.add('hidden');
+        window.closeSheetModal('modal-edit-subscription');
     }
     function openPaySubscriptionModal(sub) {
         document.getElementById('form-pay-subscription').action = '/subscriptions/' + sub.id + '/pay';
@@ -374,10 +386,10 @@
         if (sub.wallet_id) {
             document.getElementById('pay-sub-wallet-select').value = sub.wallet_id;
         }
-        document.getElementById('modal-pay-subscription').classList.remove('hidden');
+        window.openSheetModal('modal-pay-subscription');
     }
     function closePaySubscriptionModal() {
-        document.getElementById('modal-pay-subscription').classList.add('hidden');
+        window.closeSheetModal('modal-pay-subscription');
     }
 </script>
 @endsection

@@ -166,7 +166,7 @@
 
 @section('content')
 <!-- Bottom Sheet Container (rounded-t-[32px]) -->
-<div class="bg-slate-50 dark:bg-slate-900 rounded-t-[32px] pt-4 px-4 pb-28 shadow-2xl -mt-4 relative z-10 border-t border-slate-200 dark:border-slate-800/80 flex-1 flex flex-col min-h-full space-y-6 text-slate-800 dark:text-white transition-colors">
+<div class="bg-slate-50 dark:bg-slate-900 rounded-t-[32px] pt-4 px-4 pb-[max(8.5rem,calc(7.5rem+var(--sab)))] shadow-2xl -mt-4 relative z-10 border-t border-slate-200 dark:border-slate-800/80 flex-1 flex flex-col min-h-full space-y-6 text-slate-800 dark:text-white transition-colors animate-swan-in">
     <!-- Drag Pill Indicator -->
     <div class="w-12 h-1 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-2"></div>
 
@@ -193,6 +193,21 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.5M4.5 21V10.5m-1.5 0h18" /></svg>
             </div>
             <span class="text-[10px] font-semibold text-slate-600 dark:text-slate-400 text-center leading-tight">Dompet</span>
+        </a>
+
+        <!-- Investasi -->
+        <a href="{{ route('investments.index') }}" class="flex flex-col items-center gap-1.5 group shrink-0 w-14 relative">
+            <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 flex items-center justify-center group-hover:bg-emerald-200 dark:group-hover:bg-emerald-900/50 active:scale-90 transition-all border border-emerald-200 dark:border-emerald-900/40 shadow-xs relative">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
+                </svg>
+                @if(($investmentSummary['count'] ?? 0) > 0)
+                    <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-emerald-500 text-white text-[10px] font-extrabold flex items-center justify-center shadow-xs ring-2 ring-white dark:ring-slate-900 leading-none" title="{{ $investmentSummary['count'] }} Aset Aktif">
+                        {{ $investmentSummary['count'] }}
+                    </span>
+                @endif
+            </div>
+            <span class="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 text-center leading-tight">Investasi</span>
         </a>
 
         <!-- SwanDrive (File Storage & Portal Drop) -->
@@ -409,6 +424,45 @@
         </div>
     </div>
 
+    <!-- PINTASAN PORTOFOLIO INVESTASI -->
+    @if(($investmentSummary['count'] ?? 0) > 0)
+    <div class="bg-white dark:bg-slate-800/60 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-2.5 transition-colors">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <h2 class="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider">Portofolio Investasi</h2>
+            </div>
+            <a href="{{ route('investments.index') }}" class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline">
+                Kelola ➔
+            </a>
+        </div>
+        <a href="{{ route('investments.index') }}" class="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-emerald-50/80 to-teal-50/80 dark:from-emerald-950/30 dark:to-teal-950/30 border border-emerald-200/70 dark:border-emerald-900/40 group hover:border-emerald-400 transition-all block">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/15 dark:bg-emerald-500/25 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
+                    </svg>
+                </div>
+                <div class="min-w-0">
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-xs font-bold text-slate-800 dark:text-white truncate">Total Nilai Investasi</span>
+                        <span class="text-[10px] font-bold px-1.5 py-0.2 rounded-md {{ ($investmentSummary['profitLoss'] ?? 0) >= 0 ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300' : 'bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300' }}">
+                            {{ ($investmentSummary['profitLoss'] ?? 0) >= 0 ? '+' : '' }}{{ $investmentSummary['roi'] ?? 0 }}%
+                        </span>
+                    </div>
+                    <p class="text-sm font-black text-slate-900 dark:text-white mt-0.5">
+                        Rp {{ number_format($investmentSummary['totalValue'] ?? 0, 0, ',', '.') }}
+                    </p>
+                </div>
+            </div>
+            <div class="text-right shrink-0">
+                <span class="text-[10px] font-semibold text-slate-400 block">{{ $investmentSummary['count'] ?? 0 }} Aset</span>
+                <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400">Lihat ➔</span>
+            </div>
+        </a>
+    </div>
+    @endif
+
     <!-- 3. WIDGET TAGIHAN BERLANGGANAN (Upcoming Subscriptions) -->
     @if(isset($upcomingSubscriptions) && $upcomingSubscriptions->isNotEmpty())
         <div class="bg-white dark:bg-slate-800/60 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-800 space-y-2.5 transition-colors shadow-2xs">
@@ -611,14 +665,18 @@
 
 <!-- MODAL TAMBAH DOMPET DARI DASHBOARD -->
 <div id="modal-dashboard-add-wallet" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true">
-    <div class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs" onclick="closeDashboardAddWalletModal()"></div>
+    <div class="modal-backdrop fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity duration-300 opacity-0" onclick="closeDashboardAddWalletModal()"></div>
     <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
-        <div class="w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-200 dark:border-slate-800 pointer-events-auto overflow-y-auto no-scrollbar text-slate-800 dark:text-slate-100">
+        <div class="modal-panel w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-200 dark:border-slate-800 pointer-events-auto transform translate-y-full transition-transform duration-300 overflow-y-auto no-scrollbar text-slate-800 dark:text-slate-100">
             <div class="w-12 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-4 cursor-pointer" onclick="closeDashboardAddWalletModal()"></div>
             
             <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800 mb-4">
                 <h3 class="text-base font-bold text-slate-800 dark:text-white">Tambah Rekening / Dompet Baru</h3>
-                <button type="button" onclick="closeDashboardAddWalletModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white p-1">✕</button>
+                <button type="button" onclick="closeDashboardAddWalletModal()" aria-label="Tutup modal" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 flex items-center justify-center active:scale-95 transition-all cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
             </div>
 
             <form action="{{ route('wallets.store') }}" method="POST" class="space-y-4">
@@ -670,10 +728,10 @@
     }
 
     function openDashboardAddWalletModal() {
-        document.getElementById('modal-dashboard-add-wallet').classList.remove('hidden');
+        window.openSheetModal('modal-dashboard-add-wallet');
     }
     function closeDashboardAddWalletModal() {
-        document.getElementById('modal-dashboard-add-wallet').classList.add('hidden');
+        window.closeSheetModal('modal-dashboard-add-wallet');
     }
 </script>
 @endsection

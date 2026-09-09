@@ -52,9 +52,9 @@ class CategoryController extends Controller
             'type.in' => 'Tipe kategori tidak valid.',
         ]);
 
-        $defaultColor = $validated['type'] === 'income' ? '#10B981' : '#F43F5E';
-        $validated['color'] = $validated['color'] ?: $defaultColor;
-        $validated['icon'] = $validated['icon'] ?: 'tag';
+        $defaultColor = ($validated['type'] ?? 'expense') === 'income' ? '#10B981' : '#F43F5E';
+        $validated['color'] = ! empty($validated['color']) ? $validated['color'] : $defaultColor;
+        $validated['icon'] = ! empty($validated['icon']) ? $validated['icon'] : 'tag';
         $validated['user_id'] = $user->id;
 
         Category::create($validated);
@@ -80,7 +80,12 @@ class CategoryController extends Controller
         ], [
             'name.required' => 'Nama kategori wajib diisi.',
             'type.required' => 'Tipe kategori wajib dipilih.',
+            'type.in' => 'Tipe kategori tidak valid.',
         ]);
+
+        $defaultColor = ($validated['type'] ?? $category->type) === 'income' ? '#10B981' : '#F43F5E';
+        $validated['color'] = ! empty($validated['color']) ? $validated['color'] : ($category->color ?: $defaultColor);
+        $validated['icon'] = ! empty($validated['icon']) ? $validated['icon'] : ($category->icon ?: 'tag');
 
         $category->update($validated);
 

@@ -13,3 +13,11 @@
 :root {
     color-scheme: light dark;
 }
+
+input[type="date"],
+input[type="month"],
+input[type="time"] {
+    max-width: 100%;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+}

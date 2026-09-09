@@ -78,7 +78,7 @@
 @endsection
 
 @section('content')
-<div class="bg-slate-50 dark:bg-slate-900 rounded-t-[32px] pt-4 px-4 pb-28 shadow-2xl -mt-4 relative z-10 border-t border-slate-200 dark:border-slate-800 flex-1 flex flex-col min-h-full space-y-4 text-slate-800 dark:text-white transition-colors">
+<div class="bg-slate-50 dark:bg-slate-900 rounded-t-[32px] pt-4 px-4 pb-[max(8.5rem,calc(7.5rem+var(--sab)))] shadow-2xl -mt-4 relative z-10 border-t border-slate-200 dark:border-slate-800 flex-1 flex flex-col min-h-full space-y-4 text-slate-800 dark:text-white transition-colors animate-swan-in">
     <!-- Drag Handle -->
     <div class="w-12 h-1 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-1"></div>
 
@@ -570,8 +570,10 @@
                     </h2>
                     <p class="text-[11px] text-slate-500 dark:text-slate-400" id="modal-file-info">Informasi berkas...</p>
                 </div>
-                <button type="button" onclick="closeShareModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center justify-center active:scale-95 transition-all">
-                    ✕
+                <button type="button" onclick="closeShareModal()" aria-label="Tutup modal" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center justify-center active:scale-95 transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
                 </button>
             </div>
 
@@ -635,8 +637,10 @@
                     <h2 class="text-sm font-bold text-slate-900 dark:text-white">Pengaturan Link Terima File</h2>
                     <p class="text-[11px] text-slate-500 dark:text-slate-400">Atur batasan sebelum membagikan link ke orang lain</p>
                 </div>
-                <button type="button" onclick="closeCreateDropModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center justify-center active:scale-95 transition-all">
-                    ✕
+                <button type="button" onclick="closeCreateDropModal()" aria-label="Tutup modal" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center justify-center active:scale-95 transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
                 </button>
             </div>
 
@@ -813,8 +817,10 @@
                         <p class="text-[11px] text-slate-500 dark:text-slate-400">Atur kuota ruang penyimpanan SwanDrive</p>
                     </div>
                 </div>
-                <button type="button" onclick="closeQuotaModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center justify-center active:scale-95 transition-all">
-                    ✕
+                <button type="button" onclick="closeQuotaModal()" aria-label="Tutup modal" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center justify-center active:scale-95 transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
                 </button>
             </div>
 
@@ -917,8 +923,10 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
                         </svg>
                     </a>
-                    <button type="button" onclick="closePreviewModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center justify-center active:scale-95 transition-all">
-                        ✕
+                    <button type="button" onclick="closePreviewModal()" aria-label="Tutup modal" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center justify-center active:scale-95 transition-all">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
                     </button>
                 </div>
             </div>

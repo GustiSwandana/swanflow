@@ -9,6 +9,7 @@ use App\Http\Controllers\DebtController;
 use App\Http\Controllers\DriveController;
 use App\Http\Controllers\DropLinkController;
 use App\Http\Controllers\FaceIdController;
+use App\Http\Controllers\InvestmentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReceiptScannerController;
 use App\Http\Controllers\ReportController;
@@ -90,6 +91,15 @@ Route::middleware('auth')->group(function () {
     Route::put('/debts/{debt}', [DebtController::class, 'update'])->name('debts.update');
     Route::post('/debts/{debt}/repay', [DebtController::class, 'repay'])->name('debts.repay');
     Route::delete('/debts/{debt}', [DebtController::class, 'destroy'])->name('debts.destroy');
+
+    // Investments & Portfolio Tracking
+    Route::get('/investments', [InvestmentController::class, 'index'])->name('investments.index');
+    Route::post('/investments', [InvestmentController::class, 'store'])->name('investments.store');
+    Route::put('/investments/{investment}', [InvestmentController::class, 'update'])->name('investments.update');
+    Route::post('/investments/{investment}/topup', [InvestmentController::class, 'topup'])->name('investments.topup');
+    Route::post('/investments/{investment}/withdraw', [InvestmentController::class, 'withdraw'])->name('investments.withdraw');
+    Route::patch('/investments/{investment}/value', [InvestmentController::class, 'updateValue'])->name('investments.update-value');
+    Route::delete('/investments/{investment}', [InvestmentController::class, 'destroy'])->name('investments.destroy');
 
     // Reports
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');

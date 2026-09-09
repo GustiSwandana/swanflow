@@ -169,4 +169,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(UploadLink::class);
     }
+
+    /**
+     * Get the investments for the user.
+     *
+     * @return HasMany<Investment, $this>
+     */
+    public function investments(): HasMany
+    {
+        return $this->hasMany(Investment::class);
+    }
 }

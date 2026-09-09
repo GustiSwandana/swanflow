@@ -4,7 +4,7 @@
 
 @section('custom_header')
     <!-- Fintech Header (Emerald in Light Mode, Slate in Dark Mode) -->
-    <div class="bg-gradient-to-b from-emerald-600 to-emerald-700 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 border-b border-emerald-700 dark:border-slate-800/80 text-white pt-[max(1rem,calc(var(--sat)+0.75rem))] px-5 pb-6 relative transition-colors">
+    <div class="bg-gradient-to-b from-emerald-600 to-emerald-700 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 border-b border-emerald-700 dark:border-slate-800/80 text-white px-5 pb-6 relative transition-colors" style="padding-top: max(3rem, calc(var(--sat, 0px) + 0.75rem));">
         <!-- Top Navigation Bar -->
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-2.5">
@@ -77,7 +77,7 @@
 
 @section('content')
 <!-- Main Sheet Container (rounded-t-[32px]) -->
-<div class="bg-slate-50 dark:bg-slate-900 rounded-t-[32px] pt-5 px-4 pb-28 shadow-2xl -mt-4 relative z-10 border-t border-slate-200 dark:border-slate-800/80 flex-1 flex flex-col min-h-full space-y-5 text-slate-800 dark:text-white transition-colors">
+<div class="bg-slate-50 dark:bg-slate-900 rounded-t-[32px] pt-5 px-4 pb-[max(8.5rem,calc(7.5rem+var(--sab)))] shadow-2xl -mt-4 relative z-10 border-t border-slate-200 dark:border-slate-800/80 flex-1 flex flex-col min-h-full space-y-5 text-slate-800 dark:text-white transition-colors animate-swan-in">
     <!-- Drag Pill Indicator -->
     <div class="w-12 h-1 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-2"></div>
 

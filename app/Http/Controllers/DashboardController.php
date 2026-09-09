@@ -178,6 +178,12 @@ class DashboardController extends Controller
             ->count();
         $activeLinksCount = $activeDropLinksCount + $activePublicSharesCount;
 
+        $activeInvestments = $user->investments()->where('status', 'active')->with('transactions')->get();
+        $totalInvestmentValue = (float) $activeInvestments->sum('current_value');
+        $totalInvestmentInvested = (float) $activeInvestments->sum(fn ($inv) => $inv->total_invested);
+        $totalInvestmentProfitLoss = $totalInvestmentValue - $totalInvestmentInvested;
+        $totalInvestmentRoi = $totalInvestmentInvested > 0 ? round(($totalInvestmentProfitLoss / $totalInvestmentInvested) * 100, 1) : 0.0;
+
         return view('dashboard', [
             'user' => $user,
             'wallets' => $wallets,
@@ -194,6 +200,13 @@ class DashboardController extends Controller
             'pendingTodosCount' => $pendingTodosCount,
             'storedFilesCount' => $storedFilesCount,
             'activeLinksCount' => $activeLinksCount,
+            'investmentSummary' => [
+                'totalValue' => $totalInvestmentValue,
+                'totalInvested' => $totalInvestmentInvested,
+                'profitLoss' => $totalInvestmentProfitLoss,
+                'roi' => $totalInvestmentRoi,
+                'count' => $activeInvestments->count(),
+            ],
         ]);
     }
 }
