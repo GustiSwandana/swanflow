@@ -726,21 +726,52 @@
 
                         <!-- Action Buttons -->
                         <div class="pt-2 space-y-2">
-                            <button type="submit" id="edit-transaction-submit-btn" class="w-full min-h-[48px] py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 text-white font-bold text-sm shadow-md shadow-emerald-600/30 dark:shadow-emerald-500/20 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                                </svg>
-                                Simpan Perubahan Transaksi
-                            </button>
+                            <div id="edit-initial-buttons" class="space-y-2">
+                                <button type="submit" id="edit-transaction-submit-btn" class="w-full min-h-[48px] py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 text-white font-bold text-sm shadow-md shadow-emerald-600/30 dark:shadow-emerald-500/20 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                    </svg>
+                                    Simpan Perubahan Transaksi
+                                </button>
 
-                            <button type="button" 
-                                    onclick="triggerDeleteFromEditModal()" 
-                                    class="w-full min-h-[44px] py-2.5 px-4 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/50 text-rose-600 dark:text-rose-400 font-bold text-xs border border-rose-200 dark:border-rose-900/60 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                                </svg>
-                                Hapus Transaksi Ini
-                            </button>
+                                <button type="button" 
+                                        onclick="showEditModalDeleteConfirm()" 
+                                        class="w-full min-h-[44px] py-2.5 px-4 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/50 text-rose-600 dark:text-rose-400 font-bold text-xs border border-rose-200 dark:border-rose-900/60 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                    </svg>
+                                    Hapus Transaksi Ini
+                                </button>
+                            </div>
+
+                            <!-- Inline Delete Confirmation Box inside Edit Modal -->
+                            <div id="edit-delete-confirm-box" class="hidden p-3.5 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 text-center space-y-2.5">
+                                <div class="w-10 h-10 mx-auto rounded-full bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-400 flex items-center justify-center">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold text-rose-800 dark:text-rose-200">Hapus transaksi ini secara permanen?</p>
+                                    <p class="text-[11px] text-rose-600/90 dark:text-rose-400/90 mt-0.5">Saldo dompet akan otomatis dikembalikan seperti semula.</p>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2 pt-1">
+                                    <button type="button" 
+                                            onclick="hideEditModalDeleteConfirm()" 
+                                            class="min-h-[40px] py-2 px-3 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-xs border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer">
+                                        Batal
+                                    </button>
+                                    <button type="button" 
+                                            id="edit-modal-delete-confirm-btn"
+                                            onclick="executeDeleteTransaction()" 
+                                            class="min-h-[40px] py-2 px-3 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-xs active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                        Ya, Hapus
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -754,12 +785,12 @@
         </form>
 
         <!-- 5.b DELETE TRANSACTION CONFIRMATION BOTTOM SHEET MODAL -->
-        <div id="delete-transaction-confirm-modal" class="fixed inset-0 z-60 hidden transition-all duration-300" aria-modal="true" role="dialog">
+        <div id="delete-transaction-confirm-modal" class="fixed inset-0 hidden transition-all duration-300" style="z-index: 9999;" aria-modal="true" role="dialog">
             <!-- Backdrop -->
-            <div id="delete-modal-backdrop" onclick="closeDeleteTransactionModal()" class="fixed inset-0 bg-slate-950/75 backdrop-blur-xs transition-opacity duration-300 opacity-0"></div>
+            <div id="delete-modal-backdrop" onclick="closeDeleteTransactionModal()" class="fixed inset-0 bg-slate-950/75 backdrop-blur-xs transition-opacity duration-300 opacity-0" style="z-index: 9998;"></div>
 
             <!-- Bottom Sheet Panel -->
-            <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
+            <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none" style="z-index: 9999;">
                 <div id="delete-modal-panel" class="w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-100 dark:border-slate-800/80 pointer-events-auto transform translate-y-full transition-transform duration-300">
                     <!-- Drag Handle -->
                     <div class="w-12 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-4 cursor-pointer" onclick="closeDeleteTransactionModal()"></div>
@@ -1884,6 +1915,7 @@
                 const descInput = document.getElementById('edit-desc-input');
                 if (descInput) descInput.value = data.description || '';
 
+                hideEditModalDeleteConfirm();
                 modal.classList.remove('hidden');
                 setTimeout(() => {
                     backdrop.classList.remove('opacity-0');
@@ -1893,6 +1925,20 @@
                 }, 10);
             }
 
+            function showEditModalDeleteConfirm() {
+                const initBox = document.getElementById('edit-initial-buttons');
+                const confirmBox = document.getElementById('edit-delete-confirm-box');
+                if (initBox) initBox.classList.add('hidden');
+                if (confirmBox) confirmBox.classList.remove('hidden');
+            }
+
+            function hideEditModalDeleteConfirm() {
+                const initBox = document.getElementById('edit-initial-buttons');
+                const confirmBox = document.getElementById('edit-delete-confirm-box');
+                if (initBox) initBox.classList.remove('hidden');
+                if (confirmBox) confirmBox.classList.add('hidden');
+            }
+
             function closeEditTransactionModal() {
                 const modal = document.getElementById('edit-transaction-modal');
                 const backdrop = document.getElementById('edit-modal-backdrop');
@@ -1900,6 +1946,7 @@
 
                 if (!modal) return;
 
+                hideEditModalDeleteConfirm();
                 backdrop.classList.remove('opacity-100');
                 backdrop.classList.add('opacity-0');
                 panel.classList.remove('translate-y-0');
@@ -1911,8 +1958,7 @@
             }
 
             function triggerDeleteFromEditModal() {
-                if (!currentActiveTransaction) return;
-                openDeleteTransactionModal(currentActiveTransaction);
+                showEditModalDeleteConfirm();
             }
 
             function openEditFromDataset(el, ev) {
@@ -2005,19 +2051,24 @@
                     return;
                 }
 
-                const btn = document.getElementById('confirm-delete-submit-btn');
-                const origHtml = btn ? btn.innerHTML : '';
-                if (btn) {
-                    btn.disabled = true;
-                    btn.innerHTML = '<svg class="w-4 h-4 animate-spin inline-block mr-1.5" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Menghapus...';
-                }
+                const targetId = currentActiveTransaction.id;
+                const btns = [
+                    document.getElementById('confirm-delete-submit-btn'),
+                    document.getElementById('edit-modal-delete-confirm-btn')
+                ].filter(Boolean);
+
+                const origHtmls = btns.map(b => b.innerHTML);
+                btns.forEach(b => {
+                    b.disabled = true;
+                    b.innerHTML = '<svg class="w-4 h-4 animate-spin inline-block mr-1.5" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Menghapus...';
+                });
 
                 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
                     || document.querySelector('#global-delete-transaction-form input[name="_token"]')?.value
                     || document.querySelector('input[name="_token"]')?.value;
 
                 try {
-                    const res = await fetch(`/transactions/${currentActiveTransaction.id}`, {
+                    const res = await fetch(`/transactions/${targetId}`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -2033,45 +2084,45 @@
                     const result = await res.json().catch(() => null);
 
                     if (res.ok && result && result.success) {
-                        showSwanToast(result.message || 'Transaksi berhasil dihapus!');
+                        showSwanToast(result.message || 'Transaksi berhasil dihapus!', 'success');
                         closeDeleteTransactionModal();
                         closeEditTransactionModal();
 
-                        // Smoothly animate out row if exists on page
-                        const rowEl = document.querySelector(`[data-transaction-row="${currentActiveTransaction.id}"]`);
-                        if (rowEl) {
-                            rowEl.style.transition = 'all 0.3s ease-out';
+                        // Instantly remove row from DOM
+                        const rowEls = document.querySelectorAll(`[data-transaction-row="${targetId}"]`);
+                        rowEls.forEach(rowEl => {
+                            rowEl.style.transition = 'all 0.25s ease-out';
                             rowEl.style.opacity = '0';
                             rowEl.style.transform = 'scale(0.95)';
-                            setTimeout(() => {
-                                rowEl.remove();
-                                window.location.reload();
-                            }, 300);
-                        } else {
-                            setTimeout(() => {
-                                window.location.reload();
-                            }, 400);
-                        }
+                            setTimeout(() => rowEl.remove(), 250);
+                        });
+
+                        // Cache-busting refresh so fresh server HTML with updated balances is fetched
+                        setTimeout(() => {
+                            const url = new URL(window.location.href);
+                            url.searchParams.set('_t', Date.now().toString());
+                            window.location.replace(url.toString());
+                        }, 350);
                     } else {
                         const errMsg = (result && result.message) ? result.message : ('Gagal menghapus transaksi (Status ' + res.status + ')');
                         showSwanToast(errMsg, 'error');
-                        if (btn) {
-                            btn.disabled = false;
-                            btn.innerHTML = origHtml;
-                        }
+                        btns.forEach((b, i) => {
+                            b.disabled = false;
+                            b.innerHTML = origHtmls[i] || 'Ya, Hapus';
+                        });
                     }
                 } catch (err) {
                     console.error('Fetch delete error, attempting form fallback:', err);
                     const deleteForm = document.getElementById('global-delete-transaction-form');
                     if (deleteForm) {
-                        deleteForm.action = `/transactions/${currentActiveTransaction.id}`;
+                        deleteForm.action = `/transactions/${targetId}`;
                         deleteForm.submit();
                     } else {
                         showSwanToast('Gagal menghapus transaksi. Periksa koneksi Anda.', 'error');
-                        if (btn) {
-                            btn.disabled = false;
-                            btn.innerHTML = origHtml;
-                        }
+                        btns.forEach((b, i) => {
+                            b.disabled = false;
+                            b.innerHTML = origHtmls[i] || 'Ya, Hapus';
+                        });
                     }
                 }
             }
