@@ -4,7 +4,7 @@
 
 @section('custom_header')
 {{-- Emerald gradient header (konsisten dengan halaman lain) --}}
-<div class="relative overflow-hidden bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 pb-4" style="padding-top: max(3rem, calc(var(--sat, 0px) + 0.75rem));">
+<div class="relative overflow-hidden bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 pb-4" style="padding-top: max(3.5rem, calc(var(--sat, 0px) + 0.75rem));">
     <div class="absolute inset-0 opacity-10">
         <div class="absolute top-0 right-0 w-48 h-48 bg-white rounded-full -translate-y-24 translate-x-24"></div>
         <div class="absolute bottom-0 left-0 w-32 h-32 bg-white rounded-full translate-y-16 -translate-x-16"></div>
@@ -71,7 +71,7 @@
 @endsection
 
 @section('content')
-<div class="bg-slate-50 dark:bg-slate-900 rounded-t-[32px] pt-4 px-4 pb-[max(5.5rem,calc(4.75rem+var(--sab)))] shadow-2xl -mt-4 relative z-10 border-t border-slate-200 dark:border-slate-800/80 flex-1 flex flex-col min-h-full space-y-4 text-slate-800 dark:text-white transition-colors animate-swan-in">
+<div class="bg-slate-50 dark:bg-slate-900 rounded-t-[32px] pt-4 px-4 pb-[max(6rem,calc(5.25rem+var(--sab,0px)))] shadow-2xl -mt-4 relative z-10 border-t border-slate-200 dark:border-slate-800/80 flex-1 flex flex-col min-h-full space-y-4 text-slate-800 dark:text-white transition-colors animate-swan-in">
     {{-- Quick Add Card --}}
     <div>
         <div class="p-3.5 rounded-2xl bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 shadow-xs flex items-center justify-between gap-3 transition-colors">

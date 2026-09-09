@@ -2,7 +2,7 @@
 
 @section('custom_header')
     <!-- Fintech Header (Emerald in Light Mode, Slate in Dark Mode) -->
-    <div class="bg-gradient-to-b from-emerald-600 to-emerald-700 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 border-b border-emerald-700 dark:border-slate-800/80 text-white px-5 pb-8 relative transition-colors" style="padding-top: max(3rem, calc(var(--sat, 0px) + 0.75rem));">
+    <div class="bg-gradient-to-b from-emerald-600 to-emerald-700 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 border-b border-emerald-700 dark:border-slate-800/80 text-white px-5 pb-8 relative transition-colors" style="padding-top: max(3.5rem, calc(var(--sat, 0px) + 0.75rem));">
         <!-- Top Navigation Bar -->
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-2.5">
@@ -51,7 +51,7 @@
 
 @section('content')
 <!-- Main Sheet Container (rounded-t-[32px]) -->
-<div class="bg-slate-50 dark:bg-slate-900 rounded-t-[32px] pt-5 px-4 pb-[max(5.5rem,calc(4.75rem+var(--sab)))] shadow-2xl -mt-4 relative z-10 border-t border-slate-200 dark:border-slate-800/80 flex-1 flex flex-col min-h-full space-y-5 text-slate-800 dark:text-white transition-colors animate-swan-in">
+<div class="bg-slate-50 dark:bg-slate-900 rounded-t-[32px] pt-5 px-4 pb-[max(6rem,calc(5.25rem+var(--sab,0px)))] shadow-2xl -mt-4 relative z-10 border-t border-slate-200 dark:border-slate-800/80 flex-1 flex flex-col min-h-full space-y-5 text-slate-800 dark:text-white transition-colors animate-swan-in">
     <!-- Month Picker Filter Pill & Total Summary -->
     <div class="flex items-center justify-between gap-2">
         <form method="GET" action="{{ route('reports.index') }}" class="flex items-center" id="report-month-form">

@@ -2,7 +2,7 @@
 
 @section('custom_header')
     <!-- Fintech Full-Bleed Header (Emerald in Light Mode, Sleek Slate in Dark Mode) -->
-    <div class="bg-gradient-to-b from-emerald-600 via-emerald-600 to-emerald-700 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-white px-5 pb-8 relative border-b border-emerald-700 dark:border-slate-800/80 overflow-hidden transition-colors" style="padding-top: max(3rem, calc(var(--sat, 0px) + 0.75rem));">
+    <div class="bg-gradient-to-b from-emerald-600 via-emerald-600 to-emerald-700 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-white px-5 pb-8 relative border-b border-emerald-700 dark:border-slate-800/80 overflow-hidden transition-colors" style="padding-top: max(3.5rem, calc(var(--sat, 0px) + 0.75rem));">
         <!-- Subtle Glow & Mesh Highlights -->
         <div class="absolute -right-8 -top-8 w-44 h-44 bg-white/10 dark:bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
         <div class="absolute -left-8 top-20 w-40 h-40 bg-white/10 dark:bg-teal-500/10 rounded-full blur-2xl pointer-events-none"></div>
@@ -166,7 +166,7 @@
 
 @section('content')
 <!-- Bottom Sheet Container (rounded-t-[32px]) -->
-<div class="bg-slate-50 dark:bg-slate-900 rounded-t-[32px] pt-4 px-4 pb-[max(5.5rem,calc(4.75rem+var(--sab)))] shadow-2xl -mt-4 relative z-10 border-t border-slate-200 dark:border-slate-800/80 flex-1 flex flex-col min-h-full space-y-6 text-slate-800 dark:text-white transition-colors animate-swan-in">
+<div class="bg-slate-50 dark:bg-slate-900 rounded-t-[32px] pt-4 px-4 pb-[max(6rem,calc(5.25rem+var(--sab,0px)))] shadow-2xl -mt-4 relative z-10 border-t border-slate-200 dark:border-slate-800/80 flex-1 flex flex-col min-h-full space-y-6 text-slate-800 dark:text-white transition-colors animate-swan-in">
     <!-- 1. Quick Navigation Hub (Clean 4-Column Grid) -->
     <div class="grid grid-cols-4 gap-y-3.5 gap-x-2 py-1">
         <!-- 1. Dompet -->
@@ -179,7 +179,18 @@
             <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 text-center leading-tight tracking-tight">Dompet</span>
         </a>
 
-        <!-- 2. Investasi -->
+        <!-- 2. Laporan Keuangan -->
+        <a href="{{ route('reports.index') }}" class="flex flex-col items-center gap-1.5 group cursor-pointer" aria-label="Laporan dan Analisis Keuangan">
+            <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center group-hover:bg-indigo-500/20 group-hover:scale-105 active:scale-95 transition-all duration-200 border border-indigo-500/20 dark:border-indigo-500/30 shadow-xs">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z" />
+                </svg>
+            </div>
+            <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 text-center leading-tight tracking-tight">Laporan</span>
+        </a>
+
+        <!-- 3. Investasi -->
         <a href="{{ route('investments.index') }}" class="flex flex-col items-center gap-1.5 group cursor-pointer relative" aria-label="Portofolio Investasi">
             <div class="w-12 h-12 rounded-2xl bg-teal-500/10 dark:bg-teal-500/20 text-teal-600 dark:text-teal-400 flex items-center justify-center group-hover:bg-teal-500/20 group-hover:scale-105 active:scale-95 transition-all duration-200 border border-teal-500/20 dark:border-teal-500/30 shadow-xs relative">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -194,7 +205,7 @@
             <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 text-center leading-tight tracking-tight">Investasi</span>
         </a>
 
-        <!-- 3. SwanDrive -->
+        <!-- 4. SwanDrive -->
         <a href="{{ route('drive.index') }}" class="flex flex-col items-center gap-1.5 group cursor-pointer relative" aria-label="SwanDrive Cloud Storage">
             <div class="w-12 h-12 rounded-2xl bg-sky-500/10 dark:bg-sky-500/20 text-sky-600 dark:text-sky-400 flex items-center justify-center group-hover:bg-sky-500/20 group-hover:scale-105 active:scale-95 transition-all duration-200 border border-sky-500/20 dark:border-sky-500/30 shadow-xs relative">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -209,7 +220,7 @@
             <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 text-center leading-tight tracking-tight">Drive</span>
         </a>
 
-        <!-- 4. Aktivitas -->
+        <!-- 5. Aktivitas -->
         <a href="{{ route('todos.index') }}" class="flex flex-col items-center gap-1.5 group cursor-pointer relative" aria-label="Aktivitas dan Tugas">
             <div class="w-12 h-12 rounded-2xl bg-violet-500/10 dark:bg-violet-500/20 text-violet-600 dark:text-violet-400 flex items-center justify-center group-hover:bg-violet-500/20 group-hover:scale-105 active:scale-95 transition-all duration-200 border border-violet-500/20 dark:border-violet-500/30 shadow-xs relative">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">

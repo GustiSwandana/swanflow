@@ -3,12 +3,15 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#0f172a">
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SwanFlow">
     <meta name="color-scheme" content="light dark">
     <meta name="description" content="Personal Financial Tracker Mobile App eksklusif Gusti Swandana">
+    <meta name="format-detection" content="telephone=no">
 
     <!-- Instant Dark Mode Script (Prevents FOUC) -->
     <script>
@@ -17,10 +20,11 @@
                 const savedTheme = localStorage.getItem('swanflow_theme');
                 if (savedTheme === 'light') {
                     document.documentElement.classList.remove('dark');
-                    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#ffffff');
+                    document.querySelectorAll('meta[name="theme-color"]').forEach(m => {
+                        if (m.media?.includes('dark')) m.content = '#ffffff';
+                    });
                 } else {
                     document.documentElement.classList.add('dark');
-                    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#020617');
                 }
             } catch (e) {}
         })();
@@ -30,8 +34,22 @@
     <link rel="manifest" href="/manifest.webmanifest">
     <link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
     <link rel="alternate icon" type="image/png" href="/icons/icon-192.png">
+
+    <!-- Apple Touch Icons (iPhone Home Screen) -->
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+
+    <!-- Apple Splash Screens (iPhone 15 series + older) -->
+    <!-- iPhone 15 Pro Max / 15 Plus / 16 Plus (430x932 @3x = 1290x2796) -->
+    <link rel="apple-touch-startup-image" media="screen and (device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/icons/splash/splash-1290x2796.png">
+    <!-- iPhone 15 Pro / 15 / 16 (393x852 @3x = 1179x2556) -->
+    <link rel="apple-touch-startup-image" media="screen and (device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/icons/splash/splash-1179x2556.png">
+    <!-- iPhone 14 Plus / 13 Pro Max (428x926 @3x = 1284x2778) -->
+    <link rel="apple-touch-startup-image" media="screen and (device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/icons/splash/splash-1284x2778.png">
+    <!-- iPhone 14 / 13 / 12 (390x844 @3x = 1170x2532) -->
+    <link rel="apple-touch-startup-image" media="screen and (device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/icons/splash/splash-1170x2532.png">
+    <!-- iPhone SE 3rd gen / 8 (375x667 @2x = 750x1334) -->
+    <link rel="apple-touch-startup-image" media="screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/icons/splash/splash-750x1334.png">
 
     <title>{{ $title ?? config('app.name', 'SwanFlow Tracker') }}</title>
 
@@ -75,26 +93,26 @@
 
         /* Dynamic iOS Safe Area Insets (iPhone 15, Dynamic Island & Home Indicator) */
         .header-safe {
-            padding-top: max(3rem, calc(var(--sat, 0px) + 0.75rem));
-            padding-left: max(1rem, calc(var(--sal) + 1rem));
-            padding-right: max(1rem, calc(var(--sar) + 1rem));
+            padding-top: max(3.5rem, calc(var(--sat, 0px) + 0.75rem));
+            padding-left: max(1rem, calc(var(--sal, 0px) + 1rem));
+            padding-right: max(1rem, calc(var(--sar, 0px) + 1rem));
         }
         .bottom-nav-safe {
-            padding-bottom: max(0.5rem, calc(var(--sab) + 0.25rem));
-            padding-left: max(0.5rem, calc(var(--sal) + 0.5rem));
-            padding-right: max(0.5rem, calc(var(--sar) + 0.5rem));
+            padding-bottom: max(0.75rem, calc(var(--sab, 0px) + 0.35rem));
+            padding-left: max(0.5rem, calc(var(--sal, 0px) + 0.5rem));
+            padding-right: max(0.5rem, calc(var(--sar, 0px) + 0.5rem));
         }
         .content-safe {
-            padding-bottom: max(5.5rem, calc(4.75rem + var(--sab)));
-            padding-left: max(1rem, calc(var(--sal) + 1rem));
-            padding-right: max(1rem, calc(var(--sar) + 1rem));
+            padding-bottom: max(6rem, calc(5.25rem + var(--sab, 0px)));
+            padding-left: max(1rem, calc(var(--sal, 0px) + 1rem));
+            padding-right: max(1rem, calc(var(--sar, 0px) + 1rem));
         }
         .modal-sheet-safe {
-            padding-bottom: max(1.75rem, calc(1.25rem + var(--sab)));
-            max-height: calc(90dvh - var(--sat));
+            padding-bottom: max(1.75rem, calc(1.25rem + var(--sab, 0px)));
+            max-height: calc(90dvh - var(--sat, 0px));
         }
         .banner-safe {
-            bottom: max(5.25rem, calc(4.75rem + var(--sab)));
+            bottom: max(5.5rem, calc(5rem + var(--sab, 0px)));
         }
 
         /* Fluent entrance animation */
@@ -113,6 +131,7 @@
         }
     </style>
 </head>
+
 <body class="min-h-full min-h-[100dvh] bg-slate-100 dark:bg-slate-950 flex flex-col items-center text-slate-800 dark:text-slate-100 antialiased selection:bg-emerald-500 selection:text-white transition-colors duration-200">
     <!-- Mobile Frame Container (Fluid 100% on iPhones, Max-W-MD for desktop preview) -->
     <div class="w-full max-w-md flex-1 min-h-full min-h-[100dvh] bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 relative flex flex-col shadow-2xl border-x border-slate-200/80 dark:border-slate-800/80 transition-colors duration-200">
@@ -235,88 +254,82 @@
     </div>
     <!-- End Mobile Frame Container -->
 
-    <!-- 3. FLOATING DOCK BOTTOM NAVIGATION BAR (Sleek Unified Capsule) -->
-    <nav class="fixed inset-x-0 bottom-0 z-40 flex justify-center pointer-events-none px-4 pb-[max(0.75rem,calc(env(safe-area-inset-bottom,0px)+0.25rem))]">
+    <!-- 3. FLOATING DOCK BOTTOM NAVIGATION BAR (APPLE-GRADE CAPSULE) -->
+    <nav class="fixed inset-x-0 bottom-0 z-40 flex justify-center pointer-events-none px-4 pb-[max(0.75rem,calc(env(safe-area-inset-bottom,0px)+0.35rem))]">
+        <div class="w-full max-w-[364px] pointer-events-auto bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 shadow-[0_12px_36px_rgba(0,0,0,0.12),0_2px_8px_rgba(0,0,0,0.04)] dark:shadow-[0_16px_48px_rgba(0,0,0,0.6)] rounded-full px-2 py-1.5 flex items-center justify-between transition-all">
 
-            <div class="w-full max-w-[364px] pointer-events-auto bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800 shadow-[0_10px_32px_rgba(0,0,0,0.12),0_2px_6px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.55)] rounded-full px-2 py-1.5 transition-all duration-300">
-                <div class="flex items-center justify-between">
+            {{-- Tab 1: Beranda --}}
+            @php $isActive = request()->routeIs('dashboard'); @endphp
+            <a href="{{ route('dashboard') }}"
+               class="flex-1 h-12 flex flex-col items-center justify-center rounded-full relative active:scale-90 transition-all duration-200 select-none group {{ $isActive ? 'text-emerald-600 dark:text-emerald-400 font-extrabold' : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 font-semibold' }}"
+               aria-label="Beranda">
+                @if($isActive)
+                    <span class="absolute inset-x-1 inset-y-1 bg-emerald-500/12 dark:bg-emerald-400/15 rounded-full pointer-events-none animate-swan-in"></span>
+                @endif
+                <svg class="relative w-5 h-5 transition-transform duration-200 {{ $isActive ? 'scale-105' : 'group-hover:scale-105' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="{{ $isActive ? '2.3' : '1.75' }}" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                </svg>
+                <span class="relative text-[10px] tracking-tight leading-none mt-1">Beranda</span>
+            </a>
 
-                    <!-- Tab 1: Beranda -->
-                    <a href="{{ route('dashboard') }}"
-                       class="h-11 flex-1 flex flex-col items-center justify-center rounded-full transition-all duration-200 group relative active:scale-95 {{ request()->routeIs('dashboard') ? 'text-emerald-600 dark:text-emerald-400 font-extrabold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 font-semibold' }}"
-                       aria-label="Beranda">
-                        @if(request()->routeIs('dashboard'))
-                            <span class="absolute inset-0 rounded-full bg-emerald-500/12 dark:bg-emerald-400/15 pointer-events-none"></span>
-                        @endif
-                        <div class="relative z-10 flex flex-col items-center gap-0.5">
-                            <svg class="w-5 h-5 transition-transform duration-200 {{ request()->routeIs('dashboard') ? 'scale-105' : 'group-hover:scale-105' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="{{ request()->routeIs('dashboard') ? '2.5' : '1.8' }}">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-                            </svg>
-                            <span class="text-[10px] tracking-tight leading-none">Beranda</span>
-                        </div>
-                    </a>
+            {{-- Tab 2: Aktivitas --}}
+            @php $isActive = request()->routeIs('todos.*'); @endphp
+            <a href="{{ route('todos.index') }}"
+               class="flex-1 h-12 flex flex-col items-center justify-center rounded-full relative active:scale-90 transition-all duration-200 select-none group {{ $isActive ? 'text-emerald-600 dark:text-emerald-400 font-extrabold' : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 font-semibold' }}"
+               aria-label="Aktivitas">
+                @if($isActive)
+                    <span class="absolute inset-x-1 inset-y-1 bg-emerald-500/12 dark:bg-emerald-400/15 rounded-full pointer-events-none animate-swan-in"></span>
+                @endif
+                <svg class="relative w-5 h-5 transition-transform duration-200 {{ $isActive ? 'scale-105' : 'group-hover:scale-105' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="{{ $isActive ? '2.3' : '1.75' }}" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="4" y="3.5" width="16" height="17" rx="3"/>
+                    <path d="m8.5 12 2.5 2.5 4.5-5"/>
+                    <path d="M9 3.5a1.5 1.5 0 0 1 3-0.5h0a1.5 1.5 0 0 1 3 0.5"/>
+                </svg>
+                <span class="relative text-[10px] tracking-tight leading-none mt-1">Aktivitas</span>
+            </a>
 
-                    <!-- Tab 2: Laporan -->
-                    <a href="{{ route('reports.index') }}"
-                       class="h-11 flex-1 flex flex-col items-center justify-center rounded-full transition-all duration-200 group relative active:scale-95 {{ request()->routeIs('reports.*') ? 'text-emerald-600 dark:text-emerald-400 font-extrabold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 font-semibold' }}"
-                       aria-label="Laporan">
-                        @if(request()->routeIs('reports.*'))
-                            <span class="absolute inset-0 rounded-full bg-emerald-500/12 dark:bg-emerald-400/15 pointer-events-none"></span>
-                        @endif
-                        <div class="relative z-10 flex flex-col items-center gap-0.5">
-                            <svg class="w-5 h-5 transition-transform duration-200 {{ request()->routeIs('reports.*') ? 'scale-105' : 'group-hover:scale-105' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="{{ request()->routeIs('reports.*') ? '2.5' : '1.8' }}">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z" />
-                            </svg>
-                            <span class="text-[10px] tracking-tight leading-none">Laporan</span>
-                        </div>
-                    </a>
-
-                    <!-- Tab 3: Action Button (+) Tambah Transaksi -->
-                    <div class="h-11 flex-1 flex items-center justify-center">
-                        <button type="button"
-                                onclick="openTransactionModal('expense')"
-                                class="w-11 h-11 rounded-full bg-gradient-to-tr from-emerald-600 via-emerald-500 to-teal-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/35 hover:shadow-emerald-500/50 active:scale-90 hover:scale-105 transition-all duration-200 cursor-pointer"
-                                aria-label="Tambah Transaksi Cepat">
-                            <svg class="w-5 h-5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                            </svg>
-                        </button>
-                    </div>
-
-                    <!-- Tab 4: Riwayat Transaksi -->
-                    <a href="{{ route('transactions.index') }}"
-                       class="h-11 flex-1 flex flex-col items-center justify-center rounded-full transition-all duration-200 group relative active:scale-95 {{ request()->routeIs('transactions.*') ? 'text-emerald-600 dark:text-emerald-400 font-extrabold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 font-semibold' }}"
-                       aria-label="Riwayat Transaksi">
-                        @if(request()->routeIs('transactions.*'))
-                            <span class="absolute inset-0 rounded-full bg-emerald-500/12 dark:bg-emerald-400/15 pointer-events-none"></span>
-                        @endif
-                        <div class="relative z-10 flex flex-col items-center gap-0.5">
-                            <svg class="w-5 h-5 transition-transform duration-200 {{ request()->routeIs('transactions.*') ? 'scale-105' : 'group-hover:scale-105' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="{{ request()->routeIs('transactions.*') ? '2.5' : '1.8' }}">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                            <span class="text-[10px] tracking-tight leading-none">Riwayat</span>
-                        </div>
-                    </a>
-
-                    <!-- Tab 5: Profil -->
-                    <a href="{{ route('profile.edit') }}"
-                       class="h-11 flex-1 flex flex-col items-center justify-center rounded-full transition-all duration-200 group relative active:scale-95 {{ request()->routeIs('profile.*') ? 'text-emerald-600 dark:text-emerald-400 font-extrabold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 font-semibold' }}"
-                       aria-label="Profil">
-                        @if(request()->routeIs('profile.*'))
-                            <span class="absolute inset-0 rounded-full bg-emerald-500/12 dark:bg-emerald-400/15 pointer-events-none"></span>
-                        @endif
-                        <div class="relative z-10 flex flex-col items-center gap-0.5">
-                            <svg class="w-5 h-5 transition-transform duration-200 {{ request()->routeIs('profile.*') ? 'scale-105' : 'group-hover:scale-105' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="{{ request()->routeIs('profile.*') ? '2.5' : '1.8' }}">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                            </svg>
-                            <span class="text-[10px] tracking-tight leading-none">Profil</span>
-                        </div>
-                    </a>
-
-                </div>
+            {{-- Center Action: Quick Add Transaction FAB (+) --}}
+            <div class="flex items-center justify-center px-1">
+                <button type="button"
+                        onclick="openTransactionModal('expense')"
+                        class="w-12 h-12 rounded-full bg-gradient-to-tr from-emerald-500 via-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-[0_6px_20px_rgba(16,185,129,0.45)] hover:shadow-[0_8px_24px_rgba(16,185,129,0.6)] active:scale-90 hover:scale-105 transition-all duration-200 cursor-pointer border-2 border-white dark:border-slate-800 shrink-0"
+                        aria-label="Catat Transaksi Cepat">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 4.5v15m7.5-7.5h-15"/>
+                    </svg>
+                </button>
             </div>
-        </nav>
+
+            {{-- Tab 3: Riwayat Transaksi --}}
+            @php $isActive = request()->routeIs('transactions.*'); @endphp
+            <a href="{{ route('transactions.index') }}"
+               class="flex-1 h-12 flex flex-col items-center justify-center rounded-full relative active:scale-90 transition-all duration-200 select-none group {{ $isActive ? 'text-emerald-600 dark:text-emerald-400 font-extrabold' : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 font-semibold' }}"
+               aria-label="Riwayat Transaksi">
+                @if($isActive)
+                    <span class="absolute inset-x-1 inset-y-1 bg-emerald-500/12 dark:bg-emerald-400/15 rounded-full pointer-events-none animate-swan-in"></span>
+                @endif
+                <svg class="relative w-5 h-5 transition-transform duration-200 {{ $isActive ? 'scale-105' : 'group-hover:scale-105' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="{{ $isActive ? '2.3' : '1.75' }}" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                </svg>
+                <span class="relative text-[10px] tracking-tight leading-none mt-1">Riwayat</span>
+            </a>
+
+            {{-- Tab 4: Profil Pengguna --}}
+            @php $isActive = request()->routeIs('profile.*'); @endphp
+            <a href="{{ route('profile.edit') }}"
+               class="flex-1 h-12 flex flex-col items-center justify-center rounded-full relative active:scale-90 transition-all duration-200 select-none group {{ $isActive ? 'text-emerald-600 dark:text-emerald-400 font-extrabold' : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 font-semibold' }}"
+               aria-label="Profil Pengguna">
+                @if($isActive)
+                    <span class="absolute inset-x-1 inset-y-1 bg-emerald-500/12 dark:bg-emerald-400/15 rounded-full pointer-events-none animate-swan-in"></span>
+                @endif
+                <svg class="relative w-5 h-5 transition-transform duration-200 {{ $isActive ? 'scale-105' : 'group-hover:scale-105' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="{{ $isActive ? '2.3' : '1.75' }}" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                </svg>
+                <span class="relative text-[10px] tracking-tight leading-none mt-1">Profil</span>
+            </a>
+
+        </div>
+    </nav>
 
 
         <!-- 4. QUICK ADD TRANSACTION BOTTOM SHEET MODAL -->
