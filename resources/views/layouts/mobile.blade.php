@@ -160,65 +160,71 @@
     </style>
 </head>
 
-<body class="min-h-full min-h-[100dvh] bg-slate-100 dark:bg-slate-950 flex flex-col items-center text-slate-800 dark:text-slate-100 antialiased selection:bg-emerald-500 selection:text-white transition-colors duration-200">
+<body class="min-h-full min-h-[100dvh] bg-slate-100 dark:bg-slate-950 flex flex-col items-center text-slate-800 dark:text-slate-100 antialiased selection:bg-emerald-500 selection:text-white transition-colors duration-200 overflow-x-hidden relative">
+    <!-- Ambient Liquid Aura in Root Background -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <div class="absolute -top-24 -left-20 w-96 h-96 rounded-full bg-gradient-to-br from-emerald-500/15 via-teal-500/10 to-transparent blur-3xl animate-liquid-orb-1"></div>
+        <div class="absolute top-1/3 -right-28 w-96 h-96 rounded-full bg-gradient-to-bl from-teal-500/15 via-indigo-500/10 to-transparent blur-3xl animate-liquid-orb-2"></div>
+        <div class="absolute -bottom-24 left-1/3 w-80 h-80 rounded-full bg-gradient-to-tr from-emerald-500/12 via-cyan-500/10 to-transparent blur-3xl animate-liquid-orb-1"></div>
+    </div>
+
     <!-- Mobile Frame Container (Fluid 100% on iPhones, Max-W-MD for desktop preview) -->
-    <div class="w-full max-w-md flex-1 min-h-full min-h-[100dvh] bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 relative flex flex-col shadow-2xl border-x border-slate-200/80 dark:border-slate-800/80 transition-colors duration-200">
+    <div class="w-full max-w-md flex-1 min-h-full min-h-[100dvh] bg-slate-50/90 dark:bg-slate-950/90 backdrop-blur-xl text-slate-800 dark:text-slate-100 relative flex flex-col shadow-2xl border-x border-slate-200/80 dark:border-slate-800/80 transition-colors duration-200 z-10">
 
-
-        <!-- 1. TOP HEADER -->
+        <!-- 1. TOP HEADER (Apple iOS Liquid Glass) -->
         @hasSection('custom_header')
             @yield('custom_header')
         @else
-        <header class="sticky top-0 z-30 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-100 dark:border-slate-800/80 header-safe pb-3 flex items-center justify-between transition-colors">
+        <header class="sticky top-0 z-30 liquid-glass border-b border-white/60 dark:border-white/10 header-safe pb-3 flex items-center justify-between transition-colors">
             <div class="flex items-center gap-2.5">
                 @section('header_left')
-                    <a href="{{ route('dashboard') }}" class="active:scale-95 transition-transform" aria-label="Beranda">
+                    <a href="{{ route('dashboard') }}" class="ios-press" aria-label="Beranda">
                         <x-app-logo class="w-8 h-8" variant="badge" />
                     </a>
                     <div class="flex flex-col">
-                        <span class="text-xs font-medium text-slate-400 dark:text-slate-400">Selamat Datang 👋</span>
-                        <h1 class="text-base font-bold text-slate-800 dark:text-white tracking-tight leading-tight">
+                        <span class="text-xs font-semibold text-emerald-600 dark:text-emerald-400">SwanFlow</span>
+                        <h1 class="text-base font-extrabold text-slate-800 dark:text-white tracking-tight leading-tight">
                             {{ $pageTitle ?? 'Financial Tracker' }}
                         </h1>
                     </div>
                 @show
             </div>
 
-            <!-- Profile, Theme Toggle & Notification Area (Min 44x44px touch targets) -->
+            <!-- Profile, Theme Toggle & Notification Area (Touch-friendly 44x44px) -->
             <div class="flex items-center gap-1.5">
                 <!-- Theme Toggle Button (Dark / Light Mode) -->
                 <button type="button" 
                         id="theme-toggle-btn"
                         onclick="toggleSwanFlowTheme()" 
                         aria-label="Ganti Tema Gelap atau Terang" 
-                        class="min-w-[44px] min-h-[44px] w-11 h-11 flex items-center justify-center rounded-full text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-amber-400 hover:bg-slate-100 dark:hover:bg-slate-800/80 active:scale-95 transition-all">
+                        class="min-w-[42px] min-h-[42px] w-10.5 h-10.5 flex items-center justify-center rounded-2xl liquid-glass text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-amber-300 ios-press transition-all">
                     <!-- Sun Icon (visible in dark mode) -->
-                    <svg class="w-5 h-5 hidden dark:block text-amber-400 transition-transform duration-300 transform rotate-0 hover:rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <svg class="w-5 h-5 hidden dark:block text-amber-300 transition-transform duration-300 transform rotate-0 hover:rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
                     </svg>
                     <!-- Moon Icon (visible in light mode) -->
-                    <svg class="w-5 h-5 block dark:hidden text-slate-600 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <svg class="w-5 h-5 block dark:hidden text-slate-700 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
                     </svg>
                 </button>
 
-                <!-- Notification Button (Touch-friendly 44x44px) -->
-                <button type="button" aria-label="Notifikasi" class="min-w-[44px] min-h-[44px] w-11 h-11 flex items-center justify-center rounded-full text-slate-400 hover:text-white hover:bg-slate-800/80 active:scale-95 transition-all">
+                <!-- Notification Button -->
+                <a href="{{ route('transactions.index') }}" aria-label="Riwayat Notifikasi" class="min-w-[42px] min-h-[42px] w-10.5 h-10.5 flex items-center justify-center rounded-2xl liquid-glass text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white ios-press transition-all">
                     <span class="relative flex items-center justify-center">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
                         </svg>
-                        <span class="absolute top-0 right-0 w-2 h-2 bg-emerald-500 rounded-full ring-2 ring-slate-900"></span>
+                        <span class="absolute top-0 right-0 w-2 h-2 bg-emerald-500 rounded-full ring-2 ring-white dark:ring-slate-900"></span>
                     </span>
-                </button>
+                </a>
 
                 <!-- User Profile Avatar (Gusti Swandana) -->
-                <a href="{{ route('profile.edit') }}" class="min-w-[44px] min-h-[44px] flex items-center justify-center active:scale-95 transition-transform" title="Profil Gusti Swandana" aria-label="Profil Pengguna">
+                <a href="{{ route('profile.edit') }}" class="min-w-[42px] min-h-[42px] flex items-center justify-center ios-press" title="Profil Pengguna" aria-label="Profil Pengguna">
                     <div class="relative flex items-center justify-center">
-                        <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-slate-800 to-slate-700 text-white font-extrabold text-xs flex items-center justify-center shadow-xs ring-2 ring-slate-700 border border-slate-600">
+                        <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white font-extrabold text-xs flex items-center justify-center shadow-xs ring-2 ring-white/80 dark:ring-slate-700 border border-white/50 dark:border-slate-600">
                             GS
                         </div>
-                        <span class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 border-2 border-slate-900 rounded-full"></span>
+                        <span class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 border-2 border-white dark:border-slate-900 rounded-full"></span>
                     </div>
                 </a>
             </div>
@@ -307,19 +313,19 @@
     </div>
     <!-- End Mobile Frame Container -->
 
-    <!-- 3. FLOATING DOCK BOTTOM NAVIGATION BAR (PERMANENTLY LOCKED POSITION) -->
+    <!-- 3. FLOATING DOCK BOTTOM NAVIGATION BAR (APPLE iOS FLOATING GLASS ISLAND) -->
     <nav class="bottom-nav-dock">
-        <div class="bottom-nav-capsule bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 shadow-[0_12px_36px_rgba(0,0,0,0.12),0_2px_8px_rgba(0,0,0,0.04)] dark:shadow-[0_16px_48px_rgba(0,0,0,0.6)] rounded-full px-2 py-1.5 flex items-center justify-between transition-colors duration-200">
+        <div class="bottom-nav-capsule liquid-dock-capsule rounded-full px-2.5 py-1.5 flex items-center justify-between transition-all duration-300">
 
             {{-- Tab 1: Beranda --}}
             @php $isActive = request()->routeIs('dashboard'); @endphp
             <a href="{{ route('dashboard') }}"
-               class="flex-1 h-12 flex flex-col items-center justify-center rounded-full relative active:scale-95 transition-colors duration-150 select-none group {{ $isActive ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 font-medium' }}"
+               class="flex-1 h-12 flex flex-col items-center justify-center rounded-full relative ios-press select-none group {{ $isActive ? 'text-emerald-600 dark:text-emerald-400 font-extrabold' : 'text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 font-semibold' }}"
                aria-label="Beranda">
                 @if($isActive)
-                    <span class="absolute inset-x-1 inset-y-1 bg-emerald-500/12 dark:bg-emerald-400/15 rounded-full pointer-events-none"></span>
+                    <span class="absolute inset-x-1.5 inset-y-1 bg-emerald-500/15 dark:bg-emerald-400/20 rounded-full pointer-events-none transition-all"></span>
                 @endif
-                <svg class="relative w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg class="relative w-5 h-5 shrink-0 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
                 </svg>
                 <span class="relative text-[10px] tracking-tight leading-none mt-1">Beranda</span>
@@ -328,12 +334,12 @@
             {{-- Tab 2: Aktivitas --}}
             @php $isActive = request()->routeIs('todos.*'); @endphp
             <a href="{{ route('todos.index') }}"
-               class="flex-1 h-12 flex flex-col items-center justify-center rounded-full relative active:scale-95 transition-colors duration-150 select-none group {{ $isActive ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 font-medium' }}"
+               class="flex-1 h-12 flex flex-col items-center justify-center rounded-full relative ios-press select-none group {{ $isActive ? 'text-emerald-600 dark:text-emerald-400 font-extrabold' : 'text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 font-semibold' }}"
                aria-label="Aktivitas">
                 @if($isActive)
-                    <span class="absolute inset-x-1 inset-y-1 bg-emerald-500/12 dark:bg-emerald-400/15 rounded-full pointer-events-none"></span>
+                    <span class="absolute inset-x-1.5 inset-y-1 bg-emerald-500/15 dark:bg-emerald-400/20 rounded-full pointer-events-none transition-all"></span>
                 @endif
-                <svg class="relative w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg class="relative w-5 h-5 shrink-0 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="4" y="3.5" width="16" height="17" rx="3"/>
                     <path d="m8.5 12 2.5 2.5 4.5-5"/>
                     <path d="M9 3.5a1.5 1.5 0 0 1 3-0.5h0a1.5 1.5 0 0 1 3 0.5"/>
@@ -341,11 +347,11 @@
                 <span class="relative text-[10px] tracking-tight leading-none mt-1">Aktivitas</span>
             </a>
 
-            {{-- Center Action: Quick Add Transaction FAB (+) --}}
+            {{-- Center Action: Quick Add Transaction FAB (+) (Apple iOS Action Glow Button) --}}
             <div class="flex items-center justify-center px-1 shrink-0">
                 <button type="button"
                         onclick="openTransactionModal('expense')"
-                        class="w-12 h-12 rounded-full bg-gradient-to-tr from-emerald-500 via-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-[0_6px_20px_rgba(16,185,129,0.45)] hover:shadow-[0_8px_24px_rgba(16,185,129,0.6)] active:scale-90 transition-transform duration-150 cursor-pointer border-2 border-white dark:border-slate-800 shrink-0"
+                        class="liquid-action-fab w-12 h-12 rounded-full text-white flex items-center justify-center cursor-pointer shrink-0"
                         aria-label="Catat Transaksi Cepat">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 4.5v15m7.5-7.5h-15"/>
@@ -356,12 +362,12 @@
             {{-- Tab 3: Riwayat Transaksi --}}
             @php $isActive = request()->routeIs('transactions.*'); @endphp
             <a href="{{ route('transactions.index') }}"
-               class="flex-1 h-12 flex flex-col items-center justify-center rounded-full relative active:scale-95 transition-colors duration-150 select-none group {{ $isActive ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 font-medium' }}"
+               class="flex-1 h-12 flex flex-col items-center justify-center rounded-full relative ios-press select-none group {{ $isActive ? 'text-emerald-600 dark:text-emerald-400 font-extrabold' : 'text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 font-semibold' }}"
                aria-label="Riwayat Transaksi">
                 @if($isActive)
-                    <span class="absolute inset-x-1 inset-y-1 bg-emerald-500/12 dark:bg-emerald-400/15 rounded-full pointer-events-none"></span>
+                    <span class="absolute inset-x-1.5 inset-y-1 bg-emerald-500/15 dark:bg-emerald-400/20 rounded-full pointer-events-none transition-all"></span>
                 @endif
-                <svg class="relative w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg class="relative w-5 h-5 shrink-0 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
                 </svg>
                 <span class="relative text-[10px] tracking-tight leading-none mt-1">Riwayat</span>
@@ -370,12 +376,12 @@
             {{-- Tab 4: Profil Pengguna --}}
             @php $isActive = request()->routeIs('profile.*'); @endphp
             <a href="{{ route('profile.edit') }}"
-               class="flex-1 h-12 flex flex-col items-center justify-center rounded-full relative active:scale-95 transition-colors duration-150 select-none group {{ $isActive ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 font-medium' }}"
+               class="flex-1 h-12 flex flex-col items-center justify-center rounded-full relative ios-press select-none group {{ $isActive ? 'text-emerald-600 dark:text-emerald-400 font-extrabold' : 'text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 font-semibold' }}"
                aria-label="Profil Pengguna">
                 @if($isActive)
-                    <span class="absolute inset-x-1 inset-y-1 bg-emerald-500/12 dark:bg-emerald-400/15 rounded-full pointer-events-none"></span>
+                    <span class="absolute inset-x-1.5 inset-y-1 bg-emerald-500/15 dark:bg-emerald-400/20 rounded-full pointer-events-none transition-all"></span>
                 @endif
-                <svg class="relative w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg class="relative w-5 h-5 shrink-0 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
                 </svg>
                 <span class="relative text-[10px] tracking-tight leading-none mt-1">Profil</span>
@@ -396,27 +402,30 @@
             <!-- Backdrop -->
             <div id="modal-backdrop" onclick="closeTransactionModal()" class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity duration-300 opacity-0"></div>
 
-            <!-- Bottom Sheet Panel -->
+            <!-- Bottom Sheet Panel (Apple iOS Liquid Sheet) -->
             <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
-                <div id="modal-panel" class="w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-100 dark:border-slate-800/80 pointer-events-auto transform translate-y-full transition-transform duration-300 overflow-y-auto no-scrollbar">
+                <div id="modal-panel" class="w-full max-w-md bg-white/95 dark:bg-slate-900/95 backdrop-blur-3xl rounded-t-[36px] shadow-2xl p-5 modal-sheet-safe border-t border-white/60 dark:border-white/10 pointer-events-auto transform translate-y-full transition-transform duration-300 overflow-y-auto no-scrollbar">
 
                     <!-- Drag Handle -->
-                    <div class="w-12 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-4 cursor-pointer" onclick="closeTransactionModal()"></div>
+                    <div class="w-10 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-4 cursor-pointer" onclick="closeTransactionModal()"></div>
 
                     <!-- Modal Header -->
-                    <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800 mb-4">
-                        <h2 class="text-base font-bold text-slate-800 dark:text-white">Catat Transaksi</h2>
-                        <button type="button" onclick="closeTransactionModal()" aria-label="Tutup modal" class="min-w-[44px] min-h-[44px] -mr-2 flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-95 transition-all">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800/80 mb-4">
+                        <div>
+                            <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 block -mb-0.5">Transaksi Baru</span>
+                            <h2 class="text-base font-extrabold text-slate-800 dark:text-white tracking-tight">Catat Transaksi</h2>
+                        </div>
+                        <button type="button" onclick="closeTransactionModal()" aria-label="Tutup modal" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-full bg-slate-100 dark:bg-slate-800/80 ios-press transition-all">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
                     </div>
 
                     <!-- Quick Receipt Scanner Trigger Banner -->
-                    <button type="button" onclick="openReceiptScannerModal()" class="w-full py-2.5 px-3 mb-3 rounded-2xl bg-gradient-to-r from-teal-500/10 via-emerald-500/15 to-teal-500/10 hover:from-teal-500/20 hover:to-emerald-500/20 text-teal-700 dark:text-teal-300 border border-teal-200/70 dark:border-teal-800/70 flex items-center justify-between active:scale-[0.99] transition-all cursor-pointer shadow-2xs group">
+                    <button type="button" onclick="openReceiptScannerModal()" class="w-full py-2.5 px-3 mb-3.5 rounded-2xl bg-gradient-to-r from-teal-500/12 via-emerald-500/15 to-teal-500/12 hover:from-teal-500/20 hover:to-emerald-500/20 text-teal-700 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/70 flex items-center justify-between ios-press transition-all cursor-pointer shadow-2xs group">
                         <div class="flex items-center gap-2.5 min-w-0">
-                            <div class="w-7 h-7 rounded-xl bg-teal-500/20 text-teal-600 dark:text-teal-400 flex items-center justify-center font-bold shrink-0">
+                            <div class="w-7 h-7 rounded-xl bg-teal-500/20 text-teal-600 dark:text-teal-400 flex items-center justify-center font-bold shrink-0 shadow-xs">
                                 <svg class="w-4 h-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
@@ -436,23 +445,23 @@
                     <form action="{{ route('transactions.store') }}" method="POST" class="space-y-4">
                         @csrf
 
-                        <!-- Transaction Type Switcher (Pengeluaran vs Pemasukan vs Transfer) -->
-                        <div class="grid grid-cols-3 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl gap-1">
+                        <!-- Transaction Type Switcher (iOS Segmented Control) -->
+                        <div class="ios-segmented-track grid grid-cols-3">
                             <label class="cursor-pointer">
                                 <input type="radio" name="type" value="expense" checked class="peer sr-only" onchange="updateModalType('expense')">
-                                <div class="min-h-[44px] flex items-center justify-center text-xs font-bold rounded-lg text-slate-500 dark:text-slate-400 peer-checked:bg-white dark:peer-checked:bg-slate-700 peer-checked:text-rose-600 dark:peer-checked:text-rose-400 peer-checked:shadow-xs transition-all">
+                                <div class="min-h-[40px] flex items-center justify-center text-xs font-bold rounded-[13px] text-slate-500 dark:text-slate-400 peer-checked:ios-segmented-thumb peer-checked:text-rose-600 dark:peer-checked:text-rose-400 transition-all">
                                     Pengeluaran
                                 </div>
                             </label>
                             <label class="cursor-pointer">
                                 <input type="radio" name="type" value="income" class="peer sr-only" onchange="updateModalType('income')">
-                                <div class="min-h-[44px] flex items-center justify-center text-xs font-bold rounded-lg text-slate-500 dark:text-slate-400 peer-checked:bg-white dark:peer-checked:bg-slate-700 peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 peer-checked:shadow-xs transition-all">
+                                <div class="min-h-[40px] flex items-center justify-center text-xs font-bold rounded-[13px] text-slate-500 dark:text-slate-400 peer-checked:ios-segmented-thumb peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 transition-all">
                                     Pemasukan
                                 </div>
                             </label>
                             <label class="cursor-pointer">
                                 <input type="radio" name="type" value="transfer" class="peer sr-only" onchange="updateModalType('transfer')">
-                                <div class="min-h-[44px] flex items-center justify-center text-xs font-bold rounded-lg text-slate-500 dark:text-slate-400 peer-checked:bg-white dark:peer-checked:bg-slate-700 peer-checked:text-slate-800 dark:peer-checked:text-white peer-checked:shadow-xs transition-all">
+                                <div class="min-h-[40px] flex items-center justify-center text-xs font-bold rounded-[13px] text-slate-500 dark:text-slate-400 peer-checked:ios-segmented-thumb peer-checked:text-slate-800 dark:peer-checked:text-white transition-all">
                                     Transfer
                                 </div>
                             </label>
@@ -570,27 +579,30 @@
             <!-- Backdrop -->
             <div id="edit-modal-backdrop" onclick="closeEditTransactionModal()" class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity duration-300 opacity-0"></div>
 
-            <!-- Bottom Sheet Panel -->
+            <!-- Bottom Sheet Panel (Apple iOS Liquid Sheet) -->
             <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
-                <div id="edit-modal-panel" class="w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-100 dark:border-slate-800/80 pointer-events-auto transform translate-y-full transition-transform duration-300 overflow-y-auto no-scrollbar">
+                <div id="edit-modal-panel" class="w-full max-w-md bg-white/95 dark:bg-slate-900/95 backdrop-blur-3xl rounded-t-[36px] shadow-2xl p-5 modal-sheet-safe border-t border-white/60 dark:border-white/10 pointer-events-auto transform translate-y-full transition-transform duration-300 overflow-y-auto no-scrollbar">
 
                     <!-- Drag Handle -->
-                    <div class="w-12 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-4 cursor-pointer" onclick="closeEditTransactionModal()"></div>
+                    <div class="w-10 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-4 cursor-pointer" onclick="closeEditTransactionModal()"></div>
 
                     <!-- Modal Header -->
-                    <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800 mb-4">
-                        <h2 class="text-base font-bold text-slate-800 dark:text-white">Edit Transaksi</h2>
-                        <button type="button" onclick="closeEditTransactionModal()" aria-label="Tutup modal" class="min-w-[44px] min-h-[44px] -mr-2 flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-95">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800/80 mb-4">
+                        <div>
+                            <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 block -mb-0.5">Penyesuaian Data</span>
+                            <h2 class="text-base font-extrabold text-slate-800 dark:text-white tracking-tight">Edit Transaksi</h2>
+                        </div>
+                        <button type="button" onclick="closeEditTransactionModal()" aria-label="Tutup modal" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-full bg-slate-100 dark:bg-slate-800/80 ios-press transition-all">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
                     </div>
 
                     <!-- Quick Scan Receipt Button for Edit -->
-                    <button type="button" onclick="openReceiptScannerModal('edit')" class="w-full mb-3 py-2.5 px-3 rounded-2xl bg-gradient-to-r from-teal-500/10 via-emerald-500/15 to-teal-500/10 hover:from-teal-500/20 hover:to-emerald-500/20 text-teal-700 dark:text-teal-300 border border-teal-200/70 dark:border-teal-800/70 flex items-center justify-between active:scale-[0.99] transition-all cursor-pointer shadow-2xs group">
+                    <button type="button" onclick="openReceiptScannerModal('edit')" class="w-full mb-3.5 py-2.5 px-3 rounded-2xl bg-gradient-to-r from-teal-500/12 via-emerald-500/15 to-teal-500/12 hover:from-teal-500/20 hover:to-emerald-500/20 text-teal-700 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/70 flex items-center justify-between ios-press transition-all cursor-pointer shadow-2xs group">
                         <div class="flex items-center gap-2.5 min-w-0">
-                            <div class="w-7 h-7 rounded-xl bg-teal-500/20 text-teal-600 dark:text-teal-400 flex items-center justify-center font-bold shrink-0">
+                            <div class="w-7 h-7 rounded-xl bg-teal-500/20 text-teal-600 dark:text-teal-400 flex items-center justify-center font-bold shrink-0 shadow-xs">
                                 <svg class="w-4 h-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
@@ -611,23 +623,23 @@
                         @csrf
                         @method('PUT')
 
-                        <!-- Type Switcher -->
-                        <div class="grid grid-cols-3 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl gap-1">
+                        <!-- Type Switcher (iOS Segmented Control) -->
+                        <div class="ios-segmented-track grid grid-cols-3">
                             <label class="cursor-pointer">
                                 <input type="radio" name="type" id="edit-type-expense" value="expense" class="peer sr-only" onchange="updateEditModalType('expense')">
-                                <div class="min-h-[44px] flex items-center justify-center text-xs font-bold rounded-lg text-slate-500 dark:text-slate-400 peer-checked:bg-white dark:peer-checked:bg-slate-700 peer-checked:text-rose-600 dark:peer-checked:text-rose-400 peer-checked:shadow-xs transition-all">
+                                <div class="min-h-[40px] flex items-center justify-center text-xs font-bold rounded-[13px] text-slate-500 dark:text-slate-400 peer-checked:ios-segmented-thumb peer-checked:text-rose-600 dark:peer-checked:text-rose-400 transition-all">
                                     Pengeluaran
                                 </div>
                             </label>
                             <label class="cursor-pointer">
                                 <input type="radio" name="type" id="edit-type-income" value="income" class="peer sr-only" onchange="updateEditModalType('income')">
-                                <div class="min-h-[44px] flex items-center justify-center text-xs font-bold rounded-lg text-slate-500 dark:text-slate-400 peer-checked:bg-white dark:peer-checked:bg-slate-700 peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 peer-checked:shadow-xs transition-all">
+                                <div class="min-h-[40px] flex items-center justify-center text-xs font-bold rounded-[13px] text-slate-500 dark:text-slate-400 peer-checked:ios-segmented-thumb peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 transition-all">
                                     Pemasukan
                                 </div>
                             </label>
                             <label class="cursor-pointer">
                                 <input type="radio" name="type" id="edit-type-transfer" value="transfer" class="peer sr-only" onchange="updateEditModalType('transfer')">
-                                <div class="min-h-[44px] flex items-center justify-center text-xs font-bold rounded-lg text-slate-500 dark:text-slate-400 peer-checked:bg-white dark:peer-checked:bg-slate-700 peer-checked:text-slate-800 dark:peer-checked:text-white peer-checked:shadow-xs transition-all">
+                                <div class="min-h-[40px] flex items-center justify-center text-xs font-bold rounded-[13px] text-slate-500 dark:text-slate-400 peer-checked:ios-segmented-thumb peer-checked:text-slate-800 dark:peer-checked:text-white transition-all">
                                     Transfer
                                 </div>
                             </label>
@@ -789,14 +801,14 @@
             <!-- Backdrop -->
             <div id="delete-modal-backdrop" onclick="closeDeleteTransactionModal()" class="fixed inset-0 bg-slate-950/75 backdrop-blur-xs transition-opacity duration-300 opacity-0" style="z-index: 9998;"></div>
 
-            <!-- Bottom Sheet Panel -->
+            <!-- Bottom Sheet Panel (Apple iOS Liquid Sheet) -->
             <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none" style="z-index: 9999;">
-                <div id="delete-modal-panel" class="w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-100 dark:border-slate-800/80 pointer-events-auto transform translate-y-full transition-transform duration-300">
+                <div id="delete-modal-panel" class="w-full max-w-md bg-white/95 dark:bg-slate-900/95 backdrop-blur-3xl rounded-t-[36px] shadow-2xl p-5 modal-sheet-safe border-t border-white/60 dark:border-white/10 pointer-events-auto transform translate-y-full transition-transform duration-300">
                     <!-- Drag Handle -->
-                    <div class="w-12 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-4 cursor-pointer" onclick="closeDeleteTransactionModal()"></div>
+                    <div class="w-10 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-4 cursor-pointer" onclick="closeDeleteTransactionModal()"></div>
 
                     <div class="text-center space-y-3 pb-2">
-                        <div class="w-14 h-14 mx-auto rounded-full bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center">
+                        <div class="w-14 h-14 mx-auto rounded-3xl bg-rose-500/15 text-rose-600 dark:text-rose-400 flex items-center justify-center shadow-xs border border-rose-500/20">
                             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                             </svg>
