@@ -138,20 +138,24 @@
             @php
                 $isIncome = $tx->type === \App\Enums\TransactionType::Income || $tx->type === 'income';
                 $isTransfer = $tx->type === \App\Enums\TransactionType::Transfer || $tx->type === 'transfer';
+                $txData = [
+                    'id' => $tx->id,
+                    'type' => is_string($tx->type) ? $tx->type : $tx->type->value,
+                    'amount' => (float) $tx->amount,
+                    'wallet_id' => $tx->wallet_id,
+                    'target_wallet_id' => $tx->target_wallet_id,
+                    'category_id' => $tx->category_id,
+                    'category_name' => $tx->category->name ?? '',
+                    'date' => \Carbon\Carbon::parse($tx->date)->format('Y-m-d'),
+                    'date_formatted' => \Carbon\Carbon::parse($tx->date)->translatedFormat('d F Y'),
+                    'description' => $tx->description ?: ($tx->category->name ?? ($isTransfer ? 'Transfer Antar Dompet' : 'Transaksi')),
+                ];
             @endphp
-            <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-2xs flex items-center justify-between hover:border-slate-200 dark:hover:border-slate-700 transition-colors">
+            <div data-transaction-row="{{ $tx->id }}" 
+                 data-tx="{{ json_encode($txData) }}"
+                 class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-2xs flex items-center justify-between hover:border-slate-200 dark:hover:border-slate-700 transition-colors">
                 <div class="flex items-center gap-3 min-w-0 flex-1 cursor-pointer"
-                     onclick='openEditTransactionModal({
-                         id: {{ $tx->id }},
-                         type: "{{ is_string($tx->type) ? $tx->type : $tx->type->value }}",
-                         amount: {{ $tx->amount }},
-                         wallet_id: {{ $tx->wallet_id }},
-                         target_wallet_id: {{ $tx->target_wallet_id ?: "null" }},
-                         category_id: {{ $tx->category_id ?: "null" }},
-                         category_name: @json($tx->category->name ?? ""),
-                         date: "{{ \Carbon\Carbon::parse($tx->date)->format("Y-m-d") }}",
-                         description: @json($tx->description ?? "")
-                     })'>
+                     onclick="openEditFromDataset(this, event)">
                     <!-- Icon Square Container (Dark themed, no blue) -->
                     <div class="w-12 h-12 rounded-2xl {{ $isIncome ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/40' : ($isTransfer ? 'bg-teal-100 text-teal-700 dark:bg-teal-950/50 dark:text-teal-400 border border-teal-200 dark:border-teal-900/40' : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700/60') }} flex items-center justify-center shrink-0 shadow-xs">
                         <x-category-icon :category="$tx->category" :type="$tx->type" :name="$tx->description ?: ($tx->category->name ?? '')" class="w-5 h-5" />
@@ -177,17 +181,7 @@
 
                 <div class="flex items-center gap-2 shrink-0 pl-2">
                     <div class="text-right cursor-pointer"
-                         onclick='openEditTransactionModal({
-                             id: {{ $tx->id }},
-                             type: "{{ is_string($tx->type) ? $tx->type : $tx->type->value }}",
-                             amount: {{ $tx->amount }},
-                             wallet_id: {{ $tx->wallet_id }},
-                             target_wallet_id: {{ $tx->target_wallet_id ?: "null" }},
-                             category_id: {{ $tx->category_id ?: "null" }},
-                             category_name: @json($tx->category->name ?? ""),
-                             date: "{{ \Carbon\Carbon::parse($tx->date)->format("Y-m-d") }}",
-                             description: @json($tx->description ?? "")
-                         })'>
+                         onclick="openEditFromDataset(this, event)">
                         <span class="text-sm font-extrabold {{ $isIncome ? 'text-emerald-500 dark:text-emerald-400' : ($isTransfer ? 'text-slate-700 dark:text-slate-300' : 'text-rose-500 dark:text-rose-400') }} block">
                             {{ $isIncome ? '+ ' : ($isTransfer ? '' : '- ') }}Rp {{ number_format($tx->amount, 0, ',', '.') }}
                         </span>
@@ -195,17 +189,7 @@
 
                     <!-- Edit Button -->
                     <button type="button" 
-                            onclick='openEditTransactionModal({
-                                id: {{ $tx->id }},
-                                type: "{{ is_string($tx->type) ? $tx->type : $tx->type->value }}",
-                                amount: {{ $tx->amount }},
-                                wallet_id: {{ $tx->wallet_id }},
-                                target_wallet_id: {{ $tx->target_wallet_id ?: "null" }},
-                                category_id: {{ $tx->category_id ?: "null" }},
-                                category_name: @json($tx->category->name ?? ""),
-                                date: "{{ \Carbon\Carbon::parse($tx->date)->format("Y-m-d") }}",
-                                description: @json($tx->description ?? "")
-                            })'
+                            onclick="openEditFromDataset(this, event)"
                             aria-label="Edit transaksi" 
                             class="min-w-[36px] min-h-[36px] w-9 h-9 flex items-center justify-center text-slate-400 hover:text-emerald-500 dark:hover:text-emerald-400 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-95 transition-all cursor-pointer">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -215,13 +199,7 @@
 
                     <!-- Delete Button with Confirmation Modal -->
                     <button type="button" 
-                            onclick='openDeleteTransactionModal({
-                                id: {{ $tx->id }},
-                                amount: {{ $tx->amount }},
-                                date: "{{ \Carbon\Carbon::parse($tx->date)->translatedFormat("d F Y") }}",
-                                description: @json($tx->description ?: ($tx->category->name ?? ($isTransfer ? "Transfer Antar Dompet" : "Transaksi"))),
-                                type: "{{ is_string($tx->type) ? $tx->type : $tx->type->value }}"
-                            })'
+                            onclick="openDeleteFromDataset(this, event)"
                             aria-label="Hapus transaksi" 
                             class="min-w-[36px] min-h-[36px] w-9 h-9 flex items-center justify-center text-slate-300 dark:text-slate-600 hover:text-rose-500 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/40 active:scale-95 transition-all cursor-pointer">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">

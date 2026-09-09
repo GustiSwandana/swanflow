@@ -2,6 +2,7 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-slate-100 dark:bg-slate-950">
 <head>
     <meta charset="utf-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
@@ -1911,23 +1912,50 @@
 
             function triggerDeleteFromEditModal() {
                 if (!currentActiveTransaction) return;
-                closeEditTransactionModal();
-                setTimeout(() => {
-                    openDeleteTransactionModal(currentActiveTransaction);
-                }, 200);
+                openDeleteTransactionModal(currentActiveTransaction);
+            }
+
+            function openEditFromDataset(el, ev) {
+                if (ev) ev.stopPropagation();
+                try {
+                    const raw = el.dataset.tx || el.closest('[data-tx]')?.dataset.tx;
+                    if (!raw) return;
+                    const data = typeof raw === 'string' ? JSON.parse(raw) : raw;
+                    openEditTransactionModal(data);
+                } catch (e) {
+                    console.error('Error parsing transaction data for edit:', e);
+                }
+            }
+
+            function openDeleteFromDataset(el, ev) {
+                if (ev) ev.stopPropagation();
+                try {
+                    const raw = el.dataset.tx || el.closest('[data-tx]')?.dataset.tx;
+                    if (!raw) return;
+                    const data = typeof raw === 'string' ? JSON.parse(raw) : raw;
+                    openDeleteTransactionModal(data);
+                } catch (e) {
+                    console.error('Error parsing transaction data for delete:', e);
+                }
             }
 
             function openDeleteTransactionModal(data) {
+                if (typeof data === 'string') {
+                    try { data = JSON.parse(data); } catch(e) {}
+                }
+                if (!data || !data.id) return;
                 currentActiveTransaction = data;
+
                 const modal = document.getElementById('delete-transaction-confirm-modal');
                 const backdrop = document.getElementById('delete-modal-backdrop');
                 const panel = document.getElementById('delete-modal-panel');
                 const deleteForm = document.getElementById('global-delete-transaction-form');
 
-                if (!modal || !deleteForm) return;
+                if (!modal) return;
 
-                const baseTxUrl = "{{ url('/transactions') }}";
-                deleteForm.action = baseTxUrl + '/' + data.id;
+                if (deleteForm) {
+                    deleteForm.action = '/transactions/' + data.id;
+                }
 
                 const amtEl = document.getElementById('delete-preview-amount');
                 if (amtEl) {
@@ -1937,7 +1965,7 @@
 
                 const dateEl = document.getElementById('delete-preview-date');
                 if (dateEl) {
-                    dateEl.textContent = data.date || '-';
+                    dateEl.textContent = data.date_formatted || data.date || '-';
                 }
 
                 const descEl = document.getElementById('delete-preview-desc');
@@ -1971,15 +1999,80 @@
                 }, 300);
             }
 
-            function executeDeleteTransaction() {
-                const deleteForm = document.getElementById('global-delete-transaction-form');
+            async function executeDeleteTransaction() {
+                if (!currentActiveTransaction || !currentActiveTransaction.id) {
+                    showSwanToast('ID transaksi tidak ditemukan', 'error');
+                    return;
+                }
+
                 const btn = document.getElementById('confirm-delete-submit-btn');
+                const origHtml = btn ? btn.innerHTML : '';
                 if (btn) {
                     btn.disabled = true;
                     btn.innerHTML = '<svg class="w-4 h-4 animate-spin inline-block mr-1.5" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Menghapus...';
                 }
-                if (deleteForm) {
-                    deleteForm.submit();
+
+                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+                    || document.querySelector('#global-delete-transaction-form input[name="_token"]')?.value
+                    || document.querySelector('input[name="_token"]')?.value;
+
+                try {
+                    const res = await fetch(`/transactions/${currentActiveTransaction.id}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify({
+                            _method: 'DELETE'
+                        })
+                    });
+
+                    const result = await res.json().catch(() => null);
+
+                    if (res.ok && result && result.success) {
+                        showSwanToast(result.message || 'Transaksi berhasil dihapus!');
+                        closeDeleteTransactionModal();
+                        closeEditTransactionModal();
+
+                        // Smoothly animate out row if exists on page
+                        const rowEl = document.querySelector(`[data-transaction-row="${currentActiveTransaction.id}"]`);
+                        if (rowEl) {
+                            rowEl.style.transition = 'all 0.3s ease-out';
+                            rowEl.style.opacity = '0';
+                            rowEl.style.transform = 'scale(0.95)';
+                            setTimeout(() => {
+                                rowEl.remove();
+                                window.location.reload();
+                            }, 300);
+                        } else {
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 400);
+                        }
+                    } else {
+                        const errMsg = (result && result.message) ? result.message : ('Gagal menghapus transaksi (Status ' + res.status + ')');
+                        showSwanToast(errMsg, 'error');
+                        if (btn) {
+                            btn.disabled = false;
+                            btn.innerHTML = origHtml;
+                        }
+                    }
+                } catch (err) {
+                    console.error('Fetch delete error, attempting form fallback:', err);
+                    const deleteForm = document.getElementById('global-delete-transaction-form');
+                    if (deleteForm) {
+                        deleteForm.action = `/transactions/${currentActiveTransaction.id}`;
+                        deleteForm.submit();
+                    } else {
+                        showSwanToast('Gagal menghapus transaksi. Periksa koneksi Anda.', 'error');
+                        if (btn) {
+                            btn.disabled = false;
+                            btn.innerHTML = origHtml;
+                        }
+                    }
                 }
             }
 

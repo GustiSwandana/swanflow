@@ -180,21 +180,25 @@
                 @php
                     $isIncome = $tx->type === \App\Enums\TransactionType::Income || $tx->type === 'income';
                     $isTransfer = $tx->type === \App\Enums\TransactionType::Transfer || $tx->type === 'transfer';
+                    $txData = [
+                        'id' => $tx->id,
+                        'type' => is_string($tx->type) ? $tx->type : $tx->type->value,
+                        'amount' => (float) $tx->amount,
+                        'wallet_id' => $tx->wallet_id,
+                        'target_wallet_id' => $tx->target_wallet_id,
+                        'category_id' => $tx->category_id,
+                        'category_name' => $tx->category->name ?? '',
+                        'date' => \Carbon\Carbon::parse($tx->date)->format('Y-m-d'),
+                        'date_formatted' => \Carbon\Carbon::parse($tx->date)->translatedFormat('d F Y'),
+                        'description' => $tx->description ?: ($tx->category->name ?? ($isTransfer ? 'Transfer Antar Dompet' : 'Transaksi')),
+                    ];
                 @endphp
-                <div onclick='openEditTransactionModal({
-                        id: {{ $tx->id }},
-                        type: "{{ is_string($tx->type) ? $tx->type : $tx->type->value }}",
-                        amount: {{ $tx->amount }},
-                        wallet_id: {{ $tx->wallet_id }},
-                        target_wallet_id: {{ $tx->target_wallet_id ?: "null" }},
-                        category_id: {{ $tx->category_id ?: "null" }},
-                        category_name: @json($tx->category->name ?? ""),
-                        date: "{{ \Carbon\Carbon::parse($tx->date)->format("Y-m-d") }}",
-                        description: @json($tx->description ?? "")
-                    })'
-                    role="button"
-                    tabindex="0"
-                    class="p-3 bg-white dark:bg-slate-800/40 hover:bg-slate-50 dark:hover:bg-slate-800/80 active:scale-[0.99] flex items-center justify-between rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs cursor-pointer transition-all">
+                <div data-transaction-row="{{ $tx->id }}"
+                     data-tx="{{ json_encode($txData) }}"
+                     onclick="openEditFromDataset(this, event)"
+                     role="button"
+                     tabindex="0"
+                     class="p-3 bg-white dark:bg-slate-800/40 hover:bg-slate-50 dark:hover:bg-slate-800/80 active:scale-[0.99] flex items-center justify-between rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs cursor-pointer transition-all">
                     <div class="flex items-center gap-3 min-w-0">
                         <!-- Icon Square Container (No blue) -->
                         <div class="w-11 h-11 rounded-2xl {{ $isIncome ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/40' : ($isTransfer ? 'bg-teal-100 text-teal-700 dark:bg-teal-950/50 dark:text-teal-400 border border-teal-200 dark:border-teal-900/40' : 'bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-400 border border-rose-200 dark:border-rose-900/40') }} flex items-center justify-center shrink-0 shadow-2xs">
