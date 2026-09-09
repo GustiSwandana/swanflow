@@ -3,16 +3,19 @@
 @section('title', 'SwanDrive - Penyimpanan & Transfer File')
 
 @section('custom_header')
-    <!-- Top Header: Gradient SwanDrive Header -->
-    <div class="relative bg-gradient-to-br from-slate-900 via-teal-950 to-slate-900 px-4 pb-7 text-white overflow-hidden shadow-lg border-b border-teal-900/40" style="padding-top: max(3.5rem, calc(var(--sat, 0px) + 0.85rem));">
-        <!-- Subtle Glow Effect (Emerald/Teal only) -->
-        <div class="absolute -top-12 -right-12 w-48 h-48 bg-teal-500/15 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute -bottom-10 -left-10 w-44 h-44 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
+    <!-- Top Header: Apple iOS Liquid Glass SwanDrive Header -->
+    <div class="relative overflow-hidden bg-gradient-to-b from-slate-900 via-teal-950/90 to-slate-950/95 text-white px-5 pb-8 border-b border-white/20 dark:border-white/10 rounded-b-[36px] shadow-2xl backdrop-blur-3xl transition-all" style="padding-top: max(3.5rem, calc(var(--sat, 0px) + 0.85rem));">
+        <!-- Specular Highlight Line at the Top -->
+        <div class="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none"></div>
+
+        <!-- Ambient Liquid Orbs -->
+        <div class="absolute -top-12 -right-12 w-48 h-48 bg-teal-400/20 dark:bg-teal-500/15 rounded-full blur-3xl pointer-events-none animate-liquid-orb-1"></div>
+        <div class="absolute -bottom-10 -left-10 w-44 h-44 bg-emerald-400/20 dark:bg-emerald-500/10 rounded-full blur-2xl pointer-events-none animate-liquid-orb-2"></div>
 
         <!-- Top Navigation Bar (Spacious & iOS Status Bar Safe) -->
         <div class="relative z-10 flex items-center justify-between mb-4">
             <div class="flex items-center gap-3 min-w-0">
-                <a href="{{ route('dashboard') }}" class="w-10 h-10 rounded-2xl bg-white/10 hover:bg-white/20 active:scale-95 flex items-center justify-center transition-all border border-white/15 shrink-0 shadow-xs" aria-label="Kembali ke Beranda">
+                <a href="{{ route('dashboard') }}" class="w-10 h-10 rounded-[18px] liquid-glass bg-white/15 hover:bg-white/25 active:scale-95 flex items-center justify-center transition-all border border-white/30 shrink-0 shadow-xs ios-press" aria-label="Kembali ke Beranda">
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
                     </svg>
@@ -20,14 +23,14 @@
                 <div class="min-w-0">
                     <div class="flex items-center gap-2">
                         <h1 class="text-base sm:text-lg font-black tracking-tight text-white leading-tight">SwanDrive</h1>
-                        <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-teal-500/30 text-teal-300 border border-teal-400/30 shadow-2xs">Vault</span>
+                        <span class="text-[10px] font-black px-2 py-0.5 rounded-full bg-teal-400/25 text-teal-200 border border-teal-300/30 shadow-2xs backdrop-blur-md">Vault</span>
                     </div>
-                    <p class="text-[11px] text-teal-200/75 font-medium truncate mt-0.5">Penyimpanan & Terima Berkas</p>
+                    <p class="text-[11px] text-teal-200/80 font-semibold truncate mt-0.5">Penyimpanan & Terima Berkas</p>
                 </div>
             </div>
 
-            <!-- Upload Primary Action Button -->
-            <button type="button" onclick="document.getElementById('upload-input').click()" class="h-9 px-3.5 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-95 text-white text-xs font-extrabold shadow-lg shadow-teal-950/40 flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap shrink-0">
+            <!-- Upload Primary Action Button (Liquid Pill) -->
+            <button type="button" onclick="document.getElementById('upload-input').click()" class="h-9 px-4 rounded-[18px] liquid-glass bg-teal-500 hover:bg-teal-400 active:scale-95 text-white text-xs font-black shadow-lg shadow-teal-950/40 border border-white/30 flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap shrink-0 ios-press">
                 <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
@@ -35,12 +38,12 @@
             </button>
         </div>
 
-        <!-- Storage Summary Card with Clean Hierarchical Layout -->
-        <div class="relative z-10 bg-white/10 backdrop-blur-md rounded-2xl p-3.5 sm:p-4 border border-white/15 shadow-inner space-y-2.5">
+        <!-- Storage Summary Card with Apple Liquid Glassmorphism -->
+        <div class="relative z-10 liquid-glass rounded-[26px] p-4 border border-white/25 shadow-xl space-y-3 bg-white/10 backdrop-blur-2xl">
             <!-- Row 1: Label & Ubah Ukuran button -->
             <div class="flex items-center justify-between gap-2 min-w-0">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-teal-200/90 truncate">Kapasitas Penyimpanan</span>
-                <button type="button" onclick="openQuotaModal()" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-teal-400/20 hover:bg-teal-400/35 text-teal-200 hover:text-white text-[10px] font-bold border border-teal-300/30 active:scale-95 transition-all cursor-pointer shadow-xs shrink-0" title="Ubah Kapasitas Kuota">
+                <span class="text-[10px] font-extrabold uppercase tracking-wider text-teal-200/90 truncate">Kapasitas Penyimpanan</span>
+                <button type="button" onclick="openQuotaModal()" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/15 hover:bg-white/25 text-teal-100 hover:text-white text-[10px] font-black border border-white/20 active:scale-95 transition-all cursor-pointer shadow-xs shrink-0 ios-press backdrop-blur-md" title="Ubah Kapasitas Kuota">
                     <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
                     </svg>
@@ -52,11 +55,11 @@
             <div class="flex items-baseline justify-between gap-2 min-w-0">
                 <div class="flex items-baseline gap-1.5 min-w-0 truncate">
                     <span class="text-2xl sm:text-3xl font-black text-white tracking-tight truncate">{{ $formattedTotalSize }}</span>
-                    <span class="text-xs font-semibold text-teal-200/80 shrink-0">/ {{ $formattedQuotaSize }}</span>
+                    <span class="text-xs font-bold text-teal-200/80 shrink-0">/ {{ $formattedQuotaSize }}</span>
                 </div>
                 <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                    <span class="text-[10px] text-teal-200/70 font-medium">{{ $totalFiles }} Berkas</span>
-                    <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full border shadow-2xs {{ $storagePercent >= 90 ? 'bg-rose-500/30 text-rose-200 border-rose-400/40' : ($storagePercent >= 75 ? 'bg-amber-500/30 text-amber-200 border-amber-400/40' : 'bg-teal-500/30 text-teal-200 border-teal-400/30') }}">
+                    <span class="text-[10px] text-teal-200/80 font-bold">{{ $totalFiles }} Berkas</span>
+                    <span class="text-[10px] font-black px-2.5 py-0.5 rounded-full border shadow-2xs {{ $storagePercent >= 90 ? 'bg-rose-500/30 text-rose-200 border-rose-400/40' : ($storagePercent >= 75 ? 'bg-amber-500/30 text-amber-200 border-amber-400/40' : 'bg-teal-400/30 text-teal-100 border-teal-300/40') }}">
                         {{ $storagePercent }}%
                     </span>
                 </div>
@@ -64,11 +67,11 @@
 
             <!-- Row 3: Visual Progress Track -->
             <div>
-                <div class="w-full bg-slate-900/80 rounded-full h-2 overflow-hidden p-0.5 border border-white/10">
+                <div class="w-full bg-slate-950/60 rounded-full h-2.5 overflow-hidden p-0.5 border border-white/15">
                     <div class="h-full rounded-full transition-all duration-500 {{ $storagePercent >= 90 ? 'bg-gradient-to-r from-rose-500 to-amber-500' : ($storagePercent >= 75 ? 'bg-gradient-to-r from-amber-400 to-yellow-400' : 'bg-gradient-to-r from-teal-400 via-emerald-400 to-teal-300') }}"
                          style="width: {{ max(3, $storagePercent) }}%"></div>
                 </div>
-                <div class="flex items-center justify-between text-[10px] text-teal-200/70 mt-1 font-medium">
+                <div class="flex items-center justify-between text-[10px] text-teal-200/80 mt-1 font-semibold">
                     <span>{{ $totalBytes >= $quotaBytes ? 'Kapasitas Penuh' : 'Tersisa ' . number_format(max(0, ($quotaBytes - $totalBytes)) / 1048576, 1, ',', '.') . ' MB' }}</span>
                     <span>Batas: {{ $formattedQuotaSize }}</span>
                 </div>
@@ -78,24 +81,27 @@
 @endsection
 
 @section('content')
-<div class="bg-slate-50 dark:bg-slate-900 rounded-t-[32px] pt-4 px-4 pb-[max(6rem,calc(5.25rem+var(--sab,0px)))] shadow-2xl -mt-4 relative z-10 border-t border-slate-200 dark:border-slate-800 flex-1 flex flex-col min-h-full space-y-4 text-slate-800 dark:text-white transition-colors animate-swan-in">
-    <!-- TAB SWITCHER: Berkas Saya vs Link Terima File -->
-    <div class="flex p-1 bg-slate-200/80 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-inner">
+<div class="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-2xl rounded-t-[36px] pt-5 px-4 pb-[max(6.5rem,calc(5.5rem+var(--sab,0px)))] shadow-2xl -mt-5 relative z-10 border-t border-white/60 dark:border-white/10 flex-1 flex flex-col min-h-full space-y-4 text-slate-800 dark:text-white transition-colors animate-swan-in">
+    <!-- Pull handle indicator for authentic iOS sheet aesthetic -->
+    <div class="w-10 h-1.5 bg-slate-300/80 dark:bg-slate-700/80 rounded-full mx-auto mb-1"></div>
+
+    <!-- TAB SWITCHER: Berkas Saya vs Link Terima File (iOS Segmented Control) -->
+    <div class="ios-segmented-track p-1 rounded-[22px] flex items-center gap-1 w-full bg-slate-200/60 dark:bg-slate-900/70 backdrop-blur-xl border border-white/50 dark:border-white/10 shadow-inner">
         <a href="{{ route('drive.index', ['tab' => 'files']) }}"
-           class="flex-1 py-2.5 rounded-xl text-xs font-extrabold text-center transition-all flex items-center justify-center gap-1.5 {{ $activeTab !== 'drops' ? 'bg-white dark:bg-slate-800 text-teal-600 dark:text-teal-400 shadow-xs ring-1 ring-slate-200/50 dark:ring-slate-700/50' : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200' }}">
+           class="flex-1 py-2 rounded-[18px] text-xs font-black text-center transition-all flex items-center justify-center gap-1.5 ios-press {{ $activeTab !== 'drops' ? 'ios-segmented-thumb bg-white dark:bg-slate-800 text-teal-600 dark:text-teal-400 shadow-md ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white font-bold' }}">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021 18V9.75" />
             </svg>
             <span>Berkas Saya</span>
-            <span class="text-[10px] px-2 py-0.5 rounded-full font-bold {{ $activeTab !== 'drops' ? 'bg-teal-100 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300' : 'bg-slate-300 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">{{ $totalFiles }}</span>
+            <span class="text-[10px] px-2 py-0.5 rounded-full font-black {{ $activeTab !== 'drops' ? 'bg-teal-100 dark:bg-teal-950/80 text-teal-700 dark:text-teal-300' : 'bg-slate-300/60 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">{{ $totalFiles }}</span>
         </a>
         <a href="{{ route('drive.index', ['tab' => 'drops']) }}"
-           class="flex-1 py-2.5 rounded-xl text-xs font-extrabold text-center transition-all flex items-center justify-center gap-1.5 {{ $activeTab === 'drops' ? 'bg-white dark:bg-slate-800 text-teal-600 dark:text-teal-400 shadow-xs ring-1 ring-slate-200/50 dark:ring-slate-700/50' : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200' }}">
+           class="flex-1 py-2 rounded-[18px] text-xs font-black text-center transition-all flex items-center justify-center gap-1.5 ios-press {{ $activeTab === 'drops' ? 'ios-segmented-thumb bg-white dark:bg-slate-800 text-teal-600 dark:text-teal-400 shadow-md ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white font-bold' }}">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
             </svg>
             <span>Link Terima File</span>
-            <span class="text-[10px] px-2 py-0.5 rounded-full font-bold {{ $activeTab === 'drops' ? 'bg-teal-100 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300' : 'bg-slate-300 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">{{ $uploadLinks->count() }}</span>
+            <span class="text-[10px] px-2 py-0.5 rounded-full font-black {{ $activeTab === 'drops' ? 'bg-teal-100 dark:bg-teal-950/80 text-teal-700 dark:text-teal-300' : 'bg-slate-300/60 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">{{ $uploadLinks->count() }}</span>
         </a>
     </div>
 
@@ -103,7 +109,7 @@
         <!-- TAB 1: BERKAS SAYA -->
 
         <!-- 1. FORM UPLOAD FILE (Interactive Dropzone) -->
-        <div class="bg-white dark:bg-slate-950 rounded-2xl p-4 border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="liquid-card rounded-[26px] bg-white/80 dark:bg-slate-900/75 border border-white/60 dark:border-white/10 shadow-sm backdrop-blur-2xl p-4">
             <form id="upload-form" action="{{ route('drive.store') }}" method="POST" enctype="multipart/form-data" class="space-y-3">
                 @csrf
                 
@@ -112,43 +118,43 @@
 
                 <!-- Dropzone Box -->
                 <div id="dropzone" onclick="document.getElementById('upload-input').click()"
-                     class="border-2 border-dashed border-teal-400/50 dark:border-teal-600/40 rounded-xl p-4 flex flex-col items-center justify-center text-center cursor-pointer bg-teal-50/40 dark:bg-teal-950/20 hover:bg-teal-50/80 dark:hover:bg-teal-950/40 active:scale-[0.99] transition-all">
-                    <div class="w-10 h-10 rounded-full bg-teal-100 dark:bg-teal-900/50 text-teal-600 dark:text-teal-400 flex items-center justify-center mb-1.5 shadow-xs">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                     class="border-2 border-dashed border-teal-400/50 dark:border-teal-500/40 rounded-[20px] p-5 flex flex-col items-center justify-center text-center cursor-pointer bg-teal-50/40 dark:bg-teal-950/20 hover:bg-teal-50/80 dark:hover:bg-teal-950/40 active:scale-[0.99] transition-all ios-press">
+                    <div class="w-12 h-12 rounded-[18px] bg-teal-500/15 text-teal-600 dark:text-teal-400 flex items-center justify-center mb-2 shadow-xs">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
                         </svg>
                     </div>
-                    <span id="dropzone-text" class="text-xs font-bold text-slate-800 dark:text-slate-200">
+                    <span id="dropzone-text" class="text-xs font-black text-slate-800 dark:text-slate-100">
                         Sentuh untuk upload berkas atau seret ke sini
                     </span>
-                    <span class="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
+                    <span class="text-[10px] text-slate-500 dark:text-slate-400 font-semibold mt-0.5">
                         PDF, Dokumen, Excel, Gambar, ZIP (Maks 50 MB)
                     </span>
                 </div>
 
                 <!-- Upload Details Panel (Appears once file is chosen) -->
                 <div id="upload-details" class="hidden space-y-2.5 pt-1">
-                    <div class="flex items-center justify-between bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-xl text-xs">
+                    <div class="flex items-center justify-between bg-slate-100/80 dark:bg-slate-800/80 px-3.5 py-2.5 rounded-[18px] text-xs border border-white/50 dark:border-white/10">
                         <div class="flex items-center gap-2 truncate pr-2">
-                            <span class="font-bold text-teal-600 dark:text-teal-400" id="selected-ext">FILE</span>
-                            <span class="font-semibold text-slate-700 dark:text-slate-200 truncate" id="selected-filename">Nama berkas</span>
+                            <span class="font-black text-teal-600 dark:text-teal-400" id="selected-ext">FILE</span>
+                            <span class="font-bold text-slate-700 dark:text-slate-200 truncate" id="selected-filename">Nama berkas</span>
                         </div>
-                        <span class="text-[10px] text-slate-500 dark:text-slate-400 shrink-0" id="selected-size">0 KB</span>
+                        <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 shrink-0" id="selected-size">0 KB</span>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <div>
-                            <label for="file-title" class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Judul / Label (Opsional)</label>
-                            <input type="text" id="file-title" name="title" placeholder="Misal: Nota Pembelian MacBook" class="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500">
+                            <label for="file-title" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">Judul / Label (Opsional)</label>
+                            <input type="text" id="file-title" name="title" placeholder="Misal: Nota Pembelian MacBook" class="w-full px-3.5 py-2.5 text-xs rounded-[16px] bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium">
                         </div>
                         <div>
-                            <label for="file-notes" class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Catatan Tambahan (Opsional)</label>
-                            <input type="text" id="file-notes" name="notes" placeholder="Catatan ringkas..." class="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500">
+                            <label for="file-notes" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">Catatan Tambahan (Opsional)</label>
+                            <input type="text" id="file-notes" name="notes" placeholder="Catatan ringkas..." class="w-full px-3.5 py-2.5 text-xs rounded-[16px] bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium">
                         </div>
                     </div>
 
                     <div class="flex items-center gap-2 pt-1">
-                        <button type="submit" id="btn-submit-upload" class="flex-1 py-2.5 px-4 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-[0.98] text-white text-xs font-bold shadow-md shadow-teal-500/20 flex items-center justify-center gap-2 transition-all cursor-pointer">
+                        <button type="submit" id="btn-submit-upload" class="flex-1 py-2.5 px-4 rounded-[18px] bg-teal-500 hover:bg-teal-400 active:scale-[0.98] text-white text-xs font-black shadow-md shadow-teal-500/25 flex items-center justify-center gap-2 transition-all cursor-pointer ios-press">
                             <svg id="btn-upload-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                             </svg>
@@ -158,7 +164,7 @@
                             </svg>
                             <span id="btn-upload-text">Simpan ke SwanDrive</span>
                         </button>
-                        <button type="button" id="btn-cancel-upload" onclick="cancelUpload()" class="py-2.5 px-3 rounded-xl bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold active:scale-95 transition-all">
+                        <button type="button" id="btn-cancel-upload" onclick="cancelUpload()" class="py-2.5 px-3.5 rounded-[18px] bg-slate-200/80 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold active:scale-95 transition-all ios-press">
                             Batal
                         </button>
                     </div>
@@ -166,20 +172,20 @@
                     <!-- Progress Bar & Loading Status Container -->
                     <div id="upload-progress-container" class="hidden pt-2 space-y-2">
                         <div class="flex items-center justify-between text-xs">
-                            <span id="upload-progress-status" class="font-bold text-teal-600 dark:text-teal-400 flex items-center gap-1.5">
+                            <span id="upload-progress-status" class="font-black text-teal-600 dark:text-teal-400 flex items-center gap-1.5">
                                 <svg class="w-3.5 h-3.5 animate-spin shrink-0" fill="none" viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                 </svg>
                                 <span id="upload-status-text">Mengunggah berkas...</span>
                             </span>
-                            <span id="upload-progress-percent" class="font-extrabold text-slate-800 dark:text-white">0%</span>
+                            <span id="upload-progress-percent" class="font-black text-slate-800 dark:text-white">0%</span>
                         </div>
                         <!-- Progress Track -->
-                        <div class="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2.5 overflow-hidden p-0.5 border border-slate-300 dark:border-slate-700">
+                        <div class="w-full bg-slate-200/70 dark:bg-slate-800/70 rounded-full h-2.5 overflow-hidden p-0.5 border border-slate-300/60 dark:border-slate-700/60">
                             <div id="upload-progress-bar" class="bg-gradient-to-r from-teal-500 via-emerald-400 to-teal-500 h-full rounded-full transition-all duration-150 ease-out" style="width: 0%"></div>
                         </div>
-                        <div class="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+                        <div class="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 font-semibold">
                             <span id="upload-progress-bytes">0 KB / 0 KB</span>
                             <span>Mohon tidak menutup halaman</span>
                         </div>
@@ -189,27 +195,27 @@
         </div>
 
         <!-- Quick Drop Link Banner -->
-        <div class="flex items-center justify-between p-3.5 rounded-2xl bg-teal-50/80 dark:bg-teal-950/25 border border-teal-200/80 dark:border-teal-800/60 shadow-xs">
+        <div class="flex items-center justify-between p-3.5 rounded-[24px] liquid-card bg-gradient-to-r from-teal-500/10 via-emerald-500/10 to-teal-500/5 dark:from-teal-950/40 dark:to-emerald-950/20 border border-teal-400/30 backdrop-blur-xl shadow-xs">
             <div class="flex items-center gap-3 min-w-0 pr-2">
-                <div class="w-9 h-9 rounded-xl bg-teal-500/15 dark:bg-teal-500/25 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0 shadow-2xs">
+                <div class="w-9 h-9 rounded-[16px] bg-teal-500/20 dark:bg-teal-500/30 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0 shadow-2xs">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
                     </svg>
                 </div>
                 <div class="min-w-0">
-                    <p class="text-xs font-bold text-slate-800 dark:text-slate-200 leading-tight truncate">
+                    <p class="text-xs font-black text-slate-800 dark:text-slate-200 leading-tight truncate">
                         Minta file dari orang lain?
                     </p>
-                    <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5">
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium truncate mt-0.5">
                         Buat link khusus dengan batas waktu & ukuran file
                     </p>
                 </div>
             </div>
-            <button type="button" onclick="openCreateDropModal()" class="h-9 px-3.5 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-95 text-white text-xs font-extrabold shrink-0 shadow-xs transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap">
+            <button type="button" onclick="openCreateDropModal()" class="h-9 px-3.5 rounded-[16px] bg-teal-500 hover:bg-teal-400 active:scale-95 text-white text-xs font-black shrink-0 shadow-xs transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ios-press">
                 <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
-                <span class="whitespace-nowrap">Buat Link Drop</span>
+                <span class="whitespace-nowrap">Buat Link</span>
             </button>
         </div>
 
@@ -220,14 +226,14 @@
                 <input type="hidden" name="tab" value="files">
                 <input type="hidden" name="category" value="{{ $activeCategory }}">
                 <input type="text" name="search" value="{{ $search }}" placeholder="Cari nama file, ekstensi, pengirim, atau catatan..."
-                       class="w-full pl-9 pr-8 py-2 text-xs rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 shadow-xs">
-                <span class="absolute left-3 top-2.5 text-slate-400">
+                       class="w-full pl-9 pr-8 py-2.5 text-xs rounded-[20px] bg-white/80 dark:bg-slate-900/80 border border-white/60 dark:border-white/10 text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 shadow-xs backdrop-blur-xl font-medium">
+                <span class="absolute left-3.5 top-3 text-slate-400">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                     </svg>
                 </span>
                 @if(!empty($search))
-                    <a href="{{ route('drive.index', ['tab' => 'files', 'category' => $activeCategory]) }}" class="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs font-bold">
+                    <a href="{{ route('drive.index', ['tab' => 'files', 'category' => $activeCategory]) }}" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs font-bold">
                         ✕
                     </a>
                 @endif
@@ -236,23 +242,23 @@
             <!-- Category Filter Pills -->
             <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 -mx-1 px-1">
                 <a href="{{ route('drive.index', ['tab' => 'files', 'category' => 'all', 'search' => $search]) }}"
-                   class="px-3 py-1.5 rounded-full text-xs font-bold shrink-0 transition-all {{ $activeCategory === 'all' ? 'bg-teal-500 text-white shadow-xs' : 'bg-white dark:bg-slate-950 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:bg-slate-100' }}">
+                   class="px-3.5 py-1.5 rounded-[16px] text-xs font-black shrink-0 transition-all ios-press {{ $activeCategory === 'all' ? 'bg-teal-500 text-white shadow-sm ring-1 ring-teal-400/30' : 'liquid-glass bg-white/70 dark:bg-slate-900/70 text-slate-600 dark:text-slate-400 border border-white/50 dark:border-white/10 hover:bg-white/90' }}">
                     Semua ({{ $categoryCounts['all'] }})
                 </a>
                 <a href="{{ route('drive.index', ['tab' => 'files', 'category' => 'document', 'search' => $search]) }}"
-                   class="px-3 py-1.5 rounded-full text-xs font-bold shrink-0 transition-all {{ $activeCategory === 'document' ? 'bg-emerald-600 text-white shadow-xs' : 'bg-white dark:bg-slate-950 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:bg-slate-100' }}">
+                   class="px-3.5 py-1.5 rounded-[16px] text-xs font-black shrink-0 transition-all ios-press {{ $activeCategory === 'document' ? 'bg-emerald-600 text-white shadow-sm ring-1 ring-emerald-400/30' : 'liquid-glass bg-white/70 dark:bg-slate-900/70 text-slate-600 dark:text-slate-400 border border-white/50 dark:border-white/10 hover:bg-white/90' }}">
                     📄 Dokumen ({{ $categoryCounts['document'] }})
                 </a>
-                <a href="{{ route('drive.index', ['tab' => 'files', 'category' => 'image', 'search' => $search]) }}"
-                   class="px-3 py-1.5 rounded-full text-xs font-bold shrink-0 transition-all {{ $activeCategory === 'image' ? 'bg-purple-600 text-white shadow-xs' : 'bg-white dark:bg-slate-950 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:bg-slate-100' }}">
+                <a href="{{ route('drive.index', ['tab' => 'image', 'category' => 'image', 'search' => $search]) }}"
+                   class="px-3.5 py-1.5 rounded-[16px] text-xs font-black shrink-0 transition-all ios-press {{ $activeCategory === 'image' ? 'bg-purple-600 text-white shadow-sm ring-1 ring-purple-400/30' : 'liquid-glass bg-white/70 dark:bg-slate-900/70 text-slate-600 dark:text-slate-400 border border-white/50 dark:border-white/10 hover:bg-white/90' }}">
                     🖼️ Gambar ({{ $categoryCounts['image'] }})
                 </a>
                 <a href="{{ route('drive.index', ['tab' => 'files', 'category' => 'archive', 'search' => $search]) }}"
-                   class="px-3 py-1.5 rounded-full text-xs font-bold shrink-0 transition-all {{ $activeCategory === 'archive' ? 'bg-amber-600 text-white shadow-xs' : 'bg-white dark:bg-slate-950 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:bg-slate-100' }}">
+                   class="px-3.5 py-1.5 rounded-[16px] text-xs font-black shrink-0 transition-all ios-press {{ $activeCategory === 'archive' ? 'bg-amber-600 text-white shadow-sm ring-1 ring-amber-400/30' : 'liquid-glass bg-white/70 dark:bg-slate-900/70 text-slate-600 dark:text-slate-400 border border-white/50 dark:border-white/10 hover:bg-white/90' }}">
                     📦 Arsip ({{ $categoryCounts['archive'] }})
                 </a>
                 <a href="{{ route('drive.index', ['tab' => 'files', 'category' => 'other', 'search' => $search]) }}"
-                   class="px-3 py-1.5 rounded-full text-xs font-bold shrink-0 transition-all {{ $activeCategory === 'other' ? 'bg-slate-700 text-white shadow-xs' : 'bg-white dark:bg-slate-950 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:bg-slate-100' }}">
+                   class="px-3.5 py-1.5 rounded-[16px] text-xs font-black shrink-0 transition-all ios-press {{ $activeCategory === 'other' ? 'bg-slate-700 text-white shadow-sm ring-1 ring-slate-400/30' : 'liquid-glass bg-white/70 dark:bg-slate-900/70 text-slate-600 dark:text-slate-400 border border-white/50 dark:border-white/10 hover:bg-white/90' }}">
                     📎 Lainnya ({{ $categoryCounts['other'] }})
                 </a>
             </div>
@@ -260,23 +266,23 @@
 
         <!-- 3. LIST OF STORED FILES -->
         <div class="space-y-3">
-            <div class="flex items-center justify-between">
-                <h2 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            <div class="flex items-center justify-between px-1">
+                <h2 class="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
                     Daftar Berkas Tersimpan ({{ $files->count() }})
                 </h2>
-                <span class="text-[11px] text-teal-600 dark:text-teal-400 font-semibold">Tersimpan Aman</span>
+                <span class="text-[11px] text-teal-600 dark:text-teal-400 font-bold">Tersimpan Aman</span>
             </div>
 
             @forelse($files as $file)
                 @php
                     $meta = $file->categoryMeta();
                 @endphp
-                <div class="bg-white dark:bg-slate-950 rounded-2xl p-4 border border-slate-200 dark:border-slate-800 shadow-xs space-y-3 transition-all hover:border-teal-500/50">
+                <div class="liquid-card rounded-[24px] bg-white/80 dark:bg-slate-900/75 border border-white/60 dark:border-white/10 shadow-sm hover:shadow-md hover:border-teal-400/40 backdrop-blur-2xl p-4 space-y-3 transition-all">
                     <div class="flex items-start justify-between gap-3">
                         <!-- Icon + Name (Click to preview) -->
                         <div onclick="openPreviewModal('{{ $file->id }}', '{{ addslashes($file->title) }}', '{{ addslashes($file->original_name) }}', '{{ $file->formatted_size }}', '{{ strtolower($file->extension) }}', '{{ route('drive.preview', $file) }}', '{{ route('drive.download', $file) }}', '{{ $meta['label'] }}', '{{ addslashes($file->notes ?? '') }}', '{{ $file->created_at->format('d M Y, H:i') }}', '{{ route('drive.destroy', $file) }}', '{{ $file->share_url }}', {{ $file->is_public ? 'true' : 'false' }}, '{{ route('drive.share.toggle', $file) }}')"
                              class="flex items-start gap-3 min-w-0 flex-1 cursor-pointer group">
-                            <div class="w-10 h-10 rounded-xl {{ $meta['bg'] }} {{ $meta['text'] }} border {{ $meta['border'] }} flex items-center justify-center shrink-0 font-extrabold text-xs uppercase shadow-2xs group-hover:scale-105 transition-transform">
+                            <div class="w-10 h-10 rounded-[18px] {{ $meta['bg'] }} {{ $meta['text'] }} border {{ $meta['border'] }} flex items-center justify-center shrink-0 font-black text-xs uppercase shadow-2xs group-hover:scale-105 transition-transform">
                                 {{ substr($file->extension, 0, 4) }}
                             </div>
                             <div class="min-w-0">
@@ -301,18 +307,18 @@
                         <!-- Status Badge (Public Share or Received via Drop) -->
                         <div class="shrink-0 flex flex-col items-end gap-1">
                             @if($file->is_public)
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
                                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                                     Berbagi Aktif
                                 </span>
                             @else
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100/80 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
                                     Privat
                                 </span>
                             @endif
 
                             @if($file->upload_link_id)
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-teal-50 dark:bg-teal-950/50 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800" title="Diterima dari link drop: {{ $file->uploadLink?->title }}">
+                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-teal-50 dark:bg-teal-950/50 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800" title="Diterima dari link drop: {{ $file->uploadLink?->title }}">
                                     📥 Dari: {{ Str::limit($file->uploader_name ?? 'Drop Link', 14) }}
                                 </span>
                             @endif
@@ -320,7 +326,7 @@
                     </div>
 
                     @if(!empty($file->notes))
-                        <div class="text-[11px] text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-900/60 px-3 py-1.5 rounded-xl border border-slate-100 dark:border-slate-800/80 italic">
+                        <div class="text-[11px] text-slate-600 dark:text-slate-300 bg-slate-50/80 dark:bg-slate-900/60 px-3 py-1.5 rounded-[16px] border border-slate-100 dark:border-slate-800/80 italic">
                             "{{ $file->notes }}"
                         </div>
                     @endif
@@ -331,7 +337,7 @@
                         <div class="flex items-center gap-1.5">
                             <button type="button"
                                     onclick="openPreviewModal('{{ $file->id }}', '{{ addslashes($file->title) }}', '{{ addslashes($file->original_name) }}', '{{ $file->formatted_size }}', '{{ strtolower($file->extension) }}', '{{ route('drive.preview', $file) }}', '{{ route('drive.download', $file) }}', '{{ $meta['label'] }}', '{{ addslashes($file->notes ?? '') }}', '{{ $file->created_at->format('d M Y, H:i') }}', '{{ route('drive.destroy', $file) }}', '{{ $file->share_url }}', {{ $file->is_public ? 'true' : 'false' }}, '{{ route('drive.share.toggle', $file) }}')"
-                                    class="px-3 py-1.5 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-95 text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
+                                    class="px-3.5 py-1.5 rounded-[16px] bg-teal-500 hover:bg-teal-400 active:scale-95 text-white text-xs font-black flex items-center gap-1.5 transition-all shadow-xs cursor-pointer ios-press"
                                     title="Lihat Berkas Tanpa Mengunduh">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
@@ -341,7 +347,7 @@
                             </button>
 
                             <a href="{{ route('drive.download', $file) }}"
-                               class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold border border-slate-200 dark:border-slate-800 flex items-center gap-1 active:scale-95 transition-all"
+                               class="px-3 py-1.5 rounded-[16px] liquid-glass bg-slate-100/80 hover:bg-slate-200 dark:bg-slate-900/80 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold border border-white/50 dark:border-white/10 flex items-center gap-1 active:scale-95 transition-all ios-press"
                                title="Unduh ke Perangkat">
                                 <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
@@ -355,7 +361,7 @@
                             <!-- Transfer / Share Trigger Button -->
                             <button type="button"
                                     onclick="openShareModal('{{ $file->id }}', '{{ addslashes($file->title) }}', '{{ $file->formatted_size }}', '{{ $file->share_url }}', {{ $file->is_public ? 'true' : 'false' }}, '{{ route('drive.share.toggle', $file) }}')"
-                                    class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-800 flex items-center gap-1 active:scale-95 transition-all cursor-pointer"
+                                    class="px-3 py-1.5 rounded-[16px] liquid-glass bg-slate-100/80 hover:bg-slate-200 dark:bg-slate-900/80 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold border border-white/50 dark:border-white/10 flex items-center gap-1 active:scale-95 transition-all cursor-pointer ios-press"
                                     title="Bagi / Transfer">
                                 <svg class="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
@@ -366,7 +372,7 @@
                             <!-- Safe In-App Delete Button -->
                             <button type="button"
                                     onclick="confirmDeleteFile('{{ $file->id }}', '{{ addslashes($file->title) }}', '{{ $file->formatted_size }}', '{{ route('drive.destroy', $file) }}')"
-                                    class="p-1.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/30 active:scale-90 transition-all cursor-pointer"
+                                    class="p-2 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-[14px] hover:bg-rose-50 dark:hover:bg-rose-950/30 active:scale-90 transition-all cursor-pointer ios-press"
                                     title="Hapus Berkas">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
@@ -376,8 +382,8 @@
                     </div>
                 </div>
             @empty
-                <div class="text-center py-12 px-4 bg-white dark:bg-slate-950 rounded-2xl border border-dashed border-slate-300 dark:border-slate-800 space-y-3">
-                    <div class="w-14 h-14 rounded-2xl bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 mx-auto flex items-center justify-center">
+                <div class="text-center py-12 px-4 liquid-card rounded-[28px] bg-white/70 dark:bg-slate-900/70 border border-dashed border-slate-300 dark:border-slate-800 space-y-3 backdrop-blur-xl">
+                    <div class="w-14 h-14 rounded-[22px] bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 mx-auto flex items-center justify-center shadow-xs">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021 18V9.75" />
                         </svg>
@@ -388,25 +394,23 @@
                             Unggah berkas untuk disimpan privat atau bagikan tautan upload agar orang lain bisa mengirim berkas ke drive Anda.
                         </p>
                     </div>
-                    <button type="button" onclick="document.getElementById('upload-input').click()" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-95 text-white text-xs font-bold shadow-md shadow-teal-500/20 transition-all">
+                    <button type="button" onclick="document.getElementById('upload-input').click()" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-[18px] bg-teal-500 hover:bg-teal-400 active:scale-95 text-white text-xs font-black shadow-md shadow-teal-500/20 transition-all ios-press">
                         + Unggah Berkas Pertama
                     </button>
                 </div>
             @endforelse
-        </div>
-    @else
         <!-- TAB 2: LINK TERIMA FILE (DROP LINKS) -->
         <div class="space-y-4">
-            <div class="flex items-center justify-between bg-white dark:bg-slate-950 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs">
+            <div class="flex items-center justify-between liquid-card rounded-[24px] bg-white/80 dark:bg-slate-900/75 p-4 border border-white/60 dark:border-white/10 shadow-xs backdrop-blur-2xl">
                 <div class="min-w-0 pr-2">
-                    <h2 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                    <h2 class="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
                         Link Terima Berkas ({{ $uploadLinks->count() }})
                     </h2>
-                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">
                         Tautan publik agar orang lain bisa mengunggah berkas ke drive Anda.
                     </p>
                 </div>
-                <button type="button" onclick="openCreateDropModal()" class="px-3.5 py-2 rounded-xl bg-teal-500 hover:bg-teal-600 text-white text-xs font-extrabold shadow-sm active:scale-95 transition-all shrink-0 flex items-center gap-1.5 cursor-pointer">
+                <button type="button" onclick="openCreateDropModal()" class="px-4 py-2 rounded-[18px] bg-teal-500 hover:bg-teal-400 text-white text-xs font-black shadow-md shadow-teal-500/20 active:scale-95 transition-all shrink-0 flex items-center gap-1.5 cursor-pointer ios-press">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
@@ -418,41 +422,41 @@
                 @php
                     $status = $link->statusMeta();
                 @endphp
-                <div class="bg-white dark:bg-slate-950 rounded-2xl p-4 border border-slate-200 dark:border-slate-800 shadow-xs space-y-3 hover:border-teal-500/50 transition-all">
+                <div class="liquid-card rounded-[24px] bg-white/80 dark:bg-slate-900/75 border border-white/60 dark:border-white/10 shadow-sm hover:shadow-md hover:border-teal-400/40 backdrop-blur-2xl p-4 space-y-3 transition-all">
                     <div class="flex items-start justify-between gap-3">
                         <div class="min-w-0">
-                            <h3 class="text-sm font-extrabold text-slate-900 dark:text-white truncate">
+                            <h3 class="text-sm font-black text-slate-900 dark:text-white truncate">
                                 {{ $link->title }}
                             </h3>
                             @if(!empty($link->description))
-                                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-2">
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-2 font-medium">
                                     {{ $link->description }}
                                 </p>
                             @endif
                         </div>
-                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold {{ $status['bg'] }} {{ $status['text'] }} border {{ $status['border'] }} shrink-0">
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black {{ $status['bg'] }} {{ $status['text'] }} border {{ $status['border'] }} shrink-0 shadow-2xs">
                             {{ $status['label'] }}
                         </span>
                     </div>
 
                     <!-- Parameter Badges Grid -->
-                    <div class="grid grid-cols-3 gap-2 bg-slate-50 dark:bg-slate-900/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800/80 text-center text-xs">
+                    <div class="grid grid-cols-3 gap-2 bg-slate-50/80 dark:bg-slate-900/60 p-3 rounded-[18px] border border-slate-100 dark:border-slate-800/80 text-center text-xs">
                         <div>
-                            <span class="text-[10px] text-slate-400 block">Batas Ukuran</span>
-                            <span class="font-bold text-teal-600 dark:text-teal-400">{{ $link->max_file_size_mb }} MB</span>
+                            <span class="text-[10px] text-slate-400 block font-semibold">Batas Ukuran</span>
+                            <span class="font-black text-teal-600 dark:text-teal-400">{{ $link->max_file_size_mb }} MB</span>
                         </div>
-                        <div class="border-x border-slate-200 dark:border-slate-800">
-                            <span class="text-[10px] text-slate-400 block">Kuota Berkas</span>
-                            <span class="font-bold text-slate-700 dark:text-slate-200">{{ $link->uploaded_files_count }} / {{ $link->max_files }}</span>
+                        <div class="border-x border-slate-200/80 dark:border-slate-800">
+                            <span class="text-[10px] text-slate-400 block font-semibold">Kuota Berkas</span>
+                            <span class="font-black text-slate-700 dark:text-slate-200">{{ $link->uploaded_files_count }} / {{ $link->max_files }}</span>
                         </div>
                         <div>
-                            <span class="text-[10px] text-slate-400 block">Batas Waktu</span>
+                            <span class="text-[10px] text-slate-400 block font-semibold">Batas Waktu</span>
                             @if($link->expires_at)
-                                <span class="font-bold {{ $link->isExpired() ? 'text-rose-500' : 'text-amber-500' }}" title="{{ $link->expires_at->format('d M Y H:i') }}">
+                                <span class="font-black {{ $link->isExpired() ? 'text-rose-500' : 'text-amber-500' }}" title="{{ $link->expires_at->format('d M Y H:i') }}">
                                     {{ $link->isExpired() ? 'Habis' : $link->expires_at->diffForHumans(['parts' => 1]) }}
                                 </span>
                             @else
-                                <span class="font-bold text-slate-500">Selamanya</span>
+                                <span class="font-black text-slate-500">Selamanya</span>
                             @endif
                         </div>
                     </div>
@@ -464,7 +468,7 @@
                             <div class="relative flex-1 min-w-0">
                                 <input type="text" readonly value="{{ $link->public_url }}"
                                        onclick="this.select(); copyToClipboard('{{ $link->public_url }}', this)"
-                                       class="w-full pl-7 pr-3 py-2 text-[11px] font-mono rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 truncate cursor-pointer focus:outline-none focus:ring-1 focus:ring-teal-500"
+                                       class="w-full pl-7 pr-3 py-2 text-[11px] font-mono rounded-[16px] bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 truncate cursor-pointer focus:outline-none focus:ring-1 focus:ring-teal-500 font-medium"
                                        title="Klik untuk memilih tautan">
                                 <span class="absolute left-2.5 top-2.5 text-slate-400 pointer-events-none">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -474,7 +478,7 @@
                             </div>
                             <button type="button"
                                     onclick="copyToClipboard('{{ $link->public_url }}', this)"
-                                    class="px-3.5 py-2 rounded-xl bg-teal-500 hover:bg-teal-600 text-white text-xs font-bold shrink-0 flex items-center gap-1.5 shadow-xs active:scale-95 transition-all cursor-pointer"
+                                    class="px-3.5 py-2 rounded-[16px] bg-teal-500 hover:bg-teal-400 text-white text-xs font-black shrink-0 flex items-center gap-1.5 shadow-xs active:scale-95 transition-all cursor-pointer ios-press"
                                     title="Salin tautan ke papan klip">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" />
@@ -490,7 +494,7 @@
                                     $waMsg = urlencode("Halo, silakan unggah berkas '{$link->title}' melalui tautan aman ini (Maksimal {$link->max_file_size_mb} MB):\n{$link->public_url}");
                                 @endphp
                                 <a href="https://api.whatsapp.com/send?text={{ $waMsg }}" target="_blank"
-                                   class="px-2.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 text-xs font-bold flex items-center gap-1.5 active:scale-95 transition-all cursor-pointer"
+                                   class="px-3 py-1.5 rounded-[16px] bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 text-xs font-bold flex items-center gap-1.5 active:scale-95 transition-all cursor-pointer ios-press"
                                    title="Bagikan via WhatsApp">
                                     <svg class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.025 3.284l-.707 2.582 2.658-.697c1.002.581 1.777.832 2.792.832 3.182 0 5.767-2.587 5.768-5.768 0-3.182-2.586-5.768-5.768-5.768zm3.364 8.169c-.145.408-.847.784-1.173.834-.325.051-.735.083-2.164-.509-1.428-.592-2.339-2.029-2.41-2.124-.071-.095-.572-.761-.572-1.451 0-.691.362-1.03.491-1.173.129-.143.282-.179.376-.179.094 0 .188.001.27.006.088.005.206-.033.322.247.123.298.421 1.027.458 1.102.037.075.061.163.012.261-.049.098-.073.159-.146.244-.073.085-.154.19-.22.256-.073.073-.149.153-.064.299.085.146.377.621.808 1.005.556.495 1.025.648 1.171.721.146.073.232.061.318-.037.086-.098.368-.428.466-.575.098-.147.196-.123.328-.074.132.049.837.395.981.467.144.072.24.108.276.17.036.062.036.357-.109.765z"/>
@@ -499,7 +503,7 @@
                                 </a>
 
                                 <a href="{{ $link->public_url }}" target="_blank"
-                                   class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold flex items-center gap-1 active:scale-95 transition-all cursor-pointer"
+                                   class="px-3 py-1.5 rounded-[16px] liquid-glass bg-slate-100/80 hover:bg-slate-200 dark:bg-slate-800/80 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold border border-white/50 dark:border-white/10 flex items-center gap-1 active:scale-95 transition-all cursor-pointer ios-press"
                                    title="Lihat Tampilan Pengunggah">
                                     <span>Buka</span>
                                     <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -512,14 +516,14 @@
                                 <form action="{{ route('drive.drop-links.toggle', $link) }}" method="POST">
                                     @csrf
                                     @method('PATCH')
-                                    <button type="submit" class="px-2.5 py-1.5 rounded-xl text-xs font-bold border active:scale-95 transition-all cursor-pointer {{ $link->is_active ? 'bg-slate-100 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200' : 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400' }}">
+                                    <button type="submit" class="px-3 py-1.5 rounded-[16px] text-xs font-bold border active:scale-95 transition-all cursor-pointer ios-press {{ $link->is_active ? 'bg-slate-100 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200' : 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400' }}">
                                         {{ $link->is_active ? 'Tutup Link' : 'Aktifkan' }}
                                     </button>
                                 </form>
 
                                 <button type="button"
                                         onclick="confirmDeleteDropLink('{{ $link->id }}', '{{ addslashes($link->title) }}', '{{ route('drive.drop-links.destroy', $link) }}')"
-                                        class="p-1.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/30 active:scale-90 transition-all cursor-pointer"
+                                        class="p-2 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-[14px] hover:bg-rose-50 dark:hover:bg-rose-950/30 active:scale-90 transition-all cursor-pointer ios-press"
                                         title="Hapus Link Drop">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
@@ -530,8 +534,8 @@
                     </div>
                 </div>
             @empty
-                <div class="text-center py-12 px-4 bg-white dark:bg-slate-950 rounded-2xl border border-dashed border-slate-300 dark:border-slate-800 space-y-3">
-                    <div class="w-14 h-14 rounded-2xl bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 mx-auto flex items-center justify-center">
+                <div class="text-center py-12 px-4 liquid-card rounded-[28px] bg-white/70 dark:bg-slate-900/70 border border-dashed border-slate-300 dark:border-slate-800 space-y-3 backdrop-blur-xl">
+                    <div class="w-14 h-14 rounded-[22px] bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 mx-auto flex items-center justify-center shadow-xs">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
                         </svg>
@@ -542,7 +546,7 @@
                             Buat link khusus dengan batas waktu dan ukuran berkas agar orang lain bisa mengunggah berkas langsung ke drive Anda.
                         </p>
                     </div>
-                    <button type="button" onclick="openCreateDropModal()" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-95 text-white text-xs font-extrabold shadow-md shadow-teal-500/20 transition-all cursor-pointer">
+                    <button type="button" onclick="openCreateDropModal()" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-[18px] bg-teal-500 hover:bg-teal-400 active:scale-95 text-white text-xs font-black shadow-md shadow-teal-500/20 transition-all cursor-pointer ios-press">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                         </svg>
@@ -558,8 +562,8 @@
 <div id="share-modal" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true" role="dialog">
     <div id="share-backdrop" onclick="closeShareModal()" class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity duration-300 opacity-0"></div>
     <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
-        <div id="share-panel" class="w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-100 dark:border-slate-800 pointer-events-auto transform translate-y-full transition-transform duration-300 space-y-4">
-            <div class="w-12 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-2 cursor-pointer" onclick="closeShareModal()"></div>
+        <div id="share-panel" class="w-full max-w-md bg-white/95 dark:bg-slate-900/95 rounded-t-[36px] backdrop-blur-3xl shadow-2xl p-5 modal-sheet-safe border-t border-white/60 dark:border-white/10 pointer-events-auto transform translate-y-full transition-transform duration-300 space-y-4">
+            <div class="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-3 cursor-pointer" onclick="closeShareModal()"></div>
             <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
                 <div>
                     <h2 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
@@ -626,8 +630,8 @@
 <div id="create-drop-modal" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true" role="dialog">
     <div id="drop-backdrop" onclick="closeCreateDropModal()" class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity duration-300 opacity-0"></div>
     <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
-        <div id="drop-panel" class="w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-100 dark:border-slate-800 pointer-events-auto transform translate-y-full transition-transform duration-300 space-y-4 max-h-[90vh] overflow-y-auto no-scrollbar">
-            <div class="w-12 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-2 cursor-pointer" onclick="closeCreateDropModal()"></div>
+        <div id="drop-panel" class="w-full max-w-md bg-white/95 dark:bg-slate-900/95 rounded-t-[36px] backdrop-blur-3xl shadow-2xl p-5 modal-sheet-safe border-t border-white/60 dark:border-white/10 pointer-events-auto transform translate-y-full transition-transform duration-300 space-y-4 max-h-[90vh] overflow-y-auto no-scrollbar">
+            <div class="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-3 cursor-pointer" onclick="closeCreateDropModal()"></div>
             
             <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
                 <div>
@@ -797,9 +801,9 @@
 
     <!-- Panel Bottom-Sheet (Matches SwanFlow Mobile Sheet) -->
     <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
-        <div id="quota-panel" class="w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-100 dark:border-slate-800 pointer-events-auto transform translate-y-full transition-transform duration-300 space-y-4 max-h-[90vh] overflow-y-auto no-scrollbar text-slate-800 dark:text-white">
+        <div id="quota-panel" class="w-full max-w-md bg-white/95 dark:bg-slate-900/95 rounded-t-[36px] backdrop-blur-3xl shadow-2xl p-5 modal-sheet-safe border-t border-white/60 dark:border-white/10 pointer-events-auto transform translate-y-full transition-transform duration-300 space-y-4 max-h-[90vh] overflow-y-auto no-scrollbar text-slate-800 dark:text-white">
             <!-- Drag Handle -->
-            <div class="w-12 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-2 cursor-pointer" onclick="closeQuotaModal()"></div>
+            <div class="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-3 cursor-pointer" onclick="closeQuotaModal()"></div>
 
             <!-- Header -->
             <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
@@ -891,9 +895,9 @@
 
     <!-- Panel Bottom-Sheet (High-fidelity SwanFlow Mobile Sheet) -->
     <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
-        <div id="preview-panel" class="w-full max-w-lg bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-4 sm:p-5 modal-sheet-safe border-t border-slate-100 dark:border-slate-800 pointer-events-auto transform translate-y-full transition-transform duration-300 flex flex-col max-h-[92vh] text-slate-800 dark:text-white">
+        <div id="preview-panel" class="w-full max-w-lg bg-white/95 dark:bg-slate-900/95 rounded-t-[36px] backdrop-blur-3xl shadow-2xl p-4 sm:p-5 modal-sheet-safe border-t border-white/60 dark:border-white/10 pointer-events-auto transform translate-y-full transition-transform duration-300 flex flex-col max-h-[92vh] text-slate-800 dark:text-white">
             <!-- Drag Handle -->
-            <div class="w-12 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-2 cursor-pointer shrink-0" onclick="closePreviewModal()"></div>
+            <div class="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-3 cursor-pointer shrink-0" onclick="closePreviewModal()"></div>
 
             <!-- Header -->
             <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800 shrink-0 gap-3">

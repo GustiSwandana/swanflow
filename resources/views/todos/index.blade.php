@@ -3,25 +3,28 @@
 @section('title', 'Aktivitas')
 
 @section('custom_header')
-{{-- Fintech Full-Bleed Header (Emerald in Light Mode, Sleek Slate in Dark Mode, matching Dashboard) --}}
-<div class="bg-gradient-to-b from-emerald-600 via-emerald-600 to-emerald-700 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-white px-5 pb-8 relative border-b border-emerald-700 dark:border-slate-800/80 overflow-hidden transition-colors" style="padding-top: max(3.5rem, calc(var(--sat, 0px) + 0.75rem));">
-    <!-- Subtle Glow & Mesh Highlights (matching Dashboard) -->
-    <div class="absolute -right-8 -top-8 w-44 h-44 bg-white/10 dark:bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute -left-8 top-20 w-40 h-40 bg-white/10 dark:bg-teal-500/10 rounded-full blur-2xl pointer-events-none"></div>
+{{-- Apple iOS Liquid Glass Header for Aktivitas --}}
+<div class="relative overflow-hidden bg-gradient-to-b from-emerald-600 via-emerald-700/95 to-slate-950/95 dark:from-slate-950 dark:via-emerald-950/40 dark:to-slate-950 text-white px-5 pb-8 border-b border-white/20 dark:border-white/10 rounded-b-[36px] shadow-2xl backdrop-blur-3xl transition-all" style="padding-top: max(3.5rem, calc(var(--sat, 0px) + 0.85rem));">
+    <!-- Specular Highlight Line at the Top -->
+    <div class="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none"></div>
+
+    <!-- Ambient Liquid Orbs -->
+    <div class="absolute -top-10 -right-10 w-48 h-48 bg-emerald-400/25 dark:bg-emerald-500/15 rounded-full blur-3xl pointer-events-none animate-liquid-orb-1"></div>
+    <div class="absolute -bottom-10 -left-10 w-44 h-44 bg-teal-400/20 dark:bg-teal-500/10 rounded-full blur-2xl pointer-events-none animate-liquid-orb-2"></div>
 
     <div class="relative z-10 pb-1">
         <div class="flex items-center justify-between mb-4">
-            <div class="flex items-center gap-2.5">
+            <div class="flex items-center gap-3 min-w-0">
                 <a href="{{ route('dashboard') }}" 
-                   class="min-w-[40px] min-h-[40px] -ml-2 flex items-center justify-center text-white/80 hover:text-white rounded-full hover:bg-white/10 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-800 active:scale-95 transition-all" 
+                   class="w-10 h-10 rounded-[18px] liquid-glass bg-white/15 hover:bg-white/25 active:scale-95 flex items-center justify-center transition-all border border-white/30 shrink-0 shadow-xs ios-press" 
                    aria-label="Kembali ke Beranda">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
                     </svg>
                 </a>
-                <div>
-                    <h1 class="text-xl font-extrabold text-white tracking-tight leading-tight">Aktivitas & Tugas</h1>
-                    <p class="text-xs text-white/75 dark:text-slate-400">Catatan kegiatan & to-do list</p>
+                <div class="min-w-0">
+                    <h1 class="text-base sm:text-lg font-black tracking-tight text-white leading-tight">Aktivitas & Tugas</h1>
+                    <p class="text-[11px] text-emerald-100/80 font-semibold truncate mt-0.5">Catatan kegiatan & to-do list</p>
                 </div>
             </div>
 
@@ -29,7 +32,7 @@
             <button type="button" 
                     onclick="openAddModal()" 
                     aria-label="Tambah Aktivitas"
-                    class="px-3.5 py-2 rounded-xl bg-white/20 hover:bg-white/30 text-white font-bold text-xs backdrop-blur-sm border border-white/30 flex items-center gap-1.5 active:scale-95 transition-all shadow-xs">
+                    class="h-9 px-4 rounded-[18px] liquid-glass bg-white/20 hover:bg-white/30 text-white font-black text-xs backdrop-blur-md border border-white/30 flex items-center gap-1.5 active:scale-95 transition-all shadow-xs ios-press">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
@@ -37,31 +40,31 @@
             </button>
         </div>
 
-        {{-- Summary badges (Interactive Filter Cards with Apple Frosted Glass Effect) --}}
+        {{-- Summary badges (Interactive Filter Cards with Apple Liquid Glass Effect) --}}
         <div class="grid grid-cols-3 gap-2">
             <a href="{{ route('todos.index', ['tab' => 'today']) }}"
-               class="rounded-2xl p-2.5 sm:p-3 border backdrop-blur-md transition-all duration-200 flex flex-col justify-between active:scale-95 {{ $tab === 'today' ? 'bg-white/30 border-white/60 shadow-md ring-2 ring-white/40' : 'bg-white/15 hover:bg-white/20 border-white/20' }}">
+               class="rounded-[22px] p-3 border backdrop-blur-2xl transition-all duration-200 flex flex-col justify-between active:scale-95 ios-press {{ $tab === 'today' ? 'bg-white/30 border-white/60 shadow-lg ring-2 ring-white/40' : 'bg-white/15 hover:bg-white/20 border-white/20' }}">
                 <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-bold text-white/90">Hari Ini</span>
-                    <span class="w-2 h-2 rounded-full bg-amber-400 {{ $todayTodos->count() > 0 ? 'animate-pulse' : '' }}"></span>
+                    <span class="text-[11px] font-black text-white">Hari Ini</span>
+                    <span class="w-2 h-2 rounded-full bg-amber-300 {{ $todayTodos->count() > 0 ? 'animate-pulse' : '' }}"></span>
                 </div>
                 <p class="text-xl sm:text-2xl font-black text-amber-300 tracking-tight mt-1">{{ $todayTodos->count() }}</p>
             </a>
 
             <a href="{{ route('todos.index', ['tab' => 'upcoming']) }}"
-               class="rounded-2xl p-2.5 sm:p-3 border backdrop-blur-md transition-all duration-200 flex flex-col justify-between active:scale-95 {{ $tab === 'upcoming' ? 'bg-white/30 border-white/60 shadow-md ring-2 ring-white/40' : 'bg-white/15 hover:bg-white/20 border-white/20' }}">
+               class="rounded-[22px] p-3 border backdrop-blur-2xl transition-all duration-200 flex flex-col justify-between active:scale-95 ios-press {{ $tab === 'upcoming' ? 'bg-white/30 border-white/60 shadow-lg ring-2 ring-white/40' : 'bg-white/15 hover:bg-white/20 border-white/20' }}">
                 <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-bold text-white/90">Mendatang</span>
-                    <span class="w-2 h-2 rounded-full bg-sky-400"></span>
+                    <span class="text-[11px] font-black text-white">Mendatang</span>
+                    <span class="w-2 h-2 rounded-full bg-sky-300"></span>
                 </div>
                 <p class="text-xl sm:text-2xl font-black text-sky-300 tracking-tight mt-1">{{ $upcomingTodos->count() }}</p>
             </a>
 
             <a href="{{ route('todos.index', ['tab' => 'completed']) }}"
-               class="rounded-2xl p-2.5 sm:p-3 border backdrop-blur-md transition-all duration-200 flex flex-col justify-between active:scale-95 {{ $tab === 'completed' ? 'bg-white/30 border-white/60 shadow-md ring-2 ring-white/40' : 'bg-white/15 hover:bg-white/20 border-white/20' }}">
+               class="rounded-[22px] p-3 border backdrop-blur-2xl transition-all duration-200 flex flex-col justify-between active:scale-95 ios-press {{ $tab === 'completed' ? 'bg-white/30 border-white/60 shadow-lg ring-2 ring-white/40' : 'bg-white/15 hover:bg-white/20 border-white/20' }}">
                 <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-bold text-white/90">Selesai</span>
-                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                    <span class="text-[11px] font-black text-white">Selesai</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-300"></span>
                 </div>
                 <p class="text-xl sm:text-2xl font-black text-emerald-300 tracking-tight mt-1">{{ $completedTodos->count() }}</p>
             </a>
@@ -71,51 +74,52 @@
 @endsection
 
 @section('content')
-<div class="bg-slate-50 dark:bg-slate-900 rounded-t-[32px] pt-4 px-4 pb-[max(6rem,calc(5.25rem+var(--sab,0px)))] shadow-2xl -mt-4 relative z-10 border-t border-slate-200 dark:border-slate-800/80 flex-1 flex flex-col min-h-full space-y-4 text-slate-800 dark:text-white transition-colors animate-swan-in">
+<div class="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-2xl rounded-t-[36px] pt-5 px-4 pb-[max(6.5rem,calc(5.5rem+var(--sab,0px)))] shadow-2xl -mt-5 relative z-10 border-t border-white/60 dark:border-white/10 flex-1 flex flex-col min-h-full space-y-4 text-slate-800 dark:text-white transition-colors animate-swan-in">
     <!-- Pull handle indicator for authentic iOS sheet aesthetic -->
-    <div class="w-10 h-1 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-1"></div>
+    <div class="w-10 h-1.5 bg-slate-300/80 dark:bg-slate-700/80 rounded-full mx-auto mb-1"></div>
+
     {{-- Quick Add Card --}}
     <div>
-        <div class="p-3.5 rounded-2xl bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 shadow-xs flex items-center justify-between gap-3 transition-colors">
+        <div class="p-3.5 rounded-[24px] liquid-card bg-white/80 dark:bg-slate-900/75 border border-white/60 dark:border-white/10 shadow-xs backdrop-blur-2xl flex items-center justify-between gap-3 transition-colors">
             <button type="button" onclick="openAddModal()" class="flex items-center gap-3 min-w-0 flex-1 text-left group cursor-pointer">
-                <div class="w-9 h-9 rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                <div class="w-9 h-9 rounded-[16px] bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-2xs">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
                 </div>
                 <div class="truncate">
-                    <span class="text-xs font-bold text-slate-800 dark:text-white block group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors truncate">Tulis aktivitas atau agenda baru...</span>
-                    <span class="text-[10px] text-slate-400 dark:text-slate-500 block">Jadwalkan agenda & deadline</span>
+                    <span class="text-xs font-black text-slate-800 dark:text-white block group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors truncate">Tulis aktivitas atau agenda baru...</span>
+                    <span class="text-[10px] text-slate-400 dark:text-slate-500 font-semibold block">Jadwalkan agenda & deadline</span>
                 </div>
             </button>
-            <button type="button" onclick="openAddModal()" aria-label="Catat Aktivitas Baru" class="px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold shadow-xs active:scale-95 transition-all cursor-pointer">
+            <button type="button" onclick="openAddModal()" aria-label="Catat Aktivitas Baru" class="px-4 py-2 rounded-[16px] bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-black shadow-xs active:scale-95 transition-all cursor-pointer ios-press">
                 + Catat
             </button>
         </div>
     </div>
 
     {{-- Tab filter (Segmented Control) --}}
-    <div class="sticky top-0 z-10 bg-slate-50/95 dark:bg-slate-900/95 backdrop-blur-md py-1">
-        <div class="flex bg-slate-200/70 dark:bg-slate-800/70 rounded-2xl p-1 gap-1 border border-slate-300/40 dark:border-slate-700/60">
+    <div class="sticky top-0 z-10 bg-transparent py-1">
+        <div class="ios-segmented-track p-1 rounded-[22px] flex items-center gap-1 w-full bg-slate-200/60 dark:bg-slate-900/70 backdrop-blur-xl border border-white/50 dark:border-white/10 shadow-inner">
             <a href="{{ route('todos.index', ['tab' => 'today']) }}"
-                class="flex-1 py-2 text-center text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 {{ $tab === 'today' ? 'bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 font-extrabold shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-semibold' }}">
+                class="flex-1 py-2 text-center text-xs rounded-[18px] transition-all flex items-center justify-center gap-1.5 ios-press {{ $tab === 'today' ? 'ios-segmented-thumb bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 font-black shadow-md ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white font-bold' }}">
                 <span>Hari Ini</span>
                 @if($todayTodos->count() > 0)
-                    <span class="text-[10px] px-1.5 py-0.5 rounded-full font-bold {{ $tab === 'today' ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400' : 'bg-slate-300/80 dark:bg-slate-600 text-slate-700 dark:text-slate-200' }}">{{ $todayTodos->count() }}</span>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded-full font-black {{ $tab === 'today' ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400' : 'bg-slate-300/80 dark:bg-slate-700 text-slate-700 dark:text-slate-200' }}">{{ $todayTodos->count() }}</span>
                 @endif
             </a>
             <a href="{{ route('todos.index', ['tab' => 'upcoming']) }}"
-                class="flex-1 py-2 text-center text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 {{ $tab === 'upcoming' ? 'bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 font-extrabold shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-semibold' }}">
+                class="flex-1 py-2 text-center text-xs rounded-[18px] transition-all flex items-center justify-center gap-1.5 ios-press {{ $tab === 'upcoming' ? 'ios-segmented-thumb bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 font-black shadow-md ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white font-bold' }}">
                 <span>Mendatang</span>
                 @if($upcomingTodos->count() > 0)
-                    <span class="text-[10px] px-1.5 py-0.5 rounded-full font-bold {{ $tab === 'upcoming' ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400' : 'bg-slate-300/80 dark:bg-slate-600 text-slate-700 dark:text-slate-200' }}">{{ $upcomingTodos->count() }}</span>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded-full font-black {{ $tab === 'upcoming' ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400' : 'bg-slate-300/80 dark:bg-slate-700 text-slate-700 dark:text-slate-200' }}">{{ $upcomingTodos->count() }}</span>
                 @endif
             </a>
             <a href="{{ route('todos.index', ['tab' => 'completed']) }}"
-                class="flex-1 py-2 text-center text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 {{ $tab === 'completed' ? 'bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 font-extrabold shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-semibold' }}">
+                class="flex-1 py-2 text-center text-xs rounded-[18px] transition-all flex items-center justify-center gap-1.5 ios-press {{ $tab === 'completed' ? 'ios-segmented-thumb bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 font-black shadow-md ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white font-bold' }}">
                 <span>Selesai</span>
                 @if($completedTodos->count() > 0)
-                    <span class="text-[10px] px-1.5 py-0.5 rounded-full font-bold {{ $tab === 'completed' ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400' : 'bg-slate-300/80 dark:bg-slate-600 text-slate-700 dark:text-slate-200' }}">{{ $completedTodos->count() }}</span>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded-full font-black {{ $tab === 'completed' ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400' : 'bg-slate-300/80 dark:bg-slate-700 text-slate-700 dark:text-slate-200' }}">{{ $completedTodos->count() }}</span>
                 @endif
             </a>
         </div>

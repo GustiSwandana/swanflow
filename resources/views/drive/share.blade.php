@@ -19,18 +19,20 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-full flex flex-col justify-between selection:bg-teal-500 selection:text-white antialiased">
 
-    <!-- Ambient Gradient Background (Teal/Emerald only, NO blue) -->
+    <!-- Ambient Gradient Background (Teal/Emerald liquid orbs) -->
     <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl"></div>
-        <div class="absolute -bottom-32 left-1/2 -translate-x-1/2 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl"></div>
+        <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-96 h-96 bg-teal-500/15 rounded-full blur-3xl animate-liquid-orb-1"></div>
+        <div class="absolute -bottom-32 left-1/2 -translate-x-1/2 w-96 h-96 bg-emerald-500/15 rounded-full blur-3xl animate-liquid-orb-2"></div>
     </div>
 
     <!-- Main Container -->
     <div class="relative z-10 flex-1 flex flex-col items-center justify-center p-4 sm:p-6">
-        <div class="w-full max-w-md bg-slate-900/90 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 text-center">
+        <div class="w-full max-w-md liquid-card rounded-[32px] p-6 sm:p-8 shadow-2xl space-y-6 text-center bg-slate-900/85 backdrop-blur-2xl border border-white/20 relative overflow-hidden animate-swan-in">
+            <!-- Specular Top Rim -->
+            <div class="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent"></div>
             
             <!-- Branding Badge -->
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/10 border border-teal-500/30 text-teal-400 text-xs font-extrabold tracking-wide">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full liquid-glass bg-teal-500/15 border border-teal-500/30 text-teal-400 text-xs font-black tracking-wide">
                 <span class="w-2 h-2 rounded-full bg-teal-400 animate-pulse"></span>
                 <span>SwanDrive File Transfer</span>
             </div>
@@ -99,9 +101,9 @@
             @endif
 
             <!-- Action Buttons -->
-            <div class="space-y-2 pt-2">
+            <div class="space-y-2.5 pt-2">
                 <a href="{{ route('drive.shared.download', ['token' => $file->share_token]) }}"
-                   class="w-full py-3.5 px-6 rounded-2xl bg-teal-500 hover:bg-teal-600 active:scale-[0.98] text-white font-extrabold text-sm shadow-lg shadow-teal-500/25 flex items-center justify-center gap-2 transition-all cursor-pointer">
+                   class="w-full py-3.5 px-6 rounded-[20px] bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 active:scale-[0.98] text-white font-black text-sm shadow-xl shadow-teal-500/25 flex items-center justify-center gap-2 border border-white/20 ios-press transition-all cursor-pointer">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
                     </svg>
@@ -109,7 +111,7 @@
                 </a>
 
                 <a href="{{ route('drive.shared.preview', ['token' => $file->share_token]) }}" target="_blank"
-                   class="w-full py-2.5 px-4 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white text-xs font-bold border border-slate-700/80 flex items-center justify-center gap-1.5 active:scale-95 transition-all cursor-pointer">
+                   class="w-full py-2.5 px-4 rounded-[18px] liquid-glass hover:bg-white/10 text-slate-300 hover:text-white text-xs font-bold border border-white/15 flex items-center justify-center gap-1.5 ios-press transition-all cursor-pointer">
                     <svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />

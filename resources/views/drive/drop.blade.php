@@ -18,19 +18,21 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-full flex flex-col justify-between selection:bg-teal-500 selection:text-white antialiased">
 
-    <!-- Ambient Gradient Background (Teal/Emerald only, NO blue) -->
+    <!-- Ambient Gradient Background (Teal/Emerald liquid orbs) -->
     <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl"></div>
-        <div class="absolute -bottom-32 left-1/2 -translate-x-1/2 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl"></div>
+        <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-96 h-96 bg-teal-500/15 rounded-full blur-3xl animate-liquid-orb-1"></div>
+        <div class="absolute -bottom-32 left-1/2 -translate-x-1/2 w-96 h-96 bg-emerald-500/15 rounded-full blur-3xl animate-liquid-orb-2"></div>
     </div>
 
     <!-- Main Container -->
     <div class="relative z-10 flex-1 flex flex-col items-center justify-center p-4 sm:p-6">
-        <div class="w-full max-w-lg bg-slate-900/90 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
+        <div class="w-full max-w-lg liquid-card rounded-[32px] p-6 sm:p-8 shadow-2xl space-y-6 bg-slate-900/85 backdrop-blur-2xl border border-white/20 relative overflow-hidden animate-swan-in">
+            <!-- Specular Top Rim -->
+            <div class="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent"></div>
             
             <!-- Branding Badge -->
             <div class="text-center">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/10 border border-teal-500/30 text-teal-400 text-xs font-extrabold tracking-wide">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full liquid-glass bg-teal-500/15 border border-teal-500/30 text-teal-400 text-xs font-black tracking-wide">
                     <span class="w-2 h-2 rounded-full bg-teal-400 animate-pulse"></span>
                     <span>SwanDrive Drop Portal</span>
                 </div>
@@ -42,35 +44,35 @@
                     {{ $link->title }}
                 </h1>
                 @if(!empty($link->description))
-                    <p class="text-xs sm:text-sm text-slate-300 max-w-md mx-auto leading-relaxed">
+                    <p class="text-xs sm:text-sm font-semibold text-slate-300 max-w-md mx-auto leading-relaxed">
                         {{ $link->description }}
                     </p>
                 @endif
             </div>
 
             <!-- Setting & Limit Parameters Grid -->
-            <div class="grid grid-cols-3 gap-2 bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800 text-center">
+            <div class="grid grid-cols-3 gap-2 rounded-[22px] liquid-glass p-3.5 border border-white/15 backdrop-blur-xl text-center shadow-xs">
                 <!-- Limit 1: Batas Ukuran -->
                 <div class="space-y-0.5">
-                    <span class="text-[10px] font-semibold text-slate-400 block">Batas Ukuran</span>
-                    <span class="text-xs sm:text-sm font-extrabold text-teal-400">
+                    <span class="text-[10px] font-bold text-slate-400 block uppercase tracking-wider">Batas Ukuran</span>
+                    <span class="text-xs sm:text-sm font-black text-teal-400">
                         {{ $link->max_file_size_mb }} MB
                     </span>
                 </div>
 
                 <!-- Limit 2: Kuota File -->
-                <div class="space-y-0.5 border-x border-slate-800 px-1">
-                    <span class="text-[10px] font-semibold text-slate-400 block">Sisa Kuota</span>
-                    <span class="text-xs sm:text-sm font-extrabold {{ $link->remainingSlots() > 0 ? 'text-emerald-400' : 'text-rose-400' }}">
+                <div class="space-y-0.5 border-x border-white/10 px-1">
+                    <span class="text-[10px] font-bold text-slate-400 block uppercase tracking-wider">Sisa Kuota</span>
+                    <span class="text-xs sm:text-sm font-black {{ $link->remainingSlots() > 0 ? 'text-emerald-400' : 'text-rose-400' }}">
                         {{ $link->remainingSlots() }} / {{ $link->max_files }}
                     </span>
                 </div>
 
                 <!-- Limit 3: Batas Waktu -->
                 <div class="space-y-0.5">
-                    <span class="text-[10px] font-semibold text-slate-400 block">Batas Waktu</span>
+                    <span class="text-[10px] font-bold text-slate-400 block uppercase tracking-wider">Batas Waktu</span>
                     @if($link->expires_at)
-                        <span class="text-xs sm:text-sm font-extrabold {{ $link->isExpired() ? 'text-rose-400' : 'text-amber-400' }}" title="{{ $link->expires_at->format('d M Y H:i') }}">
+                        <span class="text-xs sm:text-sm font-black {{ $link->isExpired() ? 'text-rose-400' : 'text-amber-400' }}" title="{{ $link->expires_at->format('d M Y H:i') }}">
                             @if($link->isExpired())
                                 Habis
                             @else
@@ -78,7 +80,7 @@
                             @endif
                         </span>
                     @else
-                        <span class="text-xs sm:text-sm font-extrabold text-slate-300">
+                        <span class="text-xs sm:text-sm font-black text-slate-300">
                             Tak Terbatas
                         </span>
                     @endif
@@ -124,25 +126,25 @@
 
                     <!-- Interactive Drag & Drop Box -->
                     <div id="dropzone" onclick="document.getElementById('drop-file-input').click()"
-                         class="border-2 border-dashed border-teal-500/40 hover:border-teal-400 rounded-2xl p-6 flex flex-col items-center justify-center text-center cursor-pointer bg-slate-950/60 hover:bg-slate-950/90 active:scale-[0.99] transition-all">
-                        <div class="w-12 h-12 rounded-2xl bg-teal-500/15 text-teal-400 flex items-center justify-center mb-2.5">
+                         class="border-2 border-dashed border-teal-500/40 hover:border-teal-400 rounded-[24px] p-6 flex flex-col items-center justify-center text-center cursor-pointer bg-slate-950/60 hover:bg-slate-950/90 ios-press active:scale-[0.99] transition-all">
+                        <div class="w-12 h-12 rounded-[18px] bg-teal-500/15 text-teal-400 flex items-center justify-center mb-2.5 border border-teal-500/30 shadow-2xs">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
                             </svg>
                         </div>
-                        <span id="dropzone-title" class="text-xs sm:text-sm font-bold text-white">
+                        <span id="dropzone-title" class="text-xs sm:text-sm font-black text-white tracking-tight">
                             Pilih atau Seret Berkas ke Sini
                         </span>
-                        <span id="dropzone-subtitle" class="text-[11px] text-slate-400 mt-0.5">
+                        <span id="dropzone-subtitle" class="text-[11px] font-semibold text-slate-400 mt-0.5">
                             Maksimal {{ $link->max_file_size_mb }} MB
                         </span>
                     </div>
 
                     <!-- File Details Preview -->
-                    <div id="file-preview-card" class="hidden p-3 bg-teal-950/30 border border-teal-800/60 rounded-xl flex items-center justify-between text-xs">
+                    <div id="file-preview-card" class="hidden p-3.5 bg-teal-950/40 border border-teal-500/30 rounded-[20px] flex items-center justify-between text-xs backdrop-blur-md">
                         <div class="truncate pr-2">
                             <span id="preview-name" class="font-bold text-white block truncate">Nama berkas</span>
-                            <span id="preview-size" class="text-[10px] text-teal-300">0 KB</span>
+                            <span id="preview-size" class="text-[10px] font-semibold text-teal-300">0 KB</span>
                         </div>
                         <button type="button" onclick="cancelSelection()" class="text-slate-400 hover:text-white p-1 text-xs font-bold">
                             ✕ Ganti
@@ -150,22 +152,22 @@
                     </div>
 
                     <!-- Uploader Metadata Inputs -->
-                    <div class="space-y-2.5 pt-1">
+                    <div class="space-y-3 pt-1">
                         <div>
-                            <label for="uploader_name" class="block text-[11px] font-semibold text-slate-400 mb-1">Nama Pengirim (Opsional)</label>
+                            <label for="uploader_name" class="block text-[11px] font-bold text-slate-300 mb-1.5">Nama Pengirim (Opsional)</label>
                             <input type="text" id="uploader_name" name="uploader_name" placeholder="Misal: Andi / Vendor Acara"
-                                   class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500">
+                                   class="w-full min-h-[46px] px-4 py-2.5 text-xs font-semibold rounded-[20px] bg-slate-950/80 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500 backdrop-blur-md transition-all">
                         </div>
                         <div>
-                            <label for="uploader_notes" class="block text-[11px] font-semibold text-slate-400 mb-1">Catatan Tambahan (Opsional)</label>
+                            <label for="uploader_notes" class="block text-[11px] font-bold text-slate-300 mb-1.5">Catatan Tambahan (Opsional)</label>
                             <input type="text" id="uploader_notes" name="uploader_notes" placeholder="Misal: Revisi nota final tahap 2..."
-                                   class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500">
+                                   class="w-full min-h-[46px] px-4 py-2.5 text-xs font-semibold rounded-[20px] bg-slate-950/80 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500 backdrop-blur-md transition-all">
                         </div>
                     </div>
 
                     <!-- Submit Button -->
                     <button type="submit" id="btn-submit"
-                            class="w-full py-3.5 px-6 rounded-2xl bg-teal-500 hover:bg-teal-600 active:scale-[0.98] text-white font-extrabold text-xs sm:text-sm shadow-lg shadow-teal-500/25 flex items-center justify-center gap-2 transition-all cursor-pointer">
+                            class="w-full min-h-[46px] py-3.5 px-6 rounded-[20px] bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 active:scale-[0.98] text-white font-black text-xs sm:text-sm shadow-xl shadow-teal-500/25 flex items-center justify-center gap-2 border border-white/20 ios-press transition-all cursor-pointer">
                         <svg id="btn-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                         </svg>

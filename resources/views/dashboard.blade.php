@@ -43,7 +43,7 @@
                 </button>
 
                 <!-- History / Notification Action Button -->
-                <a href="{{ route('transactions.index') }}" aria-label="Riwayat Transaksi" class="min-w-[42px] min-h-[42px] w-10.5 h-10.5 flex items-center justify-center rounded-[18px] text-white/90 hover:text-white bg-white/15 hover:bg-white/25 border border-white/25 dark:text-slate-300 dark:hover:text-white dark:bg-slate-800/80 dark:border-white/10 backdrop-blur-xl shadow-xs ios-press transition-all">
+                <a href="{{ route('transactions.index') }}" aria-label="Riwayat Notifikasi" class="min-w-[42px] min-h-[42px] w-10.5 h-10.5 flex items-center justify-center rounded-[18px] text-white/90 hover:text-white bg-white/15 hover:bg-white/25 border border-white/25 dark:text-slate-300 dark:hover:text-white dark:bg-slate-800/80 dark:border-white/10 backdrop-blur-xl shadow-xs ios-press transition-all">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
                     </svg>

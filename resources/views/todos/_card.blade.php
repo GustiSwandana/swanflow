@@ -44,23 +44,23 @@
     };
 @endphp
 
-<div class="relative bg-white dark:bg-slate-800/95 rounded-2xl p-4 pl-4.5 border border-slate-200/80 dark:border-slate-700/80 shadow-xs hover:shadow-md transition-all space-y-3 overflow-hidden {{ $todo->is_completed ? 'opacity-70 bg-slate-50/60 dark:bg-slate-800/60' : '' }}">
+<div class="relative liquid-card bg-white/80 dark:bg-slate-900/75 rounded-[24px] p-4 pl-4.5 border border-white/60 dark:border-white/10 shadow-xs hover:shadow-md hover:border-emerald-500/40 backdrop-blur-2xl transition-all space-y-3 overflow-hidden {{ $todo->is_completed ? 'opacity-70 bg-slate-50/60 dark:bg-slate-900/60' : '' }}">
     <!-- Vertical Accent Bar on the left -->
-    <span class="absolute left-0 top-3.5 bottom-3.5 w-1 rounded-r-full {{ $accentColor }}" aria-hidden="true"></span>
+    <span class="absolute left-0 top-3.5 bottom-3.5 w-1.5 rounded-r-full {{ $accentColor }}" aria-hidden="true"></span>
 
     {{-- Header Row: Checkbox, Title, Description & Action Buttons --}}
     <div class="flex items-start justify-between gap-3">
         <div class="flex items-start gap-3 min-w-0 flex-1">
-            {{-- Smooth Interactive Checkbox --}}
+            {{-- Smooth Interactive Checkbox (Apple Tactile) --}}
             <form action="{{ route('todos.toggle', $todo) }}" method="POST" class="shrink-0 mt-0.5">
                 @csrf
                 @method('PATCH')
                 <button type="submit"
                     aria-label="{{ $todo->is_completed ? 'Tandai belum selesai' : 'Tandai selesai' }}"
-                    class="w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all cursor-pointer shrink-0
+                    class="w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all cursor-pointer shrink-0 ios-press
                         {{ $todo->is_completed
                             ? 'bg-emerald-500 border-emerald-500 text-white shadow-xs shadow-emerald-500/30'
-                            : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 hover:border-emerald-500 hover:scale-105 active:scale-90' }}">
+                            : 'border-slate-300/80 dark:border-slate-600 bg-white/80 dark:bg-slate-800 hover:border-emerald-500 hover:scale-105 active:scale-90' }}">
                     @if($todo->is_completed)
                         <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
@@ -71,11 +71,11 @@
 
             {{-- Title & Description --}}
             <div class="min-w-0 flex-1">
-                <h3 class="text-sm font-bold text-slate-900 dark:text-white leading-snug break-words {{ $todo->is_completed ? 'line-through text-slate-400 dark:text-slate-500' : '' }}">
+                <h3 class="text-sm font-black text-slate-900 dark:text-white leading-snug break-words {{ $todo->is_completed ? 'line-through text-slate-400 dark:text-slate-500' : '' }}">
                     {{ $todo->title }}
                 </h3>
                 @if($todo->description)
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 leading-relaxed font-normal">
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 leading-relaxed font-medium">
                         {{ $todo->description }}
                     </p>
                 @endif
@@ -94,7 +94,7 @@
                     data-due-date="{{ $todo->due_date ? $todo->due_date->format('Y-m-d') : '' }}"
                     data-description="{{ $todo->description ?? '' }}"
                     aria-label="Edit aktivitas"
-                    class="w-7 h-7 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 dark:hover:text-emerald-400 flex items-center justify-center active:scale-95 transition-all">
+                    class="w-7 h-7 rounded-[14px] text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 dark:hover:text-emerald-400 flex items-center justify-center active:scale-95 transition-all ios-press">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
                     </svg>
@@ -107,7 +107,7 @@
                 @method('DELETE')
                 <button type="submit"
                     aria-label="Hapus aktivitas"
-                    class="w-7 h-7 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 dark:hover:text-rose-400 flex items-center justify-center active:scale-95 transition-all">
+                    class="w-7 h-7 rounded-[14px] text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 dark:hover:text-rose-400 flex items-center justify-center active:scale-95 transition-all ios-press">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
                     </svg>
@@ -117,20 +117,20 @@
     </div>
 
     {{-- Footer Row: Category & Priority Badges (Left) vs Deadline (Right) --}}
-    <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-100 dark:border-slate-700/60 flex-wrap sm:flex-nowrap">
+    <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-100 dark:border-slate-800/80 flex-wrap sm:flex-nowrap">
         <div class="flex items-center gap-1.5 shrink-0 flex-wrap">
             @if($todo->category)
-                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border {{ $catStyle }}">
+                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-[14px] text-[11px] font-bold border shadow-2xs {{ $catStyle }}">
                     {!! $iconSvg !!}
                     <span>{{ $catBadge['label'] }}</span>
                 </span>
             @endif
-            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border {{ $priorityStyle }}">
+            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-[14px] text-[11px] font-bold border shadow-2xs {{ $priorityStyle }}">
                 {!! $priorityIcons[$todo->priority] ?? $priorityIcons['medium'] !!}
                 <span>{{ $priority['label'] }}</span>
             </span>
             @if($todo->is_completed && $todo->completed_at)
-                <span class="text-[11px] font-medium text-slate-400 dark:text-slate-500">
+                <span class="text-[11px] font-semibold text-slate-400 dark:text-slate-500">
                     ✓ Selesai {{ $todo->completed_at->diffForHumans() }}
                 </span>
             @endif
@@ -138,7 +138,7 @@
 
         {{-- Tanggal Deadline Slot (Refined Pill) --}}
         @if($todo->due_date && !$showCompleted)
-            <div class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ml-auto shrink-0
+            <div class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-[14px] text-[11px] font-bold border ml-auto shrink-0 shadow-2xs
                 {{ $isOverdue 
                     ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800/40 font-bold' 
                     : ($todo->due_date->isToday() 
