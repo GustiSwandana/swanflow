@@ -37,29 +37,34 @@
             </button>
         </div>
 
-        {{-- Summary badges (High Contrast, Vivid Indicators) --}}
+        {{-- Summary badges (Interactive Filter Cards) --}}
         <div class="grid grid-cols-3 gap-2">
-            <div class="bg-white/15 dark:bg-slate-800/80 backdrop-blur-md rounded-2xl p-2.5 sm:p-3 border border-white/20 dark:border-slate-700/60 shadow-sm flex flex-col justify-between">
+            <a href="{{ route('todos.index', ['tab' => 'today']) }}"
+               class="rounded-2xl p-2.5 sm:p-3 border transition-all duration-200 flex flex-col justify-between active:scale-95 {{ $tab === 'today' ? 'bg-white/30 border-white/60 shadow-md ring-2 ring-white/40' : 'bg-white/15 hover:bg-white/20 border-white/20' }}">
                 <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-bold text-white/80 dark:text-slate-300">Hari Ini</span>
-                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                    <span class="text-[11px] font-bold text-white/90">Hari Ini</span>
+                    <span class="w-2 h-2 rounded-full bg-amber-400 {{ $todayTodos->count() > 0 ? 'animate-pulse' : '' }}"></span>
                 </div>
-                <p class="text-xl sm:text-2xl font-black text-amber-300 dark:text-amber-400 tracking-tight mt-1">{{ $todayTodos->count() }}</p>
-            </div>
-            <div class="bg-white/15 dark:bg-slate-800/80 backdrop-blur-md rounded-2xl p-2.5 sm:p-3 border border-white/20 dark:border-slate-700/60 shadow-sm flex flex-col justify-between">
+                <p class="text-xl sm:text-2xl font-black text-amber-300 tracking-tight mt-1">{{ $todayTodos->count() }}</p>
+            </a>
+
+            <a href="{{ route('todos.index', ['tab' => 'upcoming']) }}"
+               class="rounded-2xl p-2.5 sm:p-3 border transition-all duration-200 flex flex-col justify-between active:scale-95 {{ $tab === 'upcoming' ? 'bg-white/30 border-white/60 shadow-md ring-2 ring-white/40' : 'bg-white/15 hover:bg-white/20 border-white/20' }}">
                 <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-bold text-white/80 dark:text-slate-300">Mendatang</span>
+                    <span class="text-[11px] font-bold text-white/90">Mendatang</span>
                     <span class="w-2 h-2 rounded-full bg-sky-400"></span>
                 </div>
-                <p class="text-xl sm:text-2xl font-black text-sky-300 dark:text-sky-400 tracking-tight mt-1">{{ $upcomingTodos->count() }}</p>
-            </div>
-            <div class="bg-white/15 dark:bg-slate-800/80 backdrop-blur-md rounded-2xl p-2.5 sm:p-3 border border-white/20 dark:border-slate-700/60 shadow-sm flex flex-col justify-between">
+                <p class="text-xl sm:text-2xl font-black text-sky-300 tracking-tight mt-1">{{ $upcomingTodos->count() }}</p>
+            </a>
+
+            <a href="{{ route('todos.index', ['tab' => 'completed']) }}"
+               class="rounded-2xl p-2.5 sm:p-3 border transition-all duration-200 flex flex-col justify-between active:scale-95 {{ $tab === 'completed' ? 'bg-white/30 border-white/60 shadow-md ring-2 ring-white/40' : 'bg-white/15 hover:bg-white/20 border-white/20' }}">
                 <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-bold text-white/80 dark:text-slate-300">Selesai</span>
+                    <span class="text-[11px] font-bold text-white/90">Selesai</span>
                     <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
                 </div>
-                <p class="text-xl sm:text-2xl font-black text-emerald-300 dark:text-emerald-400 tracking-tight mt-1">{{ $completedTodos->count() }}</p>
-            </div>
+                <p class="text-xl sm:text-2xl font-black text-emerald-300 tracking-tight mt-1">{{ $completedTodos->count() }}</p>
+            </a>
         </div>
     </div>
 </div>
@@ -81,34 +86,34 @@
                     <span class="text-[10px] text-slate-400 dark:text-slate-500 block">Jadwalkan agenda & deadline</span>
                 </div>
             </button>
-            <button type="button" onclick="openAddModal()" aria-label="Catat Aktivitas Baru" class="px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-black shadow-md shadow-emerald-500/25 shrink-0 active:scale-95 transition-all cursor-pointer">
+            <button type="button" onclick="openAddModal()" aria-label="Catat Aktivitas Baru" class="px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold shadow-xs active:scale-95 transition-all cursor-pointer">
                 + Catat
             </button>
         </div>
     </div>
 
-    {{-- Tab filter --}}
-    <div class="sticky top-0 z-10 bg-slate-50/95 dark:bg-slate-900/95 backdrop-blur-sm py-1">
-        <div class="flex bg-slate-200/80 dark:bg-slate-800/80 rounded-2xl p-1 gap-1 border border-slate-300/50 dark:border-slate-700/80">
+    {{-- Tab filter (Segmented Control) --}}
+    <div class="sticky top-0 z-10 bg-slate-50/95 dark:bg-slate-900/95 backdrop-blur-md py-1">
+        <div class="flex bg-slate-200/70 dark:bg-slate-800/70 rounded-2xl p-1 gap-1 border border-slate-300/40 dark:border-slate-700/60">
             <a href="{{ route('todos.index', ['tab' => 'today']) }}"
-                class="flex-1 py-2 text-center text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 {{ $tab === 'today' ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/30 font-black' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-bold' }}">
+                class="flex-1 py-2 text-center text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 {{ $tab === 'today' ? 'bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 font-extrabold shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-semibold' }}">
                 <span>Hari Ini</span>
                 @if($todayTodos->count() > 0)
-                    <span class="text-[10px] px-1.5 py-0.5 rounded-full font-extrabold {{ $tab === 'today' ? 'bg-slate-950/20 text-slate-950' : 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400' }}">{{ $todayTodos->count() }}</span>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded-full font-bold {{ $tab === 'today' ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400' : 'bg-slate-300/80 dark:bg-slate-600 text-slate-700 dark:text-slate-200' }}">{{ $todayTodos->count() }}</span>
                 @endif
             </a>
             <a href="{{ route('todos.index', ['tab' => 'upcoming']) }}"
-                class="flex-1 py-2 text-center text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 {{ $tab === 'upcoming' ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/30 font-black' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-bold' }}">
+                class="flex-1 py-2 text-center text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 {{ $tab === 'upcoming' ? 'bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 font-extrabold shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-semibold' }}">
                 <span>Mendatang</span>
                 @if($upcomingTodos->count() > 0)
-                    <span class="text-[10px] px-1.5 py-0.5 rounded-full font-extrabold {{ $tab === 'upcoming' ? 'bg-slate-950/20 text-slate-950' : 'bg-slate-300 dark:bg-slate-700 text-slate-700 dark:text-slate-300' }}">{{ $upcomingTodos->count() }}</span>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded-full font-bold {{ $tab === 'upcoming' ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400' : 'bg-slate-300/80 dark:bg-slate-600 text-slate-700 dark:text-slate-200' }}">{{ $upcomingTodos->count() }}</span>
                 @endif
             </a>
             <a href="{{ route('todos.index', ['tab' => 'completed']) }}"
-                class="flex-1 py-2 text-center text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 {{ $tab === 'completed' ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/30 font-black' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-bold' }}">
+                class="flex-1 py-2 text-center text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 {{ $tab === 'completed' ? 'bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 font-extrabold shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-semibold' }}">
                 <span>Selesai</span>
                 @if($completedTodos->count() > 0)
-                    <span class="text-[10px] px-1.5 py-0.5 rounded-full font-extrabold {{ $tab === 'completed' ? 'bg-slate-950/20 text-slate-950' : 'bg-slate-300 dark:bg-slate-700 text-slate-700 dark:text-slate-300' }}">{{ $completedTodos->count() }}</span>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded-full font-bold {{ $tab === 'completed' ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400' : 'bg-slate-300/80 dark:bg-slate-600 text-slate-700 dark:text-slate-200' }}">{{ $completedTodos->count() }}</span>
                 @endif
             </a>
         </div>
