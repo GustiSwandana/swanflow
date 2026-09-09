@@ -604,6 +604,7 @@
                         wallet_id: {{ $tx->wallet_id }},
                         target_wallet_id: {{ $tx->target_wallet_id ?: "null" }},
                         category_id: {{ $tx->category_id ?: "null" }},
+                        category_name: @json($tx->category->name ?? ""),
                         date: "{{ \Carbon\Carbon::parse($tx->date)->format("Y-m-d") }}",
                         description: @json($tx->description ?? "")
                     })'

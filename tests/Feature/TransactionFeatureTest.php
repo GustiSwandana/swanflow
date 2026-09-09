@@ -445,4 +445,138 @@ class TransactionFeatureTest extends TestCase
         // Target: was 800k - revert 300k = 500k; apply +100k => 600,000
         $this->assertEquals(600000.00, (float) $targetWallet->balance);
     }
+
+    public function test_user_can_update_income_transaction_and_wallet_balance_adjusts_correctly(): void
+    {
+        $user = User::factory()->create();
+        $wallet = Wallet::factory()->create([
+            'user_id' => $user->id,
+            'balance' => 500000.00,
+        ]);
+        $category = Category::factory()->income()->create(['user_id' => $user->id]);
+
+        $transaction = Transaction::factory()->income()->create([
+            'user_id' => $user->id,
+            'wallet_id' => $wallet->id,
+            'category_id' => $category->id,
+            'amount' => 200000.00,
+            'description' => 'Gaji paruh waktu',
+        ]);
+
+        $updatePayload = [
+            'wallet_id' => $wallet->id,
+            'category_id' => $category->id,
+            'type' => 'income',
+            'amount' => 350000.00,
+            'date' => now()->toDateString(),
+            'description' => 'Gaji bertambah',
+        ];
+
+        $response = $this->actingAs($user)->put("/transactions/{$transaction->id}", $updatePayload);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('success', 'Transaksi berhasil diperbarui!');
+
+        $wallet->refresh();
+        // 500k - 200k (revert) + 350k (new) = 650k
+        $this->assertEquals(650000.00, (float) $wallet->balance);
+    }
+
+    public function test_user_can_update_transaction_via_ajax_and_receive_json(): void
+    {
+        $user = User::factory()->create();
+        $wallet = Wallet::factory()->create([
+            'user_id' => $user->id,
+            'balance' => 500000.00,
+        ]);
+        $category = Category::factory()->expense()->create(['user_id' => $user->id]);
+
+        $transaction = Transaction::factory()->expense()->create([
+            'user_id' => $user->id,
+            'wallet_id' => $wallet->id,
+            'category_id' => $category->id,
+            'amount' => 50000.00,
+        ]);
+
+        $updatePayload = [
+            'wallet_id' => $wallet->id,
+            'category_id' => $category->id,
+            'type' => 'expense',
+            'amount' => 75000.00,
+            'date' => now()->toDateString(),
+            'description' => 'Makan siang enak',
+        ];
+
+        $response = $this->actingAs($user)->putJson("/transactions/{$transaction->id}", $updatePayload);
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            'success' => true,
+            'message' => 'Transaksi berhasil diperbarui!',
+        ]);
+
+        $this->assertDatabaseHas('transactions', [
+            'id' => $transaction->id,
+            'amount' => 75000.00,
+        ]);
+    }
+
+    public function test_user_can_delete_transaction_via_ajax_and_receive_json(): void
+    {
+        $user = User::factory()->create();
+        $wallet = Wallet::factory()->create([
+            'user_id' => $user->id,
+            'balance' => 450000.00,
+        ]);
+        $category = Category::factory()->expense()->create(['user_id' => $user->id]);
+
+        $transaction = Transaction::factory()->expense()->create([
+            'user_id' => $user->id,
+            'wallet_id' => $wallet->id,
+            'category_id' => $category->id,
+            'amount' => 50000.00,
+        ]);
+
+        $response = $this->actingAs($user)->deleteJson("/transactions/{$transaction->id}");
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            'success' => true,
+            'message' => 'Transaksi berhasil dihapus!',
+        ]);
+
+        $this->assertDatabaseMissing('transactions', ['id' => $transaction->id]);
+        $wallet->refresh();
+        $this->assertEquals(500000.00, (float) $wallet->balance);
+    }
+
+    public function test_user_cannot_update_or_delete_other_users_transaction(): void
+    {
+        $userA = User::factory()->create();
+        $userB = User::factory()->create();
+
+        $walletA = Wallet::factory()->create(['user_id' => $userA->id]);
+        $catA = Category::factory()->expense()->create(['user_id' => $userA->id]);
+
+        $transactionA = Transaction::factory()->expense()->create([
+            'user_id' => $userA->id,
+            'wallet_id' => $walletA->id,
+            'category_id' => $catA->id,
+            'amount' => 100000.00,
+        ]);
+
+        // User B tries to update user A's transaction
+        $updateResponse = $this->actingAs($userB)->put("/transactions/{$transactionA->id}", [
+            'wallet_id' => $walletA->id,
+            'category_id' => $catA->id,
+            'type' => 'expense',
+            'amount' => 200000.00,
+            'date' => now()->toDateString(),
+        ]);
+        $updateResponse->assertStatus(403);
+
+        // User B tries to delete user A's transaction
+        $deleteResponse = $this->actingAs($userB)->delete("/transactions/{$transactionA->id}");
+        $deleteResponse->assertStatus(403);
+    }
 }

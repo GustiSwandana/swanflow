@@ -10,6 +10,7 @@ use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Wallet;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -140,7 +141,7 @@ class TransactionController extends Controller
     /**
      * Update the specified transaction and adjust wallet balances atomically.
      */
-    public function update(UpdateTransactionRequest $request, Transaction $transaction): RedirectResponse
+    public function update(UpdateTransactionRequest $request, Transaction $transaction): RedirectResponse|JsonResponse
     {
         /** @var User $user */
         $user = $request->user() ?? User::first() ?? User::getPrimaryUser();
@@ -201,13 +202,23 @@ class TransactionController extends Controller
             }
         });
 
-        return back()->with('success', 'Transaksi berhasil diperbarui!');
+        $message = 'Transaksi berhasil diperbarui!';
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'transaction' => $transaction->fresh(['wallet', 'targetWallet', 'category']),
+            ]);
+        }
+
+        return back()->with('success', $message);
     }
 
     /**
      * Remove the specified transaction and revert the wallet balance.
      */
-    public function destroy(Request $request, Transaction $transaction): RedirectResponse
+    public function destroy(Request $request, Transaction $transaction): RedirectResponse|JsonResponse
     {
         /** @var User $user */
         $user = $request->user() ?? User::first() ?? User::getPrimaryUser();
@@ -238,6 +249,15 @@ class TransactionController extends Controller
             $transaction->delete();
         });
 
-        return back()->with('success', 'Transaksi berhasil dihapus!');
+        $message = 'Transaksi berhasil dihapus!';
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+            ]);
+        }
+
+        return back()->with('success', $message);
     }
 }

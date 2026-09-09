@@ -252,6 +252,31 @@
             </script>
         @endif
 
+        @if(session('error'))
+            <div id="flash-error-toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-11/12 max-w-sm bg-rose-900 text-white px-4 py-3 rounded-2xl shadow-xl border border-rose-700 flex items-center justify-between transition-all duration-300">
+                <div class="flex items-center gap-2.5">
+                    <span class="w-7 h-7 rounded-full bg-rose-500/20 text-rose-300 flex items-center justify-center shrink-0 font-bold">
+                        ✕
+                    </span>
+                    <span class="text-xs font-semibold text-rose-100">{{ session('error') }}</span>
+                </div>
+                <button type="button" onclick="document.getElementById('flash-error-toast').remove()" class="text-rose-300 hover:text-white p-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <script>
+                setTimeout(() => {
+                    const toast = document.getElementById('flash-error-toast');
+                    if (toast) {
+                        toast.style.opacity = '0';
+                        setTimeout(() => toast.remove(), 300);
+                    }
+                }, 4000);
+            </script>
+        @endif
+
         @if($errors->any())
             <div id="error-toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-11/12 max-w-sm bg-rose-900 text-white px-4 py-3 rounded-2xl shadow-xl border border-rose-700 flex items-start gap-2.5">
                 <span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-300 flex items-center justify-center shrink-0 mt-0.5">
@@ -698,16 +723,94 @@
                                    class="block w-full max-w-full min-w-0 box-border min-h-[44px] px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
                         </div>
 
-                        <!-- Submit Button -->
-                        <div class="pt-2">
-                            <button type="submit" class="w-full min-h-[48px] py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 text-white font-bold text-sm shadow-md shadow-emerald-600/30 dark:shadow-emerald-500/20 active:scale-98 transition-all flex items-center justify-center gap-2">
+                        <!-- Action Buttons -->
+                        <div class="pt-2 space-y-2">
+                            <button type="submit" id="edit-transaction-submit-btn" class="w-full min-h-[48px] py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 text-white font-bold text-sm shadow-md shadow-emerald-600/30 dark:shadow-emerald-500/20 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                                 </svg>
                                 Simpan Perubahan Transaksi
                             </button>
+
+                            <button type="button" 
+                                    onclick="triggerDeleteFromEditModal()" 
+                                    class="w-full min-h-[44px] py-2.5 px-4 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/50 text-rose-600 dark:text-rose-400 font-bold text-xs border border-rose-200 dark:border-rose-900/60 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                </svg>
+                                Hapus Transaksi Ini
+                            </button>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hidden Global Delete Transaction Form -->
+        <form id="global-delete-transaction-form" action="" method="POST" class="hidden">
+            @csrf
+            @method('DELETE')
+        </form>
+
+        <!-- 5.b DELETE TRANSACTION CONFIRMATION BOTTOM SHEET MODAL -->
+        <div id="delete-transaction-confirm-modal" class="fixed inset-0 z-60 hidden transition-all duration-300" aria-modal="true" role="dialog">
+            <!-- Backdrop -->
+            <div id="delete-modal-backdrop" onclick="closeDeleteTransactionModal()" class="fixed inset-0 bg-slate-950/75 backdrop-blur-xs transition-opacity duration-300 opacity-0"></div>
+
+            <!-- Bottom Sheet Panel -->
+            <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
+                <div id="delete-modal-panel" class="w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-100 dark:border-slate-800/80 pointer-events-auto transform translate-y-full transition-transform duration-300">
+                    <!-- Drag Handle -->
+                    <div class="w-12 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-4 cursor-pointer" onclick="closeDeleteTransactionModal()"></div>
+
+                    <div class="text-center space-y-3 pb-2">
+                        <div class="w-14 h-14 mx-auto rounded-full bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                            </svg>
+                        </div>
+
+                        <div>
+                            <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Hapus Transaksi?</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                                Transaksi ini akan dihapus permanen. Saldo dompet terkait akan otomatis disesuaikan kembali seperti semula.
+                            </p>
+                        </div>
+
+                        <!-- Transaction Preview Card inside Modal -->
+                        <div class="p-3 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 text-left space-y-1.5">
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="text-slate-400 dark:text-slate-400">Nominal:</span>
+                                <span id="delete-preview-amount" class="font-bold text-slate-900 dark:text-white">Rp 0</span>
+                            </div>
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="text-slate-400 dark:text-slate-400">Tanggal:</span>
+                                <span id="delete-preview-date" class="font-medium text-slate-700 dark:text-slate-300">-</span>
+                            </div>
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="text-slate-400 dark:text-slate-400">Keterangan:</span>
+                                <span id="delete-preview-desc" class="font-medium text-slate-700 dark:text-slate-300 truncate max-w-[200px]">-</span>
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="grid grid-cols-2 gap-2.5 pt-2">
+                            <button type="button" 
+                                    onclick="closeDeleteTransactionModal()" 
+                                    class="w-full min-h-[44px] py-2.5 px-4 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs active:scale-98 transition-all cursor-pointer">
+                                Batal
+                            </button>
+                            <button type="button" 
+                                    id="confirm-delete-submit-btn"
+                                    onclick="executeDeleteTransaction()" 
+                                    class="w-full min-h-[44px] py-2.5 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-md shadow-rose-600/30 active:scale-98 transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                                Ya, Hapus
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1680,6 +1783,8 @@
                 }
             }
 
+            let currentActiveTransaction = null;
+
             function updateEditModalType(type) {
                 const walletLabel = document.getElementById('edit-wallet-label');
                 const targetWalletContainer = document.getElementById('edit-target-wallet-container');
@@ -1692,24 +1797,29 @@
                     if (targetWalletContainer) targetWalletContainer.classList.remove('hidden');
                     if (targetWalletSelect) targetWalletSelect.required = true;
                     if (categoryContainer) categoryContainer.classList.add('hidden');
-                    if (categorySelect) categorySelect.required = false;
+                    if (categorySelect) {
+                        categorySelect.required = false;
+                        categorySelect.value = '';
+                    }
                 } else {
                     if (walletLabel) walletLabel.textContent = 'Dompet / Rekening';
                     if (targetWalletContainer) targetWalletContainer.classList.add('hidden');
-                    if (targetWalletSelect) targetWalletSelect.required = false;
+                    if (targetWalletSelect) {
+                        targetWalletSelect.required = false;
+                        targetWalletSelect.value = '';
+                    }
                     if (categoryContainer) categoryContainer.classList.remove('hidden');
                     if (categorySelect) {
                         categorySelect.required = true;
-                        let firstMatched = false;
+                        let firstValidOption = null;
                         for (let option of categorySelect.options) {
                             const optType = option.getAttribute('data-type');
                             if (!optType || optType === type) {
                                 option.hidden = false;
                                 option.disabled = false;
                                 option.style.display = '';
-                                if (!firstMatched && !option.selected) {
-                                    option.selected = true;
-                                    firstMatched = true;
+                                if (!firstValidOption) {
+                                    firstValidOption = option;
                                 }
                             } else {
                                 option.hidden = true;
@@ -1718,6 +1828,11 @@
                                 if (option.selected) {
                                     option.selected = false;
                                 }
+                            }
+                        }
+                        if (categorySelect.selectedOptions.length === 0 || categorySelect.selectedOptions[0].disabled) {
+                            if (firstValidOption) {
+                                firstValidOption.selected = true;
                             }
                         }
                     }
@@ -1732,7 +1847,9 @@
 
                 if (!modal || !form) return;
 
-                form.action = '/transactions/' + data.id;
+                currentActiveTransaction = data;
+                const baseTxUrl = "{{ url('/transactions') }}";
+                form.action = baseTxUrl + '/' + data.id;
 
                 const type = data.type || 'expense';
                 const radio = document.querySelector(`input[name="type"][id="edit-type-${type}"]`);
@@ -1751,10 +1868,14 @@
                 if (walletSelect && data.wallet_id) walletSelect.value = data.wallet_id;
 
                 const targetWalletSelect = document.getElementById('edit-target-wallet-select');
-                if (targetWalletSelect && data.target_wallet_id) targetWalletSelect.value = data.target_wallet_id;
+                if (targetWalletSelect) {
+                    targetWalletSelect.value = data.target_wallet_id ? data.target_wallet_id : '';
+                }
 
                 const categorySelect = document.getElementById('edit-category-select');
-                if (categorySelect && data.category_id) categorySelect.value = data.category_id;
+                if (categorySelect && data.category_id) {
+                    categorySelect.value = data.category_id;
+                }
 
                 const dateInput = document.getElementById('edit-date-input');
                 if (dateInput && data.date) dateInput.value = data.date;
@@ -1786,6 +1907,80 @@
                 setTimeout(() => {
                     modal.classList.add('hidden');
                 }, 300);
+            }
+
+            function triggerDeleteFromEditModal() {
+                if (!currentActiveTransaction) return;
+                closeEditTransactionModal();
+                setTimeout(() => {
+                    openDeleteTransactionModal(currentActiveTransaction);
+                }, 200);
+            }
+
+            function openDeleteTransactionModal(data) {
+                currentActiveTransaction = data;
+                const modal = document.getElementById('delete-transaction-confirm-modal');
+                const backdrop = document.getElementById('delete-modal-backdrop');
+                const panel = document.getElementById('delete-modal-panel');
+                const deleteForm = document.getElementById('global-delete-transaction-form');
+
+                if (!modal || !deleteForm) return;
+
+                const baseTxUrl = "{{ url('/transactions') }}";
+                deleteForm.action = baseTxUrl + '/' + data.id;
+
+                const amtEl = document.getElementById('delete-preview-amount');
+                if (amtEl) {
+                    const formattedAmt = new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 }).format(data.amount || 0);
+                    amtEl.textContent = 'Rp ' + formattedAmt;
+                }
+
+                const dateEl = document.getElementById('delete-preview-date');
+                if (dateEl) {
+                    dateEl.textContent = data.date || '-';
+                }
+
+                const descEl = document.getElementById('delete-preview-desc');
+                if (descEl) {
+                    descEl.textContent = data.description || (data.category_name || (data.type === 'transfer' ? 'Transfer Antar Dompet' : 'Transaksi'));
+                }
+
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    backdrop.classList.remove('opacity-0');
+                    backdrop.classList.add('opacity-100');
+                    panel.classList.remove('translate-y-full');
+                    panel.classList.add('translate-y-0');
+                }, 10);
+            }
+
+            function closeDeleteTransactionModal() {
+                const modal = document.getElementById('delete-transaction-confirm-modal');
+                const backdrop = document.getElementById('delete-modal-backdrop');
+                const panel = document.getElementById('delete-modal-panel');
+
+                if (!modal) return;
+
+                backdrop.classList.remove('opacity-100');
+                backdrop.classList.add('opacity-0');
+                panel.classList.remove('translate-y-0');
+                panel.classList.add('translate-y-full');
+
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            }
+
+            function executeDeleteTransaction() {
+                const deleteForm = document.getElementById('global-delete-transaction-form');
+                const btn = document.getElementById('confirm-delete-submit-btn');
+                if (btn) {
+                    btn.disabled = true;
+                    btn.innerHTML = '<svg class="w-4 h-4 animate-spin inline-block mr-1.5" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Menghapus...';
+                }
+                if (deleteForm) {
+                    deleteForm.submit();
+                }
             }
 
             // Universal Bottom-Sheet Modal Animation Helpers

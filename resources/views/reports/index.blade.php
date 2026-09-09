@@ -179,11 +179,25 @@
             @forelse($monthTransactions as $tx)
                 @php
                     $isIncome = $tx->type === \App\Enums\TransactionType::Income || $tx->type === 'income';
+                    $isTransfer = $tx->type === \App\Enums\TransactionType::Transfer || $tx->type === 'transfer';
                 @endphp
-                <div class="p-3 bg-white dark:bg-slate-800/40 flex items-center justify-between rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs">
+                <div onclick='openEditTransactionModal({
+                        id: {{ $tx->id }},
+                        type: "{{ is_string($tx->type) ? $tx->type : $tx->type->value }}",
+                        amount: {{ $tx->amount }},
+                        wallet_id: {{ $tx->wallet_id }},
+                        target_wallet_id: {{ $tx->target_wallet_id ?: "null" }},
+                        category_id: {{ $tx->category_id ?: "null" }},
+                        category_name: @json($tx->category->name ?? ""),
+                        date: "{{ \Carbon\Carbon::parse($tx->date)->format("Y-m-d") }}",
+                        description: @json($tx->description ?? "")
+                    })'
+                    role="button"
+                    tabindex="0"
+                    class="p-3 bg-white dark:bg-slate-800/40 hover:bg-slate-50 dark:hover:bg-slate-800/80 active:scale-[0.99] flex items-center justify-between rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs cursor-pointer transition-all">
                     <div class="flex items-center gap-3 min-w-0">
                         <!-- Icon Square Container (No blue) -->
-                        <div class="w-11 h-11 rounded-2xl {{ $isIncome ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/40' : 'bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-400 border border-rose-200 dark:border-rose-900/40' }} flex items-center justify-center shrink-0 shadow-2xs">
+                        <div class="w-11 h-11 rounded-2xl {{ $isIncome ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/40' : ($isTransfer ? 'bg-teal-100 text-teal-700 dark:bg-teal-950/50 dark:text-teal-400 border border-teal-200 dark:border-teal-900/40' : 'bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-400 border border-rose-200 dark:border-rose-900/40') }} flex items-center justify-center shrink-0 shadow-2xs">
                             <x-category-icon :category="$tx->category" :type="$tx->type" :name="$tx->description ?: ($tx->category->name ?? '')" class="w-5 h-5" />
                         </div>
                         <div class="min-w-0">
@@ -196,8 +210,8 @@
                         </div>
                     </div>
                     <div class="text-right shrink-0 pl-2">
-                        <span class="text-sm font-extrabold {{ $isIncome ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400' }} block">
-                            {{ $isIncome ? '+ ' : '- ' }}Rp {{ number_format($tx->amount, 0, ',', '.') }}
+                        <span class="text-sm font-extrabold {{ $isIncome ? 'text-emerald-600 dark:text-emerald-400' : ($isTransfer ? 'text-slate-700 dark:text-slate-300' : 'text-rose-600 dark:text-rose-400') }} block">
+                            {{ $isIncome ? '+ ' : ($isTransfer ? '' : '- ') }}Rp {{ number_format($tx->amount, 0, ',', '.') }}
                         </span>
                     </div>
                 </div>
