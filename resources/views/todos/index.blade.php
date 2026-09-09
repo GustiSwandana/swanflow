@@ -66,10 +66,10 @@
 @endsection
 
 @section('content')
-<div class="bg-slate-100 dark:bg-slate-950 flex-1 flex flex-col min-h-full pb-[max(8.5rem,calc(7.5rem+var(--sab)))] animate-swan-in">
+<div class="bg-slate-50 dark:bg-slate-900 rounded-t-[32px] pt-4 px-4 pb-[max(8.5rem,calc(7.5rem+var(--sab)))] shadow-2xl -mt-4 relative z-10 border-t border-slate-200 dark:border-slate-800/80 flex-1 flex flex-col min-h-full space-y-4 text-slate-800 dark:text-white transition-colors animate-swan-in">
     {{-- Quick Add Card --}}
-    <div class="px-4 pt-3 pb-1">
-        <div class="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs flex items-center justify-between gap-3 transition-colors">
+    <div>
+        <div class="p-3.5 rounded-2xl bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 shadow-xs flex items-center justify-between gap-3 transition-colors">
             <button type="button" onclick="openAddModal()" class="flex items-center gap-3 min-w-0 flex-1 text-left group cursor-pointer">
                 <div class="w-9 h-9 rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
@@ -88,8 +88,8 @@
     </div>
 
     {{-- Tab filter --}}
-    <div class="px-4 pt-2 pb-2 sticky top-0 z-10 bg-slate-100/95 dark:bg-slate-950/95 backdrop-blur-sm">
-        <div class="flex bg-slate-200/80 dark:bg-slate-900 rounded-2xl p-1 gap-1 border border-slate-300/50 dark:border-slate-800">
+    <div class="sticky top-0 z-10 bg-slate-50/95 dark:bg-slate-900/95 backdrop-blur-sm py-1">
+        <div class="flex bg-slate-200/80 dark:bg-slate-800/80 rounded-2xl p-1 gap-1 border border-slate-300/50 dark:border-slate-700/80">
             <a href="{{ route('todos.index', ['tab' => 'today']) }}"
                 class="flex-1 py-2 text-center text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 {{ $tab === 'today' ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/30 font-black' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-bold' }}">
                 <span>Hari Ini</span>
@@ -115,7 +115,7 @@
     </div>
 
     {{-- Content area --}}
-    <div class="px-4 pb-[max(7rem,calc(6.5rem+var(--sab)))] pt-2 space-y-3">
+    <div class="space-y-3">
 
         @if($tab === 'today')
             @forelse($todayTodos as $todo)

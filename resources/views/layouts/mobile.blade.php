@@ -109,7 +109,7 @@
             }
         }
         .animate-swan-in {
-            animation: swanFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: swanFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
     </style>
 </head>
@@ -233,8 +233,7 @@
         @endif
 
         <!-- 3. FLOATING DOCK BOTTOM NAVIGATION BAR -->
-        <nav class="fixed left-0 right-0 z-40 flex justify-center pointer-events-none px-4"
-             style="bottom: max(0.85rem, calc(var(--sab, 0px) + 0.65rem));">
+        <nav class="fixed inset-x-0 bottom-0 z-40 flex justify-center pointer-events-none px-4 pb-[max(0.75rem,calc(env(safe-area-inset-bottom,0px)+0.5rem))]">
             <div class="w-full max-w-[420px] pointer-events-auto bg-white/85 dark:bg-slate-900/85 backdrop-blur-2xl border border-white/60 dark:border-slate-700/60 rounded-[28px] shadow-[0_12px_36px_-6px_rgba(0,0,0,0.12),0_4px_16px_-2px_rgba(0,0,0,0.06)] dark:shadow-[0_16px_48px_-8px_rgba(0,0,0,0.65),0_4px_16px_rgba(0,0,0,0.4)] px-2.5 py-1.5 transition-all duration-300">
                 <div class="flex items-center justify-between relative">
 

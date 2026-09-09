@@ -167,67 +167,51 @@
 @section('content')
 <!-- Bottom Sheet Container (rounded-t-[32px]) -->
 <div class="bg-slate-50 dark:bg-slate-900 rounded-t-[32px] pt-4 px-4 pb-[max(8.5rem,calc(7.5rem+var(--sab)))] shadow-2xl -mt-4 relative z-10 border-t border-slate-200 dark:border-slate-800/80 flex-1 flex flex-col min-h-full space-y-6 text-slate-800 dark:text-white transition-colors animate-swan-in">
-    <!-- Drag Pill Indicator -->
-    <div class="w-12 h-1 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-2"></div>
-
-    <!-- 1. Quick Navigation Shortcuts (scrollable horizontal) -->
-    <div class="flex gap-3 overflow-x-auto no-scrollbar pb-1 pt-1 -mx-1 px-1">
-        <!-- Scan Struk (AI / OCR) -->
-        <button type="button" onclick="openReceiptScannerModal()" class="flex flex-col items-center gap-1.5 group shrink-0 w-14 cursor-pointer" title="Pindai Struk / Bukti Transfer">
-            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-500/20 via-emerald-500/25 to-teal-500/20 text-teal-700 dark:text-teal-300 flex items-center justify-center group-hover:from-teal-500/30 group-hover:to-emerald-500/40 active:scale-90 transition-all border border-teal-500/30 dark:border-teal-700/50 shadow-xs relative ring-2 ring-teal-500/20">
+    <!-- 1. Quick Navigation Hub (Clean 4-Column Grid) -->
+    <div class="grid grid-cols-4 gap-y-3.5 gap-x-2 py-1">
+        <!-- 1. Dompet -->
+        <a href="{{ route('wallets.index') }}" class="flex flex-col items-center gap-1.5 group cursor-pointer" aria-label="Dompet dan Rekening">
+            <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:bg-emerald-500/20 group-hover:scale-105 active:scale-95 transition-all duration-200 border border-emerald-500/20 dark:border-emerald-500/30 shadow-xs">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.5M4.5 21V10.5m-1.5 0h18" />
                 </svg>
-                <span class="absolute -top-1 -right-1 flex h-2.5 w-2.5">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-teal-500"></span>
-                </span>
             </div>
-            <span class="text-[10px] font-bold text-teal-600 dark:text-teal-400 text-center leading-tight">Scan Struk</span>
-        </button>
-
-        <!-- Dompet -->
-        <a href="{{ route('wallets.index') }}" class="flex flex-col items-center gap-1.5 group shrink-0 w-14">
-            <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 flex items-center justify-center group-hover:bg-emerald-200 dark:group-hover:bg-emerald-900/50 active:scale-90 transition-all border border-emerald-200 dark:border-emerald-900/40 shadow-sm">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.5M4.5 21V10.5m-1.5 0h18" /></svg>
-            </div>
-            <span class="text-[10px] font-semibold text-slate-600 dark:text-slate-400 text-center leading-tight">Dompet</span>
+            <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 text-center leading-tight tracking-tight">Dompet</span>
         </a>
 
-        <!-- Investasi -->
-        <a href="{{ route('investments.index') }}" class="flex flex-col items-center gap-1.5 group shrink-0 w-14 relative">
-            <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 flex items-center justify-center group-hover:bg-emerald-200 dark:group-hover:bg-emerald-900/50 active:scale-90 transition-all border border-emerald-200 dark:border-emerald-900/40 shadow-xs relative">
+        <!-- 2. Investasi -->
+        <a href="{{ route('investments.index') }}" class="flex flex-col items-center gap-1.5 group cursor-pointer relative" aria-label="Portofolio Investasi">
+            <div class="w-12 h-12 rounded-2xl bg-teal-500/10 dark:bg-teal-500/20 text-teal-600 dark:text-teal-400 flex items-center justify-center group-hover:bg-teal-500/20 group-hover:scale-105 active:scale-95 transition-all duration-200 border border-teal-500/20 dark:border-teal-500/30 shadow-xs relative">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
                 </svg>
                 @if(($investmentSummary['count'] ?? 0) > 0)
-                    <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-emerald-500 text-white text-[10px] font-extrabold flex items-center justify-center shadow-xs ring-2 ring-white dark:ring-slate-900 leading-none" title="{{ $investmentSummary['count'] }} Aset Aktif">
+                    <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-emerald-500 text-white text-[10px] font-extrabold flex items-center justify-center shadow-xs ring-2 ring-white dark:ring-slate-900 leading-none">
                         {{ $investmentSummary['count'] }}
                     </span>
                 @endif
             </div>
-            <span class="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 text-center leading-tight">Investasi</span>
+            <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 text-center leading-tight tracking-tight">Investasi</span>
         </a>
 
-        <!-- SwanDrive (File Storage & Portal Drop) -->
-        <a href="{{ route('drive.index') }}" class="flex flex-col items-center gap-1.5 group shrink-0 w-14 relative">
-            <div class="w-12 h-12 rounded-2xl bg-teal-100 text-teal-700 dark:bg-teal-950/40 dark:text-teal-400 flex items-center justify-center group-hover:bg-teal-200 dark:group-hover:bg-teal-900/50 active:scale-90 transition-all border border-teal-200 dark:border-teal-900/40 shadow-sm relative">
+        <!-- 3. SwanDrive -->
+        <a href="{{ route('drive.index') }}" class="flex flex-col items-center gap-1.5 group cursor-pointer relative" aria-label="SwanDrive Cloud Storage">
+            <div class="w-12 h-12 rounded-2xl bg-sky-500/10 dark:bg-sky-500/20 text-sky-600 dark:text-sky-400 flex items-center justify-center group-hover:bg-sky-500/20 group-hover:scale-105 active:scale-95 transition-all duration-200 border border-sky-500/20 dark:border-sky-500/30 shadow-xs relative">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021 18V9.75" />
                 </svg>
                 @if(($activeLinksCount ?? 0) > 0)
-                    <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-emerald-500 text-white text-[10px] font-extrabold flex items-center justify-center shadow-xs ring-2 ring-white dark:ring-slate-900 leading-none" title="{{ $activeLinksCount }} Link Aktif">
+                    <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-sky-500 text-white text-[10px] font-extrabold flex items-center justify-center shadow-xs ring-2 ring-white dark:ring-slate-900 leading-none">
                         {{ $activeLinksCount }}
                     </span>
                 @endif
             </div>
-            <span class="text-[10px] font-bold text-teal-700 dark:text-teal-400 text-center leading-tight">Drive</span>
+            <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 text-center leading-tight tracking-tight">Drive</span>
         </a>
 
-        <!-- Aktivitas -->
-        <a href="{{ route('todos.index') }}" class="flex flex-col items-center gap-1.5 group shrink-0 w-14 relative">
-            <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 flex items-center justify-center group-hover:bg-emerald-200 dark:group-hover:bg-emerald-900/50 active:scale-90 transition-all border border-emerald-200 dark:border-emerald-900/40 shadow-xs relative">
+        <!-- 4. Aktivitas -->
+        <a href="{{ route('todos.index') }}" class="flex flex-col items-center gap-1.5 group cursor-pointer relative" aria-label="Aktivitas dan Tugas">
+            <div class="w-12 h-12 rounded-2xl bg-violet-500/10 dark:bg-violet-500/20 text-violet-600 dark:text-violet-400 flex items-center justify-center group-hover:bg-violet-500/20 group-hover:scale-105 active:scale-95 transition-all duration-200 border border-violet-500/20 dark:border-violet-500/30 shadow-xs relative">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
                 </svg>
@@ -237,62 +221,48 @@
                     </span>
                 @endif
             </div>
-            <span class="text-[10px] font-semibold text-slate-600 dark:text-slate-400 text-center leading-tight">Aktivitas</span>
+            <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 text-center leading-tight tracking-tight">Aktivitas</span>
         </a>
 
-        <!-- Kalkulator & Patungan -->
-        <a href="{{ route('calculator.index') }}" class="flex flex-col items-center gap-1.5 group shrink-0 w-14">
-            <div class="w-12 h-12 rounded-2xl bg-teal-100 text-teal-700 dark:bg-teal-950/40 dark:text-teal-400 flex items-center justify-center group-hover:bg-teal-200 dark:group-hover:bg-teal-900/50 active:scale-90 transition-all border border-teal-200 dark:border-teal-900/40 shadow-sm">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008zm0 3h.008v.008H8.25v-.008zm0 3h.008v.008H8.25v-.008zm3-6h.008v.008H11.25v-.008zm0 3h.008v.008H11.25v-.008zm0 3h.008v.008H11.25v-.008zm3-6h.008v.008H14.25v-.008zm0 3h.008v.008H14.25v-.008zM4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" />
-                </svg>
-            </div>
-            <span class="text-[10px] font-semibold text-slate-600 dark:text-slate-400 text-center leading-tight">Kalkulator</span>
-        </a>
-
-        <!-- Anggaran -->
-        <a href="{{ route('budgets.index') }}" class="flex flex-col items-center gap-1.5 group shrink-0 w-14">
-            <div class="w-12 h-12 rounded-2xl bg-teal-100 text-teal-700 dark:bg-teal-950/40 dark:text-teal-400 flex items-center justify-center group-hover:bg-teal-200 dark:group-hover:bg-teal-900/50 active:scale-90 transition-all border border-teal-200 dark:border-teal-900/40 shadow-sm">
+        <!-- 5. Anggaran -->
+        <a href="{{ route('budgets.index') }}" class="flex flex-col items-center gap-1.5 group cursor-pointer" aria-label="Kelola Anggaran Pengeluaran">
+            <div class="w-12 h-12 rounded-2xl bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center group-hover:bg-amber-500/20 group-hover:scale-105 active:scale-95 transition-all duration-200 border border-amber-500/20 dark:border-amber-500/30 shadow-xs">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z" />
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z" />
                 </svg>
             </div>
-            <span class="text-[10px] font-semibold text-slate-600 dark:text-slate-400 text-center leading-tight">Anggaran</span>
+            <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 text-center leading-tight tracking-tight">Anggaran</span>
         </a>
 
-        <!-- Kategori -->
-        <a href="{{ route('categories.index') }}" class="flex flex-col items-center gap-1.5 group shrink-0 w-14">
-            <div class="w-12 h-12 rounded-2xl bg-purple-100 text-purple-700 dark:bg-purple-950/40 dark:text-purple-400 flex items-center justify-center group-hover:bg-purple-200 dark:group-hover:bg-purple-900/50 active:scale-90 transition-all border border-purple-200 dark:border-purple-900/40 shadow-sm">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" /><path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z" /></svg>
-            </div>
-            <span class="text-[10px] font-semibold text-slate-600 dark:text-slate-400 text-center leading-tight">Kategori</span>
-        </a>
-
-        <!-- Langganan -->
-        <a href="{{ route('subscriptions.index') }}" class="flex flex-col items-center gap-1.5 group shrink-0 w-14">
-            <div class="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-400 flex items-center justify-center group-hover:bg-indigo-200 dark:group-hover:bg-indigo-900/50 active:scale-90 transition-all border border-indigo-200 dark:border-indigo-900/40 shadow-sm">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            </div>
-            <span class="text-[10px] font-semibold text-slate-600 dark:text-slate-400 text-center leading-tight">Langganan</span>
-        </a>
-
-        <!-- Utang/Piutang -->
-        <a href="{{ route('debts.index') }}" class="flex flex-col items-center gap-1.5 group shrink-0 w-14">
-            <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400 flex items-center justify-center group-hover:bg-amber-200 dark:group-hover:bg-amber-900/50 active:scale-90 transition-all border border-amber-200 dark:border-amber-900/40 shadow-sm">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" /></svg>
-            </div>
-            <span class="text-[10px] font-semibold text-slate-600 dark:text-slate-400 text-center leading-tight">Utang</span>
-        </a>
-
-        <!-- Laporan -->
-        <a href="{{ route('reports.index') }}" class="flex flex-col items-center gap-1.5 group shrink-0 w-14">
-            <div class="w-12 h-12 rounded-2xl bg-rose-100 text-rose-700 dark:bg-rose-950/40 dark:text-rose-400 flex items-center justify-center group-hover:bg-rose-200 dark:group-hover:bg-rose-900/50 active:scale-90 transition-all border border-rose-200 dark:border-rose-900/40 shadow-sm">
+        <!-- 6. Kalkulator -->
+        <a href="{{ route('calculator.index') }}" class="flex flex-col items-center gap-1.5 group cursor-pointer" aria-label="Kalkulator Finansial & Patungan">
+            <div class="w-12 h-12 rounded-2xl bg-teal-500/10 dark:bg-teal-500/20 text-teal-600 dark:text-teal-400 flex items-center justify-center group-hover:bg-teal-500/20 group-hover:scale-105 active:scale-95 transition-all duration-200 border border-teal-500/20 dark:border-teal-500/30 shadow-xs">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008zm0 3h.008v.008H8.25v-.008zm0 3h.008v.008H8.25v-.008zm3-6h.008v.008H11.25v-.008zm0 3h.008v.008H11.25v-.008zm0 3h.008v.008H11.25v-.008zm3-6h.008v.008H14.25v-.008zm0 3h.008v.008H14.25v-.008zM4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" />
                 </svg>
             </div>
-            <span class="text-[10px] font-semibold text-slate-600 dark:text-slate-400 text-center leading-tight">Laporan</span>
+            <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 text-center leading-tight tracking-tight">Kalkulator</span>
+        </a>
+
+        <!-- 7. Langganan -->
+        <a href="{{ route('subscriptions.index') }}" class="flex flex-col items-center gap-1.5 group cursor-pointer" aria-label="Langganan dan Tagihan Rutin">
+            <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center group-hover:bg-indigo-500/20 group-hover:scale-105 active:scale-95 transition-all duration-200 border border-indigo-500/20 dark:border-indigo-500/30 shadow-xs">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+            <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 text-center leading-tight tracking-tight">Langganan</span>
+        </a>
+
+        <!-- 8. Utang & Piutang -->
+        <a href="{{ route('debts.index') }}" class="flex flex-col items-center gap-1.5 group cursor-pointer" aria-label="Catatan Utang dan Piutang">
+            <div class="w-12 h-12 rounded-2xl bg-rose-500/10 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400 flex items-center justify-center group-hover:bg-rose-500/20 group-hover:scale-105 active:scale-95 transition-all duration-200 border border-rose-500/20 dark:border-rose-500/30 shadow-xs">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+                </svg>
+            </div>
+            <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 text-center leading-tight tracking-tight">Utang</span>
         </a>
     </div>
 
