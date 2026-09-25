@@ -83,7 +83,15 @@ class Folder extends Model
      */
     public function isDropFolder(): bool
     {
-        return str_starts_with($this->name, '📥') || $this->uploadLinks()->exists();
+        if (str_starts_with($this->name, '📥')) {
+            return true;
+        }
+
+        try {
+            return $this->uploadLinks()->exists();
+        } catch (\Throwable) {
+            return false;
+        }
     }
 
     /**
