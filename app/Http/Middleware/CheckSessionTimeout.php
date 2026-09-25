@@ -17,7 +17,7 @@ class CheckSessionTimeout
     public function handle(Request $request, Closure $next): Response
     {
         if (Auth::check()) {
-            $timeoutMinutes = (int) config('session.inactivity_timeout', config('session.lifetime', 15));
+            $timeoutMinutes = (int) config('session.inactivity_timeout', config('session.lifetime', 5));
             $timeoutSeconds = $timeoutMinutes * 60;
             $lastActivity = $request->session()->get('last_activity_time');
 
@@ -29,14 +29,14 @@ class CheckSessionTimeout
 
                 if ($request->expectsJson()) {
                     return response()->json([
-                        'message' => 'Sesi Anda telah berakhir karena tidak ada aktivitas. Silakan masuk kembali.',
+                        'message' => 'Sesi Anda telah berakhir karena tidak ada aktivitas. Silakan verifikasi biometrik atau PIN.',
                         'session_expired' => true,
                     ], 401);
                 }
 
                 return redirect()->route('login')->with([
                     'session_expired' => true,
-                    'warning' => "Sesi Anda telah berakhir karena tidak aktif selama {$timeoutMinutes} menit demi keamanan akun keuangan Anda. Silakan masukkan PIN atau masuk kembali.",
+                    'warning' => "Sesi Anda telah terkunci karena tidak aktif selama {$timeoutMinutes} menit demi keamanan akun keuangan Anda. Silakan gunakan Biometrik (Face ID / Sidik Jari) atau masukkan PIN Anda.",
                 ]);
             }
 

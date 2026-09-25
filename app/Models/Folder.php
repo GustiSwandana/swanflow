@@ -69,6 +69,24 @@ class Folder extends Model
     }
 
     /**
+     * Upload links associated with this folder.
+     *
+     * @return HasMany<UploadLink, $this>
+     */
+    public function uploadLinks(): HasMany
+    {
+        return $this->hasMany(UploadLink::class);
+    }
+
+    /**
+     * Check if this folder is dedicated for received public/drop uploads.
+     */
+    public function isDropFolder(): bool
+    {
+        return str_starts_with($this->name, '📥') || $this->uploadLinks()->exists();
+    }
+
+    /**
      * Calculate total bytes of files directly in this folder.
      */
     public function getTotalSizeBytesAttribute(): int

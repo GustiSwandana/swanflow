@@ -329,13 +329,13 @@
     <!-- End Mobile Frame Container -->
 
     <!-- 3. MODERN BOTTOM NAVIGATION BAR (Apple Liquid Glass Dock) -->
-    <nav class="fixed bottom-5 w-[92%] sm:w-[396px] liquid-dock-capsule rounded-[28px] px-6 py-2.5 z-40 transition-colors duration-300 left-1/2 -translate-x-1/2" style="margin-bottom: env(safe-area-inset-bottom, 0px);">
-        <div class="flex justify-between items-center w-full relative z-10">
+    <nav class="fixed bottom-5 w-[92%] sm:w-[396px] liquid-dock-capsule rounded-[28px] px-2 sm:px-4 py-2 z-40 transition-colors duration-300 left-1/2 -translate-x-1/2" style="margin-bottom: env(safe-area-inset-bottom, 0px);">
+        <div class="grid grid-cols-5 items-center w-full relative z-10">
 
             {{-- Tab 1: Home --}}
             @php $isActive = request()->routeIs('dashboard'); @endphp
             <a href="{{ route('dashboard') }}"
-               class="flex flex-col items-center gap-1 group relative {{ $isActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200' }} transition-colors"
+               class="flex flex-col items-center justify-center w-full text-center gap-0.5 group relative {{ $isActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200' }} transition-colors"
                aria-label="Home">
                 <div class="relative z-10 p-1.5 {{ $isActive ? 'bg-emerald-500/15 dark:bg-emerald-400/20 text-emerald-600 dark:text-emerald-400 rounded-2xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.25)]' : '' }} transition-transform active:scale-95">
                     <svg class="w-5.5 h-5.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -343,7 +343,7 @@
                         <polyline points="9 22 9 12 15 12 15 22"></polyline>
                     </svg>
                 </div>
-                <span class="text-[10px] font-bold tracking-tight">Home</span>
+                <span class="text-[10px] font-bold tracking-tight truncate max-w-full">Home</span>
             </a>
 
             {{-- Tab 2: Finance --}}
@@ -359,21 +359,21 @@
                     || request()->routeIs('categories.*'); 
             @endphp
             <a href="{{ route('transactions.index') }}"
-               class="flex flex-col items-center gap-1 group relative {{ $isFinanceActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200' }} transition-colors"
+               class="flex flex-col items-center justify-center w-full text-center gap-0.5 group relative {{ $isFinanceActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200' }} transition-colors"
                aria-label="Finance">
                 <div class="relative z-10 p-1.5 {{ $isFinanceActive ? 'bg-emerald-500/15 dark:bg-emerald-400/20 text-emerald-600 dark:text-emerald-400 rounded-2xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.25)]' : '' }} transition-transform active:scale-95">
                     <svg class="w-5.5 h-5.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                 </div>
-                <span class="text-[10px] font-bold tracking-tight">Finance</span>
+                <span class="text-[10px] font-bold tracking-tight truncate max-w-full">Finance</span>
             </a>
             
             {{-- Center Action: Quick Add Transaction FAB (+) --}}
-            <div class="flex items-center justify-center shrink-0 -mt-8 relative z-50">
+            <div class="flex items-center justify-center w-full -mt-8 relative z-50">
                 <button type="button"
                         onclick="openTransactionModal('expense')"
-                        class="w-13.5 h-13.5 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white flex items-center justify-center cursor-pointer shrink-0 shadow-lg shadow-emerald-500/35 border-[3.5px] border-white/95 dark:border-white/25 ring-4 ring-emerald-500/20 dark:ring-emerald-400/25 transition-transform hover:scale-105 active:scale-95"
+                        class="w-13 h-13 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white flex items-center justify-center cursor-pointer shrink-0 shadow-lg shadow-emerald-500/35 border-[3.5px] border-white/95 dark:border-white/25 ring-4 ring-emerald-500/20 dark:ring-emerald-400/25 transition-transform hover:scale-105 active:scale-95"
                         aria-label="Quick Action">
                     <svg class="w-6.5 h-6.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 4.5v15m7.5-7.5h-15"/>
@@ -384,7 +384,7 @@
             {{-- Tab 3: Drive --}}
             @php $isActive = request()->routeIs('drive.*'); @endphp
             <a href="{{ route('drive.index') }}"
-               class="flex flex-col items-center gap-1 group relative {{ $isActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200' }} transition-colors"
+               class="flex flex-col items-center justify-center w-full text-center gap-0.5 group relative {{ $isActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200' }} transition-colors"
                aria-label="Drive">
                 <div class="relative z-10 p-1.5 {{ $isActive ? 'bg-emerald-500/15 dark:bg-emerald-400/20 text-emerald-600 dark:text-emerald-400 rounded-2xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.25)]' : '' }} transition-transform active:scale-95">
                     <svg class="w-5.5 h-5.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -392,20 +392,20 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 12v6m0 0l-3-3m3 3l3-3M3 15V6a2 2 0 012-2h14a2 2 0 012 2v9"></path>
                     </svg>
                 </div>
-                <span class="text-[10px] font-bold tracking-tight">Drive</span>
+                <span class="text-[10px] font-bold tracking-tight truncate max-w-full">Drive</span>
             </a>
 
             {{-- Tab 4: Aktivitas --}}
             @php $isActive = request()->routeIs('todos.*'); @endphp
             <a href="{{ route('todos.index') }}"
-               class="flex flex-col items-center gap-1 group relative {{ $isActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200' }} transition-colors"
+               class="flex flex-col items-center justify-center w-full text-center gap-0.5 group relative {{ $isActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200' }} transition-colors"
                aria-label="Aktivitas">
                 <div class="relative z-10 p-1.5 {{ $isActive ? 'bg-emerald-500/15 dark:bg-emerald-400/20 text-emerald-600 dark:text-emerald-400 rounded-2xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.25)]' : '' }} transition-transform active:scale-95">
                     <svg class="w-5.5 h-5.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                 </div>
-                <span class="text-[10px] font-bold tracking-tight">Aktivitas</span>
+                <span class="text-[10px] font-bold tracking-tight truncate max-w-full">Aktivitas</span>
             </a>
 
         </div>
@@ -2628,6 +2628,44 @@
                     if (themeMeta) themeMeta.setAttribute('content', '#ffffff');
                 }
             }
+
+            // 5-Minute Inactivity Session Watcher with Biometrics / PIN Security
+            (function initSessionInactivityWatcher() {
+                const INACTIVITY_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
+                let lastActivity = Date.now();
+                let timeoutTimer = null;
+
+                function resetTimer() {
+                    lastActivity = Date.now();
+                    if (timeoutTimer) clearTimeout(timeoutTimer);
+                    timeoutTimer = setTimeout(triggerSessionTimeout, INACTIVITY_TIMEOUT_MS);
+                }
+
+                function triggerSessionTimeout() {
+                    if (Date.now() - lastActivity >= INACTIVITY_TIMEOUT_MS) {
+                        window.location.href = "{{ route('login') }}?expired=1";
+                    } else {
+                        resetTimer();
+                    }
+                }
+
+                const activityEvents = ['touchstart', 'touchmove', 'mousemove', 'keydown', 'scroll', 'click'];
+                activityEvents.forEach(evt => {
+                    window.addEventListener(evt, resetTimer, { passive: true });
+                });
+
+                document.addEventListener('visibilitychange', function() {
+                    if (document.visibilityState === 'visible') {
+                        if (Date.now() - lastActivity >= INACTIVITY_TIMEOUT_MS) {
+                            triggerSessionTimeout();
+                        } else {
+                            resetTimer();
+                        }
+                    }
+                });
+
+                resetTimer();
+            })();
         </script>
 
         <!-- PWA Install Prompt Card (Appears if browser supports installation) -->

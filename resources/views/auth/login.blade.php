@@ -552,9 +552,19 @@
                 const backBtn = document.getElementById('back-to-pin-btn');
                 if (backBtn) backBtn.textContent = isAndroid ? '← Kembali ke PIN & Sidik Jari' : '← Kembali ke PIN & Biometrik';
             }
+
+            // If session was locked/expired due to inactivity, auto-prompt Biometric if available
+            if (new URLSearchParams(window.location.search).has('expired')) {
+                if (window.PublicKeyCredential && !sessionStorage.getItem('swanflow_bio_cancelled')) {
+                    setTimeout(() => {
+                        authenticateWithFaceId();
+                    }, 500);
+                }
+            }
         });
 
         function closeFaceIdModal() {
+            sessionStorage.setItem('swanflow_bio_cancelled', 'true');
             const modal = document.getElementById('face-id-modal');
             if (modal) modal.classList.add('hidden');
         }

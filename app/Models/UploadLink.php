@@ -60,16 +60,19 @@ class UploadLink extends Model
             }
         }
 
+        $folderTitle = trim($this->title);
+        $folderName = str_starts_with($folderTitle, '📥') ? $folderTitle : '📥 '.$folderTitle;
+
         $folder = Folder::firstOrCreate(
             [
                 'user_id' => $this->user_id,
-                'name' => $this->title,
+                'name' => $folderName,
             ],
             [
-                'color' => 'teal',
+                'color' => 'amber',
                 'share_token' => Str::random(40),
                 'is_public' => false,
-                'description' => 'Folder khusus berkas yang diunggah via link: '.$this->title,
+                'description' => 'Folder penerimaan berkas dari link: '.$folderTitle,
             ]
         );
 

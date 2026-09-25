@@ -364,6 +364,10 @@
                    class="px-3.5 py-1.5 rounded-[16px] text-xs font-black shrink-0 transition-all ios-press {{ $activeCategory === 'all' ? 'bg-teal-500 text-white shadow-sm ring-1 ring-teal-400/30' : 'liquid-glass bg-white/70 dark:bg-slate-900/75 text-slate-600 dark:text-slate-400 border border-white/50 dark:border-white/10 hover:bg-white/90' }}">
                     Semua ({{ $categoryCounts['all'] }})
                 </a>
+                <a href="{{ route('drive.index', array_filter(['tab' => 'files', 'category' => 'received', 'search' => $search, 'folder_id' => $currentFolder?->id])) }}"
+                   class="px-3.5 py-1.5 rounded-[16px] text-xs font-black shrink-0 transition-all ios-press {{ $activeCategory === 'received' ? 'bg-amber-500 text-white shadow-sm ring-1 ring-amber-400/40' : 'liquid-glass bg-amber-50/60 dark:bg-amber-950/30 text-amber-700 dark:text-amber-300 border border-amber-300/40 dark:border-amber-700/40 hover:bg-amber-100/80' }}">
+                    📥 Dari Orang Lain ({{ $categoryCounts['received'] ?? 0 }})
+                </a>
                 <a href="{{ route('drive.index', array_filter(['tab' => 'files', 'category' => 'document', 'search' => $search, 'folder_id' => $currentFolder?->id])) }}"
                    class="px-3.5 py-1.5 rounded-[16px] text-xs font-black shrink-0 transition-all ios-press {{ $activeCategory === 'document' ? 'bg-emerald-600 text-white shadow-sm ring-1 ring-emerald-400/30' : 'liquid-glass bg-white/70 dark:bg-slate-900/75 text-slate-600 dark:text-slate-400 border border-white/50 dark:border-white/10 hover:bg-white/90' }}">
                     📄 Dokumen ({{ $categoryCounts['document'] }})
@@ -403,18 +407,30 @@
                     @foreach($folders as $fld)
                         @php
                             $fldColor = $fld->colorMeta();
+                            $isDropFolder = $fld->isDropFolder();
                         @endphp
-                        <div class="liquid-card rounded-[22px] bg-white/80 dark:bg-slate-900/75 border border-white/60 dark:border-white/10 shadow-xs hover:shadow-md hover:border-teal-400/40 p-3 space-y-2.5 transition-all group relative">
+                        <div class="liquid-card rounded-[22px] bg-white/80 dark:bg-slate-900/75 border {{ $isDropFolder ? 'border-amber-400/60 dark:border-amber-500/50 shadow-xs shadow-amber-500/10' : 'border-white/60 dark:border-white/10 shadow-xs' }} hover:shadow-md hover:border-teal-400/40 p-3 space-y-2.5 transition-all group relative">
                             <a href="{{ route('drive.index', ['folder_id' => $fld->id]) }}" class="block space-y-2">
                                 <div class="flex items-start justify-between gap-1.5">
-                                    <div class="w-10 h-10 rounded-[14px] {{ $fldColor['iconBg'] }} flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
-                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M19.5 21a3 3 0 003-3v-4.5a3 3 0 00-3-3h-1.5V9a3 3 0 00-3-3h-3.379a3 3 0 01-2.121-.879L8.379 4.04A3 3 0 006.257 3.16H4.5A3 3 0 001.5 6.16v11.84a3 3 0 003 3h15z" />
-                                        </svg>
+                                    <div class="w-10 h-10 rounded-[14px] {{ $isDropFolder ? 'bg-amber-500/20 text-amber-600 dark:text-amber-400' : $fldColor['iconBg'] }} flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+                                        @if($isDropFolder)
+                                            <span class="text-lg">📥</span>
+                                        @else
+                                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M19.5 21a3 3 0 003-3v-4.5a3 3 0 00-3-3h-1.5V9a3 3 0 00-3-3h-3.379a3 3 0 01-2.121-.879L8.379 4.04A3 3 0 006.257 3.16H4.5A3 3 0 001.5 6.16v11.84a3 3 0 003 3h15z" />
+                                            </svg>
+                                        @endif
                                     </div>
-                                    @if($fld->is_public)
-                                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse mt-1" title="Folder dibagikan publik"></span>
-                                    @endif
+                                    <div class="flex items-center gap-1">
+                                        @if($isDropFolder)
+                                            <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200 border border-amber-300/60 dark:border-amber-700/60">
+                                                Drop
+                                            </span>
+                                        @endif
+                                        @if($fld->is_public)
+                                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse mt-1" title="Folder dibagikan publik"></span>
+                                        @endif
+                                    </div>
                                 </div>
                                 <div class="min-w-0">
                                     <h3 class="text-xs font-black text-slate-800 dark:text-white truncate group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors" title="{{ $fld->name }}">
@@ -471,8 +487,23 @@
             @forelse($files as $file)
                 @php
                     $meta = $file->categoryMeta();
+                    $isReceivedFromOther = !empty($file->upload_link_id) || !empty($file->uploader_name);
                 @endphp
-                <div id="file-{{ $file->id }}" data-file-id="{{ $file->id }}" class="liquid-card rounded-[24px] bg-white/80 dark:bg-slate-900/75 border border-white/60 dark:border-white/10 shadow-sm hover:shadow-md hover:border-teal-400/40 backdrop-blur-2xl p-4 space-y-3 transition-all duration-300">
+                <div id="file-{{ $file->id }}" data-file-id="{{ $file->id }}" class="liquid-card rounded-[24px] {{ $isReceivedFromOther ? 'bg-gradient-to-br from-amber-500/10 via-white/85 to-white/80 dark:from-amber-950/30 dark:via-slate-900/80 dark:to-slate-900/75 border-amber-400/50 dark:border-amber-500/40 shadow-xs ring-1 ring-amber-400/20' : 'bg-white/80 dark:bg-slate-900/75 border border-white/60 dark:border-white/10 shadow-sm' }} hover:shadow-md hover:border-teal-400/40 backdrop-blur-2xl p-4 space-y-3 transition-all duration-300">
+                    
+                    @if($isReceivedFromOther)
+                        <!-- Distinct Header Banner for Files Received from Others -->
+                        <div class="flex items-center justify-between pb-2.5 border-b border-amber-200/60 dark:border-amber-800/40 text-[11px] font-bold text-amber-800 dark:text-amber-300">
+                            <div class="flex items-center gap-1.5 truncate pr-2">
+                                <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse shrink-0"></span>
+                                <span class="truncate">📥 Diterima dari: <strong class="text-amber-900 dark:text-amber-200">{{ $file->uploader_name ?? 'Pihak Luar' }}</strong></span>
+                            </div>
+                            <span class="text-[9px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200 border border-amber-300/60 dark:border-amber-700/60 shrink-0">
+                                Berkas Masuk
+                            </span>
+                        </div>
+                    @endif
+
                     <div class="flex items-start justify-between gap-3">
                         <!-- Icon + Name (Click to preview) -->
                         <div onclick="openPreviewModal('{{ $file->id }}', '{{ addslashes($file->title) }}', '{{ addslashes($file->original_name) }}', '{{ $file->formatted_size }}', '{{ strtolower($file->extension) }}', '{{ route('drive.preview', $file) }}', '{{ route('drive.download', $file) }}', '{{ $meta['label'] }}', '{{ addslashes($file->notes ?? '') }}', '{{ $file->created_at->format('d M Y, H:i') }}', '{{ route('drive.destroy', $file) }}', '{{ $file->share_url }}', {{ $file->is_public ? 'true' : 'false' }}, '{{ route('drive.share.toggle', $file) }}', '{{ $file->folder_id }}')"
@@ -518,17 +549,24 @@
                             @endif
 
                             @if($file->upload_link_id)
-                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-teal-50 dark:bg-teal-950/50 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800" title="Diterima dari link drop: {{ $file->uploadLink?->title }}">
-                                    📥 Dari: {{ Str::limit($file->uploader_name ?? 'Drop Link', 14) }}
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800" title="Diterima dari link drop: {{ $file->uploadLink?->title }}">
+                                    📥 {{ Str::limit($file->uploadLink?->title ?? 'Drop Link', 14) }}
                                 </span>
                             @endif
                         </div>
                     </div>
 
                     @if(!empty($file->notes))
-                        <div class="text-[11px] text-slate-600 dark:text-slate-300 bg-slate-50/80 dark:bg-slate-900/60 px-3 py-1.5 rounded-[16px] border border-slate-100 dark:border-slate-800/80 italic">
-                            "{{ $file->notes }}"
-                        </div>
+                        @if($isReceivedFromOther)
+                            <div class="text-[11px] text-amber-900 dark:text-amber-200 bg-amber-50/80 dark:bg-amber-950/40 px-3 py-2 rounded-[16px] border border-amber-200/60 dark:border-amber-800/40 flex items-start gap-1.5">
+                                <span class="shrink-0 text-amber-600 dark:text-amber-400 font-bold">💬 Pesan:</span>
+                                <span class="italic">"{{ $file->notes }}"</span>
+                            </div>
+                        @else
+                            <div class="text-[11px] text-slate-600 dark:text-slate-300 bg-slate-50/80 dark:bg-slate-900/60 px-3 py-1.5 rounded-[16px] border border-slate-100 dark:border-slate-800/80 italic">
+                                "{{ $file->notes }}"
+                            </div>
+                        @endif
                     @endif
 
                     <!-- Action Bar (Clean 2-Tier iOS Structure) -->

@@ -118,10 +118,10 @@
             <div class="relative rounded-[20px] bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 p-3 flex items-center focus-within:border-emerald-500 dark:focus-within:border-emerald-400 focus-within:ring-2 focus-within:ring-emerald-500/20 transition-all">
                 <span class="text-sm font-extrabold text-slate-400 mr-2">Rp</span>
                 <input id="sim-start-balance" 
-                       type="number" 
-                       inputmode="decimal" 
-                       value="{{ (int) $totalBalance }}" 
-                       oninput="recalculateSimulation()"
+                       type="text" 
+                       inputmode="numeric" 
+                       value="{{ number_format($totalBalance, 0, ',', '.') }}" 
+                       oninput="handleStartBalanceInput(this)"
                        placeholder="0"
                        class="w-full text-lg font-black text-slate-900 dark:text-white bg-transparent border-none outline-hidden focus:ring-0 placeholder-slate-400 dark:placeholder-slate-600">
             </div>
@@ -191,6 +191,12 @@
         <div class="space-y-2">
             <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Pintasan Tambah Cepat</span>
             <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+                <button type="button" onclick="addQuickScenario('income', 'Freelance', 1000)" class="px-3 py-2 rounded-[16px] liquid-card bg-emerald-50/90 text-emerald-800 border border-emerald-400/80 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-700 text-xs font-black shrink-0 ios-press transition-all shadow-2xs">
+                    + Freelance (1.000)
+                </button>
+                <button type="button" onclick="addQuickScenario('expense', 'Makan', 500)" class="px-3 py-2 rounded-[16px] liquid-card bg-rose-50/90 text-rose-800 border border-rose-400/80 dark:bg-rose-950/60 dark:text-rose-300 dark:border-rose-700 text-xs font-black shrink-0 ios-press transition-all shadow-2xs">
+                    - Makan (500)
+                </button>
                 <button type="button" onclick="addQuickScenario('income', 'Gaji / Inflow', 5000000)" class="px-3 py-2 rounded-[16px] liquid-card bg-emerald-50/80 text-emerald-700 border border-emerald-300/60 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800/60 text-xs font-bold shrink-0 ios-press transition-all">
                     + Gaji (5jt)
                 </button>
@@ -218,12 +224,20 @@
                 <span class="text-xs font-black text-slate-800 dark:text-slate-100">
                     Daftar Pos Simulasi (<span id="sim-items-count">0</span>)
                 </span>
-                <button type="button" 
-                        onclick="addSimulationItem()" 
-                        class="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1 hover:underline ios-press">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
-                    Tambah Pos
-                </button>
+                <div class="flex items-center gap-1.5">
+                    <button type="button" 
+                            onclick="addSimulationItem('income')" 
+                            class="px-2.5 py-1 rounded-[12px] text-[11px] font-extrabold bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 flex items-center gap-1 hover:bg-emerald-500/25 active:scale-95 transition-all ios-press cursor-pointer">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+                        + Pemasukan
+                    </button>
+                    <button type="button" 
+                            onclick="addSimulationItem('expense')" 
+                            class="px-2.5 py-1 rounded-[12px] text-[11px] font-extrabold bg-rose-500/15 text-rose-700 dark:text-rose-400 border border-rose-500/30 flex items-center gap-1 hover:bg-rose-500/25 active:scale-95 transition-all ios-press cursor-pointer">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12h-15" /></svg>
+                        - Pengeluaran
+                    </button>
+                </div>
             </div>
 
             <!-- Items Container -->
@@ -582,7 +596,7 @@
     function resetCurrentTab() {
         if (activeTab === 'simulasi') {
             simulationItems = [];
-            document.getElementById('sim-start-balance').value = Math.round(ACTUAL_BALANCE);
+            document.getElementById('sim-start-balance').value = formatRupiah(ACTUAL_BALANCE);
             renderSimulationItems();
             recalculateSimulation();
             showToast('Simulasi telah direset');
@@ -602,8 +616,26 @@
     // ==========================================
     // SIMULATION ENGINE
     // ==========================================
+    function parseRupiah(val) {
+        if (typeof val === 'number') return isNaN(val) ? 0 : Math.round(val);
+        if (!val) return 0;
+        const clean = val.toString().replace(/[^0-9-]/g, '');
+        const num = parseFloat(clean);
+        return isNaN(num) ? 0 : Math.round(num);
+    }
+
+    function handleStartBalanceInput(input) {
+        const raw = parseRupiah(input.value);
+        if (input.value.trim() === '') {
+            recalculateSimulation();
+            return;
+        }
+        input.value = formatRupiah(raw);
+        recalculateSimulation();
+    }
+
     function useActualBalance() {
-        document.getElementById('sim-start-balance').value = Math.round(ACTUAL_BALANCE);
+        document.getElementById('sim-start-balance').value = formatRupiah(ACTUAL_BALANCE);
         recalculateSimulation();
         showToast('Saldo riil diterapkan');
     }
@@ -613,18 +645,19 @@
             id: Date.now() + Math.random(),
             type: type,
             label: label,
-            amount: amount
+            amount: parseRupiah(amount)
         });
         renderSimulationItems();
         recalculateSimulation();
+        showToast(`Pos "${label}" ditambahkan`);
     }
 
-    function addSimulationItem() {
+    function addSimulationItem(type = 'expense') {
         simulationItems.push({
             id: Date.now() + Math.random(),
-            type: 'expense',
+            type: type,
             label: '',
-            amount: ''
+            amount: 0
         });
         renderSimulationItems();
         recalculateSimulation();
@@ -652,10 +685,17 @@
         }
     }
 
-    function updateItemAmount(id, val) {
+    function handleItemAmountInput(id, input) {
+        const raw = parseRupiah(input.value);
         const item = simulationItems.find(i => i.id === id);
         if (item) {
-            item.amount = parseFloat(val) || 0;
+            item.amount = raw;
+            if (input.value.trim() === '') {
+                item.amount = 0;
+                input.value = '';
+            } else {
+                input.value = formatRupiah(raw);
+            }
             recalculateSimulation();
         }
     }
@@ -686,25 +726,26 @@
         container.innerHTML = simulationItems.map((item, index) => {
             const isIncome = item.type === 'income';
             return `
-                <div class="p-3.5 liquid-card bg-white/85 dark:bg-slate-900/80 rounded-[24px] border border-white/60 dark:border-white/10 shadow-xs flex flex-col gap-2.5">
+                <div class="p-3.5 liquid-card bg-white/85 dark:bg-slate-900/80 rounded-[24px] border ${isIncome ? 'border-emerald-500/30' : 'border-rose-500/30'} shadow-xs flex flex-col gap-2.5">
                     <div class="flex items-center gap-2">
                         <!-- Type toggle pill -->
                         <button type="button" 
                                 onclick="toggleItemType(${item.id})"
-                                title="Klik untuk ubah jenis (+/-)"
-                                class="w-8.5 h-8.5 rounded-[14px] font-black text-sm flex items-center justify-center transition-all ios-press active:scale-95 ${
+                                title="Klik untuk ubah jenis (Pemasukan / Pengeluaran)"
+                                class="px-2.5 py-1.5 rounded-[14px] font-black text-xs flex items-center gap-1 transition-all ios-press active:scale-95 ${
                                     isIncome 
-                                        ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30' 
-                                        : 'bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30'
+                                        ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/40' 
+                                        : 'bg-rose-500/15 text-rose-700 dark:text-rose-400 border border-rose-500/40'
                                 }">
-                            ${isIncome ? '+' : '-'}
+                            <span>${isIncome ? '+' : '-'}</span>
+                            <span>${isIncome ? 'Masuk' : 'Keluar'}</span>
                         </button>
 
                         <!-- Label input -->
                         <input type="text" 
                                value="${escapeHtml(item.label)}" 
                                oninput="updateItemLabel(${item.id}, this.value)"
-                               placeholder="Nama pos (misal: Gaji, Belanja)" 
+                               placeholder="Nama pos (misal: Makan, Freelance)" 
                                class="flex-1 text-xs font-bold text-slate-850 dark:text-slate-100 bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 rounded-[16px] px-3 py-2 outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400">
 
                         <!-- Delete button -->
@@ -718,12 +759,12 @@
 
                     <div class="flex items-center gap-2">
                         <!-- Nominal input -->
-                        <div class="relative flex-1 rounded-[16px] bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 px-3 py-1.5 flex items-center">
+                        <div class="relative flex-1 rounded-[16px] bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 px-3 py-1.5 flex items-center focus-within:border-emerald-500">
                             <span class="text-xs font-bold text-slate-400 mr-1.5">Rp</span>
-                            <input type="number" 
-                                   inputmode="decimal"
-                                   value="${item.amount || ''}" 
-                                   oninput="updateItemAmount(${item.id}, this.value)"
+                            <input type="text" 
+                                   inputmode="numeric"
+                                   value="${item.amount ? formatRupiah(item.amount) : ''}" 
+                                   oninput="handleItemAmountInput(${item.id}, this)"
                                    placeholder="0" 
                                    class="w-full text-xs font-black text-slate-900 dark:text-white bg-transparent border-none outline-hidden focus:ring-0">
                         </div>
@@ -743,12 +784,12 @@
     }
 
     function recalculateSimulation() {
-        const startBalance = parseFloat(document.getElementById('sim-start-balance').value) || 0;
+        const startBalance = parseRupiah(document.getElementById('sim-start-balance').value);
         let totalIncome = 0;
         let totalExpense = 0;
 
         simulationItems.forEach(item => {
-            const amt = parseFloat(item.amount) || 0;
+            const amt = parseRupiah(item.amount);
             if (item.type === 'income') {
                 totalIncome += amt;
             } else {
@@ -780,13 +821,13 @@
     }
 
     function copySimulationSummary() {
-        const startBalance = parseFloat(document.getElementById('sim-start-balance').value) || 0;
+        const startBalance = parseRupiah(document.getElementById('sim-start-balance').value);
         let totalIncome = 0;
         let totalExpense = 0;
         let itemsText = '';
 
         simulationItems.forEach(item => {
-            const amt = parseFloat(item.amount) || 0;
+            const amt = parseRupiah(item.amount);
             const sign = item.type === 'income' ? '(+)' : '(-)';
             const label = item.label || (item.type === 'income' ? 'Pemasukan' : 'Pengeluaran');
             if (item.type === 'income') totalIncome += amt;

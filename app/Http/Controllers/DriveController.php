@@ -62,7 +62,12 @@ class DriveController extends Controller
             }
         }
 
-        if ($activeCategory !== 'all' && in_array($activeCategory, ['document', 'image', 'archive', 'other'])) {
+        if ($activeCategory === 'received') {
+            $query->where(function ($q) {
+                $q->whereNotNull('upload_link_id')
+                    ->orWhereNotNull('uploader_name');
+            });
+        } elseif ($activeCategory !== 'all' && in_array($activeCategory, ['document', 'image', 'archive', 'other'])) {
             $query->where('category', $activeCategory);
         }
 
@@ -70,18 +75,20 @@ class DriveController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
                     ->orWhere('original_name', 'like', "%{$search}%")
-                    ->orWhere('notes', 'like', "%{$search}%");
+                    ->orWhere('notes', 'like', "%{$search}%")
+                    ->orWhere('uploader_name', 'like', "%{$search}%");
             });
         }
 
-        $files = $query->latest()->get();
+        $files = $query->with(['folder', 'uploadLink'])->latest()->get();
 
-        $allFiles = $user->storedFiles()->get(['category', 'size_bytes']);
+        $allFiles = $user->storedFiles()->get(['category', 'size_bytes', 'upload_link_id', 'uploader_name']);
         $totalBytes = $allFiles->sum('size_bytes');
         $totalFiles = $allFiles->count();
 
         $categoryCounts = [
             'all' => $totalFiles,
+            'received' => $allFiles->filter(fn ($f) => ! empty($f->upload_link_id) || ! empty($f->uploader_name))->count(),
             'document' => $allFiles->where('category', 'document')->count(),
             'image' => $allFiles->where('category', 'image')->count(),
             'archive' => $allFiles->where('category', 'archive')->count(),

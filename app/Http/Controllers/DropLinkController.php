@@ -34,12 +34,15 @@ class DropLinkController extends Controller
             default => null,
         };
 
+        $folderTitle = trim($request->input('title'));
+        $folderName = str_starts_with($folderTitle, '📥') ? $folderTitle : '📥 '.$folderTitle;
+
         $folder = $request->user()->folders()->create([
-            'name' => trim($request->input('title')),
-            'color' => 'teal',
+            'name' => $folderName,
+            'color' => 'amber',
             'share_token' => Str::random(40),
             'is_public' => false,
-            'description' => 'Folder khusus berkas dari tautan terima berkas: '.trim($request->input('title')),
+            'description' => 'Folder penerimaan berkas dari pihak luar via link: '.$folderTitle,
         ]);
 
         $request->user()->uploadLinks()->create([
