@@ -1,5 +1,5 @@
-// SwanFlow PWA Service Worker (v1.0.10)
-const CACHE_NAME = 'swanflow-cache-v14';
+// SwanFlow PWA Service Worker (v1.0.16)
+const CACHE_NAME = 'swanflow-cache-v16';
 
 const STATIC_ASSETS = [
     '/',
@@ -11,21 +11,27 @@ const STATIC_ASSETS = [
     '/favicon.svg'
 ];
 
-// 1. Install Event - Precache core app shell
+// 1. Install Event - Precache core app shell & skip waiting immediately
 self.addEventListener('install', (event) => {
+    self.skipWaiting();
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
             return cache.addAll(STATIC_ASSETS);
-        }).then(() => self.skipWaiting())
+        })
     );
 });
 
-// 2. Activate Event - Clean up old caches
+// 2. Activate Event - Clean up all previous caches and claim clients immediately
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys().then((keys) => {
             return Promise.all(
-                keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+                keys.map((key) => {
+                    if (key !== CACHE_NAME) {
+                        console.log('Purging old SW cache:', key);
+                        return caches.delete(key);
+                    }
+                })
             );
         }).then(() => self.clients.claim())
     );

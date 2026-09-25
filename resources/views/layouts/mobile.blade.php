@@ -330,14 +330,14 @@
 
     <!-- 3. MODERN BOTTOM NAVIGATION BAR (Apple Liquid Glass Dock) -->
     <nav class="fixed bottom-5 w-[92%] sm:w-[396px] liquid-dock-capsule rounded-[28px] px-2 sm:px-4 py-2 z-40 transition-colors duration-300 left-1/2 -translate-x-1/2" style="margin-bottom: env(safe-area-inset-bottom, 0px);">
-        <div class="grid grid-cols-5 items-center w-full relative z-10">
+        <div class="liquid-dock-grid grid grid-cols-5 items-center w-full relative z-10" style="display: grid !important; grid-template-columns: repeat(5, minmax(0, 1fr)) !important; align-items: center !important; width: 100% !important;">
 
             {{-- Tab 1: Home --}}
-            @php $isActive = request()->routeIs('dashboard'); @endphp
+            @php $isHomeActive = request()->routeIs('dashboard'); @endphp
             <a href="{{ route('dashboard') }}"
-               class="flex flex-col items-center justify-center w-full text-center gap-0.5 group relative {{ $isActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200' }} transition-colors"
+               class="flex flex-col items-center justify-center w-full text-center gap-0.5 group relative {{ $isHomeActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200' }} transition-colors"
                aria-label="Home">
-                <div class="relative z-10 p-1.5 {{ $isActive ? 'bg-emerald-500/15 dark:bg-emerald-400/20 text-emerald-600 dark:text-emerald-400 rounded-2xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.25)]' : '' }} transition-transform active:scale-95">
+                <div class="relative z-10 p-1.5 {{ $isHomeActive ? 'bg-emerald-500/15 dark:bg-emerald-400/20 text-emerald-600 dark:text-emerald-400 rounded-2xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.25)]' : '' }} transition-transform active:scale-95">
                     <svg class="w-5.5 h-5.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path>
                         <polyline points="9 22 9 12 15 12 15 22"></polyline>
@@ -370,7 +370,7 @@
             </a>
             
             {{-- Center Action: Quick Add Transaction FAB (+) --}}
-            <div class="flex items-center justify-center w-full -mt-8 relative z-50">
+            <div class="liquid-dock-fab-col flex items-center justify-center w-full relative z-50">
                 <button type="button"
                         onclick="openTransactionModal('expense')"
                         class="w-13 h-13 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white flex items-center justify-center cursor-pointer shrink-0 shadow-lg shadow-emerald-500/35 border-[3.5px] border-white/95 dark:border-white/25 ring-4 ring-emerald-500/20 dark:ring-emerald-400/25 transition-transform hover:scale-105 active:scale-95"
@@ -382,11 +382,11 @@
             </div>
 
             {{-- Tab 3: Drive --}}
-            @php $isActive = request()->routeIs('drive.*'); @endphp
+            @php $isDriveActive = request()->routeIs('drive.*'); @endphp
             <a href="{{ route('drive.index') }}"
-               class="flex flex-col items-center justify-center w-full text-center gap-0.5 group relative {{ $isActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200' }} transition-colors"
+               class="flex flex-col items-center justify-center w-full text-center gap-0.5 group relative {{ $isDriveActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200' }} transition-colors"
                aria-label="Drive">
-                <div class="relative z-10 p-1.5 {{ $isActive ? 'bg-emerald-500/15 dark:bg-emerald-400/20 text-emerald-600 dark:text-emerald-400 rounded-2xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.25)]' : '' }} transition-transform active:scale-95">
+                <div class="relative z-10 p-1.5 {{ $isDriveActive ? 'bg-emerald-500/15 dark:bg-emerald-400/20 text-emerald-600 dark:text-emerald-400 rounded-2xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.25)]' : '' }} transition-transform active:scale-95">
                     <svg class="w-5.5 h-5.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path>
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 12v6m0 0l-3-3m3 3l3-3M3 15V6a2 2 0 012-2h14a2 2 0 012 2v9"></path>
@@ -396,11 +396,11 @@
             </a>
 
             {{-- Tab 4: Aktivitas --}}
-            @php $isActive = request()->routeIs('todos.*'); @endphp
+            @php $isTodosActive = request()->routeIs('todos.*'); @endphp
             <a href="{{ route('todos.index') }}"
-               class="flex flex-col items-center justify-center w-full text-center gap-0.5 group relative {{ $isActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200' }} transition-colors"
+               class="flex flex-col items-center justify-center w-full text-center gap-0.5 group relative {{ $isTodosActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200' }} transition-colors"
                aria-label="Aktivitas">
-                <div class="relative z-10 p-1.5 {{ $isActive ? 'bg-emerald-500/15 dark:bg-emerald-400/20 text-emerald-600 dark:text-emerald-400 rounded-2xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.25)]' : '' }} transition-transform active:scale-95">
+                <div class="relative z-10 p-1.5 {{ $isTodosActive ? 'bg-emerald-500/15 dark:bg-emerald-400/20 text-emerald-600 dark:text-emerald-400 rounded-2xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.25)]' : '' }} transition-transform active:scale-95">
                     <svg class="w-5.5 h-5.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
@@ -2568,12 +2568,13 @@
                 }
             });
 
-            // Register PWA Service Worker
+            // Register PWA Service Worker with auto-update
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
-                    navigator.serviceWorker.register('/sw.js')
+                    navigator.serviceWorker.register('/sw.js?v=16')
                         .then((reg) => {
-                            console.log('SwanFlow Service Worker registered');
+                            reg.update();
+                            console.log('SwanFlow Service Worker v16 active');
                         })
                         .catch((err) => {
                             console.log('Service Worker registration skipped/failed:', err);

@@ -143,6 +143,33 @@ button, a, input, select, textarea, [role="button"], .ios-press, .liquid-action-
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.03) 70%, transparent 100%);
 }
 
+/* Symmetrical 5-Column Grid for Bottom Navigation Dock across all pages */
+.liquid-dock-grid {
+    display: grid !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    align-items: center !important;
+    width: 100% !important;
+    position: relative !important;
+    z-index: 10 !important;
+}
+
+.liquid-dock-grid > a,
+.liquid-dock-grid > div {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    text-align: center !important;
+    min-width: 0 !important;
+}
+
+.liquid-dock-grid > .liquid-dock-fab-col {
+    position: relative !important;
+    margin-top: -2rem !important;
+    z-index: 50 !important;
+}
+
 /* 4. iOS Liquid Action Button (+) with Pulse & Spring */
 @keyframes liquidFabGlow {
     0%, 100% {
