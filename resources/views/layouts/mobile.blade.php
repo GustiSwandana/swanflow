@@ -142,7 +142,7 @@
             padding-right: max(1rem, calc(var(--sar, 0px) + 1rem));
         }
         .modal-sheet-safe {
-            padding-bottom: max(2.5rem, calc(2rem + var(--sab, 0px)));
+            padding-bottom: max(1.25rem, calc(var(--sab, 0px) + 0.75rem));
             max-height: calc(90dvh - var(--sat, 0px));
         }
         .banner-safe {
@@ -164,13 +164,15 @@
             animation: swanFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
+        .liquid-dock-capsule {
+            bottom: max(0.75rem, calc(var(--sab, 0px) + 0.35rem)) !important;
+            margin-bottom: 0 !important;
+            transition: transform 0.32s cubic-bezier(0.34, 1.2, 0.64, 1), opacity 0.25s ease, background-color 0.3s ease !important;
+        }
         body.modal-open nav.liquid-dock-capsule {
             transform: translate(-50%, 180%) !important;
             opacity: 0 !important;
             pointer-events: none !important;
-        }
-        nav.liquid-dock-capsule {
-            transition: transform 0.32s cubic-bezier(0.34, 1.2, 0.64, 1), opacity 0.25s ease, background-color 0.3s ease !important;
         }
     </style>
 </head>
@@ -248,7 +250,7 @@
 
         <!-- Toast Notification (Flash feedback) -->
         @if(session('success'))
-            <div id="flash-toast" style="top: max(4.5rem, calc(var(--sat, 0px) + 3.75rem)); z-index: 100;" class="fixed left-1/2 -translate-x-1/2 w-11/12 max-w-sm bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-2xl border border-slate-700 flex items-center justify-between transition-all duration-300">
+            <div id="flash-toast" style="top: max(1rem, calc(var(--sat, 0px) + 0.65rem)); z-index: 100;" class="fixed left-1/2 -translate-x-1/2 w-[92%] sm:w-[380px] bg-slate-900/95 dark:bg-slate-900/95 text-white px-4 py-3 rounded-2xl shadow-2xl border border-slate-700/80 backdrop-blur-xl flex items-center justify-between transition-all duration-300">
                 <div class="flex items-center gap-2.5">
                     <span class="w-7 h-7 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
@@ -275,7 +277,7 @@
         @endif
 
         @if(session('error'))
-            <div id="flash-error-toast" style="top: max(4.5rem, calc(var(--sat, 0px) + 3.75rem)); z-index: 100;" class="fixed left-1/2 -translate-x-1/2 w-11/12 max-w-sm bg-rose-900 text-white px-4 py-3 rounded-2xl shadow-2xl border border-rose-700 flex items-center justify-between transition-all duration-300">
+            <div id="flash-error-toast" style="top: max(1rem, calc(var(--sat, 0px) + 0.65rem)); z-index: 100;" class="fixed left-1/2 -translate-x-1/2 w-[92%] sm:w-[380px] bg-rose-900/95 text-white px-4 py-3 rounded-2xl shadow-2xl border border-rose-700/80 backdrop-blur-xl flex items-center justify-between transition-all duration-300">
                 <div class="flex items-center gap-2.5">
                     <span class="w-7 h-7 rounded-full bg-rose-500/20 text-rose-300 flex items-center justify-center shrink-0 font-bold">
                         ✕
@@ -300,7 +302,7 @@
         @endif
 
         @if($errors->any())
-            <div id="error-toast" style="top: max(4.5rem, calc(var(--sat, 0px) + 3.75rem)); z-index: 100;" class="fixed left-1/2 -translate-x-1/2 w-11/12 max-w-sm bg-rose-900 text-white px-4 py-3 rounded-2xl shadow-2xl border border-rose-700 flex items-start gap-2.5">
+            <div id="error-toast" style="top: max(1rem, calc(var(--sat, 0px) + 0.65rem)); z-index: 100;" class="fixed left-1/2 -translate-x-1/2 w-[92%] sm:w-[380px] bg-rose-900/95 text-white px-4 py-3 rounded-2xl shadow-2xl border border-rose-700/80 backdrop-blur-xl flex items-start gap-2.5">
                 <span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-300 flex items-center justify-center shrink-0 mt-0.5">
                     !
                 </span>
@@ -329,7 +331,7 @@
     <!-- End Mobile Frame Container -->
 
     <!-- 3. MODERN BOTTOM NAVIGATION BAR (Apple Liquid Glass Dock) -->
-    <nav class="fixed bottom-5 w-[92%] sm:w-[396px] liquid-dock-capsule rounded-[28px] px-2 sm:px-4 py-2 z-40 transition-colors duration-300 left-1/2 -translate-x-1/2" style="margin-bottom: env(safe-area-inset-bottom, 0px);">
+    <nav class="fixed liquid-dock-capsule w-[92%] sm:w-[396px] rounded-[28px] px-2 sm:px-4 py-2 z-40 transition-colors duration-300 left-1/2 -translate-x-1/2">
         <div class="liquid-dock-grid grid grid-cols-5 items-center w-full relative z-10" style="display: grid !important; grid-template-columns: repeat(5, minmax(0, 1fr)) !important; align-items: center !important; width: 100% !important;">
 
             {{-- Tab 1: Home --}}
@@ -1407,6 +1409,7 @@
                     panel.classList.remove('translate-y-full');
                     panel.classList.add('translate-y-0');
                     panel.style.transform = 'translateY(0)';
+                    if (panel) panel.scrollTop = 0;
                 });
 
                 // Set type & update segmented control
@@ -1462,14 +1465,17 @@
                     }
                 }
 
-                // Focus amount or desc input
-                setTimeout(() => {
-                    if (defaultAmount !== null && defaultAmount !== undefined && defaultAmount !== '') {
-                        document.getElementById('desc-input')?.focus();
-                    } else {
-                        document.getElementById('amount-input')?.focus();
-                    }
-                }, 300);
+                // Focus amount or desc input only on desktop (prevents iOS keyboard sheet jump)
+                const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+                if (!isTouchDevice) {
+                    setTimeout(() => {
+                        if (defaultAmount !== null && defaultAmount !== undefined && defaultAmount !== '') {
+                            document.getElementById('desc-input')?.focus();
+                        } else {
+                            document.getElementById('amount-input')?.focus();
+                        }
+                    }, 300);
+                }
             }
 
             // Receipt Scanner State & Handlers
@@ -2187,6 +2193,7 @@
                     panel.classList.remove('translate-y-full');
                     panel.classList.add('translate-y-0');
                     panel.style.transform = 'translateY(0)';
+                    if (panel) panel.scrollTop = 0;
                 });
             }
 
@@ -2568,13 +2575,27 @@
                 }
             });
 
-            // Register PWA Service Worker with auto-update
+            // Register PWA Service Worker with instant auto-update for iOS Home Screen
             if ('serviceWorker' in navigator) {
+                let refreshing = false;
+                navigator.serviceWorker.addEventListener('controllerchange', () => {
+                    if (!refreshing) {
+                        refreshing = true;
+                        window.location.reload();
+                    }
+                });
+
                 window.addEventListener('load', () => {
-                    navigator.serviceWorker.register('/sw.js?v=17')
+                    navigator.serviceWorker.register('/sw.js?v=18')
                         .then((reg) => {
                             reg.update();
-                            console.log('SwanFlow Service Worker v16 active');
+                            // When resuming app from background on iOS Home Screen
+                            document.addEventListener('visibilitychange', () => {
+                                if (document.visibilityState === 'visible') {
+                                    reg.update();
+                                }
+                            });
+                            console.log('SwanFlow Service Worker v18 active');
                         })
                         .catch((err) => {
                             console.log('Service Worker registration skipped/failed:', err);

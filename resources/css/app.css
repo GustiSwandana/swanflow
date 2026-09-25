@@ -577,6 +577,20 @@ input[type="time"]::-webkit-calendar-picker-indicator {
         backface-visibility: hidden;
         -webkit-backface-visibility: hidden;
     }
+
+    /* Floating Tab Bar Safe Placement (iPhone 15 Home Screen & Standalone PWA) */
+    .liquid-dock-capsule {
+        bottom: max(0.75rem, calc(env(safe-area-inset-bottom, 0px) + 0.35rem)) !important;
+        margin-bottom: 0 !important;
+    }
+}
+
+/* Standalone PWA Navigation Dock Clearance */
+@media all and (display-mode: standalone) {
+    .liquid-dock-capsule {
+        bottom: max(0.75rem, calc(env(safe-area-inset-bottom, 0px) + 0.35rem)) !important;
+        margin-bottom: 0 !important;
+    }
 }
 
 /* Specific Android UX & GPU acceleration (Adreno / Mali) */

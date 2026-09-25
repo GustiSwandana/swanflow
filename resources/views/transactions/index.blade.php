@@ -76,42 +76,42 @@
 
     <!-- Filter & Tools Section -->
     <div class="space-y-3">
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-2 gap-2">
             <!-- Month Picker -->
-            <form method="GET" action="{{ route('transactions.index') }}" class="flex items-center w-full" id="month-form">
+            <form method="GET" action="{{ route('transactions.index') }}" class="flex items-center w-full min-w-0" id="month-form">
                 @if(request('type'))<input type="hidden" name="type" value="{{ request('type') }}">@endif
                 @if(request('category_id'))<input type="hidden" name="category_id" value="{{ request('category_id') }}">@endif
                 @if(request('wallet_id'))<input type="hidden" name="wallet_id" value="{{ request('wallet_id') }}">@endif
-                <div class="relative w-full">
+                <div class="relative w-full min-w-0">
                     <input type="month" 
                            name="month" 
                            value="{{ request('month', now()->format('Y-m')) }}" 
                            onchange="document.getElementById('month-form').submit()" 
-                           class="relative w-full h-12 pl-9 pr-2 appearance-none bg-white/90 dark:bg-slate-900/90 border border-slate-200/80 dark:border-white/10 rounded-2xl text-[11px] font-bold text-slate-800 dark:text-slate-100 shadow-xs focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all cursor-pointer [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-clear-button]:hidden"
+                           class="relative w-full h-11 pl-8 pr-1.5 appearance-none bg-white/90 dark:bg-slate-900/90 border border-slate-200/80 dark:border-white/10 rounded-2xl text-[11px] font-bold text-slate-800 dark:text-slate-100 shadow-xs focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all cursor-pointer [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-clear-button]:hidden"
                            onclick="try { this.showPicker() } catch(e) {}">
-                    <div class="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-500 pointer-events-none">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    <div class="absolute left-2.5 top-1/2 -translate-y-1/2 text-emerald-500 pointer-events-none">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                     </div>
                 </div>
             </form>
 
             <!-- Wallet Dropdown -->
-            <form method="GET" action="{{ route('transactions.index') }}" class="flex items-center w-full">
+            <form method="GET" action="{{ route('transactions.index') }}" class="flex items-center w-full min-w-0">
                 @if(request('type'))<input type="hidden" name="type" value="{{ request('type') }}">@endif
                 @if(request('category_id'))<input type="hidden" name="category_id" value="{{ request('category_id') }}">@endif
                 @if(request('month'))<input type="hidden" name="month" value="{{ request('month') }}">@endif
-                <div class="relative w-full">
-                    <select name="wallet_id" onchange="this.form.submit()" class="w-full h-12 pl-9 pr-7 appearance-none bg-white/90 dark:bg-slate-900/90 border border-slate-200/80 dark:border-white/10 rounded-2xl text-[11px] font-bold text-slate-800 dark:text-slate-100 shadow-xs focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all cursor-pointer truncate">
+                <div class="relative w-full min-w-0">
+                    <select name="wallet_id" onchange="this.form.submit()" class="w-full h-11 pl-8 pr-5.5 appearance-none bg-white/90 dark:bg-slate-900/90 border border-slate-200/80 dark:border-white/10 rounded-2xl text-[11px] font-bold text-slate-800 dark:text-slate-100 shadow-xs focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all cursor-pointer truncate" style="-webkit-appearance: none; appearance: none;">
                         <option value="">Semua Dompet</option>
                         @foreach($wallets as $w)
                             <option value="{{ $w->id }}" {{ $currentWalletId == $w->id ? 'selected' : '' }}>{{ $w->name }}</option>
                         @endforeach
                     </select>
-                    <div class="absolute left-3 top-1/2 -translate-y-1/2 text-cyan-500 pointer-events-none">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                    <div class="absolute left-2.5 top-1/2 -translate-y-1/2 text-cyan-500 pointer-events-none">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
                     </div>
-                    <div class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
+                    <div class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
                     </div>
                 </div>
             </form>
