@@ -42,12 +42,18 @@ Route::get('/share/{token}', [DriveController::class, 'sharedView'])->name('driv
 Route::get('/share/{token}/preview', [DriveController::class, 'sharedPreview'])->name('drive.shared.preview');
 Route::get('/share/{token}/download', [DriveController::class, 'sharedDownload'])->name('drive.shared.download');
 
+// Public Shared Folder Routes (SwanDrive)
+Route::get('/share/folder/{token}', [DriveController::class, 'sharedFolderView'])->name('drive.shared.folder.view');
+Route::get('/share/folder/{token}/preview/{file}', [DriveController::class, 'sharedFolderPreview'])->name('drive.shared.folder.preview');
+Route::get('/share/folder/{token}/download/{file}', [DriveController::class, 'sharedFolderDownload'])->name('drive.shared.folder.download');
+Route::get('/share/folder/{token}/zip', [DriveController::class, 'sharedFolderZip'])->name('drive.shared.folder.zip');
+
 // Public Drop Portal (Upload file request link)
 Route::get('/drop/{token}', [DropLinkController::class, 'show'])->name('drive.drop.view');
 Route::post('/drop/{token}', [DropLinkController::class, 'upload'])->name('drive.drop.upload');
 
-// Protected Application Routes (Requires Authentication)
-Route::middleware('auth')->group(function () {
+// Protected Application Routes (Requires Authentication & Session Timeout Protection)
+Route::middleware(['auth', 'session.timeout'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
@@ -114,7 +120,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/drive/{file}/preview', [DriveController::class, 'preview'])->name('drive.preview');
     Route::get('/drive/{file}/download', [DriveController::class, 'download'])->name('drive.download');
     Route::patch('/drive/{file}/share', [DriveController::class, 'toggleShare'])->name('drive.share.toggle');
+    Route::patch('/drive/{file}/move', [DriveController::class, 'moveFile'])->name('drive.file.move');
     Route::delete('/drive/{file}', [DriveController::class, 'destroy'])->name('drive.destroy');
+
+    // Folder Management
+    Route::post('/drive/folders', [DriveController::class, 'createFolder'])->name('drive.folders.store');
+    Route::patch('/drive/folders/{folder}', [DriveController::class, 'updateFolder'])->name('drive.folders.update');
+    Route::delete('/drive/folders/{folder}', [DriveController::class, 'destroyFolder'])->name('drive.folders.destroy');
+    Route::patch('/drive/folders/{folder}/share', [DriveController::class, 'toggleFolderShare'])->name('drive.folders.share.toggle');
+
     Route::post('/drive/drop-links', [DropLinkController::class, 'store'])->name('drive.drop-links.store');
     Route::patch('/drive/drop-links/{link}/toggle', [DropLinkController::class, 'toggle'])->name('drive.drop-links.toggle');
     Route::delete('/drive/drop-links/{link}', [DropLinkController::class, 'destroy'])->name('drive.drop-links.destroy');

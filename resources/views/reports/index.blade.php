@@ -2,7 +2,7 @@
 
 @section('custom_header')
     <!-- Apple iOS Liquid Glass Header -->
-    <div class="relative overflow-hidden bg-gradient-to-b from-slate-900 via-emerald-950/90 to-slate-950/95 text-white px-5 pb-8 border-b border-white/20 dark:border-white/10 rounded-b-[36px] shadow-2xl backdrop-blur-3xl transition-all" style="padding-top: max(3.5rem, calc(var(--sat, 0px) + 0.85rem));">
+    <div class="relative overflow-hidden bg-gradient-to-b from-emerald-600/95 via-emerald-600/85 to-teal-700/90 dark:from-slate-900/95 dark:via-emerald-950/90 dark:to-slate-950/95 text-white px-5 pb-8 border-b border-white/20 dark:border-white/10 rounded-b-[36px] shadow-2xl backdrop-blur-3xl transition-colors duration-200" style="padding-top: max(3.5rem, calc(var(--sat, 0px) + 0.85rem));">
         <!-- Specular Rim -->
         <div class="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none"></div>
 
@@ -32,10 +32,10 @@
                     onclick="toggleSwanFlowTheme()" 
                     aria-label="Ganti Tema Gelap atau Terang" 
                     class="w-10 h-10 flex items-center justify-center rounded-[18px] liquid-glass text-white/90 hover:text-white bg-white/15 hover:bg-white/25 border border-white/30 dark:bg-slate-800/80 dark:border-white/10 active:scale-95 transition-all shadow-xs ios-press">
-                <svg class="w-5 h-5 hidden dark:block text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <svg class="theme-icon-dark w-5 h-5 text-amber-300 transition-transform duration-300 transform rotate-0 hover:rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
                 </svg>
-                <svg class="w-5 h-5 block dark:hidden text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <svg class="theme-icon-light w-5 h-5 text-white transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
                 </svg>
             </button>
@@ -61,25 +61,34 @@
 
 @section('content')
 <!-- Main Sheet Container (Apple connected sheet rounded-t-[36px]) -->
-<div class="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-2xl rounded-t-[36px] pt-5 px-4 pb-[max(6.5rem,calc(5.5rem+var(--sab,0px)))] shadow-2xl -mt-5 relative z-10 border-t border-white/60 dark:border-white/10 flex-1 flex flex-col min-h-full space-y-5 text-slate-800 dark:text-white transition-colors animate-swan-in">
+<div class="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-2xl rounded-t-[36px] pt-5 px-4 pb-[max(6.5rem,calc(5.5rem+var(--sab,0px)))] shadow-2xl -mt-5 relative z-10 border-t border-slate-200/80 dark:border-white/10 flex-1 flex flex-col min-h-full space-y-5 text-slate-800 dark:text-white transition-colors animate-swan-in">
     <!-- Grab Handle -->
     <div class="w-10 h-1.5 bg-slate-300/80 dark:bg-slate-700/80 rounded-full mx-auto mb-1"></div>
 
     <!-- Month Picker Filter Pill & Total Summary -->
     <div class="flex items-center justify-between gap-3">
-        <form method="GET" action="{{ route('reports.index') }}" class="flex items-center" id="report-month-form">
-            <input type="hidden" name="type" value="{{ $selectedType }}">
-            <div class="relative flex items-center">
-                <input type="month" 
-                       name="month" 
-                       value="{{ $selectedMonth }}" 
-                       onchange="document.getElementById('report-month-form').submit()" 
-                       class="min-h-[42px] pl-10 pr-4 py-2 bg-white/80 dark:bg-slate-900/80 border border-white/60 dark:border-white/10 rounded-[20px] text-xs font-black text-slate-800 dark:text-slate-100 shadow-xs backdrop-blur-xl focus:outline-hidden focus:ring-2 focus:ring-emerald-500/30 cursor-pointer">
-                <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400 absolute left-3.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+        <div class="relative shrink-0">
+            <button type="button" 
+                    onclick="document.getElementById('report-month-input').click()"
+                    class="h-9 px-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 shadow-xs flex items-center gap-2 active:scale-95 transition-all cursor-pointer">
+                <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
                 </svg>
-            </div>
-        </form>
+                <span class="text-xs font-bold text-slate-800 dark:text-white capitalize">
+                    {{ \Carbon\Carbon::createFromFormat('Y-m', $selectedMonth)->translatedFormat('F Y') }}
+                </span>
+                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                </svg>
+            </button>
+            <input type="month" 
+                   id="report-month-input"
+                   value="{{ $selectedMonth }}" 
+                   onchange="window.location.href = '{{ route('reports.index') }}?type={{ $selectedType }}&month=' + this.value"
+                   onclick="try { this.showPicker() } catch(e) {}"
+                   class="absolute inset-0 opacity-0 pointer-events-auto cursor-pointer w-full h-full [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-clear-button]:hidden" 
+                   aria-label="Pilih Bulan Laporan">
+        </div>
 
         <div class="text-right">
             <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">Total {{ $selectedType === 'income' ? 'Pemasukan' : 'Pengeluaran' }}</span>

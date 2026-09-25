@@ -34,7 +34,16 @@ class DropLinkController extends Controller
             default => null,
         };
 
+        $folder = $request->user()->folders()->create([
+            'name' => trim($request->input('title')),
+            'color' => 'teal',
+            'share_token' => Str::random(40),
+            'is_public' => false,
+            'description' => 'Folder khusus berkas dari tautan terima berkas: '.trim($request->input('title')),
+        ]);
+
         $request->user()->uploadLinks()->create([
+            'folder_id' => $folder->id,
             'title' => trim($request->input('title')),
             'token' => Str::random(40),
             'description' => $request->input('description'),
@@ -46,7 +55,7 @@ class DropLinkController extends Controller
         ]);
 
         return redirect()->route('drive.index', ['tab' => 'drops'])
-            ->with('success', 'Tautan terima berkas (Drop Link) berhasil dibuat!');
+            ->with('success', 'Tautan terima berkas (Drop Link) dan folder khusus berhasil dibuat!');
     }
 
     /**
@@ -116,24 +125,35 @@ class DropLinkController extends Controller
         $maxKb = $link->max_file_size_mb * 1024;
 
         $request->validate([
-            'file' => ['required', 'file', "max:{$maxKb}"],
+            'files' => ['nullable', 'array'],
+            'files.*' => ['file', "max:{$maxKb}"],
+            'file' => ['nullable', 'file', "max:{$maxKb}"],
             'uploader_name' => ['nullable', 'string', 'max:100'],
             'uploader_notes' => ['nullable', 'string', 'max:500'],
         ], [
-            'file.required' => 'Pilih berkas yang ingin diunggah terlebih dahulu.',
+            'files.*.max' => "Ukuran berkas melebihi batas maksimal {$link->max_file_size_mb} MB.",
             'file.max' => "Ukuran berkas melebihi batas maksimal {$link->max_file_size_mb} MB.",
         ]);
 
-        $uploadedFile = $request->file('file');
-        $originalName = $uploadedFile->getClientOriginalName();
-        $extension = $uploadedFile->getClientOriginalExtension() ?: pathinfo($originalName, PATHINFO_EXTENSION);
-        $mimeType = $uploadedFile->getClientMimeType();
-        $sizeBytes = $uploadedFile->getSize();
-        $category = StoredFile::detectCategory($extension, $mimeType);
+        $uploadedFiles = [];
+        if ($request->hasFile('files')) {
+            $uploadedFiles = (array) $request->file('files');
+        } elseif ($request->hasFile('file')) {
+            $uploadedFiles = [$request->file('file')];
+        }
 
-        $path = $uploadedFile->store('drive/'.$link->user_id, 'local');
+        if (empty($uploadedFiles)) {
+            return back()->withErrors(['file' => 'Pilih setidaknya satu berkas yang ingin diunggah.']);
+        }
 
-        $title = pathinfo($originalName, PATHINFO_FILENAME);
+        // Check if remaining slots allow this upload batch
+        $remaining = $link->remainingSlots();
+        if ($remaining > 0 && count($uploadedFiles) > $remaining) {
+            return back()->withErrors(['file' => "Slot pengunggahan tersisa {$remaining} berkas lagi."]);
+        }
+
+        $folder = $link->getOrCreateFolder();
+
         $uploaderName = $request->filled('uploader_name')
             ? trim($request->input('uploader_name'))
             : 'Pihak Luar (Drop Link)';
@@ -142,24 +162,47 @@ class DropLinkController extends Controller
             ? trim($request->input('uploader_notes'))
             : "Diterima melalui tautan: {$link->title}";
 
-        $link->user->storedFiles()->create([
-            'upload_link_id' => $link->id,
-            'title' => $title,
-            'original_name' => $originalName,
-            'file_path' => $path,
-            'mime_type' => $mimeType,
-            'extension' => strtolower($extension),
-            'size_bytes' => $sizeBytes,
-            'category' => $category,
-            'share_token' => Str::random(40),
-            'is_public' => false,
-            'download_count' => 0,
-            'notes' => $notes,
-            'uploader_name' => $uploaderName,
-        ]);
+        $storedCount = 0;
+        foreach ($uploadedFiles as $uploadedFile) {
+            if (! $uploadedFile) {
+                continue;
+            }
 
-        $link->increment('uploaded_files_count');
+            $originalName = $uploadedFile->getClientOriginalName();
+            $extension = $uploadedFile->getClientOriginalExtension() ?: pathinfo($originalName, PATHINFO_EXTENSION);
+            $mimeType = $uploadedFile->getClientMimeType();
+            $sizeBytes = $uploadedFile->getSize();
+            $category = StoredFile::detectCategory($extension, $mimeType);
 
-        return back()->with('drop_success', "Berkas \"{$originalName}\" berhasil terkirim ke SwanDrive!");
+            $path = $uploadedFile->store('drive/'.$link->user_id, 'local');
+            $title = pathinfo($originalName, PATHINFO_FILENAME);
+
+            $link->user->storedFiles()->create([
+                'folder_id' => $folder->id,
+                'upload_link_id' => $link->id,
+                'title' => $title,
+                'original_name' => $originalName,
+                'file_path' => $path,
+                'mime_type' => $mimeType,
+                'extension' => strtolower($extension),
+                'size_bytes' => $sizeBytes,
+                'category' => $category,
+                'share_token' => Str::random(40),
+                'is_public' => false,
+                'download_count' => 0,
+                'notes' => $notes,
+                'uploader_name' => $uploaderName,
+            ]);
+
+            $storedCount++;
+        }
+
+        $link->increment('uploaded_files_count', $storedCount);
+
+        $msg = $storedCount === 1
+            ? "1 berkas berhasil terkirim ke folder \"{$folder->name}\" di SwanDrive!"
+            : "{$storedCount} berkas berhasil terkirim ke folder \"{$folder->name}\" di SwanDrive!";
+
+        return back()->with('drop_success', $msg);
     }
 }

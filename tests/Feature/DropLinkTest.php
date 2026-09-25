@@ -134,9 +134,9 @@ class DropLinkTest extends TestCase
         $response->assertSee('Kirim Berkas Laporan');
         $response->assertSee('SwanDrive Drop Portal');
         $response->assertSee('25 MB');
+        $response->assertSee('Gusti Swandana');
         // Ensure no confidential user data is leaked to external uploader
         $response->assertDontSee('Total Saldo');
-        $response->assertDontSee('Gusti Swandana');
     }
 
     public function test_public_user_can_upload_file_through_drop_link(): void

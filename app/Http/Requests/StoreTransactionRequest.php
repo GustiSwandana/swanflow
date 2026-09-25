@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreTransactionRequest extends FormRequest
 {
@@ -23,8 +24,17 @@ class StoreTransactionRequest extends FormRequest
     {
         return [
             'wallet_id' => ['required', 'exists:wallets,id'],
-            'target_wallet_id' => ['required_if:type,transfer', 'nullable', 'different:wallet_id', 'exists:wallets,id'],
-            'category_id' => ['required_unless:type,transfer', 'nullable', 'exists:categories,id'],
+            'target_wallet_id' => [
+                Rule::excludeIf(fn () => $this->input('type') !== 'transfer'),
+                'required',
+                'different:wallet_id',
+                'exists:wallets,id',
+            ],
+            'category_id' => [
+                Rule::excludeIf(fn () => $this->input('type') === 'transfer'),
+                'required',
+                'exists:categories,id',
+            ],
             'type' => ['required', 'in:income,expense,transfer'],
             'amount' => ['required', 'numeric', 'min:1'],
             'date' => ['required', 'date'],

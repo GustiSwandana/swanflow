@@ -102,6 +102,10 @@ class CategoryController extends Controller
 
         abort_if($category->user_id !== $user->id, 403, 'Kategori bawaan sistem tidak dapat dihapus.');
 
+        if ($category->transactions()->exists()) {
+            return redirect()->back()->with('error', 'Kategori tidak dapat dihapus karena masih terhubung dengan catatan transaksi.');
+        }
+
         $category->delete();
 
         return redirect()->back()->with('success', 'Kategori berhasil dihapus.');

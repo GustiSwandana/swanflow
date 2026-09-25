@@ -1,72 +1,91 @@
 @extends('layouts.mobile')
 
-@section('header_left')
-    <div class="flex items-center gap-3">
-        <a href="{{ route('dashboard') }}" class="min-w-[42px] min-h-[42px] w-10.5 h-10.5 flex items-center justify-center text-slate-700 dark:text-slate-200 rounded-[18px] liquid-glass border border-white/60 dark:border-white/10 ios-press transition-all shadow-xs" aria-label="Kembali ke Dashboard">
-            <svg class="w-5 h-5 text-slate-800 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-            </svg>
-        </a>
-        <div class="flex flex-col">
-            <h1 class="text-base font-black text-slate-900 dark:text-white tracking-tight leading-tight">
-                Investasi & Portofolio
-            </h1>
-            <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">Kelola aset, modal & pertumbuhan uang</span>
-        </div>
-    </div>
-@endsection
-
-@section('content')
-<div class="space-y-5">
-
-    <!-- 1. HERO CARD: TOTAL DANA TERSIMPAN & MUTASI SALDO (APPLE WALLET LIQUID GLASS) -->
-    <div class="relative overflow-hidden rounded-[32px] p-6 text-white shadow-2xl border border-white/20 dark:border-white/10 backdrop-blur-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-        <!-- Specular highlight line -->
-        <div class="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/40 to-transparent pointer-events-none"></div>
+@section('custom_header')
+    <!-- Apple iOS Liquid Glass Header -->
+    <div class="relative overflow-hidden bg-gradient-to-br from-teal-600 via-emerald-700 to-slate-800 dark:from-slate-900 dark:via-emerald-950/90 dark:to-slate-950 text-white px-5 pb-8 border-b border-white/20 dark:border-white/10 rounded-b-[36px] shadow-2xl backdrop-blur-3xl transition-colors duration-200" style="padding-top: max(3.5rem, calc(var(--sat, 0px) + 0.85rem));">
+        <!-- Specular Rim -->
+        <div class="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none"></div>
 
         <!-- Ambient Liquid Orbs -->
-        <div class="absolute -right-8 -bottom-8 w-36 h-36 bg-emerald-500/20 rounded-full blur-2xl pointer-events-none animate-liquid-orb-1"></div>
-        <div class="absolute -left-8 -top-8 w-32 h-32 bg-teal-500/15 rounded-full blur-2xl pointer-events-none animate-liquid-orb-2"></div>
+        <div class="absolute -right-12 -top-12 w-48 h-48 bg-white/10 dark:bg-emerald-500/10 rounded-full blur-[40px] pointer-events-none"></div>
+        <div class="absolute -left-12 bottom-0 w-48 h-48 bg-teal-400/20 dark:bg-teal-500/10 rounded-full blur-[40px] pointer-events-none"></div>
 
-        <div class="relative z-10 space-y-3.5">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span class="text-[11px] font-bold text-emerald-300 uppercase tracking-wider">Total Dana Tersimpan</span>
+        <!-- Top Navigation Bar -->
+        <div class="relative z-10 flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3">
+                <a href="{{ route('dashboard') }}" class="w-10 h-10 rounded-[18px] liquid-glass bg-white/15 hover:bg-white/25 active:scale-95 flex items-center justify-center transition-all border border-white/30 shrink-0 shadow-xs ios-press" aria-label="Kembali ke Dashboard">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                    </svg>
+                </a>
+                <div class="flex flex-col">
+                    <h1 class="text-lg font-black text-white tracking-tight leading-tight">
+                        Investasi & Portofolio
+                    </h1>
+                    <span class="text-[11px] font-semibold text-emerald-100/80">Kelola aset, modal & pertumbuhan uang</span>
                 </div>
-                <span class="px-2.5 py-1 rounded-[14px] text-[10px] font-extrabold bg-white/10 text-slate-200 border border-white/10 backdrop-blur-xs">
+            </div>
+
+            <!-- Header Action / Theme Toggle -->
+            <button type="button" 
+                    id="theme-toggle-btn"
+                    onclick="toggleSwanFlowTheme()" 
+                    aria-label="Ganti Tema Gelap atau Terang" 
+                    class="w-10 h-10 flex items-center justify-center rounded-[18px] liquid-glass text-white/90 hover:text-white bg-white/15 hover:bg-white/25 border border-white/30 dark:bg-slate-800/80 dark:border-white/10 active:scale-95 transition-all shadow-xs ios-press">
+                <svg class="theme-icon-dark w-5 h-5 text-amber-300 transition-transform duration-300 transform rotate-0 hover:rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+                </svg>
+                <svg class="theme-icon-light w-5 h-5 text-white transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="relative z-20 bg-white/12 dark:bg-slate-900/60 backdrop-blur-2xl border border-white/20 dark:border-white/10 rounded-[30px] p-5 shadow-2xl overflow-hidden">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span class="text-[11px] font-bold text-emerald-200 dark:text-emerald-400 uppercase tracking-wider">Total Dana Tersimpan</span>
+                </div>
+                <span class="px-2.5 py-1 rounded-xl text-[10px] font-extrabold bg-white/20 dark:bg-emerald-500/10 text-white dark:text-emerald-300 border border-white/20 dark:border-emerald-500/30 backdrop-blur-md">
                     {{ $activeCount }} Catatan Aktif
                 </span>
             </div>
 
             <!-- Large Total Value -->
             <div>
-                <p class="text-3xl font-black text-white tracking-tight">
+                <p class="text-4xl sm:text-5xl font-black text-white tracking-tight drop-shadow-sm mb-1">
                     Rp {{ number_format($totalPortfolioValue, 0, ',', '.') }}
                 </p>
-                <p class="text-[11px] font-semibold text-slate-400 mt-0.5">Akumulasi seluruh saldo tabungan & aset investasi</p>
+                <p class="text-[10px] font-semibold text-emerald-100/80 dark:text-slate-400">Akumulasi seluruh saldo tabungan & aset investasi</p>
             </div>
 
             <!-- 2-Column Metric Grid: Total Disetor vs Total Ditarik -->
-            <div class="grid grid-cols-2 gap-2.5 pt-3 border-t border-white/10">
+            <div class="grid grid-cols-2 gap-2.5 pt-4 mt-3 border-t border-white/20 dark:border-white/10">
                 <!-- Total Setor (Uang Masuk) -->
-                <div class="bg-white/10 dark:bg-white/5 rounded-[18px] p-2.5 border border-white/10 backdrop-blur-md">
-                    <span class="text-[10px] font-semibold text-slate-300 block">Total Disetor (Masuk)</span>
-                    <p class="text-xs sm:text-sm font-black text-emerald-300 mt-0.5 truncate">
+                <div class="bg-white/10 dark:bg-slate-800/60 rounded-[20px] p-3 border border-white/20 dark:border-white/10 backdrop-blur-md">
+                    <span class="text-[10px] font-semibold text-emerald-100/80 dark:text-slate-400 block mb-1">Total Disetor (Masuk)</span>
+                    <p class="text-sm font-black text-white dark:text-emerald-400 truncate">
                         +Rp {{ number_format($totalDeposited, 0, ',', '.') }}
                     </p>
                 </div>
 
                 <!-- Total Ditarik (Uang Keluar) -->
-                <div class="bg-white/10 dark:bg-white/5 rounded-[18px] p-2.5 border border-white/10 backdrop-blur-md">
-                    <span class="text-[10px] font-semibold text-slate-300 block">Total Ditarik (Keluar)</span>
-                    <p class="text-xs sm:text-sm font-black text-amber-300 mt-0.5 truncate">
+                <div class="bg-white/10 dark:bg-slate-800/60 rounded-[20px] p-3 border border-white/20 dark:border-white/10 backdrop-blur-md">
+                    <span class="text-[10px] font-semibold text-emerald-100/80 dark:text-slate-400 block mb-1">Total Ditarik (Keluar)</span>
+                    <p class="text-sm font-black text-white dark:text-amber-400 truncate">
                         -Rp {{ number_format($totalWithdrawn, 0, ',', '.') }}
                     </p>
                 </div>
             </div>
         </div>
     </div>
+@endsection
+
+@section('content')
+<div class="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-2xl rounded-t-[36px] pt-5 px-4 pb-[max(6.5rem,calc(5.5rem+var(--sab,0px)))] shadow-2xl -mt-5 relative z-10 border-t border-slate-200/80 dark:border-white/10 flex-1 flex flex-col min-h-full space-y-5 text-slate-800 dark:text-white transition-colors animate-swan-in">
+    <!-- Grab Handle -->
+    <div class="w-10 h-1.5 bg-slate-300/80 dark:bg-slate-700/80 rounded-full mx-auto mb-1"></div>
 
     <!-- 2. FILTER CAROUSEL & ADD BUTTON -->
     <div class="flex items-center justify-between gap-2.5 pt-0.5">
@@ -173,7 +192,7 @@
                 </div>
 
                 <!-- Saldo Terkumpul & Ringkasan Mutasi (Pendataan Bersih) -->
-                <div class="p-4 bg-slate-100/60 dark:bg-slate-800/50 rounded-[20px] border border-slate-200/60 dark:border-slate-700/50 space-y-2.5 backdrop-blur-xs">
+                <div class="p-4 bg-slate-50/80 dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-white/5 space-y-2.5 backdrop-blur-xs">
                     <div class="flex items-baseline justify-between gap-2">
                         <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Saldo Terkumpul</span>
                         <span class="text-base sm:text-lg font-black text-slate-900 dark:text-white">
@@ -181,14 +200,14 @@
                         </span>
                     </div>
 
-                    <div class="flex items-center justify-between text-[11px] pt-2.5 border-t border-slate-200/60 dark:border-slate-700/60 text-slate-500 dark:text-slate-400">
+                    <div class="flex items-center justify-between text-[11px] pt-2.5 border-t border-slate-200/60 dark:border-white/10 text-slate-500 dark:text-slate-400 flex-wrap gap-1">
                         <span class="flex items-center gap-1">
                             <span class="text-emerald-600 dark:text-emerald-400 font-bold">↓ Setor:</span>
-                            <span class="font-bold text-slate-700 dark:text-slate-200">Rp {{ number_format($item->total_deposited, 0, ',', '.') }}</span>
+                            <span class="font-bold text-slate-700 dark:text-slate-200 truncate">Rp {{ number_format($item->total_deposited, 0, ',', '.') }}</span>
                         </span>
                         <span class="flex items-center gap-1">
                             <span class="text-amber-600 dark:text-amber-400 font-bold">↑ Tarik:</span>
-                            <span class="font-bold text-slate-700 dark:text-slate-200">Rp {{ number_format($item->total_withdrawn, 0, ',', '.') }}</span>
+                            <span class="font-bold text-slate-700 dark:text-slate-200 truncate">Rp {{ number_format($item->total_withdrawn, 0, ',', '.') }}</span>
                         </span>
                     </div>
                 </div>
@@ -285,7 +304,7 @@
 <!-- ========================================================================= -->
 <div id="modal-add-investment" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true">
     <div class="modal-backdrop fixed inset-0 bg-slate-950/60 backdrop-blur-md transition-opacity duration-300 opacity-0" onclick="closeSheetModal('modal-add-investment')"></div>
-    <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
+    <div class="fixed bottom-0 left-0 right-0 z-30 flex justify-center pointer-events-none">
         <div class="modal-panel w-full max-w-md bg-white/95 dark:bg-slate-900/95 rounded-t-[36px] shadow-2xl p-6 modal-sheet-safe border-t border-white/60 dark:border-white/10 backdrop-blur-3xl pointer-events-auto transform translate-y-full transition-transform duration-300 overflow-y-auto no-scrollbar max-h-[90vh]">
             <div class="w-12 h-1.5 bg-slate-300/80 dark:bg-slate-700/80 rounded-full mx-auto mb-4 cursor-pointer" onclick="closeSheetModal('modal-add-investment')"></div>
 
@@ -370,7 +389,7 @@
 <!-- ========================================================================= -->
 <div id="modal-topup-investment" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true">
     <div class="modal-backdrop fixed inset-0 bg-slate-950/60 backdrop-blur-md transition-opacity duration-300 opacity-0" onclick="closeSheetModal('modal-topup-investment')"></div>
-    <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
+    <div class="fixed bottom-0 left-0 right-0 z-30 flex justify-center pointer-events-none">
         <div class="modal-panel w-full max-w-md bg-white/95 dark:bg-slate-900/95 rounded-t-[36px] shadow-2xl p-6 modal-sheet-safe border-t border-white/60 dark:border-white/10 backdrop-blur-3xl pointer-events-auto transform translate-y-full transition-transform duration-300 overflow-y-auto no-scrollbar">
             <div class="w-12 h-1.5 bg-slate-300/80 dark:bg-slate-700/80 rounded-full mx-auto mb-4 cursor-pointer" onclick="closeSheetModal('modal-topup-investment')"></div>
 
@@ -450,7 +469,7 @@
 <!-- ========================================================================= -->
 <div id="modal-update-value" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true">
     <div class="modal-backdrop fixed inset-0 bg-slate-950/60 backdrop-blur-md transition-opacity duration-300 opacity-0" onclick="closeSheetModal('modal-update-value')"></div>
-    <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
+    <div class="fixed bottom-0 left-0 right-0 z-30 flex justify-center pointer-events-none">
         <div class="modal-panel w-full max-w-md bg-white/95 dark:bg-slate-900/95 rounded-t-[36px] shadow-2xl p-6 modal-sheet-safe border-t border-white/60 dark:border-white/10 backdrop-blur-3xl pointer-events-auto transform translate-y-full transition-transform duration-300 overflow-y-auto no-scrollbar">
             <div class="w-12 h-1.5 bg-slate-300/80 dark:bg-slate-700/80 rounded-full mx-auto mb-4 cursor-pointer" onclick="closeSheetModal('modal-update-value')"></div>
 
@@ -494,7 +513,7 @@
 <!-- ========================================================================= -->
 <div id="modal-withdraw-investment" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true">
     <div class="modal-backdrop fixed inset-0 bg-slate-950/60 backdrop-blur-md transition-opacity duration-300 opacity-0" onclick="closeSheetModal('modal-withdraw-investment')"></div>
-    <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
+    <div class="fixed bottom-0 left-0 right-0 z-30 flex justify-center pointer-events-none">
         <div class="modal-panel w-full max-w-md bg-white/95 dark:bg-slate-900/95 rounded-t-[36px] shadow-2xl p-6 modal-sheet-safe border-t border-white/60 dark:border-white/10 backdrop-blur-3xl pointer-events-auto transform translate-y-full transition-transform duration-300 overflow-y-auto no-scrollbar">
             <div class="w-12 h-1.5 bg-slate-300/80 dark:bg-slate-700/80 rounded-full mx-auto mb-4 cursor-pointer" onclick="closeSheetModal('modal-withdraw-investment')"></div>
 
@@ -575,7 +594,7 @@
 <!-- ========================================================================= -->
 <div id="modal-edit-investment" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true">
     <div class="modal-backdrop fixed inset-0 bg-slate-950/60 backdrop-blur-md transition-opacity duration-300 opacity-0" onclick="closeSheetModal('modal-edit-investment')"></div>
-    <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
+    <div class="fixed bottom-0 left-0 right-0 z-30 flex justify-center pointer-events-none">
         <div class="modal-panel w-full max-w-md bg-white/95 dark:bg-slate-900/95 rounded-t-[36px] shadow-2xl p-6 modal-sheet-safe border-t border-white/60 dark:border-white/10 backdrop-blur-3xl pointer-events-auto transform translate-y-full transition-transform duration-300 overflow-y-auto no-scrollbar max-h-[90vh]">
             <div class="w-12 h-1.5 bg-slate-300/80 dark:bg-slate-700/80 rounded-full mx-auto mb-4 cursor-pointer" onclick="closeSheetModal('modal-edit-investment')"></div>
 

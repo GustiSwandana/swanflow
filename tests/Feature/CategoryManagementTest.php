@@ -4,7 +4,9 @@ namespace Tests\Feature;
 
 use App\Enums\TransactionType;
 use App\Models\Category;
+use App\Models\Transaction;
 use App\Models\User;
+use App\Models\Wallet;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -167,6 +169,31 @@ class CategoryManagementTest extends TestCase
         $response = $this->actingAs($user1)->delete("/categories/{$category->id}");
 
         $response->assertStatus(403);
+        $this->assertDatabaseHas('categories', ['id' => $category->id]);
+    }
+
+    public function test_user_cannot_delete_category_with_transactions(): void
+    {
+        $user = User::factory()->create();
+        $wallet = Wallet::factory()->create(['user_id' => $user->id]);
+        $category = Category::factory()->create([
+            'user_id' => $user->id,
+            'name' => 'Kategori Ada Transaksi',
+            'type' => TransactionType::Expense,
+        ]);
+
+        Transaction::factory()->create([
+            'user_id' => $user->id,
+            'wallet_id' => $wallet->id,
+            'category_id' => $category->id,
+            'amount' => 50000,
+            'type' => TransactionType::Expense,
+        ]);
+
+        $response = $this->actingAs($user)->delete("/categories/{$category->id}");
+
+        $response->assertRedirect();
+        $response->assertSessionHas('error');
         $this->assertDatabaseHas('categories', ['id' => $category->id]);
     }
 }

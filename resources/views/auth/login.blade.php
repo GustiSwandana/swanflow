@@ -1,16 +1,20 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-slate-950">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-slate-100 dark:bg-slate-950">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#020617">
     <meta name="color-scheme" content="light dark">
     <meta name="description" content="Masuk ke SwanFlow - Personal Financial Tracker Gusti Swandana">
+    <meta name="author" content="Gusti Swandana">
 
-    <!-- Instant Dark Mode Script -->
+    <!-- Instant Dark Mode Script & Android Engine Detection -->
     <script>
         (function() {
             try {
+                if (/Android/i.test(navigator.userAgent)) {
+                    document.documentElement.classList.add('is-android');
+                }
                 const savedTheme = localStorage.getItem('swanflow_theme');
                 const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
                 if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
@@ -18,7 +22,7 @@
                     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#020617');
                 } else {
                     document.documentElement.classList.remove('dark');
-                    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#ffffff');
+                    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#f8fafc');
                 }
             } catch (e) {}
         })();
@@ -58,7 +62,7 @@
         }
     </style>
 </head>
-<body class="min-h-full bg-slate-950 flex justify-center text-slate-800 dark:text-slate-100 antialiased selection:bg-emerald-500 selection:text-white">
+<body class="min-h-full bg-slate-100 dark:bg-slate-950 flex justify-center text-slate-800 dark:text-slate-100 antialiased selection:bg-emerald-500 selection:text-white">
     <!-- Frame Container -->
     <div class="w-full max-w-md min-h-full min-h-[100dvh] bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 relative flex flex-col justify-between p-6 shadow-2xl border-x border-slate-200/80 dark:border-slate-800/80 transition-colors duration-200" style="padding-top: max(1.5rem, calc(var(--sat) + 1rem)); padding-bottom: max(1.5rem, calc(var(--sab) + 1rem));">
 
@@ -89,6 +93,15 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                 </svg>
                 <span>{{ session('success') }}</span>
+            </div>
+        @endif
+
+        @if(session('warning') || request('expired'))
+            <div class="mb-4 bg-amber-500/15 border border-amber-500/30 text-amber-700 dark:text-amber-300 px-4 py-3 rounded-2xl text-xs font-semibold flex items-center gap-2.5 shadow-xs">
+                <svg class="w-4 h-4 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                </svg>
+                <span>{{ session('warning') ?? 'Sesi Anda telah berakhir karena tidak ada aktivitas demi keamanan akun keuangan Anda. Silakan masukkan PIN atau masuk kembali.' }}</span>
             </div>
         @endif
 
@@ -146,22 +159,25 @@
                 <button type="button" onclick="appendPinDigit('8')" class="min-h-[56px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xl font-bold text-slate-800 dark:text-white shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-slate-800 transition-all">8</button>
                 <button type="button" onclick="appendPinDigit('9')" class="min-h-[56px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xl font-bold text-slate-800 dark:text-white shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-slate-800 transition-all">9</button>
 
-                <!-- Face ID Biometric Quick Trigger Button -->
+                <!-- Face ID / Biometric Quick Trigger Button -->
                 <button type="button" 
+                        id="face-id-keypad-btn"
                         onclick="authenticateWithFaceId()" 
-                        aria-label="Buka dengan Face ID" 
-                        class="min-h-[56px] rounded-2xl bg-emerald-500/10 hover:bg-emerald-500/20 dark:bg-emerald-500/15 dark:hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 shadow-xs active:scale-90 transition-all flex flex-col items-center justify-center gap-0.5">
-                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M4 8V6a2 2 0 0 1 2-2h2" />
-                        <path d="M4 16v2a2 2 0 0 0 2 2h2" />
-                        <path d="M16 4h2a2 2 0 0 1 2 2v2" />
-                        <path d="M16 20h2a2 2 0 0 0 2-2v-2" />
-                        <path d="M9 10h.01" />
-                        <path d="M15 10h.01" />
-                        <path d="M9.5 15a3.5 3.5 0 0 0 5 0" />
-                        <path d="M12 11v2" />
-                    </svg>
-                    <span class="text-[9px] font-bold">Face ID</span>
+                        aria-label="Buka dengan Biometrik" 
+                        class="min-h-[56px] rounded-2xl bg-emerald-500/10 hover:bg-emerald-500/20 dark:bg-emerald-500/15 dark:hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 shadow-xs active:scale-90 transition-all flex flex-col items-center justify-center gap-0.5 cursor-pointer">
+                    <div id="face-id-keypad-icon" class="flex items-center justify-center">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 8V6a2 2 0 0 1 2-2h2" />
+                            <path d="M4 16v2a2 2 0 0 0 2 2h2" />
+                            <path d="M16 4h2a2 2 0 0 1 2 2v2" />
+                            <path d="M16 20h2a2 2 0 0 0 2-2v-2" />
+                            <path d="M9 10h.01" />
+                            <path d="M15 10h.01" />
+                            <path d="M9.5 15a3.5 3.5 0 0 0 5 0" />
+                            <path d="M12 11v2" />
+                        </svg>
+                    </div>
+                    <span id="face-id-keypad-label" class="text-[9px] font-bold">Face ID</span>
                 </button>
 
                 <button type="button" onclick="appendPinDigit('0')" class="min-h-[56px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xl font-bold text-slate-800 dark:text-white shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-slate-800 transition-all">0</button>
@@ -188,7 +204,7 @@
         <!-- 2. EMAIL & PASSWORD SCREEN (Alternative view) -->
         <div id="email-password-screen" class="hidden flex-1 flex flex-col justify-center my-auto">
             <div class="mb-4">
-                <button type="button" onclick="toggleLoginView('pin')" class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline mb-2">
+                <button type="button" id="back-to-pin-btn" onclick="toggleLoginView('pin')" class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline mb-2">
                     ← Kembali ke PIN & Face ID
                 </button>
                 <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight mt-1">Masuk Akun</h2>
@@ -258,27 +274,30 @@
                 </div>
             </form>
 
-            <!-- Face ID Alternate Button -->
+            <!-- Face ID / Biometric Alternate Button -->
             <div class="mt-4 pt-3 border-t border-slate-200/80 dark:border-slate-800">
-                <button type="button" onclick="authenticateWithFaceId()" class="w-full min-h-[44px] py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs flex items-center justify-center gap-2 transition-all">
-                    <svg class="w-4 h-4 text-emerald-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M4 8V6a2 2 0 0 1 2-2h2" />
-                        <path d="M4 16v2a2 2 0 0 0 2 2h2" />
-                        <path d="M16 4h2a2 2 0 0 1 2 2v2" />
-                        <path d="M16 20h2a2 2 0 0 0 2-2v-2" />
-                        <path d="M9 10h.01" />
-                        <path d="M15 10h.01" />
-                        <path d="M9.5 15a3.5 3.5 0 0 0 5 0" />
-                        <path d="M12 11v2" />
-                    </svg>
-                    <span>Buka dengan Face ID</span>
+                <button type="button" onclick="authenticateWithFaceId()" class="w-full min-h-[44px] py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer">
+                    <span id="face-id-alt-icon" class="flex items-center">
+                        <svg class="w-4 h-4 text-emerald-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 8V6a2 2 0 0 1 2-2h2" />
+                            <path d="M4 16v2a2 2 0 0 0 2 2h2" />
+                            <path d="M16 4h2a2 2 0 0 1 2 2v2" />
+                            <path d="M16 20h2a2 2 0 0 0 2-2v-2" />
+                            <path d="M9 10h.01" />
+                            <path d="M15 10h.01" />
+                            <path d="M9.5 15a3.5 3.5 0 0 0 5 0" />
+                            <path d="M12 11v2" />
+                        </svg>
+                    </span>
+                    <span id="face-id-alt-label">Buka dengan Face ID</span>
                 </button>
             </div>
         </div>
 
         <!-- Footer -->
-        <div class="text-center pt-6 text-[11px] text-slate-400">
-            SwanFlow Personal Finance &bull; Versi 1.2.0 PWA
+        <div class="text-center pt-6 text-[11px] text-slate-400 space-y-1">
+            <div>SwanFlow Personal Finance &bull; Versi 1.2.0 PWA</div>
+            <div class="text-[10px] text-slate-400/80">Dibuat oleh <strong class="font-bold text-slate-600 dark:text-slate-300">Gusti Swandana</strong></div>
         </div>
 
     </div>
@@ -289,7 +308,7 @@
         <div class="relative z-10 w-full max-w-xs bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl text-center space-y-4 transform transition-transform">
             <div class="relative w-20 h-20 mx-auto flex items-center justify-center">
                 <div id="face-id-pulse" class="absolute inset-0 rounded-2xl bg-emerald-500/20 animate-ping"></div>
-                <div class="relative w-20 h-20 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-emerald-500 shadow-inner border border-slate-200 dark:border-slate-700">
+                <div id="face-id-modal-icon" class="relative w-20 h-20 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-emerald-500 shadow-inner border border-slate-200 dark:border-slate-700">
                     <svg class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M4 8V6a2 2 0 0 1 2-2h2" />
                         <path d="M4 16v2a2 2 0 0 0 2 2h2" />
@@ -323,6 +342,9 @@
         const maxPinLength = 6;
 
         function appendPinDigit(digit) {
+            if (navigator.vibrate) {
+                try { navigator.vibrate(10); } catch(e) {}
+            }
             if (currentPin.length < maxPinLength) {
                 currentPin += digit;
                 updatePinDots();
@@ -334,6 +356,9 @@
         }
 
         function removePinDigit() {
+            if (navigator.vibrate) {
+                try { navigator.vibrate(10); } catch(e) {}
+            }
             if (currentPin.length > 0) {
                 currentPin = currentPin.slice(0, -1);
                 updatePinDots();
@@ -437,14 +462,12 @@
 
         function toggleSwanFlowTheme() {
             const isDark = document.documentElement.classList.toggle('dark');
-            const themeMeta = document.querySelector('meta[name="theme-color"]');
-            if (isDark) {
-                localStorage.setItem('swanflow_theme', 'dark');
-                if (themeMeta) themeMeta.setAttribute('content', '#020617');
-            } else {
-                localStorage.setItem('swanflow_theme', 'light');
-                if (themeMeta) themeMeta.setAttribute('content', '#ffffff');
-            }
+            const color = isDark ? '#020617' : '#f8fafc';
+            localStorage.setItem('swanflow_theme', isDark ? 'dark' : 'light');
+            document.querySelectorAll('meta[name="theme-color"]').forEach(m => {
+                m.removeAttribute('media');
+                m.setAttribute('content', color);
+            });
         }
 
         function base64UrlToUint8Array(base64Url) {
@@ -478,6 +501,59 @@
             return btoa(binary);
         }
 
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        const isAndroid = /Android/.test(navigator.userAgent);
+
+        // SVG icons for Android Fingerprint / Passkey
+        const fingerprintSvg = `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4" />
+            <path d="M14 13.12c0 2.38 0 6.38-1 8.88" />
+            <path d="M2 12h1" />
+            <path d="M21 12h1" />
+            <path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2" />
+            <path d="M8.65 22c.21-.66.45-1.32.57-2" />
+            <path d="M9 6.8a6 6 0 0 1 9 5.2v2" />
+            <path d="M15 16.5c-.32 1.34-.84 2.87-1.5 4.5" />
+            <path d="M18 19c.42-1 .73-2.18.9-3.5" />
+            <path d="M7 10.5a8 8 0 0 1 12.5-3" />
+        </svg>`;
+
+        const fingerprintModalSvg = `<svg class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4" />
+            <path d="M14 13.12c0 2.38 0 6.38-1 8.88" />
+            <path d="M2 12h1" />
+            <path d="M21 12h1" />
+            <path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2" />
+            <path d="M8.65 22c.21-.66.45-1.32.57-2" />
+            <path d="M9 6.8a6 6 0 0 1 9 5.2v2" />
+            <path d="M15 16.5c-.32 1.34-.84 2.87-1.5 4.5" />
+            <path d="M18 19c.42-1 .73-2.18.9-3.5" />
+            <path d="M7 10.5a8 8 0 0 1 12.5-3" />
+        </svg>`;
+
+        // Adapt UI labels based on platform (iPhone stays 100% Face ID, Android gets Biometrik/Sidik Jari)
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!isIOS) {
+                const label = isAndroid ? 'Biometrik' : 'Biometrik';
+                const keypadLabel = document.getElementById('face-id-keypad-label');
+                if (keypadLabel) keypadLabel.textContent = label;
+                const keypadIcon = document.getElementById('face-id-keypad-icon');
+                if (keypadIcon) keypadIcon.innerHTML = fingerprintSvg;
+
+                const altLabel = document.getElementById('face-id-alt-label');
+                if (altLabel) altLabel.textContent = isAndroid ? 'Buka dengan Sidik Jari / Biometrik' : 'Buka dengan Biometrik';
+                const altIcon = document.getElementById('face-id-alt-icon');
+                if (altIcon) altIcon.innerHTML = fingerprintSvg.replace('w-5 h-5', 'w-4 h-4 text-emerald-500');
+
+                const modalIcon = document.getElementById('face-id-modal-icon');
+                if (modalIcon) modalIcon.innerHTML = fingerprintModalSvg;
+                const statusTitle = document.getElementById('face-id-status-title');
+                if (statusTitle) statusTitle.textContent = isAndroid ? 'Sidik Jari / Biometrik' : 'Autentikasi Biometrik';
+                const backBtn = document.getElementById('back-to-pin-btn');
+                if (backBtn) backBtn.textContent = isAndroid ? '← Kembali ke PIN & Sidik Jari' : '← Kembali ke PIN & Biometrik';
+            }
+        });
+
         function closeFaceIdModal() {
             const modal = document.getElementById('face-id-modal');
             if (modal) modal.classList.add('hidden');
@@ -491,8 +567,8 @@
 
             modal.classList.remove('hidden');
             if (pulse) pulse.classList.remove('hidden');
-            statusTitle.textContent = 'Memindai Face ID...';
-            statusText.textContent = 'Menghubungkan ke sensor keamanan iPhone...';
+            statusTitle.textContent = isIOS ? 'Memindai Face ID...' : (isAndroid ? 'Memindai Sidik Jari / Biometrik...' : 'Memindai Biometrik...');
+            statusText.textContent = isIOS ? 'Menghubungkan ke sensor keamanan iPhone...' : (isAndroid ? 'Menghubungkan ke sensor biometrik Android...' : 'Menghubungkan ke sensor keamanan perangkat...');
 
             try {
                 // 1. Request challenge
@@ -513,20 +589,24 @@
 
                 if (!data.registered || !data.credentials || data.credentials.length === 0) {
                     if (pulse) pulse.classList.add('hidden');
-                    statusTitle.textContent = 'Face ID Belum Aktif';
-                    statusText.textContent = 'Face ID belum didaftarkan pada akun ini. Silakan masuk terlebih dahulu dengan email & password atau PIN, lalu aktifkan Face ID di menu Profil.';
+                    statusTitle.textContent = isIOS ? 'Face ID Belum Aktif' : 'Biometrik Belum Aktif';
+                    statusText.textContent = isIOS
+                        ? 'Face ID belum didaftarkan pada akun ini. Silakan masuk terlebih dahulu dengan email & password atau PIN, lalu aktifkan Face ID di menu Profil.'
+                        : 'Biometrik / Sidik Jari belum didaftarkan pada akun ini. Silakan masuk terlebih dahulu dengan email & password atau PIN, lalu aktifkan Biometrik di menu Profil.';
                     return;
                 }
 
-                statusText.textContent = 'Arahkan wajah Anda ke kamera iPhone...';
+                statusText.textContent = isIOS 
+                    ? 'Arahkan wajah Anda ke kamera iPhone...' 
+                    : (isAndroid ? 'Sentuh sensor sidik jari atau pindai wajah pada perangkat Android Anda...' : 'Verifikasi identitas Anda pada perangkat...');
 
                 // Check WebAuthn support
                 if (!window.PublicKeyCredential) {
                     if (pulse) pulse.classList.add('hidden');
                     statusTitle.textContent = !window.isSecureContext ? 'Perlu Koneksi HTTPS' : 'Tidak Didukung';
                     statusText.textContent = !window.isSecureContext
-                        ? 'Sensor biometrik Face ID dinonaktifkan browser karena web dibuka via HTTP biasa (bukan HTTPS). Gunakan koneksi aman HTTPS atau masuk dengan PIN 6-Digit.'
-                        : 'Peramban ini tidak mendukung sensor biometrik Face ID WebAuthn. Gunakan PIN 6-Digit untuk masuk cepat.';
+                        ? 'Sensor biometrik dinonaktifkan browser karena web dibuka via HTTP biasa (bukan HTTPS). Gunakan koneksi aman HTTPS atau masuk dengan PIN 6-Digit.'
+                        : 'Peramban ini tidak mendukung sensor biometrik WebAuthn. Gunakan PIN 6-Digit untuk masuk cepat.';
                     return;
                 }
 
@@ -555,7 +635,7 @@
                 });
 
                 if (assertion) {
-                    statusTitle.textContent = 'Wajah Dikenali!';
+                    statusTitle.textContent = isIOS ? 'Wajah Dikenali!' : 'Identitas Terverifikasi!';
                     statusText.textContent = 'Mengonfirmasi otentikasi...';
 
                     let clientDataJson = '';
@@ -590,10 +670,12 @@
                 if (pulse) pulse.classList.add('hidden');
                 if (err.name === 'NotAllowedError') {
                     statusTitle.textContent = 'Pemindaian Dibatalkan';
-                    statusText.textContent = 'Anda membatalkan pemindaian Face ID atau waktu habis.';
+                    statusText.textContent = isIOS 
+                        ? 'Anda membatalkan pemindaian Face ID atau waktu habis.' 
+                        : 'Anda membatalkan verifikasi biometrik atau waktu habis.';
                 } else {
                     statusTitle.textContent = 'Verifikasi Gagal';
-                    statusText.textContent = err.message || 'Terjadi kesalahan pada verifikasi Face ID.';
+                    statusText.textContent = err.message || (isIOS ? 'Terjadi kesalahan pada verifikasi Face ID.' : 'Terjadi kesalahan pada verifikasi biometrik.');
                 }
             }
         }

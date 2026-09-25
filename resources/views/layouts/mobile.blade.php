@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-slate-100 dark:bg-slate-950">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="bg-slate-100 dark:bg-slate-950">
 <head>
     <meta charset="utf-8">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -12,7 +12,13 @@
     <meta name="apple-mobile-web-app-title" content="SwanFlow">
     <meta name="color-scheme" content="light dark">
     <meta name="description" content="Personal Financial Tracker Mobile App eksklusif Gusti Swandana">
+    <meta name="author" content="Gusti Swandana">
     <meta name="format-detection" content="telephone=no">
+
+    <style>
+        html:not(.dark) .theme-icon-dark { display: none !important; }
+        html.dark .theme-icon-light { display: none !important; }
+    </style>
 
     <!-- Instant Dark Mode Script (Prevents FOUC) -->
     <script>
@@ -136,7 +142,7 @@
             padding-right: max(1rem, calc(var(--sar, 0px) + 1rem));
         }
         .modal-sheet-safe {
-            padding-bottom: max(1.75rem, calc(1.25rem + var(--sab, 0px)));
+            padding-bottom: max(2.5rem, calc(2rem + var(--sab, 0px)));
             max-height: calc(90dvh - var(--sat, 0px));
         }
         .banner-safe {
@@ -157,10 +163,19 @@
         .animate-swan-in {
             animation: swanFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
+
+        body.modal-open nav.liquid-dock-capsule {
+            transform: translate(-50%, 180%) !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+        nav.liquid-dock-capsule {
+            transition: transform 0.32s cubic-bezier(0.34, 1.2, 0.64, 1), opacity 0.25s ease, background-color 0.3s ease !important;
+        }
     </style>
 </head>
 
-<body class="min-h-full min-h-[100dvh] bg-slate-100 dark:bg-slate-950 flex flex-col items-center text-slate-800 dark:text-slate-100 antialiased selection:bg-emerald-500 selection:text-white transition-colors duration-200 overflow-x-hidden relative">
+<body class="min-h-[100dvh] bg-slate-100 dark:bg-slate-950 flex flex-col items-center text-slate-800 dark:text-slate-100 antialiased selection:bg-emerald-500 selection:text-white transition-colors duration-200 relative">
     <!-- Ambient Liquid Aura in Root Background -->
     <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
         <div class="absolute -top-24 -left-20 w-96 h-96 rounded-full bg-gradient-to-br from-emerald-500/15 via-teal-500/10 to-transparent blur-3xl animate-liquid-orb-1"></div>
@@ -169,7 +184,7 @@
     </div>
 
     <!-- Mobile Frame Container (Fluid 100% on iPhones, Max-W-MD for desktop preview) -->
-    <div class="w-full max-w-md flex-1 min-h-full min-h-[100dvh] bg-slate-50/90 dark:bg-slate-950/90 backdrop-blur-xl text-slate-800 dark:text-slate-100 relative flex flex-col shadow-2xl border-x border-slate-200/80 dark:border-slate-800/80 transition-colors duration-200 z-10">
+    <div class="w-full max-w-md flex-1 min-h-[100dvh] bg-slate-50/90 dark:bg-slate-950/90 backdrop-blur-xl text-slate-800 dark:text-slate-100 relative flex flex-col shadow-2xl border-x border-slate-200/80 dark:border-slate-800/80 transition-colors duration-200 z-10 overflow-x-hidden">
 
         <!-- 1. TOP HEADER (Apple iOS Liquid Glass) -->
         @hasSection('custom_header')
@@ -199,11 +214,11 @@
                         aria-label="Ganti Tema Gelap atau Terang" 
                         class="min-w-[42px] min-h-[42px] w-10.5 h-10.5 flex items-center justify-center rounded-2xl liquid-glass text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-amber-300 ios-press transition-all">
                     <!-- Sun Icon (visible in dark mode) -->
-                    <svg class="w-5 h-5 hidden dark:block text-amber-300 transition-transform duration-300 transform rotate-0 hover:rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <svg class="theme-icon-dark w-5 h-5 text-amber-300 transition-transform duration-300 transform rotate-0 hover:rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
                     </svg>
                     <!-- Moon Icon (visible in light mode) -->
-                    <svg class="w-5 h-5 block dark:hidden text-slate-700 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <svg class="theme-icon-light w-5 h-5 text-slate-700 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
                     </svg>
                 </button>
@@ -233,7 +248,7 @@
 
         <!-- Toast Notification (Flash feedback) -->
         @if(session('success'))
-            <div id="flash-toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-11/12 max-w-sm bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-xl border border-slate-700 flex items-center justify-between transition-all duration-300">
+            <div id="flash-toast" style="top: max(4.5rem, calc(var(--sat, 0px) + 3.75rem)); z-index: 100;" class="fixed left-1/2 -translate-x-1/2 w-11/12 max-w-sm bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-2xl border border-slate-700 flex items-center justify-between transition-all duration-300">
                 <div class="flex items-center gap-2.5">
                     <span class="w-7 h-7 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
@@ -260,7 +275,7 @@
         @endif
 
         @if(session('error'))
-            <div id="flash-error-toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-11/12 max-w-sm bg-rose-900 text-white px-4 py-3 rounded-2xl shadow-xl border border-rose-700 flex items-center justify-between transition-all duration-300">
+            <div id="flash-error-toast" style="top: max(4.5rem, calc(var(--sat, 0px) + 3.75rem)); z-index: 100;" class="fixed left-1/2 -translate-x-1/2 w-11/12 max-w-sm bg-rose-900 text-white px-4 py-3 rounded-2xl shadow-2xl border border-rose-700 flex items-center justify-between transition-all duration-300">
                 <div class="flex items-center gap-2.5">
                     <span class="w-7 h-7 rounded-full bg-rose-500/20 text-rose-300 flex items-center justify-center shrink-0 font-bold">
                         ✕
@@ -285,7 +300,7 @@
         @endif
 
         @if($errors->any())
-            <div id="error-toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-11/12 max-w-sm bg-rose-900 text-white px-4 py-3 rounded-2xl shadow-xl border border-rose-700 flex items-start gap-2.5">
+            <div id="error-toast" style="top: max(4.5rem, calc(var(--sat, 0px) + 3.75rem)); z-index: 100;" class="fixed left-1/2 -translate-x-1/2 w-11/12 max-w-sm bg-rose-900 text-white px-4 py-3 rounded-2xl shadow-2xl border border-rose-700 flex items-start gap-2.5">
                 <span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-300 flex items-center justify-center shrink-0 mt-0.5">
                     !
                 </span>
@@ -313,78 +328,84 @@
     </div>
     <!-- End Mobile Frame Container -->
 
-    <!-- 3. FLOATING DOCK BOTTOM NAVIGATION BAR (APPLE iOS FLOATING GLASS ISLAND) -->
-    <nav class="bottom-nav-dock">
-        <div class="bottom-nav-capsule liquid-dock-capsule rounded-full px-2.5 py-1.5 flex items-center justify-between transition-all duration-300">
+    <!-- 3. MODERN BOTTOM NAVIGATION BAR (Apple Liquid Glass Dock) -->
+    <nav class="fixed bottom-5 w-[92%] sm:w-[396px] liquid-dock-capsule rounded-[28px] px-6 py-2.5 z-40 transition-colors duration-300 left-1/2 -translate-x-1/2" style="margin-bottom: env(safe-area-inset-bottom, 0px);">
+        <div class="flex justify-between items-center w-full">
 
-            {{-- Tab 1: Beranda --}}
+            {{-- Tab 1: Home --}}
             @php $isActive = request()->routeIs('dashboard'); @endphp
             <a href="{{ route('dashboard') }}"
-               class="flex-1 h-12 flex flex-col items-center justify-center rounded-full relative ios-press select-none group {{ $isActive ? 'text-emerald-600 dark:text-emerald-400 font-extrabold' : 'text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 font-semibold' }}"
-               aria-label="Beranda">
-                @if($isActive)
-                    <span class="absolute inset-x-1.5 inset-y-1 bg-emerald-500/15 dark:bg-emerald-400/20 rounded-full pointer-events-none transition-all"></span>
-                @endif
-                <svg class="relative w-5 h-5 shrink-0 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-                </svg>
-                <span class="relative text-[10px] tracking-tight leading-none mt-1">Beranda</span>
+               class="flex flex-col items-center gap-1 group relative {{ $isActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200' }} transition-colors"
+               aria-label="Home">
+                <div class="relative z-10 p-1.5 {{ $isActive ? 'bg-emerald-500/12 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-2xl' : '' }} transition-transform active:scale-95">
+                    <svg class="w-5.5 h-5.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                </div>
+                <span class="text-[10px] font-bold tracking-tight">Home</span>
             </a>
 
-            {{-- Tab 2: Aktivitas --}}
-            @php $isActive = request()->routeIs('todos.*'); @endphp
-            <a href="{{ route('todos.index') }}"
-               class="flex-1 h-12 flex flex-col items-center justify-center rounded-full relative ios-press select-none group {{ $isActive ? 'text-emerald-600 dark:text-emerald-400 font-extrabold' : 'text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 font-semibold' }}"
-               aria-label="Aktivitas">
-                @if($isActive)
-                    <span class="absolute inset-x-1.5 inset-y-1 bg-emerald-500/15 dark:bg-emerald-400/20 rounded-full pointer-events-none transition-all"></span>
-                @endif
-                <svg class="relative w-5 h-5 shrink-0 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="4" y="3.5" width="16" height="17" rx="3"/>
-                    <path d="m8.5 12 2.5 2.5 4.5-5"/>
-                    <path d="M9 3.5a1.5 1.5 0 0 1 3-0.5h0a1.5 1.5 0 0 1 3 0.5"/>
-                </svg>
-                <span class="relative text-[10px] tracking-tight leading-none mt-1">Aktivitas</span>
+            {{-- Tab 2: Finance --}}
+            @php 
+                $isFinanceActive = request()->routeIs('transactions.*') 
+                    || request()->routeIs('wallets.*') 
+                    || request()->routeIs('budgets.*') 
+                    || request()->routeIs('reports.*') 
+                    || request()->routeIs('debts.*') 
+                    || request()->routeIs('subscriptions.*') 
+                    || request()->routeIs('investments.*') 
+                    || request()->routeIs('calculator.*') 
+                    || request()->routeIs('categories.*'); 
+            @endphp
+            <a href="{{ route('transactions.index') }}"
+               class="flex flex-col items-center gap-1 group relative {{ $isFinanceActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200' }} transition-colors"
+               aria-label="Finance">
+                <div class="relative z-10 p-1.5 {{ $isFinanceActive ? 'bg-emerald-500/12 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-2xl' : '' }} transition-transform active:scale-95">
+                    <svg class="w-5.5 h-5.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <span class="text-[10px] font-bold tracking-tight">Finance</span>
             </a>
-
-            {{-- Center Action: Quick Add Transaction FAB (+) (Apple iOS Action Glow Button) --}}
-            <div class="flex items-center justify-center px-1 shrink-0">
+            
+            {{-- Center Action: Quick Add Transaction FAB (+) --}}
+            <div class="flex items-center justify-center shrink-0 -mt-8 relative z-50">
                 <button type="button"
                         onclick="openTransactionModal('expense')"
-                        class="liquid-action-fab w-12 h-12 rounded-full text-white flex items-center justify-center cursor-pointer shrink-0"
-                        aria-label="Catat Transaksi Cepat">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        class="w-13.5 h-13.5 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white flex items-center justify-center cursor-pointer shrink-0 shadow-lg shadow-emerald-500/35 border-[3.5px] border-white dark:border-slate-900 transition-transform hover:scale-105 active:scale-95"
+                        aria-label="Quick Action">
+                    <svg class="w-6.5 h-6.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 4.5v15m7.5-7.5h-15"/>
                     </svg>
                 </button>
             </div>
 
-            {{-- Tab 3: Riwayat Transaksi --}}
-            @php $isActive = request()->routeIs('transactions.*'); @endphp
-            <a href="{{ route('transactions.index') }}"
-               class="flex-1 h-12 flex flex-col items-center justify-center rounded-full relative ios-press select-none group {{ $isActive ? 'text-emerald-600 dark:text-emerald-400 font-extrabold' : 'text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 font-semibold' }}"
-               aria-label="Riwayat Transaksi">
-                @if($isActive)
-                    <span class="absolute inset-x-1.5 inset-y-1 bg-emerald-500/15 dark:bg-emerald-400/20 rounded-full pointer-events-none transition-all"></span>
-                @endif
-                <svg class="relative w-5 h-5 shrink-0 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-                </svg>
-                <span class="relative text-[10px] tracking-tight leading-none mt-1">Riwayat</span>
+            {{-- Tab 3: Drive --}}
+            @php $isActive = request()->routeIs('drive.*'); @endphp
+            <a href="{{ route('drive.index') }}"
+               class="flex flex-col items-center gap-1 group relative {{ $isActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200' }} transition-colors"
+               aria-label="Drive">
+                <div class="relative z-10 p-1.5 {{ $isActive ? 'bg-emerald-500/12 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-2xl' : '' }} transition-transform active:scale-95">
+                    <svg class="w-5.5 h-5.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 12v6m0 0l-3-3m3 3l3-3M3 15V6a2 2 0 012-2h14a2 2 0 012 2v9"></path>
+                    </svg>
+                </div>
+                <span class="text-[10px] font-bold tracking-tight">Drive</span>
             </a>
 
-            {{-- Tab 4: Profil Pengguna --}}
-            @php $isActive = request()->routeIs('profile.*'); @endphp
-            <a href="{{ route('profile.edit') }}"
-               class="flex-1 h-12 flex flex-col items-center justify-center rounded-full relative ios-press select-none group {{ $isActive ? 'text-emerald-600 dark:text-emerald-400 font-extrabold' : 'text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 font-semibold' }}"
-               aria-label="Profil Pengguna">
-                @if($isActive)
-                    <span class="absolute inset-x-1.5 inset-y-1 bg-emerald-500/15 dark:bg-emerald-400/20 rounded-full pointer-events-none transition-all"></span>
-                @endif
-                <svg class="relative w-5 h-5 shrink-0 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-                </svg>
-                <span class="relative text-[10px] tracking-tight leading-none mt-1">Profil</span>
+            {{-- Tab 4: Aktivitas --}}
+            @php $isActive = request()->routeIs('todos.*'); @endphp
+            <a href="{{ route('todos.index') }}"
+               class="flex flex-col items-center gap-1 group relative {{ $isActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200' }} transition-colors"
+               aria-label="Aktivitas">
+                <div class="relative z-10 p-1.5 {{ $isActive ? 'bg-emerald-500/12 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-2xl' : '' }} transition-transform active:scale-95">
+                    <svg class="w-5.5 h-5.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <span class="text-[10px] font-bold tracking-tight">Aktivitas</span>
             </a>
 
         </div>
@@ -396,14 +417,27 @@
             $modalUser = auth()->user() ?? \App\Models\User::first() ?? \App\Models\User::getPrimaryUser();
             $modalWallets = isset($wallets) ? $wallets : ($modalUser ? $modalUser->wallets : collect());
             $modalCategories = isset($categories) ? $categories : ($modalUser ? \App\Models\Category::where(function($q) use ($modalUser) { $q->where('user_id', $modalUser->id)->orWhereNull('user_id'); })->get() : collect());
+            $swanCategoriesJson = json_encode($modalCategories->map(function ($c) {
+                $typeVal = is_string($c->type) ? $c->type : $c->type->value;
+                $labelVal = is_string($c->type) ? ucfirst($c->type) : $c->type->label();
+                return [
+                    'id' => $c->id,
+                    'name' => $c->name,
+                    'type' => $typeVal,
+                    'label' => $labelVal,
+                ];
+            })->values());
         @endphp
+        <script>
+            window.__allSwanCategories = {!! $swanCategoriesJson !!};
+        </script>
 
         <div id="transaction-modal" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true" role="dialog">
             <!-- Backdrop -->
             <div id="modal-backdrop" onclick="closeTransactionModal()" class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity duration-300 opacity-0"></div>
 
             <!-- Bottom Sheet Panel (Apple iOS Liquid Sheet) -->
-            <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
+            <div class="fixed bottom-0 left-0 right-0 z-30 flex justify-center pointer-events-none">
                 <div id="modal-panel" class="w-full max-w-md bg-white/95 dark:bg-slate-900/95 backdrop-blur-3xl rounded-t-[36px] shadow-2xl p-5 modal-sheet-safe border-t border-white/60 dark:border-white/10 pointer-events-auto transform translate-y-full transition-transform duration-300 overflow-y-auto no-scrollbar">
 
                     <!-- Drag Handle -->
@@ -446,20 +480,20 @@
                         @csrf
 
                         <!-- Transaction Type Switcher (iOS Segmented Control) -->
-                        <div class="ios-segmented-track grid grid-cols-3">
-                            <label class="cursor-pointer">
+                        <div class="ios-segmented-track flex items-center w-full">
+                            <label class="flex-1 min-w-0 cursor-pointer">
                                 <input type="radio" name="type" value="expense" checked class="peer sr-only" onchange="updateModalType('expense')">
                                 <div class="min-h-[40px] flex items-center justify-center text-xs font-bold rounded-[13px] text-slate-500 dark:text-slate-400 peer-checked:ios-segmented-thumb peer-checked:text-rose-600 dark:peer-checked:text-rose-400 transition-all">
                                     Pengeluaran
                                 </div>
                             </label>
-                            <label class="cursor-pointer">
+                            <label class="flex-1 min-w-0 cursor-pointer">
                                 <input type="radio" name="type" value="income" class="peer sr-only" onchange="updateModalType('income')">
                                 <div class="min-h-[40px] flex items-center justify-center text-xs font-bold rounded-[13px] text-slate-500 dark:text-slate-400 peer-checked:ios-segmented-thumb peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 transition-all">
                                     Pemasukan
                                 </div>
                             </label>
-                            <label class="cursor-pointer">
+                            <label class="flex-1 min-w-0 cursor-pointer">
                                 <input type="radio" name="type" value="transfer" class="peer sr-only" onchange="updateModalType('transfer')">
                                 <div class="min-h-[40px] flex items-center justify-center text-xs font-bold rounded-[13px] text-slate-500 dark:text-slate-400 peer-checked:ios-segmented-thumb peer-checked:text-slate-800 dark:peer-checked:text-white transition-all">
                                     Transfer
@@ -501,7 +535,7 @@
                             <!-- Dompet (Asal) -->
                             <div>
                                 <label id="wallet-label" for="wallet-select" class="block text-xs font-medium text-slate-400 dark:text-slate-400 mb-1 truncate">Dompet / Rekening</label>
-                                <select id="wallet-select" name="wallet_id" required class="w-full min-h-[44px] px-2.5 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
+                                <select id="wallet-select" name="wallet_id" required onchange="syncTransferWallets('')" class="w-full min-h-[44px] px-2.5 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
                                     @foreach($modalWallets as $w)
                                         <option value="{{ $w->id }}" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
                                             {{ $w->name }} (Rp {{ number_format($w->balance, 0, ',', '.') }})
@@ -513,7 +547,7 @@
                             <!-- Pilihan Dompet Tujuan (Khusus Transfer) -->
                             <div id="target-wallet-container" class="hidden">
                                 <label for="target-wallet-select" class="block text-xs font-medium text-slate-400 dark:text-slate-400 mb-1 truncate">Dompet Tujuan (Ke)</label>
-                                <select id="target-wallet-select" name="target_wallet_id" class="w-full min-h-[44px] px-2.5 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
+                                <select id="target-wallet-select" name="target_wallet_id" onchange="syncTransferWalletsReverse('')" class="w-full min-h-[44px] px-2.5 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
                                     @foreach($modalWallets as $index => $w)
                                         <option value="{{ $w->id }}" {{ $index === 1 ? 'selected' : '' }} class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
                                             {{ $w->name }} (Rp {{ number_format($w->balance, 0, ',', '.') }})
@@ -580,7 +614,7 @@
             <div id="edit-modal-backdrop" onclick="closeEditTransactionModal()" class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity duration-300 opacity-0"></div>
 
             <!-- Bottom Sheet Panel (Apple iOS Liquid Sheet) -->
-            <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
+            <div class="fixed bottom-0 left-0 right-0 z-30 flex justify-center pointer-events-none">
                 <div id="edit-modal-panel" class="w-full max-w-md bg-white/95 dark:bg-slate-900/95 backdrop-blur-3xl rounded-t-[36px] shadow-2xl p-5 modal-sheet-safe border-t border-white/60 dark:border-white/10 pointer-events-auto transform translate-y-full transition-transform duration-300 overflow-y-auto no-scrollbar">
 
                     <!-- Drag Handle -->
@@ -624,20 +658,20 @@
                         @method('PUT')
 
                         <!-- Type Switcher (iOS Segmented Control) -->
-                        <div class="ios-segmented-track grid grid-cols-3">
-                            <label class="cursor-pointer">
+                        <div class="ios-segmented-track flex items-center w-full">
+                            <label class="flex-1 min-w-0 cursor-pointer">
                                 <input type="radio" name="type" id="edit-type-expense" value="expense" class="peer sr-only" onchange="updateEditModalType('expense')">
                                 <div class="min-h-[40px] flex items-center justify-center text-xs font-bold rounded-[13px] text-slate-500 dark:text-slate-400 peer-checked:ios-segmented-thumb peer-checked:text-rose-600 dark:peer-checked:text-rose-400 transition-all">
                                     Pengeluaran
                                 </div>
                             </label>
-                            <label class="cursor-pointer">
+                            <label class="flex-1 min-w-0 cursor-pointer">
                                 <input type="radio" name="type" id="edit-type-income" value="income" class="peer sr-only" onchange="updateEditModalType('income')">
                                 <div class="min-h-[40px] flex items-center justify-center text-xs font-bold rounded-[13px] text-slate-500 dark:text-slate-400 peer-checked:ios-segmented-thumb peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 transition-all">
                                     Pemasukan
                                 </div>
                             </label>
-                            <label class="cursor-pointer">
+                            <label class="flex-1 min-w-0 cursor-pointer">
                                 <input type="radio" name="type" id="edit-type-transfer" value="transfer" class="peer sr-only" onchange="updateEditModalType('transfer')">
                                 <div class="min-h-[40px] flex items-center justify-center text-xs font-bold rounded-[13px] text-slate-500 dark:text-slate-400 peer-checked:ios-segmented-thumb peer-checked:text-slate-800 dark:peer-checked:text-white transition-all">
                                     Transfer
@@ -679,7 +713,7 @@
                             <!-- Dompet Asal -->
                             <div>
                                 <label id="edit-wallet-label" for="edit-wallet-select" class="block text-xs font-medium text-slate-400 dark:text-slate-400 mb-1 truncate">Dompet / Rekening</label>
-                                <select id="edit-wallet-select" name="wallet_id" required class="w-full min-h-[44px] px-2.5 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
+                                <select id="edit-wallet-select" name="wallet_id" required onchange="syncTransferWallets('edit')" class="w-full min-h-[44px] px-2.5 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
                                     @foreach($modalWallets as $w)
                                         <option value="{{ $w->id }}" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
                                             {{ $w->name }} (Rp {{ number_format($w->balance, 0, ',', '.') }})
@@ -691,7 +725,7 @@
                             <!-- Dompet Tujuan (Khusus Transfer) -->
                             <div id="edit-target-wallet-container" class="hidden">
                                 <label for="edit-target-wallet-select" class="block text-xs font-medium text-slate-400 dark:text-slate-400 mb-1 truncate">Dompet Tujuan (Ke)</label>
-                                <select id="edit-target-wallet-select" name="target_wallet_id" class="w-full min-h-[44px] px-2.5 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
+                                <select id="edit-target-wallet-select" name="target_wallet_id" onchange="syncTransferWalletsReverse('edit')" class="w-full min-h-[44px] px-2.5 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
                                     @foreach($modalWallets as $index => $w)
                                         <option value="{{ $w->id }}" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
                                             {{ $w->name }} (Rp {{ number_format($w->balance, 0, ',', '.') }})
@@ -874,7 +908,7 @@
 
         <div id="receipt-scanner-modal" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true" role="dialog">
             <div id="scanner-backdrop" onclick="closeReceiptScannerModal()" class="fixed inset-0 bg-slate-950/75 backdrop-blur-xs transition-opacity duration-300 opacity-0"></div>
-            <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
+            <div class="fixed bottom-0 left-0 right-0 z-30 flex justify-center pointer-events-none">
                 <div id="scanner-panel" class="w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-4 pt-3 modal-sheet-safe border-t border-slate-100 dark:border-slate-800 pointer-events-auto transform translate-y-full transition-transform duration-300 space-y-3 max-h-[92vh] overflow-y-auto no-scrollbar text-slate-800 dark:text-white">
                     <div class="w-10 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-1 cursor-pointer" onclick="closeReceiptScannerModal()"></div>
 
@@ -1201,7 +1235,8 @@
 
                 const toast = document.createElement('div');
                 toast.id = 'swan-toast-container';
-                toast.className = 'fixed top-5 left-1/2 -translate-x-1/2 z-50 w-11/12 max-w-sm px-4 py-3 rounded-2xl shadow-2xl border flex items-center justify-between transition-all duration-300 transform -translate-y-4 opacity-0 pointer-events-auto ' +
+                toast.style.cssText = 'top: max(4.5rem, calc(var(--sat, 0px) + 3.75rem)); z-index: 100;';
+                toast.className = 'fixed left-1/2 -translate-x-1/2 z-[100] w-11/12 max-w-sm px-4 py-3 rounded-2xl shadow-2xl border flex items-center justify-between transition-all duration-300 transform -translate-y-4 opacity-0 pointer-events-auto ' +
                     (type === 'error' 
                         ? 'bg-rose-900/95 text-white border-rose-700 shadow-rose-950/40 backdrop-blur-md' 
                         : 'bg-slate-900/95 dark:bg-slate-800/95 text-white border-slate-700/80 shadow-slate-950/40 backdrop-blur-md');
@@ -1240,13 +1275,22 @@
                 const backdrop = document.getElementById('modal-backdrop');
                 const panel = document.getElementById('modal-panel');
 
+                if (panel && panel.parentElement) {
+                    panel.parentElement.style.zIndex = '30';
+                }
+
                 modal.classList.remove('hidden');
-                setTimeout(() => {
+                document.body.classList.add('modal-open');
+                void modal.offsetHeight;
+
+                requestAnimationFrame(() => {
                     backdrop.classList.remove('opacity-0');
                     backdrop.classList.add('opacity-100');
+                    backdrop.style.opacity = '1';
                     panel.classList.remove('translate-y-full');
                     panel.classList.add('translate-y-0');
-                }, 10);
+                    panel.style.transform = 'translateY(0)';
+                });
 
                 // Set type
                 const radio = document.querySelector(`input[name="type"][value="${defaultType}"]`);
@@ -1768,18 +1812,55 @@
                 }
             }
 
+            function syncTransferWallets(prefix = '') {
+                const sourceSelect = document.getElementById(prefix ? `${prefix}-wallet-select` : 'wallet-select');
+                const targetSelect = document.getElementById(prefix ? `${prefix}-target-wallet-select` : 'target-wallet-select');
+                if (!sourceSelect || !targetSelect) return;
+
+                if (sourceSelect.value && targetSelect.value && sourceSelect.value === targetSelect.value) {
+                    for (let opt of targetSelect.options) {
+                        if (opt.value && opt.value !== sourceSelect.value) {
+                            targetSelect.value = opt.value;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            function syncTransferWalletsReverse(prefix = '') {
+                const sourceSelect = document.getElementById(prefix ? `${prefix}-wallet-select` : 'wallet-select');
+                const targetSelect = document.getElementById(prefix ? `${prefix}-target-wallet-select` : 'target-wallet-select');
+                if (!sourceSelect || !targetSelect) return;
+
+                if (sourceSelect.value && targetSelect.value && sourceSelect.value === targetSelect.value) {
+                    for (let opt of sourceSelect.options) {
+                        if (opt.value && opt.value !== targetSelect.value) {
+                            sourceSelect.value = opt.value;
+                            break;
+                        }
+                    }
+                }
+            }
+
             function closeTransactionModal() {
                 const modal = document.getElementById('transaction-modal');
                 const backdrop = document.getElementById('modal-backdrop');
                 const panel = document.getElementById('modal-panel');
 
-                backdrop.classList.remove('opacity-100');
-                backdrop.classList.add('opacity-0');
-                panel.classList.remove('translate-y-0');
-                panel.classList.add('translate-y-full');
+                document.body.classList.remove('modal-open');
+                if (backdrop) {
+                    backdrop.classList.remove('opacity-100');
+                    backdrop.classList.add('opacity-0');
+                    backdrop.style.opacity = '0';
+                }
+                if (panel) {
+                    panel.classList.remove('translate-y-0');
+                    panel.classList.add('translate-y-full');
+                    panel.style.transform = 'translateY(100%)';
+                }
 
                 setTimeout(() => {
-                    modal.classList.add('hidden');
+                    if (modal) modal.classList.add('hidden');
                 }, 300);
             }
 
@@ -1793,33 +1874,64 @@
                 if (type === 'transfer') {
                     if (walletLabel) walletLabel.textContent = 'Dompet Asal (Dari)';
                     if (targetWalletContainer) targetWalletContainer.classList.remove('hidden');
-                    if (targetWalletSelect) targetWalletSelect.required = true;
+                    if (targetWalletSelect) {
+                        targetWalletSelect.required = true;
+                        targetWalletSelect.disabled = false;
+                    }
                     if (categoryContainer) categoryContainer.classList.add('hidden');
-                    if (categorySelect) categorySelect.required = false;
+                    if (categorySelect) {
+                        categorySelect.required = false;
+                        categorySelect.disabled = true;
+                    }
+                    syncTransferWallets('');
                 } else {
                     if (walletLabel) walletLabel.textContent = 'Dompet / Rekening';
                     if (targetWalletContainer) targetWalletContainer.classList.add('hidden');
-                    if (targetWalletSelect) targetWalletSelect.required = false;
+                    if (targetWalletSelect) {
+                        targetWalletSelect.required = false;
+                        targetWalletSelect.disabled = true;
+                    }
                     if (categoryContainer) categoryContainer.classList.remove('hidden');
                     if (categorySelect) {
                         categorySelect.required = true;
-                        let firstMatched = false;
-                        for (let option of categorySelect.options) {
-                            const optType = option.getAttribute('data-type');
-                            if (!optType || optType === type) {
-                                option.hidden = false;
-                                option.disabled = false;
-                                option.style.display = '';
-                                if (!firstMatched) {
-                                    option.selected = true;
-                                    firstMatched = true;
+                        categorySelect.disabled = false;
+
+                        if (window.__allSwanCategories && window.__allSwanCategories.length > 0) {
+                            const curVal = categorySelect.value;
+                            categorySelect.innerHTML = '';
+                            const filtered = window.__allSwanCategories.filter(c => !c.type || c.type === type);
+                            filtered.forEach(c => {
+                                const opt = document.createElement('option');
+                                opt.value = c.id;
+                                opt.textContent = c.name + (c.label ? ` (${c.label})` : '');
+                                opt.className = 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100';
+                                if (String(c.id) === String(curVal)) {
+                                    opt.selected = true;
                                 }
-                            } else {
-                                option.hidden = true;
-                                option.disabled = true;
-                                option.style.display = 'none';
-                                if (option.selected) {
-                                    option.selected = false;
+                                categorySelect.appendChild(opt);
+                            });
+                            if (!categorySelect.value && filtered.length > 0) {
+                                categorySelect.selectedIndex = 0;
+                            }
+                        } else {
+                            let firstMatched = false;
+                            for (let option of categorySelect.options) {
+                                const optType = option.getAttribute('data-type');
+                                if (!optType || optType === type) {
+                                    option.hidden = false;
+                                    option.disabled = false;
+                                    option.style.display = '';
+                                    if (!firstMatched) {
+                                        option.selected = true;
+                                        firstMatched = true;
+                                    }
+                                } else {
+                                    option.hidden = true;
+                                    option.disabled = true;
+                                    option.style.display = 'none';
+                                    if (option.selected) {
+                                        option.selected = false;
+                                    }
                                 }
                             }
                         }
@@ -1839,44 +1951,71 @@
                 if (type === 'transfer') {
                     if (walletLabel) walletLabel.textContent = 'Dompet Asal (Dari)';
                     if (targetWalletContainer) targetWalletContainer.classList.remove('hidden');
-                    if (targetWalletSelect) targetWalletSelect.required = true;
+                    if (targetWalletSelect) {
+                        targetWalletSelect.required = true;
+                        targetWalletSelect.disabled = false;
+                    }
                     if (categoryContainer) categoryContainer.classList.add('hidden');
                     if (categorySelect) {
                         categorySelect.required = false;
+                        categorySelect.disabled = true;
                         categorySelect.value = '';
                     }
+                    syncTransferWallets('edit');
                 } else {
                     if (walletLabel) walletLabel.textContent = 'Dompet / Rekening';
                     if (targetWalletContainer) targetWalletContainer.classList.add('hidden');
                     if (targetWalletSelect) {
                         targetWalletSelect.required = false;
+                        targetWalletSelect.disabled = true;
                         targetWalletSelect.value = '';
                     }
                     if (categoryContainer) categoryContainer.classList.remove('hidden');
                     if (categorySelect) {
                         categorySelect.required = true;
-                        let firstValidOption = null;
-                        for (let option of categorySelect.options) {
-                            const optType = option.getAttribute('data-type');
-                            if (!optType || optType === type) {
-                                option.hidden = false;
-                                option.disabled = false;
-                                option.style.display = '';
-                                if (!firstValidOption) {
-                                    firstValidOption = option;
+                        categorySelect.disabled = false;
+
+                        if (window.__allSwanCategories && window.__allSwanCategories.length > 0) {
+                            const curVal = categorySelect.value;
+                            categorySelect.innerHTML = '';
+                            const filtered = window.__allSwanCategories.filter(c => !c.type || c.type === type);
+                            filtered.forEach(c => {
+                                const opt = document.createElement('option');
+                                opt.value = c.id;
+                                opt.textContent = c.name + (c.label ? ` (${c.label})` : '');
+                                opt.className = 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100';
+                                if (String(c.id) === String(curVal)) {
+                                    opt.selected = true;
                                 }
-                            } else {
-                                option.hidden = true;
-                                option.disabled = true;
-                                option.style.display = 'none';
-                                if (option.selected) {
-                                    option.selected = false;
+                                categorySelect.appendChild(opt);
+                            });
+                            if (!categorySelect.value && filtered.length > 0) {
+                                categorySelect.selectedIndex = 0;
+                            }
+                        } else {
+                            let firstValidOption = null;
+                            for (let option of categorySelect.options) {
+                                const optType = option.getAttribute('data-type');
+                                if (!optType || optType === type) {
+                                    option.hidden = false;
+                                    option.disabled = false;
+                                    option.style.display = '';
+                                    if (!firstValidOption) {
+                                        firstValidOption = option;
+                                    }
+                                } else {
+                                    option.hidden = true;
+                                    option.disabled = true;
+                                    option.style.display = 'none';
+                                    if (option.selected) {
+                                        option.selected = false;
+                                    }
                                 }
                             }
-                        }
-                        if (categorySelect.selectedOptions.length === 0 || categorySelect.selectedOptions[0].disabled) {
-                            if (firstValidOption) {
-                                firstValidOption.selected = true;
+                            if (categorySelect.selectedOptions.length === 0 || categorySelect.selectedOptions[0].disabled) {
+                                if (firstValidOption) {
+                                    firstValidOption.selected = true;
+                                }
                             }
                         }
                     }
@@ -1890,6 +2029,10 @@
                 const form = document.getElementById('edit-transaction-form');
 
                 if (!modal || !form) return;
+
+                if (panel && panel.parentElement) {
+                    panel.parentElement.style.zIndex = '30';
+                }
 
                 currentActiveTransaction = data;
                 const baseTxUrl = "{{ url('/transactions') }}";
@@ -1929,12 +2072,17 @@
 
                 hideEditModalDeleteConfirm();
                 modal.classList.remove('hidden');
-                setTimeout(() => {
+                document.body.classList.add('modal-open');
+                void modal.offsetHeight;
+
+                requestAnimationFrame(() => {
                     backdrop.classList.remove('opacity-0');
                     backdrop.classList.add('opacity-100');
+                    backdrop.style.opacity = '1';
                     panel.classList.remove('translate-y-full');
                     panel.classList.add('translate-y-0');
-                }, 10);
+                    panel.style.transform = 'translateY(0)';
+                });
             }
 
             function showEditModalDeleteConfirm() {
@@ -1959,10 +2107,17 @@
                 if (!modal) return;
 
                 hideEditModalDeleteConfirm();
-                backdrop.classList.remove('opacity-100');
-                backdrop.classList.add('opacity-0');
-                panel.classList.remove('translate-y-0');
-                panel.classList.add('translate-y-full');
+                document.body.classList.remove('modal-open');
+                if (backdrop) {
+                    backdrop.classList.remove('opacity-100');
+                    backdrop.classList.add('opacity-0');
+                    backdrop.style.opacity = '0';
+                }
+                if (panel) {
+                    panel.classList.remove('translate-y-0');
+                    panel.classList.add('translate-y-full');
+                    panel.style.transform = 'translateY(100%)';
+                }
 
                 setTimeout(() => {
                     modal.classList.add('hidden');
@@ -2143,18 +2298,31 @@
             window.openSheetModal = function(modalId) {
                 const modal = typeof modalId === 'string' ? document.getElementById(modalId) : modalId;
                 if (!modal) return;
+
+                if (modal.parentElement !== document.body) {
+                    document.body.appendChild(modal);
+                }
+
                 const backdrop = modal.querySelector('.modal-backdrop') || modal.querySelector('[data-backdrop]') || modal.children[0];
                 const panel = modal.querySelector('.modal-sheet-safe') || modal.querySelector('.modal-panel') || (modal.children[1] ? (modal.children[1].firstElementChild || modal.children[1]) : null);
                 
+                if (panel && panel.parentElement) {
+                    panel.parentElement.style.zIndex = '30';
+                }
+
+                document.body.classList.add('modal-open');
                 modal.classList.remove('hidden');
+                void modal.offsetHeight;
                 requestAnimationFrame(() => {
                     if (backdrop) {
                         backdrop.classList.remove('opacity-0');
                         backdrop.classList.add('opacity-100');
+                        backdrop.style.opacity = '1';
                     }
                     if (panel) {
                         panel.classList.remove('translate-y-full');
                         panel.classList.add('translate-y-0');
+                        panel.style.transform = 'translateY(0)';
                     }
                 });
             };
@@ -2165,13 +2333,16 @@
                 const backdrop = modal.querySelector('.modal-backdrop') || modal.querySelector('[data-backdrop]') || modal.children[0];
                 const panel = modal.querySelector('.modal-sheet-safe') || modal.querySelector('.modal-panel') || (modal.children[1] ? (modal.children[1].firstElementChild || modal.children[1]) : null);
                 
+                document.body.classList.remove('modal-open');
                 if (backdrop) {
                     backdrop.classList.remove('opacity-100');
                     backdrop.classList.add('opacity-0');
+                    backdrop.style.opacity = '0';
                 }
                 if (panel) {
                     panel.classList.remove('translate-y-0');
                     panel.classList.add('translate-y-full');
+                    panel.style.transform = 'translateY(100%)';
                 }
                 setTimeout(() => {
                     modal.classList.add('hidden');

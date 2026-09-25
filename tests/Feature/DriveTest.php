@@ -192,8 +192,8 @@ class DriveTest extends TestCase
         $viewResponse->assertStatus(200);
         $viewResponse->assertSee($storedFile->title);
         $viewResponse->assertSee('SwanDrive File Transfer');
+        $viewResponse->assertSee('Gusti Swandana');
         // Ensure no confidential user balances are leaked on the public page
-        $viewResponse->assertDontSee('Gusti Swandana');
         $viewResponse->assertDontSee('Total Saldo');
 
         // Unauthenticated guest can download

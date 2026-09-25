@@ -48,6 +48,7 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
+            $request->session()->put('last_activity_time', now()->timestamp);
 
             return redirect()->intended(route('dashboard'))
                 ->with('success', 'Selamat datang kembali, '.Auth::user()->name.'!');
@@ -99,6 +100,7 @@ class AuthController extends Controller
 
         Auth::login($user, true);
         $request->session()->regenerate();
+        $request->session()->put('last_activity_time', now()->timestamp);
 
         if ($request->wantsJson()) {
             return response()->json([

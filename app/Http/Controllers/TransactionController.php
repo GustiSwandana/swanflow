@@ -76,7 +76,7 @@ class TransactionController extends Controller
     /**
      * Store a newly created transaction and update wallet balance atomically.
      */
-    public function store(StoreTransactionRequest $request): RedirectResponse
+    public function store(StoreTransactionRequest $request): RedirectResponse|JsonResponse
     {
         /** @var User $user */
         $user = $request->user() ?? User::first() ?? User::getPrimaryUser();

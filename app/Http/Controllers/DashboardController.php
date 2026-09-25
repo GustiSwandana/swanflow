@@ -169,6 +169,7 @@ class DashboardController extends Controller
             ->count();
 
         $storedFilesCount = $user->storedFiles()->count();
+        $recentStoredFiles = $user->storedFiles()->with('folder')->latest()->take(4)->get();
         $activeDropLinksCount = $user->uploadLinks()
             ->get()
             ->filter(fn ($link) => $link->canAcceptUpload())
@@ -199,6 +200,7 @@ class DashboardController extends Controller
             'todayTodos' => $todayTodos,
             'pendingTodosCount' => $pendingTodosCount,
             'storedFilesCount' => $storedFilesCount,
+            'recentStoredFiles' => $recentStoredFiles,
             'activeLinksCount' => $activeLinksCount,
             'investmentSummary' => [
                 'totalValue' => $totalInvestmentValue,

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class UploadLink extends Model
 {
@@ -13,6 +14,7 @@ class UploadLink extends Model
 
     protected $fillable = [
         'user_id',
+        'folder_id',
         'title',
         'token',
         'description',
@@ -36,9 +38,44 @@ class UploadLink extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function folder(): BelongsTo
+    {
+        return $this->belongsTo(Folder::class);
+    }
+
     public function files(): HasMany
     {
         return $this->hasMany(StoredFile::class);
+    }
+
+    /**
+     * Get or automatically create the dedicated folder for this drop link.
+     */
+    public function getOrCreateFolder(): Folder
+    {
+        if ($this->folder_id) {
+            $existing = Folder::where('user_id', $this->user_id)->find($this->folder_id);
+            if ($existing) {
+                return $existing;
+            }
+        }
+
+        $folder = Folder::firstOrCreate(
+            [
+                'user_id' => $this->user_id,
+                'name' => $this->title,
+            ],
+            [
+                'color' => 'teal',
+                'share_token' => Str::random(40),
+                'is_public' => false,
+                'description' => 'Folder khusus berkas yang diunggah via link: '.$this->title,
+            ]
+        );
+
+        $this->update(['folder_id' => $folder->id]);
+
+        return $folder;
     }
 
     public function isExpired(): bool

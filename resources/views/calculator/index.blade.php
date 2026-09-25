@@ -4,7 +4,7 @@
 
 @section('custom_header')
     <!-- iOS Liquid Glass Header -->
-    <div class="relative overflow-hidden bg-gradient-to-b from-slate-900 via-emerald-950/90 to-slate-950/95 text-white px-5 pb-8 border-b border-white/20 dark:border-white/10 rounded-b-[36px] shadow-2xl backdrop-blur-3xl transition-all" style="padding-top: max(3.5rem, calc(var(--sat, 0px) + 0.75rem));">
+    <div class="relative overflow-hidden bg-gradient-to-b from-emerald-600/95 via-emerald-600/85 to-teal-700/90 dark:from-slate-900/95 dark:via-emerald-950/90 dark:to-slate-950/95 text-white px-5 pb-8 border-b border-white/20 dark:border-white/10 rounded-b-[36px] shadow-2xl backdrop-blur-3xl transition-colors duration-200" style="padding-top: max(3.5rem, calc(var(--sat, 0px) + 0.75rem));">
         <!-- Specular Top Rim Line -->
         <div class="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none"></div>
 
@@ -46,12 +46,12 @@
                         onclick="toggleSwanFlowTheme()" 
                         aria-label="Ganti Tema Gelap atau Terang" 
                         class="min-w-[40px] min-h-[40px] w-10 h-10 flex items-center justify-center rounded-[18px] text-white/90 hover:text-white liquid-glass border border-white/25 ios-press transition-all shadow-xs">
-                    <svg class="w-4.5 h-4.5 hidden dark:block text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
-                    </svg>
-                    <svg class="w-4.5 h-4.5 block dark:hidden text-emerald-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
-                    </svg>
+                <svg class="theme-icon-dark w-5 h-5 text-amber-300 transition-transform duration-300 transform rotate-0 hover:rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+                </svg>
+                <svg class="theme-icon-light w-5 h-5 text-white transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+                </svg>
                 </button>
             </div>
         </div>
@@ -139,7 +139,7 @@
         </div>
 
         <!-- 2. Hero Projection Result Card (Apple Wallet Fluid) -->
-        <div class="relative overflow-hidden rounded-[32px] p-6 text-white shadow-2xl border border-white/20 dark:border-white/10 backdrop-blur-2xl bg-gradient-to-br from-slate-900 via-emerald-950 to-slate-950">
+        <div class="relative overflow-hidden rounded-[32px] p-6 text-white shadow-2xl border border-white/20 dark:border-white/10 backdrop-blur-2xl bg-gradient-to-br from-emerald-700 via-teal-800 to-slate-950 dark:from-slate-900 dark:via-emerald-950 dark:to-slate-950">
             <!-- Specular top highlight -->
             <div class="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none"></div>
 
@@ -455,7 +455,7 @@
         </div>
 
         <!-- 2. Split Result Card (Apple Wallet Fluid) -->
-        <div class="relative overflow-hidden rounded-[32px] p-6 text-white shadow-2xl border border-white/20 dark:border-white/10 backdrop-blur-2xl bg-gradient-to-br from-slate-900 via-teal-950 to-slate-950 space-y-4">
+        <div class="relative overflow-hidden rounded-[32px] p-6 text-white shadow-2xl border border-white/20 dark:border-white/10 backdrop-blur-2xl bg-gradient-to-br from-teal-700 via-emerald-800 to-slate-950 dark:from-slate-900 dark:via-teal-950 dark:to-slate-950 space-y-4">
             <!-- Specular top highlight -->
             <div class="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none"></div>
 
@@ -540,8 +540,8 @@
     </div>
 </div>
 
-<!-- Copy Toast Notification -->
-<div id="calc-toast" class="fixed top-5 inset-x-0 z-50 flex justify-center pointer-events-none transition-all duration-300 opacity-0 -translate-y-4">
+<!-- Copy Toast Notification (Dynamic Island & Notch Safe) -->
+<div id="calc-toast" class="fixed ios-safe-toast inset-x-0 z-50 flex justify-center pointer-events-none transition-all duration-300 opacity-0 -translate-y-4" style="top: max(1.25rem, calc(var(--sat, 0px) + 0.75rem));">
     <div class="liquid-glass bg-slate-900/95 dark:bg-white/95 text-white dark:text-slate-900 px-5 py-3 rounded-[20px] shadow-2xl border border-white/20 dark:border-slate-200/20 text-xs font-bold flex items-center gap-2">
         <svg class="w-4 h-4 text-emerald-400 dark:text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />

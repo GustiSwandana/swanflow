@@ -4,7 +4,7 @@
 
 @section('custom_header')
     <!-- Top Header: Apple iOS Liquid Glass SwanDrive Header -->
-    <div class="relative overflow-hidden bg-gradient-to-b from-slate-900 via-teal-950/90 to-slate-950/95 text-white px-5 pb-8 border-b border-white/20 dark:border-white/10 rounded-b-[36px] shadow-2xl backdrop-blur-3xl transition-all" style="padding-top: max(3.5rem, calc(var(--sat, 0px) + 0.85rem));">
+    <div class="relative overflow-hidden bg-gradient-to-b from-teal-600/95 via-teal-600/85 to-emerald-700/90 dark:from-slate-900/95 dark:via-teal-950/90 dark:to-slate-950/95 text-white px-5 pb-8 border-b border-white/20 dark:border-white/10 rounded-b-[36px] shadow-2xl backdrop-blur-3xl transition-colors duration-200" style="padding-top: max(3.5rem, calc(var(--sat, 0px) + 0.85rem));">
         <!-- Specular Highlight Line at the Top -->
         <div class="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none"></div>
 
@@ -13,29 +13,61 @@
         <div class="absolute -bottom-10 -left-10 w-44 h-44 bg-emerald-400/20 dark:bg-emerald-500/10 rounded-full blur-2xl pointer-events-none animate-liquid-orb-2"></div>
 
         <!-- Top Navigation Bar (Spacious & iOS Status Bar Safe) -->
-        <div class="relative z-10 flex items-center justify-between mb-4">
-            <div class="flex items-center gap-3 min-w-0">
+        <div class="relative z-10 flex items-center justify-between mb-4 gap-2">
+            <!-- Left: Back Button & Brand Title -->
+            <div class="flex items-center gap-2.5 min-w-0">
                 <a href="{{ route('dashboard') }}" class="w-10 h-10 rounded-[18px] liquid-glass bg-white/15 hover:bg-white/25 active:scale-95 flex items-center justify-center transition-all border border-white/30 shrink-0 shadow-xs ios-press" aria-label="Kembali ke Beranda">
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
                     </svg>
                 </a>
-                <div class="min-w-0">
-                    <div class="flex items-center gap-2">
-                        <h1 class="text-base sm:text-lg font-black tracking-tight text-white leading-tight">SwanDrive</h1>
-                        <span class="text-[10px] font-black px-2 py-0.5 rounded-full bg-teal-400/25 text-teal-200 border border-teal-300/30 shadow-2xs backdrop-blur-md">Vault</span>
+                <div class="flex flex-col min-w-0">
+                    <div class="flex items-center gap-1.5">
+                        <h1 class="text-base font-black tracking-tight text-white leading-tight">SwanDrive</h1>
+                        <span class="text-[10px] font-black px-2 py-0.5 rounded-full bg-teal-400/25 text-teal-200 border border-teal-300/30 shadow-2xs backdrop-blur-md shrink-0">Vault</span>
                     </div>
-                    <p class="text-[11px] text-teal-200/80 font-semibold truncate mt-0.5">Penyimpanan & Terima Berkas</p>
+                    <p class="text-[11px] text-teal-200/80 font-semibold truncate mt-0.5">Penyimpanan Cloud</p>
                 </div>
             </div>
 
-            <!-- Upload Primary Action Button (Liquid Pill) -->
-            <button type="button" onclick="document.getElementById('upload-input').click()" class="h-9 px-4 rounded-[18px] liquid-glass bg-teal-500 hover:bg-teal-400 active:scale-95 text-white text-xs font-black shadow-lg shadow-teal-950/40 border border-white/30 flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap shrink-0 ios-press">
-                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-                <span>Upload</span>
-            </button>
+            <!-- Right: Action Buttons (Folder, Upload & Theme Toggle) -->
+            <div class="flex items-center gap-1.5 shrink-0">
+                <!-- Buat Folder Baru -->
+                <button type="button" 
+                        onclick="openCreateFolderModal()" 
+                        class="w-10 h-10 rounded-[18px] liquid-glass bg-white/15 hover:bg-white/25 active:scale-95 text-white shadow-xs border border-white/30 flex items-center justify-center transition-all cursor-pointer ios-press" 
+                        title="Buat Folder Baru" 
+                        aria-label="Buat Folder Baru">
+                    <svg class="w-4.5 h-4.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 10.5v6m3-3h-6M3 7.5a2.25 2.25 0 012.25-2.25h4.125c.621 0 1.217.246 1.657.686l1.371 1.372c.44.44 1.036.686 1.657.686H18.75A2.25 2.25 0 0121 10.5v8.25A2.25 2.25 0 0118.75 21H5.25A2.25 2.25 0 013 18.75V7.5z" />
+                    </svg>
+                </button>
+
+                <!-- Upload Button (Sleek Apple Action Icon) -->
+                <button type="button" 
+                        onclick="document.getElementById('upload-input').click()" 
+                        class="w-10 h-10 rounded-[18px] bg-gradient-to-tr from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 active:scale-95 text-white shadow-lg shadow-emerald-500/30 border border-white/25 flex items-center justify-center transition-all cursor-pointer ios-press" 
+                        title="Upload Berkas" 
+                        aria-label="Upload Berkas">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                    </svg>
+                </button>
+
+                <!-- Theme Toggle Button -->
+                <button type="button" 
+                        id="theme-toggle-btn"
+                        onclick="toggleSwanFlowTheme()" 
+                        aria-label="Ganti Tema Gelap atau Terang" 
+                        class="w-10 h-10 flex items-center justify-center rounded-[18px] liquid-glass text-white/90 hover:text-white bg-white/15 hover:bg-white/25 border border-white/30 dark:bg-slate-800/80 dark:border-white/10 active:scale-95 transition-all shadow-xs ios-press">
+                    <svg class="theme-icon-dark w-5 h-5 text-amber-300 transition-transform duration-300 transform rotate-0 hover:rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+                    </svg>
+                    <svg class="theme-icon-light w-5 h-5 text-white transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+                    </svg>
+                </button>
+            </div>
         </div>
 
         <!-- Storage Summary Card with Apple Liquid Glassmorphism -->
@@ -81,12 +113,12 @@
 @endsection
 
 @section('content')
-<div class="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-2xl rounded-t-[36px] pt-5 px-4 pb-[max(6.5rem,calc(5.5rem+var(--sab,0px)))] shadow-2xl -mt-5 relative z-10 border-t border-white/60 dark:border-white/10 flex-1 flex flex-col min-h-full space-y-4 text-slate-800 dark:text-white transition-colors animate-swan-in">
+<div class="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-2xl rounded-t-[36px] pt-5 px-4 pb-[max(7.5rem,calc(6.5rem+var(--sab,0px)))] shadow-2xl -mt-5 relative z-10 border-t border-slate-200/80 dark:border-white/10 flex-1 flex flex-col min-h-full space-y-5 text-slate-800 dark:text-white transition-colors animate-swan-in">
     <!-- Pull handle indicator for authentic iOS sheet aesthetic -->
     <div class="w-10 h-1.5 bg-slate-300/80 dark:bg-slate-700/80 rounded-full mx-auto mb-1"></div>
 
     <!-- TAB SWITCHER: Berkas Saya vs Link Terima File (iOS Segmented Control) -->
-    <div class="ios-segmented-track p-1 rounded-[22px] flex items-center gap-1 w-full bg-slate-200/60 dark:bg-slate-900/70 backdrop-blur-xl border border-white/50 dark:border-white/10 shadow-inner">
+    <div class="ios-segmented-track p-1 rounded-[22px] flex items-center gap-1 w-full bg-slate-200/60 dark:bg-white/5 backdrop-blur-xl border border-white/50 dark:border-white/10 shadow-inner">
         <a href="{{ route('drive.index', ['tab' => 'files']) }}"
            class="flex-1 py-2 rounded-[18px] text-xs font-black text-center transition-all flex items-center justify-center gap-1.5 ios-press {{ $activeTab !== 'drops' ? 'ios-segmented-thumb bg-white dark:bg-slate-800 text-teal-600 dark:text-teal-400 shadow-md ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white font-bold' }}">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -113,14 +145,14 @@
             <form id="upload-form" action="{{ route('drive.store') }}" method="POST" enctype="multipart/form-data" class="space-y-3">
                 @csrf
                 
-                <!-- Hidden File Input -->
-                <input type="file" id="upload-input" name="file" class="hidden" onchange="handleFileSelect(this)" required>
+                <!-- Hidden File Input (Supports multiple files) -->
+                <input type="file" id="upload-input" name="files[]" multiple class="hidden" onchange="handleFileSelect(this)" required>
 
                 <!-- Dropzone Box -->
                 <div id="dropzone" onclick="document.getElementById('upload-input').click()"
-                     class="border-2 border-dashed border-teal-400/50 dark:border-teal-500/40 rounded-[20px] p-5 flex flex-col items-center justify-center text-center cursor-pointer bg-teal-50/40 dark:bg-teal-950/20 hover:bg-teal-50/80 dark:hover:bg-teal-950/40 active:scale-[0.99] transition-all ios-press">
-                    <div class="w-12 h-12 rounded-[18px] bg-teal-500/15 text-teal-600 dark:text-teal-400 flex items-center justify-center mb-2 shadow-xs">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                     class="border-2 border-dashed border-teal-400/50 dark:border-teal-500/40 rounded-[20px] p-4 sm:p-5 flex flex-col items-center justify-center text-center cursor-pointer bg-teal-50/40 dark:bg-teal-500/10 hover:bg-teal-50/80 dark:hover:bg-teal-500/20 active:scale-[0.99] transition-all ios-press">
+                    <div class="w-10 h-10 rounded-[16px] bg-teal-500/15 text-teal-600 dark:text-teal-400 flex items-center justify-center mb-2 shadow-xs">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
                         </svg>
                     </div>
@@ -128,7 +160,7 @@
                         Sentuh untuk upload berkas atau seret ke sini
                     </span>
                     <span class="text-[10px] text-slate-500 dark:text-slate-400 font-semibold mt-0.5">
-                        PDF, Dokumen, Excel, Gambar, ZIP (Maks 50 MB)
+                        PDF, Dokumen, Excel, Gambar, ZIP (Bisa pilih banyak berkas sekaligus)
                     </span>
                 </div>
 
@@ -148,9 +180,20 @@
                             <input type="text" id="file-title" name="title" placeholder="Misal: Nota Pembelian MacBook" class="w-full px-3.5 py-2.5 text-xs rounded-[16px] bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium">
                         </div>
                         <div>
-                            <label for="file-notes" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">Catatan Tambahan (Opsional)</label>
-                            <input type="text" id="file-notes" name="notes" placeholder="Catatan ringkas..." class="w-full px-3.5 py-2.5 text-xs rounded-[16px] bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium">
+                            <label for="upload-target-folder" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">Simpan di Folder</label>
+                            <select id="upload-target-folder" name="folder_id" class="w-full px-3.5 py-2.5 text-xs rounded-[16px] bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium">
+                                <option value="">📁 Root (Tanpa Folder)</option>
+                                @foreach($allUserFolders as $uf)
+                                    <option value="{{ $uf->id }}" {{ ($currentFolder && $currentFolder->id === $uf->id) ? 'selected' : '' }}>
+                                        📁 {{ $uf->name }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
+                    </div>
+                    <div>
+                        <label for="file-notes" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">Catatan Tambahan (Opsional)</label>
+                        <input type="text" id="file-notes" name="notes" placeholder="Catatan ringkas..." class="w-full px-3.5 py-2.5 text-xs rounded-[16px] bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium">
                     </div>
 
                     <div class="flex items-center gap-2 pt-1">
@@ -195,7 +238,7 @@
         </div>
 
         <!-- Quick Drop Link Banner -->
-        <div class="flex items-center justify-between p-3.5 rounded-[24px] liquid-card bg-gradient-to-r from-teal-500/10 via-emerald-500/10 to-teal-500/5 dark:from-teal-950/40 dark:to-emerald-950/20 border border-teal-400/30 backdrop-blur-xl shadow-xs">
+        <div class="flex items-center justify-between p-3.5 rounded-[24px] liquid-card bg-white/80 dark:bg-slate-900/75 border border-white/60 dark:border-white/10 backdrop-blur-2xl shadow-sm hover:shadow-md transition-all">
             <div class="flex items-center gap-3 min-w-0 pr-2">
                 <div class="w-9 h-9 rounded-[16px] bg-teal-500/20 dark:bg-teal-500/30 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0 shadow-2xs">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
@@ -219,21 +262,97 @@
             </button>
         </div>
 
+        @if($currentFolder)
+            <!-- BREADCRUMB & CURRENT FOLDER BANNER -->
+            <div class="liquid-card rounded-[24px] p-4 bg-white/80 dark:bg-slate-900/75 border border-white/60 dark:border-white/10 shadow-sm backdrop-blur-2xl space-y-3">
+                <div class="flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <a href="{{ $currentFolder->parent_id ? route('drive.index', ['folder_id' => $currentFolder->parent_id]) : route('drive.index') }}"
+                           class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center transition-all shrink-0 active:scale-95" title="Kembali ke folder sebelumnya">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                            </svg>
+                        </a>
+                        <div class="min-w-0">
+                            <!-- Breadcrumbs Trail -->
+                            <div class="flex items-center gap-1 text-[11px] text-slate-400 font-semibold overflow-x-auto no-scrollbar">
+                                <a href="{{ route('drive.index') }}" class="hover:text-teal-600 dark:hover:text-teal-400 transition-colors">SwanDrive</a>
+                                @foreach($breadcrumbs as $crumb)
+                                    <span>/</span>
+                                    @if($crumb->id === $currentFolder->id)
+                                        <span class="text-teal-600 dark:text-teal-400 font-black truncate max-w-[120px]">{{ $crumb->name }}</span>
+                                    @else
+                                        <a href="{{ route('drive.index', ['folder_id' => $crumb->id]) }}" class="hover:text-teal-600 dark:hover:text-teal-400 transition-colors truncate max-w-[100px]">{{ $crumb->name }}</a>
+                                    @endif
+                                @endforeach
+                            </div>
+                            <div class="flex items-center gap-2 mt-0.5">
+                                <h2 class="text-base font-black text-slate-900 dark:text-white truncate">{{ $currentFolder->name }}</h2>
+                                @if($currentFolder->is_public)
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 flex items-center gap-1">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                        Dibagikan
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Folder Action Controls -->
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <button type="button"
+                                onclick="openFolderShareModal('{{ $currentFolder->id }}', '{{ addslashes($currentFolder->name) }}', '{{ $currentFolder->formatted_size }}', '{{ $currentFolder->share_url }}', {{ $currentFolder->is_public ? 'true' : 'false' }}, '{{ route('drive.folders.share.toggle', $currentFolder) }}')"
+                                class="p-2 rounded-xl liquid-glass bg-teal-500/10 hover:bg-teal-500/20 text-teal-600 dark:text-teal-400 border border-teal-500/20 active:scale-95 transition-all cursor-pointer"
+                                title="Bagikan Folder Ini">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
+                            </svg>
+                        </button>
+                        <button type="button"
+                                onclick="openEditFolderModal('{{ $currentFolder->id }}', '{{ addslashes($currentFolder->name) }}', '{{ $currentFolder->color }}', '{{ addslashes($currentFolder->description ?? '') }}')"
+                                class="p-2 rounded-xl liquid-glass bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-white/40 active:scale-95 transition-all cursor-pointer"
+                                title="Edit Folder">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
+                            </svg>
+                        </button>
+                        <button type="button"
+                                onclick="confirmDeleteFolder('{{ $currentFolder->id }}', '{{ addslashes($currentFolder->name) }}', '{{ route('drive.folders.destroy', $currentFolder) }}')"
+                                class="p-2 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200/60 dark:border-rose-900/40 active:scale-95 transition-all cursor-pointer"
+                                title="Hapus Folder Ini">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                @if(!empty($currentFolder->description))
+                    <p class="text-xs text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-100 dark:border-slate-800">
+                        {{ $currentFolder->description }}
+                    </p>
+                @endif
+            </div>
+        @endif
+
         <!-- 2. SEARCH & FILTER BAR -->
         <div class="space-y-2.5">
             <!-- Search Input Form -->
             <form method="GET" action="{{ route('drive.index') }}" class="relative">
                 <input type="hidden" name="tab" value="files">
+                @if($currentFolder)
+                    <input type="hidden" name="folder_id" value="{{ $currentFolder->id }}">
+                @endif
                 <input type="hidden" name="category" value="{{ $activeCategory }}">
                 <input type="text" name="search" value="{{ $search }}" placeholder="Cari nama file, ekstensi, pengirim, atau catatan..."
-                       class="w-full pl-9 pr-8 py-2.5 text-xs rounded-[20px] bg-white/80 dark:bg-slate-900/80 border border-white/60 dark:border-white/10 text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 shadow-xs backdrop-blur-xl font-medium">
+                       class="w-full pl-9 pr-8 py-2.5 text-xs rounded-[20px] liquid-card bg-white/80 dark:bg-slate-900/75 border border-white/60 dark:border-white/10 text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 shadow-xs backdrop-blur-2xl font-medium">
                 <span class="absolute left-3.5 top-3 text-slate-400">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                     </svg>
                 </span>
                 @if(!empty($search))
-                    <a href="{{ route('drive.index', ['tab' => 'files', 'category' => $activeCategory]) }}" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs font-bold">
+                    <a href="{{ route('drive.index', array_filter(['tab' => 'files', 'category' => $activeCategory, 'folder_id' => $currentFolder?->id])) }}" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs font-bold">
                         ✕
                     </a>
                 @endif
@@ -241,27 +360,103 @@
 
             <!-- Category Filter Pills -->
             <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 -mx-1 px-1">
-                <a href="{{ route('drive.index', ['tab' => 'files', 'category' => 'all', 'search' => $search]) }}"
-                   class="px-3.5 py-1.5 rounded-[16px] text-xs font-black shrink-0 transition-all ios-press {{ $activeCategory === 'all' ? 'bg-teal-500 text-white shadow-sm ring-1 ring-teal-400/30' : 'liquid-glass bg-white/70 dark:bg-slate-900/70 text-slate-600 dark:text-slate-400 border border-white/50 dark:border-white/10 hover:bg-white/90' }}">
+                <a href="{{ route('drive.index', array_filter(['tab' => 'files', 'category' => 'all', 'search' => $search, 'folder_id' => $currentFolder?->id])) }}"
+                   class="px-3.5 py-1.5 rounded-[16px] text-xs font-black shrink-0 transition-all ios-press {{ $activeCategory === 'all' ? 'bg-teal-500 text-white shadow-sm ring-1 ring-teal-400/30' : 'liquid-glass bg-white/70 dark:bg-slate-900/75 text-slate-600 dark:text-slate-400 border border-white/50 dark:border-white/10 hover:bg-white/90' }}">
                     Semua ({{ $categoryCounts['all'] }})
                 </a>
-                <a href="{{ route('drive.index', ['tab' => 'files', 'category' => 'document', 'search' => $search]) }}"
-                   class="px-3.5 py-1.5 rounded-[16px] text-xs font-black shrink-0 transition-all ios-press {{ $activeCategory === 'document' ? 'bg-emerald-600 text-white shadow-sm ring-1 ring-emerald-400/30' : 'liquid-glass bg-white/70 dark:bg-slate-900/70 text-slate-600 dark:text-slate-400 border border-white/50 dark:border-white/10 hover:bg-white/90' }}">
+                <a href="{{ route('drive.index', array_filter(['tab' => 'files', 'category' => 'document', 'search' => $search, 'folder_id' => $currentFolder?->id])) }}"
+                   class="px-3.5 py-1.5 rounded-[16px] text-xs font-black shrink-0 transition-all ios-press {{ $activeCategory === 'document' ? 'bg-emerald-600 text-white shadow-sm ring-1 ring-emerald-400/30' : 'liquid-glass bg-white/70 dark:bg-slate-900/75 text-slate-600 dark:text-slate-400 border border-white/50 dark:border-white/10 hover:bg-white/90' }}">
                     📄 Dokumen ({{ $categoryCounts['document'] }})
                 </a>
-                <a href="{{ route('drive.index', ['tab' => 'image', 'category' => 'image', 'search' => $search]) }}"
-                   class="px-3.5 py-1.5 rounded-[16px] text-xs font-black shrink-0 transition-all ios-press {{ $activeCategory === 'image' ? 'bg-purple-600 text-white shadow-sm ring-1 ring-purple-400/30' : 'liquid-glass bg-white/70 dark:bg-slate-900/70 text-slate-600 dark:text-slate-400 border border-white/50 dark:border-white/10 hover:bg-white/90' }}">
+                <a href="{{ route('drive.index', array_filter(['tab' => 'files', 'category' => 'image', 'search' => $search, 'folder_id' => $currentFolder?->id])) }}"
+                   class="px-3.5 py-1.5 rounded-[16px] text-xs font-black shrink-0 transition-all ios-press {{ $activeCategory === 'image' ? 'bg-purple-600 text-white shadow-sm ring-1 ring-purple-400/30' : 'liquid-glass bg-white/70 dark:bg-slate-900/75 text-slate-600 dark:text-slate-400 border border-white/50 dark:border-white/10 hover:bg-white/90' }}">
                     🖼️ Gambar ({{ $categoryCounts['image'] }})
                 </a>
-                <a href="{{ route('drive.index', ['tab' => 'files', 'category' => 'archive', 'search' => $search]) }}"
+                <a href="{{ route('drive.index', array_filter(['tab' => 'files', 'category' => 'archive', 'search' => $search, 'folder_id' => $currentFolder?->id])) }}"
                    class="px-3.5 py-1.5 rounded-[16px] text-xs font-black shrink-0 transition-all ios-press {{ $activeCategory === 'archive' ? 'bg-amber-600 text-white shadow-sm ring-1 ring-amber-400/30' : 'liquid-glass bg-white/70 dark:bg-slate-900/70 text-slate-600 dark:text-slate-400 border border-white/50 dark:border-white/10 hover:bg-white/90' }}">
                     📦 Arsip ({{ $categoryCounts['archive'] }})
                 </a>
-                <a href="{{ route('drive.index', ['tab' => 'files', 'category' => 'other', 'search' => $search]) }}"
+                <a href="{{ route('drive.index', array_filter(['tab' => 'files', 'category' => 'other', 'search' => $search, 'folder_id' => $currentFolder?->id])) }}"
                    class="px-3.5 py-1.5 rounded-[16px] text-xs font-black shrink-0 transition-all ios-press {{ $activeCategory === 'other' ? 'bg-slate-700 text-white shadow-sm ring-1 ring-slate-400/30' : 'liquid-glass bg-white/70 dark:bg-slate-900/70 text-slate-600 dark:text-slate-400 border border-white/50 dark:border-white/10 hover:bg-white/90' }}">
                     📎 Lainnya ({{ $categoryCounts['other'] }})
                 </a>
             </div>
+        </div>
+
+        <!-- 3. FOLDERS SECTION -->
+        <div class="space-y-2.5">
+            <div class="flex items-center justify-between px-1">
+                <h2 class="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                    <span>{{ $currentFolder ? 'Sub-Folder' : 'Folder Saya' }}</span>
+                    <span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold">{{ $folders->count() }}</span>
+                </h2>
+                <button type="button" onclick="openCreateFolderModal()" class="text-xs font-black text-teal-600 dark:text-teal-400 hover:underline flex items-center gap-1 ios-press cursor-pointer">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                    <span>Folder Baru</span>
+                </button>
+            </div>
+
+            @if($folders->isNotEmpty())
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                    @foreach($folders as $fld)
+                        @php
+                            $fldColor = $fld->colorMeta();
+                        @endphp
+                        <div class="liquid-card rounded-[22px] bg-white/80 dark:bg-slate-900/75 border border-white/60 dark:border-white/10 shadow-xs hover:shadow-md hover:border-teal-400/40 p-3 space-y-2.5 transition-all group relative">
+                            <a href="{{ route('drive.index', ['folder_id' => $fld->id]) }}" class="block space-y-2">
+                                <div class="flex items-start justify-between gap-1.5">
+                                    <div class="w-10 h-10 rounded-[14px] {{ $fldColor['iconBg'] }} flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M19.5 21a3 3 0 003-3v-4.5a3 3 0 00-3-3h-1.5V9a3 3 0 00-3-3h-3.379a3 3 0 01-2.121-.879L8.379 4.04A3 3 0 006.257 3.16H4.5A3 3 0 001.5 6.16v11.84a3 3 0 003 3h15z" />
+                                        </svg>
+                                    </div>
+                                    @if($fld->is_public)
+                                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse mt-1" title="Folder dibagikan publik"></span>
+                                    @endif
+                                </div>
+                                <div class="min-w-0">
+                                    <h3 class="text-xs font-black text-slate-800 dark:text-white truncate group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors" title="{{ $fld->name }}">
+                                        {{ $fld->name }}
+                                    </h3>
+                                    <p class="text-[10px] text-slate-400 font-semibold mt-0.5">
+                                        {{ $fld->files_count }} berkas
+                                    </p>
+                                </div>
+                            </a>
+
+                            <!-- Folder Quick Actions Menu -->
+                            <div class="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-slate-800/80">
+                                <button type="button"
+                                        onclick="openFolderShareModal('{{ $fld->id }}', '{{ addslashes($fld->name) }}', '{{ $fld->formatted_size }}', '{{ $fld->share_url }}', {{ $fld->is_public ? 'true' : 'false' }}, '{{ route('drive.folders.share.toggle', $fld) }}')"
+                                        class="p-1.5 rounded-lg text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                                        title="Bagikan Folder">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
+                                    </svg>
+                                </button>
+                                <button type="button"
+                                        onclick="openEditFolderModal('{{ $fld->id }}', '{{ addslashes($fld->name) }}', '{{ $fld->color }}', '{{ addslashes($fld->description ?? '') }}')"
+                                        class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                                        title="Ubah Nama/Warna">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
+                                    </svg>
+                                </button>
+                                <button type="button"
+                                        onclick="confirmDeleteFolder('{{ $fld->id }}', '{{ addslashes($fld->name) }}', '{{ route('drive.folders.destroy', $fld) }}')"
+                                        class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors cursor-pointer"
+                                        title="Hapus Folder">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
         </div>
 
         <!-- 3. LIST OF STORED FILES -->
@@ -277,10 +472,10 @@
                 @php
                     $meta = $file->categoryMeta();
                 @endphp
-                <div class="liquid-card rounded-[24px] bg-white/80 dark:bg-slate-900/75 border border-white/60 dark:border-white/10 shadow-sm hover:shadow-md hover:border-teal-400/40 backdrop-blur-2xl p-4 space-y-3 transition-all">
+                <div class="liquid-card rounded-[24px] bg-white/80 dark:bg-slate-900/75 border border-white/60 dark:border-white/10 shadow-sm hover:shadow-md hover:border-teal-400/40 backdrop-blur-2xl p-4 space-y-3">
                     <div class="flex items-start justify-between gap-3">
                         <!-- Icon + Name (Click to preview) -->
-                        <div onclick="openPreviewModal('{{ $file->id }}', '{{ addslashes($file->title) }}', '{{ addslashes($file->original_name) }}', '{{ $file->formatted_size }}', '{{ strtolower($file->extension) }}', '{{ route('drive.preview', $file) }}', '{{ route('drive.download', $file) }}', '{{ $meta['label'] }}', '{{ addslashes($file->notes ?? '') }}', '{{ $file->created_at->format('d M Y, H:i') }}', '{{ route('drive.destroy', $file) }}', '{{ $file->share_url }}', {{ $file->is_public ? 'true' : 'false' }}, '{{ route('drive.share.toggle', $file) }}')"
+                        <div onclick="openPreviewModal('{{ $file->id }}', '{{ addslashes($file->title) }}', '{{ addslashes($file->original_name) }}', '{{ $file->formatted_size }}', '{{ strtolower($file->extension) }}', '{{ route('drive.preview', $file) }}', '{{ route('drive.download', $file) }}', '{{ $meta['label'] }}', '{{ addslashes($file->notes ?? '') }}', '{{ $file->created_at->format('d M Y, H:i') }}', '{{ route('drive.destroy', $file) }}', '{{ $file->share_url }}', {{ $file->is_public ? 'true' : 'false' }}, '{{ route('drive.share.toggle', $file) }}', '{{ $file->folder_id }}')"
                              class="flex items-start gap-3 min-w-0 flex-1 cursor-pointer group">
                             <div class="w-10 h-10 rounded-[18px] {{ $meta['bg'] }} {{ $meta['text'] }} border {{ $meta['border'] }} flex items-center justify-center shrink-0 font-black text-xs uppercase shadow-2xs group-hover:scale-105 transition-transform">
                                 {{ substr($file->extension, 0, 4) }}
@@ -299,6 +494,11 @@
                                     @if($file->download_count > 0)
                                         <span>•</span>
                                         <span class="text-teal-600 dark:text-teal-400 font-semibold">⬇ {{ $file->download_count }}x diunduh</span>
+                                    @endif
+                                    @if($file->folder_id && !$currentFolder)
+                                        <a href="{{ route('drive.index', ['folder_id' => $file->folder_id]) }}" class="inline-flex items-center gap-0.5 font-bold text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/60 px-2 py-0.5 rounded-md border border-teal-200/60 dark:border-teal-800/60 hover:underline" onclick="event.stopPropagation();">
+                                            📁 {{ $file->folder?->name }}
+                                        </a>
                                     @endif
                                 </div>
                             </div>
@@ -332,47 +532,54 @@
                     @endif
 
                     <!-- Action Bar -->
-                    <div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800/80 gap-2">
-                        <!-- Left: View (Preview) & Download Buttons -->
-                        <div class="flex items-center gap-1.5">
-                            <button type="button"
-                                    onclick="openPreviewModal('{{ $file->id }}', '{{ addslashes($file->title) }}', '{{ addslashes($file->original_name) }}', '{{ $file->formatted_size }}', '{{ strtolower($file->extension) }}', '{{ route('drive.preview', $file) }}', '{{ route('drive.download', $file) }}', '{{ $meta['label'] }}', '{{ addslashes($file->notes ?? '') }}', '{{ $file->created_at->format('d M Y, H:i') }}', '{{ route('drive.destroy', $file) }}', '{{ $file->share_url }}', {{ $file->is_public ? 'true' : 'false' }}, '{{ route('drive.share.toggle', $file) }}')"
-                                    class="px-3.5 py-1.5 rounded-[16px] bg-teal-500 hover:bg-teal-400 active:scale-95 text-white text-xs font-black flex items-center gap-1.5 transition-all shadow-xs cursor-pointer ios-press"
-                                    title="Lihat Berkas Tanpa Mengunduh">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                </svg>
-                                <span>Lihat</span>
-                            </button>
+                    <div class="flex items-center gap-1.5 pt-2 border-t border-slate-100 dark:border-slate-800/80 overflow-x-auto no-scrollbar pb-0.5 -mx-1 px-1">
+                        <!-- View (Preview) -->
+                        <button type="button"
+                                onclick="openPreviewModal('{{ $file->id }}', '{{ addslashes($file->title) }}', '{{ addslashes($file->original_name) }}', '{{ $file->formatted_size }}', '{{ strtolower($file->extension) }}', '{{ route('drive.preview', $file) }}', '{{ route('drive.download', $file) }}', '{{ $meta['label'] }}', '{{ addslashes($file->notes ?? '') }}', '{{ $file->created_at->format('d M Y, H:i') }}', '{{ route('drive.destroy', $file) }}', '{{ $file->share_url }}', {{ $file->is_public ? 'true' : 'false' }}, '{{ route('drive.share.toggle', $file) }}', '{{ $file->folder_id }}')"
+                                class="shrink-0 px-3 py-1.5 rounded-[16px] bg-teal-500 hover:bg-teal-400 active:scale-95 text-white text-xs font-black flex items-center gap-1.5 transition-all shadow-xs cursor-pointer ios-press"
+                                title="Lihat Berkas Tanpa Mengunduh">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            <span>Lihat</span>
+                        </button>
 
-                            <a href="{{ route('drive.download', $file) }}"
-                               class="px-3 py-1.5 rounded-[16px] liquid-glass bg-slate-100/80 hover:bg-slate-200 dark:bg-slate-900/80 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold border border-white/50 dark:border-white/10 flex items-center gap-1 active:scale-95 transition-all ios-press"
-                               title="Unduh ke Perangkat">
-                                <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                                </svg>
-                                <span>Unduh</span>
-                            </a>
-                        </div>
+                        <!-- Download -->
+                        <a href="{{ route('drive.download', $file) }}"
+                           class="shrink-0 px-3 py-1.5 rounded-[16px] liquid-glass bg-slate-100/80 hover:bg-slate-200 dark:bg-slate-900/80 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold border border-white/50 dark:border-white/10 flex items-center gap-1 active:scale-95 transition-all ios-press"
+                            title="Unduh ke Perangkat">
+                            <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                            </svg>
+                            <span>Unduh</span>
+                        </a>
 
-                        <!-- Right Group: Share Transfer & Delete -->
-                        <div class="flex items-center gap-1.5">
-                            <!-- Transfer / Share Trigger Button -->
+                        <!-- Share Transfer -->
+                        <button type="button"
+                                onclick="openShareModal('{{ $file->id }}', '{{ addslashes($file->title) }}', '{{ $file->formatted_size }}', '{{ $file->share_url }}', {{ $file->is_public ? 'true' : 'false' }}, '{{ route('drive.share.toggle', $file) }}')"
+                                class="shrink-0 px-3 py-1.5 rounded-[16px] liquid-glass bg-slate-100/80 hover:bg-slate-200 dark:bg-slate-900/80 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold border border-white/50 dark:border-white/10 flex items-center gap-1 active:scale-95 transition-all cursor-pointer ios-press"
+                                title="Bagi / Transfer">
+                            <svg class="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
+                            </svg>
+                            <span>Transfer</span>
+                        </button>
+
+                            <!-- Move to Folder Trigger Button -->
                             <button type="button"
-                                    onclick="openShareModal('{{ $file->id }}', '{{ addslashes($file->title) }}', '{{ $file->formatted_size }}', '{{ $file->share_url }}', {{ $file->is_public ? 'true' : 'false' }}, '{{ route('drive.share.toggle', $file) }}')"
-                                    class="px-3 py-1.5 rounded-[16px] liquid-glass bg-slate-100/80 hover:bg-slate-200 dark:bg-slate-900/80 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold border border-white/50 dark:border-white/10 flex items-center gap-1 active:scale-95 transition-all cursor-pointer ios-press"
-                                    title="Bagi / Transfer">
-                                <svg class="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
+                                    onclick="openMoveFileModal('{{ $file->id }}', '{{ addslashes($file->title) }}', '{{ $file->folder_id }}')"
+                                    class="shrink-0 p-2 text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 rounded-[14px] hover:bg-teal-50 dark:hover:bg-teal-950/30 active:scale-90 transition-all cursor-pointer ios-press"
+                                    title="Pindahkan ke Folder">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 00-1.883 2.542l.857 6a2.25 2.25 0 002.227 1.932H19.05a2.25 2.25 0 002.227-1.932l.857-6a2.25 2.25 0 00-1.883-2.542m-16.5 0V6A2.25 2.25 0 016 3.75h3.879a1.5 1.5 0 011.06.44l2.122 2.12a1.5 1.5 0 001.06.44H18A2.25 2.25 0 0120.25 9v.776" />
                                 </svg>
-                                <span>Transfer</span>
                             </button>
 
                             <!-- Safe In-App Delete Button -->
                             <button type="button"
                                     onclick="confirmDeleteFile('{{ $file->id }}', '{{ addslashes($file->title) }}', '{{ $file->formatted_size }}', '{{ route('drive.destroy', $file) }}')"
-                                    class="p-2 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-[14px] hover:bg-rose-50 dark:hover:bg-rose-950/30 active:scale-90 transition-all cursor-pointer ios-press"
+                                    class="shrink-0 p-2 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-[14px] hover:bg-rose-50 dark:hover:bg-rose-950/30 active:scale-90 transition-all cursor-pointer ios-press"
                                     title="Hapus Berkas">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
@@ -382,7 +589,7 @@
                     </div>
                 </div>
             @empty
-                <div class="text-center py-12 px-4 liquid-card rounded-[28px] bg-white/70 dark:bg-slate-900/70 border border-dashed border-slate-300 dark:border-slate-800 space-y-3 backdrop-blur-xl">
+                <div class="text-center py-12 px-4 liquid-card rounded-[28px] bg-white/70 dark:bg-slate-900/75 border border-dashed border-slate-300 dark:border-white/10 space-y-3 backdrop-blur-xl">
                     <div class="w-14 h-14 rounded-[22px] bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 mx-auto flex items-center justify-center shadow-xs">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021 18V9.75" />
@@ -399,6 +606,8 @@
                     </button>
                 </div>
             @endforelse
+        </div>
+    @else
         <!-- TAB 2: LINK TERIMA FILE (DROP LINKS) -->
         <div class="space-y-4">
             <div class="flex items-center justify-between liquid-card rounded-[24px] bg-white/80 dark:bg-slate-900/75 p-4 border border-white/60 dark:border-white/10 shadow-xs backdrop-blur-2xl">
@@ -460,6 +669,29 @@
                             @endif
                         </div>
                     </div>
+
+                    <!-- Dedicated Folder Info & Navigation -->
+                    @if($link->folder)
+                        <div class="flex items-center justify-between p-2.5 rounded-[18px] bg-teal-50/70 dark:bg-teal-950/40 border border-teal-200/70 dark:border-teal-800/60 text-xs">
+                            <div class="flex items-center gap-2 min-w-0 pr-2">
+                                <div class="w-7 h-7 rounded-xl bg-teal-500/20 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021 18V9.75" />
+                                    </svg>
+                                </div>
+                                <div class="min-w-0">
+                                    <span class="text-[10px] text-slate-400 font-semibold block leading-tight">Folder Penyimpanan Khusus:</span>
+                                    <span class="font-black text-teal-800 dark:text-teal-200 truncate block">{{ $link->folder->name }}</span>
+                                </div>
+                            </div>
+                            <a href="{{ route('drive.index', ['tab' => 'files', 'folder_id' => $link->folder_id]) }}" class="px-2.5 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-bold text-[11px] shrink-0 active:scale-95 transition-all shadow-xs flex items-center gap-1">
+                                <span>Buka Folder</span>
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                                </svg>
+                            </a>
+                        </div>
+                    @endif
 
                     <!-- Actions -->
                     <div class="pt-2 border-t border-slate-100 dark:border-slate-800/80 space-y-2">
@@ -534,7 +766,7 @@
                     </div>
                 </div>
             @empty
-                <div class="text-center py-12 px-4 liquid-card rounded-[28px] bg-white/70 dark:bg-slate-900/70 border border-dashed border-slate-300 dark:border-slate-800 space-y-3 backdrop-blur-xl">
+                <div class="text-center py-12 px-4 liquid-card rounded-[28px] bg-white/70 dark:bg-slate-900/75 border border-dashed border-slate-300 dark:border-white/10 space-y-3 backdrop-blur-xl">
                     <div class="w-14 h-14 rounded-[22px] bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 mx-auto flex items-center justify-center shadow-xs">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
@@ -557,12 +789,14 @@
         </div>
     @endif
 </div>
+@endsection
 
+@push('modals')
 <!-- MODAL 1: SHARE & TRANSFER FILE (Existing) -->
 <div id="share-modal" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true" role="dialog">
     <div id="share-backdrop" onclick="closeShareModal()" class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity duration-300 opacity-0"></div>
-    <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
-        <div id="share-panel" class="w-full max-w-md bg-white/95 dark:bg-slate-900/95 rounded-t-[36px] backdrop-blur-3xl shadow-2xl p-5 modal-sheet-safe border-t border-white/60 dark:border-white/10 pointer-events-auto transform translate-y-full transition-transform duration-300 space-y-4">
+    <div class="fixed bottom-0 left-0 right-0 z-30 flex justify-center pointer-events-none">
+        <div id="share-panel" class="w-full max-w-md bg-white/95 dark:bg-slate-900/95 rounded-t-[36px] backdrop-blur-3xl shadow-2xl p-5 modal-sheet-safe border-t border-white/60 dark:border-white/10 pointer-events-auto transform translate-y-full transition-transform duration-300 space-y-4 max-h-[90vh] overflow-y-auto no-scrollbar">
             <div class="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-3 cursor-pointer" onclick="closeShareModal()"></div>
             <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
                 <div>
@@ -608,13 +842,42 @@
                 <div class="grid grid-cols-2 gap-2 pt-1">
                     <a id="btn-wa-share" href="#" target="_blank" class="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95 transition-all shadow-sm">
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.025 3.284l-.707 2.582 2.658-.697c1.002.581 1.777.832 2.792.832 3.182 0 5.767-2.587 5.768-5.766 0-3.182-2.586-5.768-5.768-5.768zm3.364 8.169c-.145.408-.847.784-1.173.834-.325.051-.735.083-2.164-.509-1.428-.592-2.339-2.029-2.41-2.124-.071-.095-.572-.761-.572-1.451 0-.691.362-1.03.491-1.173.129-.143.282-.179.376-.179.094 0 .188.001.27.006.088.005.206-.033.322.247.123.298.421 1.027.458 1.102.037.075.061.163.012.261-.049.098-.073.159-.146.244-.073.085-.154.19-.22.256-.073.073-.149.153-.064.299.085.146.377.621.808 1.005.556.495 1.025.648 1.171.721.146.073.232.061.318-.037.086-.098.368-.428.466-.575.098-.147.196-.123.328-.074.132.049.837.395.981.467.144.072.24.108.276.17.036.062.036.357-.109.765z"/>
+                            <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.025 3.284l-.707 2.582 2.658-.697c1.002.581 1.777.832 2.792.832 3.182 0 5.767-2.587 5.768-5.768 0-3.182-2.586-5.768-5.768-5.768zm3.364 8.169c-.145.408-.847.784-1.173.834-.325.051-.735.083-2.164-.509-1.428-.592-2.339-2.029-2.41-2.124-.071-.095-.572-.761-.572-1.451 0-.691.362-1.03.491-1.173.129-.143.282-.179.376-.179.094 0 .188.001.27.006.088.005.206-.033.322.247.123.298.421 1.027.458 1.102.037.075.061.163.012.261-.049.098-.073.159-.146.244-.073.085-.154.19-.22.256-.073.073-.149.153-.064.299.085.146.377.621.808 1.005.556.495 1.025.648 1.171.721.146.073.232.061.318-.037.086-.098.368-.428.466-.575.098-.147.196-.123.328-.074.132.049.837.395.981.467.144.072.24.108.276.17.036.062.036.357-.109.765z"/>
                         </svg>
                         <span>WhatsApp</span>
                     </a>
                     <a id="btn-preview-share" href="#" target="_blank" class="py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95 transition-all">
                         <span>Buka Link ↗</span>
                     </a>
+                </div>
+
+                <!-- QR Code Toggle Button -->
+                <button type="button" id="btn-toggle-share-qr" onclick="toggleShareQrCode()" class="w-full py-2.5 px-3 rounded-xl bg-teal-50 dark:bg-teal-950/40 hover:bg-teal-100 dark:hover:bg-teal-900/50 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/80 text-xs font-bold flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 6.75h.008v.008H6.75V6.75zM6.75 16.5h.008v.008H6.75V16.5zM16.5 6.75h.008v.008H16.5V6.75zM13.5 13.5h.008v.008H13.5V13.5zM13.5 19.5h.008v.008H13.5V19.5zM19.5 13.5h.008v.008H19.5V13.5zM19.5 19.5h.008v.008H19.5V19.5zM16.5 16.5h.008v.008H16.5V16.5z" />
+                    </svg>
+                    <span id="btn-qr-label">Pindai / Tampilkan QR Code</span>
+                </button>
+
+                <!-- Expandable QR Code Card -->
+                <div id="share-qr-container" class="hidden transition-all duration-300 p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-center space-y-3">
+                    <div class="inline-block p-3 rounded-2xl bg-white shadow-md border border-slate-100 dark:border-slate-800">
+                        <img id="share-qr-image" src="" alt="QR Code Berkas" class="w-36 h-36 mx-auto object-contain">
+                    </div>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+                        Arahkan kamera smartphone ke QR Code untuk membuka atau mengunduh berkas langsung.
+                    </p>
+                    <div class="flex items-center justify-center gap-2 pt-0.5">
+                        <a id="btn-download-share-qr" href="#" target="_blank" download="qrcode-berkas.png" class="px-3.5 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 text-xs font-bold inline-flex items-center gap-1.5 shadow-2xs active:scale-95 transition-all">
+                            <svg class="w-3.5 h-3.5 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
+                            <span>Unduh QR</span>
+                        </a>
+                        <button type="button" onclick="copyToClipboard(document.getElementById('share-url-input').value, this)" class="px-3.5 py-1.5 rounded-xl bg-teal-500 text-white hover:bg-teal-600 text-xs font-bold inline-flex items-center gap-1.5 shadow-2xs active:scale-95 transition-all">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.849A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.599m7.332 0c.055.194.084.4.084.615v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.215.03-.42.084-.615m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" /></svg>
+                            <span>Salin Link</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -629,7 +892,7 @@
 <!-- MODAL 2: BUAT LINK TERIMA FILE (DROP LINK SETTINGS) -->
 <div id="create-drop-modal" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true" role="dialog">
     <div id="drop-backdrop" onclick="closeCreateDropModal()" class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity duration-300 opacity-0"></div>
-    <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
+    <div class="fixed bottom-0 left-0 right-0 z-30 flex justify-center pointer-events-none">
         <div id="drop-panel" class="w-full max-w-md bg-white/95 dark:bg-slate-900/95 rounded-t-[36px] backdrop-blur-3xl shadow-2xl p-5 modal-sheet-safe border-t border-white/60 dark:border-white/10 pointer-events-auto transform translate-y-full transition-transform duration-300 space-y-4 max-h-[90vh] overflow-y-auto no-scrollbar">
             <div class="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-3 cursor-pointer" onclick="closeCreateDropModal()"></div>
             
@@ -778,7 +1041,7 @@
                 </div>
 
                 <!-- Submit Button -->
-                <div class="pt-2 flex items-center gap-2">
+                <div class="pt-3 pb-2 flex items-center gap-2 sticky bottom-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md -mx-5 px-5 -mb-2 border-t border-slate-100 dark:border-slate-800/80">
                     <button type="submit" class="flex-1 py-3 px-4 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-[0.98] text-white text-xs font-extrabold shadow-md shadow-teal-500/20 transition-all cursor-pointer flex items-center justify-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
@@ -800,7 +1063,7 @@
     <div id="quota-backdrop" onclick="closeQuotaModal()" class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity duration-300 opacity-0"></div>
 
     <!-- Panel Bottom-Sheet (Matches SwanFlow Mobile Sheet) -->
-    <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
+    <div class="fixed bottom-0 left-0 right-0 z-30 flex justify-center pointer-events-none">
         <div id="quota-panel" class="w-full max-w-md bg-white/95 dark:bg-slate-900/95 rounded-t-[36px] backdrop-blur-3xl shadow-2xl p-5 modal-sheet-safe border-t border-white/60 dark:border-white/10 pointer-events-auto transform translate-y-full transition-transform duration-300 space-y-4 max-h-[90vh] overflow-y-auto no-scrollbar text-slate-800 dark:text-white">
             <!-- Drag Handle -->
             <div class="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-3 cursor-pointer" onclick="closeQuotaModal()"></div>
@@ -894,7 +1157,7 @@
     <div id="preview-backdrop" onclick="closePreviewModal()" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm transition-opacity duration-300 opacity-0"></div>
 
     <!-- Panel Bottom-Sheet (High-fidelity SwanFlow Mobile Sheet) -->
-    <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
+    <div class="fixed bottom-0 left-0 right-0 z-30 flex justify-center pointer-events-none">
         <div id="preview-panel" class="w-full max-w-lg bg-white/95 dark:bg-slate-900/95 rounded-t-[36px] backdrop-blur-3xl shadow-2xl p-4 sm:p-5 modal-sheet-safe border-t border-white/60 dark:border-white/10 pointer-events-auto transform translate-y-full transition-transform duration-300 flex flex-col max-h-[92vh] text-slate-800 dark:text-white">
             <!-- Drag Handle -->
             <div class="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-3 cursor-pointer shrink-0" onclick="closePreviewModal()"></div>
@@ -962,6 +1225,12 @@
                         </svg>
                         <span>Hapus</span>
                     </button>
+                    <button type="button" id="pv-move-btn" onclick="openMoveModalFromPreview()" class="py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-xs font-bold active:scale-95 transition-all cursor-pointer flex items-center gap-1.5" title="Pindahkan ke Folder">
+                        <svg class="w-4 h-4 text-teal-600 dark:text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 00-1.883 2.542l.857 6a2.25 2.25 0 002.227 1.932H19.05a2.25 2.25 0 002.227-1.932l.857-6a2.25 2.25 0 00-1.883-2.542m-16.5 0V6A2.25 2.25 0 016 3.75h3.879a1.5 1.5 0 011.06.44l2.122 2.12a1.5 1.5 0 001.06.44H18A2.25 2.25 0 0120.25 9v.776" />
+                        </svg>
+                        <span>Pindah</span>
+                    </button>
                 </div>
                 <div class="flex items-center gap-1.5 sm:gap-2">
                     <button type="button" id="pv-share-btn" onclick="openShareFromPreview()" class="py-2.5 px-3 rounded-xl bg-teal-50 hover:bg-teal-100 dark:bg-teal-950/60 dark:hover:bg-teal-900/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/80 text-xs font-bold active:scale-95 transition-all cursor-pointer flex items-center gap-1.5 shadow-xs" title="Bagi / Transfer Berkas">
@@ -985,7 +1254,7 @@
 <!-- MODAL 5: KONFIRMASI HAPUS BERKAS / DROP LINK (IN-APP NATIVE BOTTOM-SHEET) -->
 <div id="delete-modal" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true" role="dialog">
     <div id="delete-backdrop" onclick="closeDeleteModal()" class="fixed inset-0 bg-slate-950/75 backdrop-blur-xs transition-opacity duration-300 opacity-0"></div>
-    <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none">
+    <div class="fixed bottom-0 left-0 right-0 z-30 flex justify-center pointer-events-none">
         <div id="delete-panel" class="w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-100 dark:border-slate-800 pointer-events-auto transform translate-y-full transition-transform duration-300 space-y-4 text-slate-800 dark:text-white">
             <div class="w-12 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-2 cursor-pointer" onclick="closeDeleteModal()"></div>
             
@@ -1037,27 +1306,439 @@
     </div>
 </div>
 
+<!-- MODAL: BUAT FOLDER BARU -->
+<div id="create-folder-modal" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true" role="dialog">
+    <div id="create-folder-backdrop" onclick="closeCreateFolderModal()" class="fixed inset-0 bg-slate-950/75 backdrop-blur-xs transition-opacity duration-300 opacity-0"></div>
+    <div class="fixed bottom-0 left-0 right-0 z-30 flex justify-center pointer-events-none">
+        <div id="create-folder-panel" class="w-full max-w-lg bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-100 dark:border-slate-800 pointer-events-auto transform translate-y-full transition-transform duration-300 space-y-4 text-slate-800 dark:text-white max-h-[90vh] overflow-y-auto">
+            <div class="w-12 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-1 cursor-pointer" onclick="closeCreateFolderModal()"></div>
+
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-2xl bg-teal-50 dark:bg-teal-950/50 text-teal-600 dark:text-teal-400 border border-teal-200/80 dark:border-teal-900/60 flex items-center justify-center shrink-0 shadow-2xs">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-extrabold text-slate-900 dark:text-white">Buat Folder Baru</h3>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400">
+                            Lokasi: <span class="font-bold text-teal-600 dark:text-teal-400">{{ $currentFolder ? $currentFolder->name : 'Root SwanDrive' }}</span>
+                        </p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeCreateFolderModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 flex items-center justify-center active:scale-95 transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <form action="{{ route('drive.folders.store') }}" method="POST" class="space-y-4" onsubmit="handleCreateFolderSubmit(event)">
+                @csrf
+                <input type="hidden" name="parent_id" value="{{ $currentFolder?->id ?? '' }}">
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                        Nama Folder <span class="text-rose-500">*</span>
+                    </label>
+                    <input type="text" name="name" id="folder-name-input" required maxlength="100" placeholder="Contoh: Dokumen Klien, Aset UI"
+                           class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 font-semibold placeholder:text-slate-400">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                        Warna Aksen Folder
+                    </label>
+                    <div class="grid grid-cols-4 sm:grid-cols-8 gap-2">
+                        @foreach([
+                            'teal' => ['bg' => 'bg-teal-500', 'name' => 'Teal'],
+                            'indigo' => ['bg' => 'bg-indigo-500', 'name' => 'Indigo'],
+                            'rose' => ['bg' => 'bg-rose-500', 'name' => 'Rose'],
+                            'amber' => ['bg' => 'bg-amber-500', 'name' => 'Amber'],
+                            'emerald' => ['bg' => 'bg-emerald-500', 'name' => 'Emerald'],
+                            'sky' => ['bg' => 'bg-sky-500', 'name' => 'Sky'],
+                            'purple' => ['bg' => 'bg-purple-500', 'name' => 'Purple'],
+                            'slate' => ['bg' => 'bg-slate-500', 'name' => 'Slate'],
+                        ] as $colorKey => $colorItem)
+                            <label class="cursor-pointer">
+                                <input type="radio" name="color" value="{{ $colorKey }}" class="peer hidden" {{ $colorKey === 'teal' ? 'checked' : '' }}>
+                                <div class="p-2 rounded-xl border-2 border-transparent peer-checked:border-teal-500 peer-checked:bg-teal-500/10 flex flex-col items-center gap-1 transition-all">
+                                    <span class="w-5 h-5 rounded-full {{ $colorItem['bg'] }} shadow-xs block"></span>
+                                    <span class="text-[9px] font-bold text-slate-500 capitalize">{{ $colorItem['name'] }}</span>
+                                </div>
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                        Deskripsi Singkat (Opsional)
+                    </label>
+                    <input type="text" name="description" maxlength="255" placeholder="Contoh: Kumpulan berkas proposal 2026"
+                           class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium placeholder:text-slate-400">
+                </div>
+
+                <!-- Toggle Public Share -->
+                <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3">
+                    <div class="min-w-0 flex-1">
+                        <span class="text-xs font-bold text-slate-800 dark:text-slate-200 block">Aktifkan Share Link Publik Langsung</span>
+                        <span class="text-[10px] text-slate-500 dark:text-slate-400">Folder dapat langsung diakses & diunduh via tautan publik yang aman.</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                        <input type="checkbox" name="is_public" value="1" class="sr-only peer">
+                        <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-teal-500"></div>
+                    </label>
+                </div>
+
+                <div class="flex items-center gap-2 pt-1">
+                    <button type="submit" id="btn-create-folder" class="flex-1 py-3 px-4 rounded-xl bg-teal-500 hover:bg-teal-400 active:scale-[0.98] text-white text-xs font-black shadow-md shadow-teal-500/25 flex items-center justify-center gap-1.5 transition-all cursor-pointer">
+                        <span id="create-folder-text">Buat Folder</span>
+                        <svg class="w-4 h-4 animate-spin hidden" id="create-folder-spinner" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                        </svg>
+                    </button>
+                    <button type="button" onclick="closeCreateFolderModal()" class="py-3 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold active:scale-95 transition-all cursor-pointer">
+                        Batal
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: EDIT FOLDER -->
+<div id="edit-folder-modal" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true" role="dialog">
+    <div id="edit-folder-backdrop" onclick="closeEditFolderModal()" class="fixed inset-0 bg-slate-950/75 backdrop-blur-xs transition-opacity duration-300 opacity-0"></div>
+    <div class="fixed bottom-0 left-0 right-0 z-30 flex justify-center pointer-events-none">
+        <div id="edit-folder-panel" class="w-full max-w-lg bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-100 dark:border-slate-800 pointer-events-auto transform translate-y-full transition-transform duration-300 space-y-4 text-slate-800 dark:text-white max-h-[90vh] overflow-y-auto">
+            <div class="w-12 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-1 cursor-pointer" onclick="closeEditFolderModal()"></div>
+
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-2xl bg-teal-50 dark:bg-teal-950/50 text-teal-600 dark:text-teal-400 border border-teal-200/80 dark:border-teal-900/60 flex items-center justify-center shrink-0 shadow-2xs">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-extrabold text-slate-900 dark:text-white">Edit Folder</h3>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400">Perbarui nama, warna, atau catatan folder</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeEditFolderModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 flex items-center justify-center active:scale-95 transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <form id="edit-folder-form" action="" method="POST" class="space-y-4">
+                @csrf
+                @method('PATCH')
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                        Nama Folder <span class="text-rose-500">*</span>
+                    </label>
+                    <input type="text" name="name" id="edit-folder-name" required maxlength="100"
+                           class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 font-semibold">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                        Warna Aksen Folder
+                    </label>
+                    <div class="grid grid-cols-4 sm:grid-cols-8 gap-2">
+                        @foreach([
+                            'teal' => ['bg' => 'bg-teal-500', 'name' => 'Teal'],
+                            'indigo' => ['bg' => 'bg-indigo-500', 'name' => 'Indigo'],
+                            'rose' => ['bg' => 'bg-rose-500', 'name' => 'Rose'],
+                            'amber' => ['bg' => 'bg-amber-500', 'name' => 'Amber'],
+                            'emerald' => ['bg' => 'bg-emerald-500', 'name' => 'Emerald'],
+                            'sky' => ['bg' => 'bg-sky-500', 'name' => 'Sky'],
+                            'purple' => ['bg' => 'bg-purple-500', 'name' => 'Purple'],
+                            'slate' => ['bg' => 'bg-slate-500', 'name' => 'Slate'],
+                        ] as $colorKey => $colorItem)
+                            <label class="cursor-pointer">
+                                <input type="radio" name="color" id="edit-color-{{ $colorKey }}" value="{{ $colorKey }}" class="peer hidden">
+                                <div class="p-2 rounded-xl border-2 border-transparent peer-checked:border-teal-500 peer-checked:bg-teal-500/10 flex flex-col items-center gap-1 transition-all">
+                                    <span class="w-5 h-5 rounded-full {{ $colorItem['bg'] }} shadow-xs block"></span>
+                                    <span class="text-[9px] font-bold text-slate-500 capitalize">{{ $colorItem['name'] }}</span>
+                                </div>
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                        Deskripsi Singkat (Opsional)
+                    </label>
+                    <input type="text" name="description" id="edit-folder-desc" maxlength="255"
+                           class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium">
+                </div>
+
+                <div class="flex items-center gap-2 pt-1">
+                    <button type="submit" class="flex-1 py-3 px-4 rounded-xl bg-teal-500 hover:bg-teal-400 active:scale-[0.98] text-white text-xs font-black shadow-md shadow-teal-500/25 flex items-center justify-center gap-1.5 transition-all cursor-pointer">
+                        Simpan Perubahan
+                    </button>
+                    <button type="button" onclick="closeEditFolderModal()" class="py-3 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold active:scale-95 transition-all cursor-pointer">
+                        Batal
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: BAGIKAN LINK FOLDER -->
+<div id="folder-share-modal" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true" role="dialog">
+    <div id="folder-share-backdrop" onclick="closeFolderShareModal()" class="fixed inset-0 bg-slate-950/75 backdrop-blur-xs transition-opacity duration-300 opacity-0"></div>
+    <div class="fixed bottom-0 left-0 right-0 z-30 flex justify-center pointer-events-none">
+        <div id="folder-share-panel" class="w-full max-w-lg bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-100 dark:border-slate-800 pointer-events-auto transform translate-y-full transition-transform duration-300 space-y-4 text-slate-800 dark:text-white max-h-[90vh] overflow-y-auto">
+            <div class="w-12 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-1 cursor-pointer" onclick="closeFolderShareModal()"></div>
+
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-2xl bg-teal-50 dark:bg-teal-950/50 text-teal-600 dark:text-teal-400 border border-teal-200/80 dark:border-teal-900/60 flex items-center justify-center shrink-0 shadow-2xs">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-extrabold text-slate-900 dark:text-white">Bagikan Folder</h3>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400" id="folder-share-summary">0 berkas tersimpan</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeFolderShareModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 flex items-center justify-center active:scale-95 transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Folder Identity Header Card -->
+            <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <span class="text-2xl">📁</span>
+                    <div class="min-w-0">
+                        <h4 class="text-xs font-black text-slate-900 dark:text-white truncate" id="folder-share-name">Nama Folder</h4>
+                        <span class="text-[10px] text-slate-400 font-semibold" id="folder-share-details">SwanDrive Shared Folder</span>
+                    </div>
+                </div>
+                <span id="folder-share-badge" class="px-2.5 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider shrink-0 bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300">
+                    Publik
+                </span>
+            </div>
+
+            <!-- Public Access Toggle Card -->
+            <div class="p-3.5 rounded-2xl bg-teal-500/5 dark:bg-teal-500/10 border border-teal-500/20 flex items-center justify-between gap-3">
+                <div class="min-w-0 flex-1">
+                    <span class="text-xs font-black text-slate-900 dark:text-white block">Akses Berbagi Publik</span>
+                    <span class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed block mt-0.5">
+                        Siapapun yang memiliki tautan dapat membuka folder, melihat preview berkas, mengunduh satuan atau ZIP.
+                    </span>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                    <input type="checkbox" id="folder-share-toggle" onchange="toggleFolderShareStatus()" class="sr-only peer">
+                    <div class="w-11 h-6 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-500"></div>
+                </label>
+            </div>
+
+            <!-- Share URL Container (Visible when public) -->
+            <div id="folder-share-url-container" class="space-y-3">
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1.5">
+                        Tautan Berbagi Folder
+                    </label>
+                    <div class="flex items-center gap-1.5">
+                        <input type="text" id="folder-share-url-input" readonly
+                               class="flex-1 px-3 py-2.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-mono select-all focus:outline-none">
+                        <button type="button" onclick="copyFolderShareLink()" id="btn-copy-folder-link"
+                                class="px-3.5 py-2.5 rounded-xl bg-teal-500 hover:bg-teal-400 active:scale-95 text-white text-xs font-bold flex items-center gap-1.5 transition-all shrink-0 cursor-pointer shadow-xs">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.849A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.599m7.332 0c.055.194.084.4.084.615v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.215.03-.42.084-.615m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" />
+                            </svg>
+                            <span id="copy-folder-btn-text">Salin</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Action Shortcut Buttons -->
+                <div class="grid grid-cols-2 gap-2">
+                    <a id="folder-share-open-btn" href="#" target="_blank"
+                       class="py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold flex items-center justify-center gap-2 active:scale-95 transition-all text-center">
+                        <svg class="w-4 h-4 text-teal-600 dark:text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                        </svg>
+                        <span>Buka Tautan</span>
+                    </a>
+                    <a id="folder-share-wa-btn" href="#" target="_blank"
+                       class="py-2.5 px-3 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-xs font-bold flex items-center justify-center gap-2 active:scale-95 transition-all text-center">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.698.058-2.073-.509-1.633-.674-2.686-2.339-2.767-2.449-.081-.11-.662-.881-.662-1.68 0-.798.419-1.192.569-1.353.15-.16.329-.2.438-.2.11 0 .22.001.317.006.103.005.241-.039.378.291.144.346.49 1.198.533 1.286.043.088.072.191.014.306-.058.115-.088.187-.174.288-.087.102-.184.227-.263.305-.088.087-.18.181-.077.358.103.177.46 1.082 1.344 1.868.514.457.946.598 1.08.686.134.088.212.077.291-.014.079-.092.34-.395.431-.531.092-.136.183-.114.306-.068.123.045.783.369.917.436.134.067.224.1.257.156.033.056.033.568-.111.973z"/>
+                        </svg>
+                        <span>Kirim WhatsApp</span>
+                    </a>
+                </div>
+
+                <!-- QR Code Toggle Button -->
+                <button type="button" id="btn-toggle-folder-share-qr" onclick="toggleFolderShareQrCode()" class="w-full py-2.5 px-3 rounded-xl bg-teal-50 dark:bg-teal-950/40 hover:bg-teal-100 dark:hover:bg-teal-900/50 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/80 text-xs font-bold flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 6.75h.008v.008H6.75V6.75zM6.75 16.5h.008v.008H6.75V16.5zM16.5 6.75h.008v.008H16.5V6.75zM13.5 13.5h.008v.008H13.5V13.5zM13.5 19.5h.008v.008H13.5V19.5zM19.5 13.5h.008v.008H19.5V13.5zM19.5 19.5h.008v.008H19.5V19.5zM16.5 16.5h.008v.008H16.5V16.5z" />
+                    </svg>
+                    <span id="btn-folder-qr-label">Pindai / Tampilkan QR Code</span>
+                </button>
+
+                <!-- Expandable QR Code Card -->
+                <div id="folder-share-qr-container" class="hidden transition-all duration-300 p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-center space-y-3">
+                    <div class="inline-block p-3 rounded-2xl bg-white shadow-md border border-slate-100 dark:border-slate-800">
+                        <img id="folder-share-qr-image" src="" alt="QR Code Folder" class="w-36 h-36 mx-auto object-contain">
+                    </div>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+                        Arahkan kamera smartphone ke QR Code untuk membuka atau mengunduh folder langsung.
+                    </p>
+                    <div class="flex items-center justify-center gap-2 pt-0.5">
+                        <a id="btn-download-folder-share-qr" href="#" target="_blank" download="qrcode-folder.png" class="px-3.5 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 text-xs font-bold inline-flex items-center gap-1.5 shadow-2xs active:scale-95 transition-all">
+                            <svg class="w-3.5 h-3.5 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
+                            <span>Unduh QR</span>
+                        </a>
+                        <button type="button" onclick="copyFolderShareLink()" class="px-3.5 py-1.5 rounded-xl bg-teal-500 text-white hover:bg-teal-600 text-xs font-bold inline-flex items-center gap-1.5 shadow-2xs active:scale-95 transition-all">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.849A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.599m7.332 0c.055.194.084.4.084.615v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.215.03-.42.084-.615m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" /></svg>
+                            <span>Salin Link</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Disabled State Notice (When private) -->
+            <div id="folder-share-private-notice" class="hidden p-4 rounded-2xl bg-slate-100 dark:bg-slate-800/60 text-center space-y-1.5">
+                <span class="text-xs font-bold text-slate-700 dark:text-slate-300 block">Folder ini Sedang Privat</span>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400">
+                    Aktifkan toggle di atas untuk menghasilkan tautan publik dan membagikan folder ini kepada orang lain.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: PINDAHKAN BERKAS KE FOLDER -->
+<div id="move-file-modal" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true" role="dialog">
+    <div id="move-file-backdrop" onclick="closeMoveFileModal()" class="fixed inset-0 bg-slate-950/75 backdrop-blur-xs transition-opacity duration-300 opacity-0"></div>
+    <div class="fixed bottom-0 left-0 right-0 z-30 flex justify-center pointer-events-none">
+        <div id="move-file-panel" class="w-full max-w-lg bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-100 dark:border-slate-800 pointer-events-auto transform translate-y-full transition-transform duration-300 space-y-4 text-slate-800 dark:text-white max-h-[90vh] overflow-y-auto">
+            <div class="w-12 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-1 cursor-pointer" onclick="closeMoveFileModal()"></div>
+
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-2xl bg-teal-50 dark:bg-teal-950/50 text-teal-600 dark:text-teal-400 border border-teal-200/80 dark:border-teal-900/60 flex items-center justify-center shrink-0 shadow-2xs">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 00-1.883 2.542l.857 6a2.25 2.25 0 002.227 1.932H19.05a2.25 2.25 0 002.227-1.932l.857-6a2.25 2.25 0 00-1.883-2.542m-16.5 0V6A2.25 2.25 0 016 3.75h3.879a1.5 1.5 0 011.06.44l2.122 2.12a1.5 1.5 0 001.06.44H18A2.25 2.25 0 0120.25 9v.776" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-extrabold text-slate-900 dark:text-white">Pindahkan Berkas</h3>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400">Pilih folder tujuan untuk berkas ini</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeMoveFileModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 flex items-center justify-center active:scale-95 transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Target File Info -->
+            <div class="p-3 bg-slate-50 dark:bg-slate-950/70 rounded-2xl border border-slate-200 dark:border-slate-800 flex items-center gap-2.5">
+                <span class="text-xl">📄</span>
+                <div class="min-w-0 flex-1">
+                    <span class="text-xs font-bold text-slate-800 dark:text-slate-200 block truncate" id="move-file-title">Nama Berkas</span>
+                    <span class="text-[10px] text-slate-400">Pindahkan ke folder di bawah</span>
+                </div>
+            </div>
+
+            <form id="move-file-form" action="" method="POST" class="space-y-3">
+                @csrf
+                @method('PATCH')
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">
+                        Pilih Folder Tujuan:
+                    </label>
+                    <div class="space-y-1.5 max-h-[220px] overflow-y-auto p-1 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 bg-slate-50/50 dark:bg-slate-950/50">
+                        <!-- Root Option -->
+                        <label class="flex items-center gap-2.5 p-2.5 rounded-xl hover:bg-white dark:hover:bg-slate-800 border border-transparent hover:border-slate-200 dark:hover:border-slate-700 cursor-pointer transition-all">
+                            <input type="radio" name="folder_id" value="" id="move-folder-root" class="w-4 h-4 text-teal-600 focus:ring-teal-500">
+                            <div class="flex items-center gap-2 min-w-0 flex-1">
+                                <span class="text-base">📁</span>
+                                <span class="text-xs font-bold text-slate-800 dark:text-slate-200">SwanDrive Root (Tanpa Folder)</span>
+                            </div>
+                        </label>
+
+                        @foreach($allUserFolders as $uf)
+                            <label class="flex items-center gap-2.5 p-2.5 rounded-xl hover:bg-white dark:hover:bg-slate-800 border border-transparent hover:border-slate-200 dark:hover:border-slate-700 cursor-pointer transition-all">
+                                <input type="radio" name="folder_id" value="{{ $uf->id }}" id="move-folder-{{ $uf->id }}" class="w-4 h-4 text-teal-600 focus:ring-teal-500">
+                                <div class="flex items-center gap-2 min-w-0 flex-1">
+                                    <span class="w-3.5 h-3.5 rounded-full {{ $uf->colorMeta()['bg'] }} shrink-0"></span>
+                                    <span class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">{{ $uf->name }}</span>
+                                    @if($uf->parent)
+                                        <span class="text-[10px] text-slate-400 truncate">di dalam {{ $uf->parent->name }}</span>
+                                    @endif
+                                </div>
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 pt-2">
+                    <button type="submit" class="flex-1 py-3 px-4 rounded-xl bg-teal-500 hover:bg-teal-400 active:scale-[0.98] text-white text-xs font-black shadow-md shadow-teal-500/25 flex items-center justify-center gap-1.5 transition-all cursor-pointer">
+                        Pindahkan Sekarang
+                    </button>
+                    <button type="button" onclick="closeMoveFileModal()" class="py-3 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold active:scale-95 transition-all cursor-pointer">
+                        Batal
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endpush
+
+@push('scripts')
 <script>
     // Handle File Selection
     function handleFileSelect(input) {
-        if (!input.files || !input.files[0]) return;
-        const file = input.files[0];
-        
-        const ext = file.name.split('.').pop().toUpperCase();
-        document.getElementById('selected-ext').innerText = ext.substring(0, 5);
-        document.getElementById('selected-filename').innerText = file.name;
-        
-        let sizeText = file.size + ' B';
-        if (file.size >= 1048576) {
-            sizeText = (file.size / 1048576).toFixed(1) + ' MB';
-        } else if (file.size >= 1024) {
-            sizeText = (file.size / 1024).toFixed(0) + ' KB';
+        if (!input.files || input.files.length === 0) return;
+        const count = input.files.length;
+        let totalSize = 0;
+        for (let i = 0; i < count; i++) {
+            totalSize += input.files[i].size;
         }
-        document.getElementById('selected-size').innerText = sizeText;
+        
+        if (count === 1) {
+            const file = input.files[0];
+            const ext = file.name.split('.').pop().toUpperCase();
+            document.getElementById('selected-ext').innerText = ext.substring(0, 5);
+            document.getElementById('selected-filename').innerText = file.name;
+            document.getElementById('selected-size').innerText = formatBytes(file.size);
 
-        const titleInput = document.getElementById('file-title');
-        if (!titleInput.value) {
-            titleInput.value = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
+            const titleInput = document.getElementById('file-title');
+            if (!titleInput.value) {
+                titleInput.value = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
+            }
+        } else {
+            document.getElementById('selected-ext').innerText = count + ' FILES';
+            document.getElementById('selected-filename').innerText = count + ' Berkas Dipilih';
+            document.getElementById('selected-size').innerText = formatBytes(totalSize);
+
+            const titleInput = document.getElementById('file-title');
+            if (!titleInput.value) {
+                titleInput.value = count + ' Berkas Sekaligus';
+            }
         }
 
         document.getElementById('upload-details').classList.remove('hidden');
@@ -1087,7 +1768,7 @@
             e.preventDefault();
 
             const fileInput = document.getElementById('upload-input');
-            if (!fileInput.files || !fileInput.files[0]) {
+            if (!fileInput.files || fileInput.files.length === 0) {
                 return;
             }
 
@@ -1113,13 +1794,18 @@
             if (btnSpinner) btnSpinner.classList.remove('hidden');
             if (btnText) btnText.innerText = 'Mengunggah...';
 
+            let totalUploadSize = 0;
+            for (let i = 0; i < fileInput.files.length; i++) {
+                totalUploadSize += fileInput.files[i].size;
+            }
+
             // Show progress bar
             if (progressContainer) {
                 progressContainer.classList.remove('hidden');
                 progressBar.style.width = '0%';
                 progressPercent.innerText = '0%';
                 statusText.innerText = 'Mengunggah berkas...';
-                progressBytes.innerText = `0 KB / ${formatBytes(fileInput.files[0].size)}`;
+                progressBytes.innerText = `0 KB / ${formatBytes(totalUploadSize)}`;
             }
 
             const formData = new FormData(uploadForm);
@@ -1243,6 +1929,16 @@
             const waText = encodeURIComponent(`Halo, berikut tautan berkas "${title}" (${size}):\n${url}`);
             document.getElementById('btn-wa-share').href = `https://api.whatsapp.com/send?text=${waText}`;
             document.getElementById('btn-preview-share').href = url;
+
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(url)}`;
+            const qrImg = document.getElementById('share-qr-image');
+            if (qrImg) qrImg.src = qrUrl;
+            const qrDownloadBtn = document.getElementById('btn-download-share-qr');
+            if (qrDownloadBtn) qrDownloadBtn.href = qrUrl;
+            const qrContainer = document.getElementById('share-qr-container');
+            if (qrContainer) qrContainer.classList.add('hidden');
+            const qrLabel = document.getElementById('btn-qr-label');
+            if (qrLabel) qrLabel.innerText = 'Pindai / Tampilkan QR Code';
         } else {
             toggleBtn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-white shadow-xs hover:bg-emerald-600';
             toggleBtn.innerText = 'Aktifkan';
@@ -1257,11 +1953,27 @@
 
         modal.classList.remove('hidden');
         requestAnimationFrame(() => {
-            backdrop.classList.remove('opacity-0');
-            backdrop.classList.add('opacity-100');
-            panel.classList.remove('translate-y-full');
-            panel.classList.add('translate-y-0');
+            requestAnimationFrame(() => {
+                backdrop.classList.remove('opacity-0');
+                backdrop.classList.add('opacity-100');
+                panel.classList.remove('translate-y-full');
+                panel.classList.add('translate-y-0');
+            });
         });
+    }
+
+    function toggleShareQrCode() {
+        const container = document.getElementById('share-qr-container');
+        const label = document.getElementById('btn-qr-label');
+        if (!container) return;
+        const isHidden = container.classList.contains('hidden');
+        if (isHidden) {
+            container.classList.remove('hidden');
+            if (label) label.innerText = 'Tutup QR Code';
+        } else {
+            container.classList.add('hidden');
+            if (label) label.innerText = 'Pindai / Tampilkan QR Code';
+        }
     }
 
     function closeShareModal() {
@@ -1280,16 +1992,21 @@
 
     // Modal Create Drop Link
     function openCreateDropModal() {
+        if (typeof pushModalHistoryState === 'function') {
+            pushModalHistoryState('createDrop');
+        }
         const modal = document.getElementById('create-drop-modal');
         const backdrop = document.getElementById('drop-backdrop');
         const panel = document.getElementById('drop-panel');
 
         modal.classList.remove('hidden');
         requestAnimationFrame(() => {
-            backdrop.classList.remove('opacity-0');
-            backdrop.classList.add('opacity-100');
-            panel.classList.remove('translate-y-full');
-            panel.classList.add('translate-y-0');
+            requestAnimationFrame(() => {
+                backdrop.classList.remove('opacity-0');
+                backdrop.classList.add('opacity-100');
+                panel.classList.remove('translate-y-full');
+                panel.classList.add('translate-y-0');
+            });
         });
     }
 
@@ -1309,16 +2026,21 @@
 
     // Quota Modal Handlers
     function openQuotaModal() {
+        if (typeof pushModalHistoryState === 'function') {
+            pushModalHistoryState('quota');
+        }
         const modal = document.getElementById('quota-modal');
         const backdrop = document.getElementById('quota-backdrop');
         const panel = document.getElementById('quota-panel');
 
         modal.classList.remove('hidden');
         requestAnimationFrame(() => {
-            backdrop.classList.remove('opacity-0');
-            backdrop.classList.add('opacity-100');
-            panel.classList.remove('translate-y-full');
-            panel.classList.add('translate-y-0');
+            requestAnimationFrame(() => {
+                backdrop.classList.remove('opacity-0');
+                backdrop.classList.add('opacity-100');
+                panel.classList.remove('translate-y-full');
+                panel.classList.add('translate-y-0');
+            });
         });
     }
 
@@ -1410,7 +2132,16 @@
         }, 250);
     }
 
-    function openPreviewModal(id, title, originalName, size, ext, previewUrl, downloadUrl, label, notes, date, deleteUrl, shareUrl, isPublic, shareToggleUrl) {
+    function openMoveModalFromPreview() {
+        if (!currentPreviewFile || !currentPreviewFile.id) return;
+        const file = { ...currentPreviewFile };
+        closePreviewModal();
+        setTimeout(() => {
+            openMoveFileModal(file.id, file.title, file.folderId);
+        }, 250);
+    }
+
+    function openPreviewModal(id, title, originalName, size, ext, previewUrl, downloadUrl, label, notes, date, deleteUrl, shareUrl, isPublic, shareToggleUrl, folderId) {
         const modal = document.getElementById('preview-modal');
         const backdrop = document.getElementById('preview-backdrop');
         const panel = document.getElementById('preview-panel');
@@ -1422,7 +2153,8 @@
             deleteUrl: deleteUrl || '',
             shareUrl: shareUrl || '',
             isPublic: isPublic || false,
-            shareToggleUrl: shareToggleUrl || ''
+            shareToggleUrl: shareToggleUrl || '',
+            folderId: folderId || ''
         };
 
         const deleteBtn = document.getElementById('pv-delete-btn');
@@ -1716,5 +2448,311 @@
         if (spinner) spinner.classList.remove('hidden');
         if (btnText) btnText.innerText = 'Menghapus...';
     }
+
+    // ==========================================
+    // FOLDER MANAGEMENT JAVASCRIPT FUNCTIONS
+    // ==========================================
+
+    // 1. Create Folder Modal
+    function openCreateFolderModal() {
+        const modal = document.getElementById('create-folder-modal');
+        const backdrop = document.getElementById('create-folder-backdrop');
+        const panel = document.getElementById('create-folder-panel');
+
+        modal.classList.remove('hidden');
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                backdrop.classList.remove('opacity-0');
+                backdrop.classList.add('opacity-100');
+                panel.classList.remove('translate-y-full');
+                panel.classList.add('translate-y-0');
+                setTimeout(() => {
+                    const nameInput = document.getElementById('folder-name-input');
+                    if (nameInput) nameInput.focus();
+                }, 150);
+            });
+        });
+    }
+
+    function closeCreateFolderModal() {
+        const backdrop = document.getElementById('create-folder-backdrop');
+        const panel = document.getElementById('create-folder-panel');
+
+        backdrop.classList.remove('opacity-100');
+        backdrop.classList.add('opacity-0');
+        panel.classList.remove('translate-y-0');
+        panel.classList.add('translate-y-full');
+
+        setTimeout(() => {
+            document.getElementById('create-folder-modal').classList.add('hidden');
+        }, 300);
+    }
+
+    function handleCreateFolderSubmit(e) {
+        const btn = document.getElementById('btn-create-folder');
+        const text = document.getElementById('create-folder-text');
+        const spinner = document.getElementById('create-folder-spinner');
+
+        btn.disabled = true;
+        btn.classList.add('opacity-80', 'cursor-not-allowed');
+        if (text) text.innerText = 'Membuat Folder...';
+        if (spinner) spinner.classList.remove('hidden');
+    }
+
+    // 2. Edit Folder Modal
+    function openEditFolderModal(id, name, color, description, updateUrl) {
+        document.getElementById('edit-folder-form').action = updateUrl;
+        document.getElementById('edit-folder-name').value = name;
+        document.getElementById('edit-folder-desc').value = description || '';
+
+        // Select color radio
+        const colorRadio = document.getElementById('edit-color-' + (color || 'teal'));
+        if (colorRadio) {
+            colorRadio.checked = true;
+        }
+
+        const modal = document.getElementById('edit-folder-modal');
+        const backdrop = document.getElementById('edit-folder-backdrop');
+        const panel = document.getElementById('edit-folder-panel');
+
+        modal.classList.remove('hidden');
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                backdrop.classList.remove('opacity-0');
+                backdrop.classList.add('opacity-100');
+                panel.classList.remove('translate-y-full');
+                panel.classList.add('translate-y-0');
+            });
+        });
+    }
+
+    function closeEditFolderModal() {
+        const backdrop = document.getElementById('edit-folder-backdrop');
+        const panel = document.getElementById('edit-folder-panel');
+
+        backdrop.classList.remove('opacity-100');
+        backdrop.classList.add('opacity-0');
+        panel.classList.remove('translate-y-0');
+        panel.classList.add('translate-y-full');
+
+        setTimeout(() => {
+            document.getElementById('edit-folder-modal').classList.add('hidden');
+        }, 300);
+    }
+
+    // 3. Share Folder Modal
+    let currentSharedFolder = null;
+
+    function openFolderShareModal(id, name, info, url, isPublic, toggleUrl) {
+        currentSharedFolder = {
+            id: id,
+            name: name,
+            info: info,
+            url: url,
+            isPublic: isPublic,
+            toggleUrl: toggleUrl
+        };
+
+        document.getElementById('folder-share-name').innerText = name;
+        document.getElementById('folder-share-summary').innerText = info;
+        document.getElementById('folder-share-url-input').value = url;
+        document.getElementById('folder-share-toggle').checked = isPublic;
+
+        updateFolderShareUI(isPublic, name, url);
+
+        const modal = document.getElementById('folder-share-modal');
+        const backdrop = document.getElementById('folder-share-backdrop');
+        const panel = document.getElementById('folder-share-panel');
+
+        modal.classList.remove('hidden');
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                backdrop.classList.remove('opacity-0');
+                backdrop.classList.add('opacity-100');
+                panel.classList.remove('translate-y-full');
+                panel.classList.add('translate-y-0');
+            });
+        });
+    }
+
+    function updateFolderShareUI(isPublic, name, url) {
+        const badge = document.getElementById('folder-share-badge');
+        const urlContainer = document.getElementById('folder-share-url-container');
+        const privateNotice = document.getElementById('folder-share-private-notice');
+        const openBtn = document.getElementById('folder-share-open-btn');
+        const waBtn = document.getElementById('folder-share-wa-btn');
+
+        if (isPublic) {
+            badge.innerText = 'Publik';
+            badge.className = 'px-2.5 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider shrink-0 bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300';
+            urlContainer.classList.remove('hidden');
+            privateNotice.classList.add('hidden');
+
+            openBtn.href = url;
+            const waText = encodeURIComponent(`Halo, berikut tautan folder berkas SwanDrive "${name}":\n${url}`);
+            waBtn.href = `https://api.whatsapp.com/send?text=${waText}`;
+
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(url)}`;
+            const qrImg = document.getElementById('folder-share-qr-image');
+            if (qrImg) qrImg.src = qrUrl;
+            const qrDownloadBtn = document.getElementById('btn-download-folder-share-qr');
+            if (qrDownloadBtn) qrDownloadBtn.href = qrUrl;
+            const qrContainer = document.getElementById('folder-share-qr-container');
+            if (qrContainer) qrContainer.classList.add('hidden');
+            const qrLabel = document.getElementById('btn-folder-qr-label');
+            if (qrLabel) qrLabel.innerText = 'Pindai / Tampilkan QR Code';
+        } else {
+            badge.innerText = 'Privat';
+            badge.className = 'px-2.5 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider shrink-0 bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300';
+            urlContainer.classList.add('hidden');
+            privateNotice.classList.remove('hidden');
+        }
+    }
+
+    function toggleFolderShareQrCode() {
+        const container = document.getElementById('folder-share-qr-container');
+        const label = document.getElementById('btn-folder-qr-label');
+        if (!container) return;
+        const isHidden = container.classList.contains('hidden');
+        if (isHidden) {
+            container.classList.remove('hidden');
+            if (label) label.innerText = 'Tutup QR Code';
+        } else {
+            container.classList.add('hidden');
+            if (label) label.innerText = 'Pindai / Tampilkan QR Code';
+        }
+    }
+
+    function closeFolderShareModal() {
+        const backdrop = document.getElementById('folder-share-backdrop');
+        const panel = document.getElementById('folder-share-panel');
+
+        backdrop.classList.remove('opacity-100');
+        backdrop.classList.add('opacity-0');
+        panel.classList.remove('translate-y-0');
+        panel.classList.add('translate-y-full');
+
+        setTimeout(() => {
+            document.getElementById('folder-share-modal').classList.add('hidden');
+        }, 300);
+    }
+
+    function toggleFolderShareStatus() {
+        if (!currentSharedFolder || !currentSharedFolder.toggleUrl) return;
+
+        const toggleCheckbox = document.getElementById('folder-share-toggle');
+        const desiredState = toggleCheckbox.checked;
+
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+            || document.querySelector('input[name="_token"]')?.value;
+
+        fetch(currentSharedFolder.toggleUrl, {
+            method: 'PATCH',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                currentSharedFolder.isPublic = data.is_public;
+                currentSharedFolder.url = data.share_url;
+                document.getElementById('folder-share-url-input').value = data.share_url;
+                updateFolderShareUI(data.is_public, currentSharedFolder.name, data.share_url);
+                if (typeof showSwanToast === 'function') {
+                    showSwanToast(data.message || 'Status berbagi folder diperbarui.');
+                }
+            } else {
+                toggleCheckbox.checked = !desiredState;
+                alert('Gagal memperbarui status berbagi folder.');
+            }
+        })
+        .catch(err => {
+            toggleCheckbox.checked = !desiredState;
+            alert('Terjadi kesalahan jaringan.');
+        });
+    }
+
+    function copyFolderShareLink() {
+        const input = document.getElementById('folder-share-url-input');
+        if (!input || !input.value) return;
+        const btn = document.getElementById('btn-copy-folder-link');
+        copyToClipboard(input.value, btn);
+    }
+
+    // 4. Move File Modal
+    function openMoveFileModal(fileId, fileTitle, currentFolderId) {
+        document.getElementById('move-file-form').action = `/drive/${fileId}/move`;
+        document.getElementById('move-file-title').innerText = fileTitle;
+
+        // Reset radio checked
+        document.querySelectorAll('input[name="folder_id"]').forEach(r => r.checked = false);
+
+        if (!currentFolderId) {
+            const rootRadio = document.getElementById('move-folder-root');
+            if (rootRadio) rootRadio.checked = true;
+        } else {
+            const folderRadio = document.getElementById(`move-folder-${currentFolderId}`);
+            if (folderRadio) folderRadio.checked = true;
+        }
+
+        const modal = document.getElementById('move-file-modal');
+        const backdrop = document.getElementById('move-file-backdrop');
+        const panel = document.getElementById('move-file-panel');
+
+        modal.classList.remove('hidden');
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                backdrop.classList.remove('opacity-0');
+                backdrop.classList.add('opacity-100');
+                panel.classList.remove('translate-y-full');
+                panel.classList.add('translate-y-0');
+            });
+        });
+    }
+
+    function closeMoveFileModal() {
+        const backdrop = document.getElementById('move-file-backdrop');
+        const panel = document.getElementById('move-file-panel');
+
+        backdrop.classList.remove('opacity-100');
+        backdrop.classList.add('opacity-0');
+        panel.classList.remove('translate-y-0');
+        panel.classList.add('translate-y-full');
+
+        setTimeout(() => {
+            document.getElementById('move-file-modal').classList.add('hidden');
+        }, 300);
+    }
+
+    // 5. Delete Folder Confirmation
+    function confirmDeleteFolder(id, name, count, url) {
+        const modal = document.getElementById('delete-modal');
+        const backdrop = document.getElementById('delete-backdrop');
+        const panel = document.getElementById('delete-panel');
+        const titleEl = document.getElementById('delete-modal-title');
+        const descEl = document.getElementById('delete-modal-desc');
+        const nameEl = document.getElementById('delete-target-name');
+        const infoEl = document.getElementById('delete-target-info');
+        const form = document.getElementById('delete-form');
+        const btnText = document.getElementById('delete-btn-text');
+
+        form.action = url;
+        titleEl.innerText = `Hapus Folder "${name}"?`;
+        descEl.innerText = `Folder ini beserta ${count} berkas di dalamnya akan dihapus secara permanen dari server. Tindakan ini tidak dapat dibatalkan.`;
+        nameEl.innerText = `📁 ${name}`;
+        infoEl.innerText = `${count} Berkas`;
+        btnText.innerText = 'Ya, Hapus Folder & Isinya';
+
+        modal.classList.remove('hidden');
+        requestAnimationFrame(() => {
+            backdrop.classList.remove('opacity-0');
+            backdrop.classList.add('opacity-100');
+            panel.classList.remove('translate-y-full');
+            panel.classList.add('translate-y-0');
+        });
+    }
 </script>
-@endsection
+@endpush

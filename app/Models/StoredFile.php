@@ -13,6 +13,7 @@ class StoredFile extends Model
     protected $fillable = [
         'user_id',
         'upload_link_id',
+        'folder_id',
         'title',
         'original_name',
         'file_path',
@@ -36,6 +37,11 @@ class StoredFile extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function folder(): BelongsTo
+    {
+        return $this->belongsTo(Folder::class);
     }
 
     public function uploadLink(): BelongsTo

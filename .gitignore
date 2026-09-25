@@ -27,3 +27,11 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+*.zip
+.env_*
+/scratch/
+extract.php
+zip.php
+upload_to_hostinger.ps1
+.htaccess_hostinger
+

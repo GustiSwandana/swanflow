@@ -13,32 +13,32 @@
     // Detect icon type
     $iconType = 'default';
     
-    if ($txType === 'transfer' || str_contains($catName, 'transfer')) {
-        $iconType = 'transfer';
-    } elseif (str_contains($catName, 'makan') || str_contains($catName, 'minum') || str_contains($catName, 'restoran') || str_contains($catName, 'kuliner') || $catIcon === 'utensils') {
+    if ($catIcon === 'utensils' || str_contains($catName, 'makan') || str_contains($catName, 'minum') || str_contains($catName, 'restoran') || str_contains($catName, 'kuliner')) {
         $iconType = 'food';
-    } elseif (str_contains($catName, 'kopi') || str_contains($catName, 'coffee') || str_contains($catName, 'cafe')) {
+    } elseif ($catIcon === 'coffee' || str_contains($catName, 'kopi') || str_contains($catName, 'coffee') || str_contains($catName, 'cafe')) {
         $iconType = 'coffee';
-    } elseif (str_contains($catName, 'transpor') || str_contains($catName, 'bensin') || str_contains($catName, 'ojek') || str_contains($catName, 'parkir') || $catIcon === 'car') {
+    } elseif ($catIcon === 'car' || str_contains($catName, 'transpor') || str_contains($catName, 'bensin') || str_contains($catName, 'ojek') || str_contains($catName, 'parkir')) {
         $iconType = 'transport';
-    } elseif (str_contains($catName, 'belanja') || str_contains($catName, 'pasar') || str_contains($catName, 'mall') || str_contains($catName, 'baju') || $catIcon === 'shopping-bag') {
+    } elseif ($catIcon === 'shopping-bag' || str_contains($catName, 'belanja') || str_contains($catName, 'pasar') || str_contains($catName, 'mall') || str_contains($catName, 'baju')) {
         $iconType = 'shopping';
-    } elseif (str_contains($catName, 'hibur') || str_contains($catName, 'nonton') || str_contains($catName, 'bioskop') || str_contains($catName, 'game') || str_contains($catName, 'film') || $catIcon === 'film') {
+    } elseif ($catIcon === 'film' || str_contains($catName, 'hibur') || str_contains($catName, 'nonton') || str_contains($catName, 'bioskop') || str_contains($catName, 'game') || str_contains($catName, 'film')) {
         $iconType = 'entertainment';
-    } elseif (str_contains($catName, 'tagihan') || str_contains($catName, 'listrik') || str_contains($catName, 'air') || str_contains($catName, 'wifi') || str_contains($catName, 'pulsa') || $catIcon === 'receipt') {
+    } elseif ($catIcon === 'receipt' || str_contains($catName, 'tagihan') || str_contains($catName, 'listrik') || str_contains($catName, 'air') || str_contains($catName, 'wifi') || str_contains($catName, 'pulsa')) {
         $iconType = 'bills';
-    } elseif (str_contains($catName, 'sehat') || str_contains($catName, 'obat') || str_contains($catName, 'dokter') || str_contains($catName, 'rumah sakit') || $catIcon === 'heart-pulse') {
+    } elseif ($catIcon === 'heart-pulse' || str_contains($catName, 'sehat') || str_contains($catName, 'obat') || str_contains($catName, 'dokter') || str_contains($catName, 'rumah sakit')) {
         $iconType = 'health';
-    } elseif (str_contains($catName, 'gaji') || str_contains($catName, 'salary') || str_contains($catName, 'upah') || $catIcon === 'banknotes') {
+    } elseif ($catIcon === 'banknotes' || str_contains($catName, 'gaji') || str_contains($catName, 'salary') || str_contains($catName, 'upah')) {
         $iconType = 'salary';
-    } elseif (str_contains($catName, 'invest') || str_contains($catName, 'dividen') || str_contains($catName, 'saham') || str_contains($catName, 'reksa') || $catIcon === 'arrow-trending-up') {
+    } elseif ($catIcon === 'arrow-trending-up' || str_contains($catName, 'invest') || str_contains($catName, 'dividen') || str_contains($catName, 'saham') || str_contains($catName, 'reksa')) {
         $iconType = 'investment';
-    } elseif (str_contains($catName, 'bonus') || str_contains($catName, 'freelance') || str_contains($catName, 'hadiah') || $catIcon === 'sparkles') {
+    } elseif ($catIcon === 'sparkles' || str_contains($catName, 'bonus') || str_contains($catName, 'freelance') || str_contains($catName, 'hadiah')) {
         $iconType = 'bonus';
-    } elseif (str_contains($catName, 'utang') || str_contains($catName, 'hutang') || str_contains($catName, 'piutang') || str_contains($catName, 'pinjam')) {
+    } elseif ($catIcon === 'debt' || str_contains($catName, 'utang') || str_contains($catName, 'hutang') || str_contains($catName, 'piutang') || str_contains($catName, 'pinjam')) {
         $iconType = 'debt';
-    } elseif (str_contains($catName, 'cukur') || str_contains($catName, 'salon') || str_contains($catName, 'barber')) {
+    } elseif ($catIcon === 'scissors' || str_contains($catName, 'cukur') || str_contains($catName, 'salon') || str_contains($catName, 'barber')) {
         $iconType = 'scissors';
+    } elseif ($txType === 'transfer' || str_contains($catName, 'transfer')) {
+        $iconType = 'transfer';
     } elseif ($txType === 'income') {
         $iconType = 'salary';
     }

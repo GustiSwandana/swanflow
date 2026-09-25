@@ -1,14 +1,14 @@
 @extends('layouts.mobile')
 
 @section('header_left')
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-2.5">
         <a href="{{ route('dashboard') }}" class="min-w-[42px] min-h-[42px] w-10.5 h-10.5 flex items-center justify-center text-slate-700 dark:text-slate-200 rounded-[18px] liquid-glass border border-white/60 dark:border-white/10 ios-press transition-all shadow-xs" aria-label="Kembali ke Dashboard">
             <svg class="w-5 h-5 text-slate-800 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
             </svg>
         </a>
         <div class="flex flex-col">
-            <h1 class="text-base font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+            <h1 class="text-base sm:text-lg font-black text-slate-900 dark:text-white tracking-tight leading-tight">
                 Profil Pengguna
             </h1>
             <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">Pengaturan akun {{ $user->name }}</span>
@@ -78,6 +78,29 @@
             </div>
         </div>
         <div class="w-9 h-9 rounded-[16px] liquid-glass border border-white/50 dark:border-white/10 text-slate-400 group-hover:text-teal-600 dark:group-hover:text-teal-400 flex items-center justify-center shrink-0 transition-colors shadow-2xs">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+            </svg>
+        </div>
+    </a>
+
+    <!-- Pintasan Kategori Transaksi di Profil -->
+    <a href="{{ route('categories.index') }}" class="liquid-card rounded-[24px] p-4.5 bg-white/80 dark:bg-slate-900/75 border border-white/60 dark:border-white/10 shadow-sm hover:shadow-md backdrop-blur-2xl flex items-center justify-between group ios-press transition-all">
+        <div class="flex items-center gap-3.5 min-w-0 pr-2">
+            <div class="w-11 h-11 rounded-[18px] bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 border border-amber-500/30 shadow-2xs">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z M6 6h.008v.008H6V6z"/>
+                </svg>
+            </div>
+            <div class="min-w-0">
+                <div class="flex items-center gap-1.5">
+                    <h3 class="text-sm font-black text-slate-800 dark:text-white truncate">Kategori Transaksi</h3>
+                    <span class="text-[9px] font-black px-2 py-0.5 rounded-[10px] bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-400/30 shrink-0">Master</span>
+                </div>
+                <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5 truncate">Kustomisasi pos belanja &amp; pendapatan</p>
+            </div>
+        </div>
+        <div class="w-9 h-9 rounded-[16px] liquid-glass border border-white/50 dark:border-white/10 text-slate-400 group-hover:text-amber-600 dark:group-hover:text-amber-400 flex items-center justify-center shrink-0 transition-colors shadow-2xs">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
             </svg>
@@ -298,7 +321,7 @@
                 </div>
                 <div>
                     <h3 class="text-sm font-black text-slate-900 dark:text-white">Face ID & Biometrik</h3>
-                    <p class="text-[11px] font-semibold text-slate-400 dark:text-slate-500">Masuk cepat menggunakan sensor wajah iPhone / Biometrik</p>
+                    <p id="face-id-profile-sub" class="text-[11px] font-semibold text-slate-400 dark:text-slate-500">Masuk cepat menggunakan sensor wajah iPhone / Biometrik Android</p>
                 </div>
             </div>
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-[14px] text-[10px] font-black {{ $biometricCredentials->isNotEmpty() ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30' : 'bg-slate-100 dark:bg-slate-800 text-slate-500' }}">
@@ -343,7 +366,7 @@
             <button type="button" 
                     id="btn-register-face-id"
                     onclick="registerFaceId()" 
-                    class="w-full min-h-[46px] py-3 px-4 rounded-[20px] bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs shadow-lg shadow-emerald-600/30 ios-press active:scale-98 transition-all flex items-center justify-center gap-2 border border-white/20">
+                    class="w-full min-h-[46px] py-3 px-4 rounded-[20px] bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs shadow-lg shadow-emerald-600/30 ios-press active:scale-98 transition-all flex items-center justify-center gap-2 border border-white/20 cursor-pointer">
                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M4 8V6a2 2 0 0 1 2-2h2" />
                     <path d="M4 16v2a2 2 0 0 0 2 2h2" />
@@ -354,7 +377,7 @@
                     <path d="M9.5 15a3.5 3.5 0 0 0 5 0" />
                     <path d="M12 11v2" />
                 </svg>
-                <span>Daftarkan Face ID di Perangkat Ini</span>
+                <span id="btn-register-face-text">Daftarkan Face ID di Perangkat Ini</span>
             </button>
             <p id="face-id-register-feedback" class="text-[11px] font-semibold text-center text-slate-400 mt-2 hidden"></p>
         </div>
@@ -371,6 +394,18 @@
                 Keluar dari Akun
             </button>
         </form>
+    </div>
+
+    <!-- 7. TENTANG APLIKASI & KREDIT PENGEMBANG -->
+    <div class="text-center pt-4 pb-2 space-y-1.5">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 text-[11px] font-bold text-slate-500 dark:text-slate-400 shadow-2xs">
+            <span>SwanFlow &copy; {{ date('Y') }}</span>
+            <span>•</span>
+            <span>Dibuat oleh <strong class="text-slate-800 dark:text-slate-200 font-black">Gusti Swandana</strong></span>
+        </div>
+        <p class="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
+            Personal Financial Tracker &amp; Cloud Vault &bull; Crafted with precision
+        </p>
     </div>
 
 </div>
@@ -393,19 +428,39 @@
         return btoa(binary);
     }
 
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const isAndroid = /Android/.test(navigator.userAgent);
+
+    document.addEventListener('DOMContentLoaded', () => {
+        if (!isIOS) {
+            const btnText = document.getElementById('btn-register-face-text');
+            if (btnText) {
+                btnText.textContent = isAndroid 
+                    ? 'Daftarkan Sidik Jari / Biometrik di Android Ini' 
+                    : 'Daftarkan Biometrik di Perangkat Ini';
+            }
+            const subText = document.getElementById('face-id-profile-sub');
+            if (subText) {
+                subText.textContent = isAndroid
+                    ? 'Masuk cepat menggunakan sensor sidik jari atau biometrik Android'
+                    : 'Masuk cepat menggunakan sensor biometrik atau passkey perangkat';
+            }
+        }
+    });
+
     async function registerFaceId() {
         const feedback = document.getElementById('face-id-register-feedback');
         const btn = document.getElementById('btn-register-face-id');
 
         feedback.classList.remove('hidden', 'text-rose-500', 'text-emerald-500');
         feedback.classList.add('text-slate-400');
-        feedback.textContent = 'Menyiapkan Face ID...';
+        feedback.textContent = isIOS ? 'Menyiapkan Face ID...' : 'Menyiapkan sensor biometrik...';
 
         if (!window.PublicKeyCredential) {
             feedback.classList.remove('text-slate-400');
             feedback.classList.add('text-rose-500');
             feedback.textContent = !window.isSecureContext
-                ? 'Sensor Face ID dinonaktifkan browser karena web dibuka via HTTP biasa (bukan HTTPS). Buka via HTTPS atau gunakan PIN 6-Digit.'
+                ? 'Sensor biometrik dinonaktifkan browser karena web dibuka via HTTP biasa (bukan HTTPS). Buka via HTTPS atau gunakan PIN 6-Digit.'
                 : 'Browser ini tidak mendukung sensor biometrik WebAuthn.';
             return;
         }
@@ -426,7 +481,9 @@
             }
 
             const data = await res.json();
-            feedback.textContent = 'Pindai wajah Anda saat dialog sensor iPhone muncul...';
+            feedback.textContent = isIOS 
+                ? 'Pindai wajah Anda saat dialog sensor iPhone muncul...' 
+                : (isAndroid ? 'Sentuh sensor sidik jari atau pindai wajah saat dialog sistem Android muncul...' : 'Verifikasi pada dialog keamanan perangkat Anda...');
 
             const challengeBytes = hexToBytes(data.challenge);
             const userIdBytes = new TextEncoder().encode(data.user.id);
@@ -463,8 +520,12 @@
                     clientDataJson = bufferToBase64(credential.response.clientDataJSON);
                 }
 
-                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-                const deviceName = isIOS ? 'iPhone (Face ID)' : 'Perangkat Biometrik';
+                let deviceName = 'Perangkat Biometrik';
+                if (isIOS) {
+                    deviceName = 'iPhone (Face ID)';
+                } else if (isAndroid) {
+                    deviceName = 'Android (Biometrik / Sidik Jari)';
+                }
 
                 const verifyRes = await fetch('{{ route("faceid.register.verify") }}', {
                     method: 'POST',
@@ -485,10 +546,12 @@
                 if (verifyRes.ok && result.success) {
                     feedback.classList.remove('text-slate-400');
                     feedback.classList.add('text-emerald-500');
-                    feedback.textContent = 'Berhasil! Face ID aktif pada perangkat ini.';
+                    feedback.textContent = isIOS 
+                        ? 'Berhasil! Face ID aktif pada perangkat iPhone ini.' 
+                        : (isAndroid ? 'Berhasil! Sidik Jari / Biometrik aktif pada perangkat Android ini.' : 'Berhasil! Biometrik aktif pada perangkat ini.');
                     setTimeout(() => window.location.reload(), 1000);
                 } else {
-                    throw new Error(result.message || 'Gagal menyimpan kredensial Face ID.');
+                    throw new Error(result.message || 'Gagal menyimpan kredensial biometrik.');
                 }
             }
         } catch (err) {
@@ -497,7 +560,7 @@
             if (err.name === 'NotAllowedError') {
                 feedback.textContent = 'Pendaftaran dibatalkan atau waktu habis.';
             } else {
-                feedback.textContent = err.message || 'Terjadi kesalahan pada registrasi Face ID.';
+                feedback.textContent = err.message || (isIOS ? 'Terjadi kesalahan pada registrasi Face ID.' : 'Terjadi kesalahan pada registrasi biometrik.');
             }
         }
     }

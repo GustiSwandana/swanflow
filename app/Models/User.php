@@ -161,6 +161,16 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the folders in SwanDrive for the user.
+     *
+     * @return HasMany<Folder, $this>
+     */
+    public function folders(): HasMany
+    {
+        return $this->hasMany(Folder::class);
+    }
+
+    /**
      * Get the file drop upload links for the user.
      *
      * @return HasMany<UploadLink, $this>

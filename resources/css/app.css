@@ -14,103 +14,191 @@
 }
 
 /* ==========================================================================
-   Apple iOS Liquid Design System
+   Cross-Platform Mobile Touch & Interaction Optimizations (Android & iOS)
+   ========================================================================== */
+.hidden {
+    display: none !important;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+/* Enable zero-latency tap gestures and prevent micro-drag gesture aborts on Android */
+button, a, input, select, textarea, [role="button"], .ios-press, .liquid-action-fab {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* ==========================================================================
+   Apple iOS / visionOS Liquid Design System (Interactive & Smooth Motion)
    ========================================================================== */
 
-/* 1. Liquid Glass Base Surfaces */
+/* 1. Liquid Glass Base Surfaces (Buttons, Badges, Headers) */
 .liquid-glass {
-    background: rgba(255, 255, 255, 0.78);
-    -webkit-backdrop-filter: blur(28px) saturate(190%);
-    backdrop-filter: blur(28px) saturate(190%);
-    border: 1px solid rgba(255, 255, 255, 0.65);
-    box-shadow: 0 10px 32px -4px rgba(0, 0, 0, 0.06), 
-                0 2px 6px 0 rgba(0, 0, 0, 0.02),
-                inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
+    position: relative;
+    background: rgba(255, 255, 255, 0.8);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(226, 232, 240, 0.6);
+    box-shadow: 0 4px 16px -4px rgba(15, 23, 42, 0.04);
+    transition: transform 0.2s ease-out,
+                box-shadow 0.2s ease,
+                border-color 0.2s ease,
+                background-color 0.2s ease,
+                filter 0.2s ease;
+}
+
+.liquid-glass:active {
+    transform: scale(0.97);
+    box-shadow: 0 2px 8px -2px rgba(15, 23, 42, 0.04);
 }
 
 :where(.dark, .dark *) .liquid-glass {
-    background: rgba(15, 23, 42, 0.72);
-    -webkit-backdrop-filter: blur(28px) saturate(200%);
-    backdrop-filter: blur(28px) saturate(200%);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    box-shadow: 0 16px 40px -6px rgba(0, 0, 0, 0.6), 
-                0 2px 8px 0 rgba(0, 0, 0, 0.3),
-                inset 0 1px 1px 0 rgba(255, 255, 255, 0.15);
-}
-
-/* 2. Liquid Glass Cards with Squircle Geometry */
-.liquid-card {
-    border-radius: 28px;
-    background: rgba(255, 255, 255, 0.84);
+    background: rgba(2, 6, 23, 0.75); /* slate-950 */
     -webkit-backdrop-filter: blur(24px) saturate(180%);
     backdrop-filter: blur(24px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.7);
-    box-shadow: 0 12px 34px -8px rgba(15, 23, 42, 0.08),
-                0 3px 10px -2px rgba(15, 23, 42, 0.03),
-                inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.9);
-    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.4);
+}
+
+:where(.dark, .dark *) .liquid-glass:active {
+    transform: scale(0.97);
+    box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.4);
+}
+
+/* 2. Liquid Glass Cards with Squircle Geometry & Dynamic Specular Sheen */
+.liquid-card {
+    position: relative;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.95);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(226, 232, 240, 0.6);
+    box-shadow: 0 8px 24px -6px rgba(15, 23, 42, 0.03);
+    transition: transform 0.2s ease-out,
+                box-shadow 0.2s ease,
+                border-color 0.2s ease,
+                background-color 0.2s ease;
 }
 
 :where(.dark, .dark *) .liquid-card {
-    background: rgba(18, 26, 43, 0.74);
-    -webkit-backdrop-filter: blur(24px) saturate(190%);
-    backdrop-filter: blur(24px) saturate(190%);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 18px 48px -10px rgba(0, 0, 0, 0.65),
-                0 4px 12px -2px rgba(0, 0, 0, 0.3),
-                inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.12);
+    background: rgba(15, 23, 42, 0.65); /* slate-900 */
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.4);
 }
 
-/* 3. Liquid Floating Island (Bottom Dock) */
+.liquid-card:active {
+    transform: scale(0.99);
+    transition-duration: 0.1s;
+}
+
+/* 3. Liquid Floating Island (Bottom Dock) - Apple visionOS Glass Geometry */
 .liquid-dock-capsule {
-    background: rgba(255, 255, 255, 0.85);
-    -webkit-backdrop-filter: blur(36px) saturate(210%);
-    backdrop-filter: blur(36px) saturate(210%);
-    border: 1px solid rgba(255, 255, 255, 0.85);
-    box-shadow: 0 20px 50px -10px rgba(15, 23, 42, 0.14),
-                0 6px 16px -2px rgba(15, 23, 42, 0.06),
+    background: rgba(255, 255, 255, 0.92);
+    -webkit-backdrop-filter: blur(20px) saturate(190%);
+    backdrop-filter: blur(20px) saturate(190%);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    box-shadow: 0 20px 50px -10px rgba(15, 23, 42, 0.12),
+                0 6px 16px -2px rgba(15, 23, 42, 0.04),
                 inset 0 1px 2px 0 rgba(255, 255, 255, 0.95);
+    transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
+                border-color 0.25s ease,
+                background-color 0.25s ease;
 }
 
 :where(.dark, .dark *) .liquid-dock-capsule {
-    background: rgba(15, 23, 42, 0.82);
-    -webkit-backdrop-filter: blur(36px) saturate(210%);
-    backdrop-filter: blur(36px) saturate(210%);
-    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(15, 23, 42, 0.88);
+    -webkit-backdrop-filter: blur(20px) saturate(190%);
+    backdrop-filter: blur(20px) saturate(190%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     box-shadow: 0 24px 60px -8px rgba(0, 0, 0, 0.75),
                 0 6px 20px -2px rgba(0, 0, 0, 0.45),
                 inset 0 1px 2px 0 rgba(255, 255, 255, 0.18);
 }
 
-/* 4. iOS Liquid Action Button (+) */
+/* 4. iOS Liquid Action Button (+) with Pulse & Spring */
+@keyframes liquidFabGlow {
+    0%, 100% {
+        box-shadow: 0 8px 24px -2px rgba(16, 185, 129, 0.45),
+                    0 0 0 0 rgba(16, 185, 129, 0.35),
+                    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.5);
+    }
+    50% {
+        box-shadow: 0 12px 32px -2px rgba(16, 185, 129, 0.65),
+                    0 0 0 7px rgba(16, 185, 129, 0),
+                    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.7);
+    }
+}
+
 .liquid-action-fab {
     background: linear-gradient(135deg, #10b981 0%, #059669 60%, #0f766e 100%);
-    box-shadow: 0 8px 24px -2px rgba(16, 185, 129, 0.45),
-                inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.5);
     border: 2px solid rgba(255, 255, 255, 0.85);
-    transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.18s ease;
+    animation: liquidFabGlow 3.6s ease-in-out infinite;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.2s ease,
+                filter 0.2s ease;
 }
 
 :where(.dark, .dark *) .liquid-action-fab {
-    border: 2px solid rgba(255, 255, 255, 0.25);
-    box-shadow: 0 10px 28px -2px rgba(16, 185, 129, 0.6),
-                inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.6);
+    border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .liquid-action-fab:active {
-    transform: scale(0.90);
-    box-shadow: 0 4px 12px -2px rgba(16, 185, 129, 0.35);
+    transform: scale(0.91);
+    filter: brightness(0.96);
+    box-shadow: 0 4px 14px -2px rgba(16, 185, 129, 0.4);
+    animation: none;
+}
+
+/* Waving Hand Natural Interaction */
+@keyframes iosWaveHand {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    10% {
+        transform: rotate(16deg);
+    }
+    20% {
+        transform: rotate(-10deg);
+    }
+    30% {
+        transform: rotate(16deg);
+    }
+    40% {
+        transform: rotate(-6deg);
+    }
+    50% {
+        transform: rotate(12deg);
+    }
+    60% {
+        transform: rotate(0deg);
+    }
+}
+
+.animate-wave-hand {
+    display: inline-block;
+    transform-origin: 70% 70%;
+    animation: iosWaveHand 2.4s infinite ease-in-out;
+}
+
+.animate-wave-hand:hover,
+.animate-wave-hand:active {
+    animation: iosWaveHand 0.8s infinite ease-in-out;
 }
 
 /* 5. Apple Inset Grouped List */
 .ios-inset-group {
     border-radius: 26px;
-    background: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.9);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.65);
+    border: 1px solid rgba(226, 232, 240, 0.85);
     overflow: hidden;
     box-shadow: 0 8px 26px -6px rgba(15, 23, 42, 0.05);
+    transition: transform 0.26s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.26s ease;
 }
 
 :where(.dark, .dark *) .ios-inset-group {
@@ -121,43 +209,45 @@
 
 /* 6. Apple iOS Spring Touch Interactions */
 .ios-press {
-    transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.16s ease;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+                opacity 0.2s ease,
+                filter 0.2s ease,
+                box-shadow 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
 }
+
+
 
 .ios-press:active {
-    transform: scale(0.96);
+    transform: scale(0.95);
     opacity: 0.88;
+    filter: brightness(0.96);
 }
 
-/* 7. Ambient Liquid Glow Animations */
-@keyframes liquidOrbFloat {
-    0%, 100% {
-        transform: translate(0px, 0px) scale(1);
-    }
-    33% {
-        transform: translate(15px, -20px) scale(1.08);
-    }
-    66% {
-        transform: translate(-18px, 12px) scale(0.95);
-    }
-}
-
-.animate-liquid-orb-1 {
-    animation: liquidOrbFloat 14s ease-in-out infinite;
-}
-
-.animate-liquid-orb-2 {
-    animation: liquidOrbFloat 18s ease-in-out infinite reverse;
+/* 7. Organic Ambient Liquid Glow Orbs (Optimized Static Aura for GPU efficiency) */
+.animate-liquid-orb-1,
+.animate-liquid-orb-2,
+.animate-liquid-orb-3 {
+    animation: none !important;
+    transform: none !important;
 }
 
 /* 8. iOS Native Segmented Control */
 .ios-segmented-track {
     background: rgba(15, 23, 42, 0.06);
-    border-radius: 16px;
+    border-radius: 18px;
     padding: 3px;
-    display: grid;
+    display: flex;
+    align-items: center;
     gap: 3px;
+    width: 100%;
     border: 1px solid rgba(15, 23, 42, 0.04);
+    transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+
+.ios-segmented-track > * {
+    flex: 1 1 0%;
+    min-width: 0;
 }
 
 :where(.dark, .dark *) .ios-segmented-track {
@@ -166,15 +256,147 @@
 }
 
 .ios-segmented-thumb {
-    border-radius: 13px;
+    border-radius: 14px;
     background: #ffffff;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.05);
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.09), 0 1px 3px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    transition: all 0.24s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 :where(.dark, .dark *) .ios-segmented-thumb {
     background: rgba(30, 41, 59, 0.95);
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* 10. Modal Sheet Stacking & Bottom Navigation Dock Auto-Hide */
+body.modal-open nav.liquid-dock-capsule {
+    transform: translate(-50%, 180%) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+nav.liquid-dock-capsule {
+    transition: transform 0.32s cubic-bezier(0.34, 1.2, 0.64, 1), opacity 0.25s ease, background-color 0.3s ease !important;
+}
+
+#modal-add-budget,
+#modal-edit-budget,
+#modal-dashboard-add-wallet,
+#modal-add-wallet,
+#modal-edit-wallet,
+#modal-add-subscription,
+#modal-edit-subscription,
+#modal-pay-subscription,
+#modal-add-debt,
+#modal-edit-debt,
+#modal-repay-debt,
+#modal-add-category,
+#modal-edit-category,
+#modal-add-investment,
+#modal-topup-investment,
+#modal-update-value,
+#modal-withdraw-investment,
+#modal-edit-investment,
+#transaction-modal,
+#edit-transaction-modal,
+#receipt-scanner-modal,
+#delete-transaction-confirm-modal,
+#shortcutModal,
+#addModal,
+#editModal,
+#share-modal,
+#folder-share-modal,
+#create-drop-modal {
+    z-index: 70 !important;
+}
+
+.modal-backdrop,
+[data-backdrop] {
+    z-index: 10 !important;
+}
+
+/* Ensure modal bottom sheet containers always stack above the backdrop */
+.fixed.bottom-0.left-0.right-0,
+div[class*="fixed bottom-0 left-0 right-0"] {
+    z-index: 30 !important;
+}
+
+.modal-panel,
+.modal-sheet-safe {
+    position: relative;
+    z-index: 35 !important;
+}
+
+/* 11. Liquid Shimmer Effect for Special Badges & Actions */
+@keyframes liquidShimmerMove {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.liquid-shimmer {
+    background-size: 200% 100%;
+    background-image: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.25) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    animation: liquidShimmerMove 4s ease-in-out infinite;
+}
+
+:where(.dark, .dark *) .liquid-shimmer {
+    background-image: linear-gradient(
+        90deg,
+        rgba(52, 211, 153, 0) 0%,
+        rgba(52, 211, 153, 0.18) 50%,
+        rgba(52, 211, 153, 0) 100%
+    );
+}
+
+/* 10. Fluent Entrance & Pop Animations */
+@keyframes swanFadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.animate-swan-in {
+    animation: swanFadeIn 0.24s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes liquidPop {
+    0% {
+        opacity: 0;
+        transform: scale(0.92);
+    }
+    70% {
+        transform: scale(1.02);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.animate-liquid-pop {
+    animation: liquidPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* 11. Mobile / Android Soft Keyboard Dock Retraction */
+@media (max-width: 768px) {
+    body:has(input:focus:not([type="checkbox"]):not([type="radio"]), textarea:focus, select:focus) .bottom-nav-dock,
+    body.keyboard-visible .bottom-nav-dock {
+        opacity: 0 !important;
+        pointer-events: none !important;
+        transform: translateY(120%) translateZ(0) !important;
+        transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease !important;
+    }
 }
 
 /* Date / Time Input Styling */
@@ -183,5 +405,257 @@ input[type="month"],
 input[type="time"] {
     max-width: 100%;
     box-sizing: border-box;
-    -webkit-appearance: none;
 }
+
+/* Ensure Android Chrome & WebKit calendar picker indicators are visible & sleek */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="month"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.65;
+    filter: invert(0.4);
+    transition: opacity 0.2s ease;
+}
+
+:where(.dark, .dark *) input[type="date"]::-webkit-calendar-picker-indicator,
+:where(.dark, .dark *) input[type="month"]::-webkit-calendar-picker-indicator,
+:where(.dark, .dark *) input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.85);
+    opacity: 0.8;
+}
+
+/* iPhone Dynamic Island & Notch Safe Toast Positioning */
+.ios-safe-toast {
+    top: max(1.25rem, calc(var(--sat, 0px) + 0.75rem)) !important;
+}
+
+/* ==========================================================================
+   Desktop Hover States (Guarded so Touchscreens Never Trigger Laggy Hovers)
+   ========================================================================== */
+@media (hover: hover) and (pointer: fine) {
+    .liquid-glass:hover {
+        background: rgba(255, 255, 255, 0.92);
+        border-color: rgba(255, 255, 255, 0.95);
+        transform: translateY(-1.5px);
+        box-shadow: 0 14px 34px -4px rgba(15, 23, 42, 0.1),
+                    0 4px 10px -1px rgba(16, 185, 129, 0.08),
+                    inset 0 1px 1.5px 0 rgba(255, 255, 255, 1);
+    }
+
+    :where(.dark, .dark *) .liquid-glass:hover {
+        background: rgba(22, 33, 58, 0.85);
+        border-color: rgba(52, 211, 153, 0.35);
+        transform: translateY(-1.5px);
+        box-shadow: 0 20px 48px -6px rgba(0, 0, 0, 0.75), 
+                    0 4px 14px 0 rgba(16, 185, 129, 0.18),
+                    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.25);
+    }
+
+    .liquid-card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(226, 232, 240, 0.9);
+        box-shadow: 0 12px 32px -8px rgba(15, 23, 42, 0.08);
+    }
+
+    :where(.dark, .dark *) .liquid-card:hover {
+        border-color: rgba(255, 255, 255, 0.12);
+        box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.6);
+    }
+
+    .liquid-dock-capsule:hover {
+        border-color: rgba(255, 255, 255, 1);
+    }
+
+    :where(.dark, .dark *) .liquid-dock-capsule:hover {
+        border-color: rgba(52, 211, 153, 0.35);
+    }
+
+    .liquid-action-fab:hover {
+        transform: scale(1.08);
+        filter: brightness(1.1);
+    }
+
+    .ios-inset-group:hover {
+        box-shadow: 0 14px 34px -6px rgba(15, 23, 42, 0.09);
+    }
+
+    :where(.dark, .dark *) .ios-inset-group:hover {
+        box-shadow: 0 18px 42px -8px rgba(0, 0, 0, 0.65);
+    }
+
+    .ios-press:hover {
+        filter: brightness(1.02);
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator:hover,
+    input[type="month"]::-webkit-calendar-picker-indicator:hover,
+    input[type="time"]::-webkit-calendar-picker-indicator:hover {
+        opacity: 1;
+    }
+}
+
+/* ==========================================================================
+   Mobile Viewport & Android Hardware Compositing Acceleration (120Hz Smoothness)
+   ========================================================================== */
+@media (max-width: 768px) {
+    /* Cap heavy multi-pass blur on mobile viewports so GPU never throttles */
+    .backdrop-blur-2xl, .backdrop-blur-3xl, .backdrop-blur-xl {
+        -webkit-backdrop-filter: blur(12px) saturate(160%) !important;
+        backdrop-filter: blur(12px) saturate(160%) !important;
+    }
+
+    /* Lock form controls to 16px base font size to permanently prevent Android Chrome auto-zoom jumps */
+    input:not([type="checkbox"]):not([type="radio"]), select, textarea {
+        font-size: 16px !important;
+    }
+    input.text-2xl, input.text-xl, input.text-3xl {
+        font-size: inherit !important;
+    }
+
+    /* Bottom Sheet Hardware Acceleration */
+    .modal-sheet-safe {
+        will-change: transform;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+    }
+}
+
+/* Specific Android UX & GPU acceleration (Adreno / Mali) */
+.is-android {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+.is-android html,
+.is-android body {
+    scroll-behavior: auto !important;
+    overscroll-behavior-y: contain;
+}
+
+/* Fast 80ms active feedback on Android (eliminates sluggish tap delay) */
+.is-android .ios-press:active {
+    transform: scale(0.97);
+    opacity: 0.85;
+    transition-duration: 0.08s;
+}
+
+/* Fixed background aura layer isolation on Android */
+.is-android .fixed.inset-0 {
+    transform: translateZ(0);
+}
+
+/* Free Android GPU rasterizer from repeated card blur passes while keeping high-contrast liquid look */
+.is-android .liquid-card,
+.is-android [class*="liquid-card"],
+.is-android .ios-inset-group {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    contain: content;
+}
+
+.is-android .liquid-card {
+    background: #ffffff !important;
+    border: 1px solid rgba(226, 232, 240, 0.95) !important;
+    box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06),
+                0 1px 3px 0 rgba(15, 23, 42, 0.03) !important;
+}
+
+:where(.dark, .dark *) .is-android .liquid-card {
+    background: #0f172a !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5) !important;
+}
+
+.is-android .ios-inset-group {
+    background: #ffffff !important;
+    border: 1px solid rgba(226, 232, 240, 0.95) !important;
+}
+
+:where(.dark, .dark *) .is-android .ios-inset-group {
+    background: #0f172a !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* High performance frosted dock on Android (10px blur instead of 20px) */
+.is-android .liquid-dock-capsule {
+    background: #ffffff !important;
+    -webkit-backdrop-filter: blur(10px) saturate(160%) !important;
+    backdrop-filter: blur(10px) saturate(160%) !important;
+    border: 1px solid rgba(226, 232, 240, 0.95) !important;
+    box-shadow: 0 12px 36px -6px rgba(15, 23, 42, 0.12),
+                0 4px 12px -2px rgba(15, 23, 42, 0.05) !important;
+}
+
+:where(.dark, .dark *) .is-android .liquid-dock-capsule {
+    background: #0f172a !important;
+    -webkit-backdrop-filter: blur(10px) saturate(160%) !important;
+    backdrop-filter: blur(10px) saturate(160%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 16px 40px -6px rgba(0, 0, 0, 0.75),
+                0 4px 14px -2px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Static radiant glow on FAB to eliminate continuous 60Hz repainting */
+.is-android .liquid-action-fab {
+    animation: none !important;
+    box-shadow: 0 10px 28px -2px rgba(16, 185, 129, 0.5),
+                inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Zero-blur bottom sheet on Android for 120Hz slide-up */
+.is-android .modal-sheet-safe {
+    background: #ffffff !important;
+    border-top: 1px solid rgba(226, 232, 240, 0.95) !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+}
+
+:where(.dark, .dark *) .is-android .modal-sheet-safe {
+    background: #0f172a !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+}
+
+.is-android #modal-backdrop,
+.is-android #edit-modal-backdrop,
+.is-android #scanner-backdrop,
+.is-android #delete-modal-backdrop {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+}
+
+/* ==========================================================================
+   Light & Dark Mode Cohesion & Contrast Normalization (WCAG AA Compliant)
+   ========================================================================== */
+
+/* Elevate washed-out borders on light mode surfaces */
+:root:not(.dark) .liquid-card,
+:root:not(.dark) [class*="liquid-card"],
+:root:not(.dark) .ios-inset-group {
+    border-color: rgba(226, 232, 240, 0.85);
+}
+
+:root:not(.dark) .border-white\/60,
+:root:not(.dark) [class*="border-white/60"] {
+    border-color: rgba(226, 232, 240, 0.85);
+}
+
+:root:not(.dark) header.liquid-glass {
+    border-bottom-color: rgba(226, 232, 240, 0.85) !important;
+}
+
+:root:not(.dark) .modal-sheet-safe {
+    border-top-color: rgba(226, 232, 240, 0.9) !important;
+}
+
+/* Boost secondary text readability in Light Mode */
+:root:not(.dark) .text-slate-400:not(button):not(svg):not(.text-white) {
+    color: #64748b;
+}
+
+/* Boost secondary text readability in Dark Mode */
+:where(.dark, .dark *) .text-slate-500:not(button):not(svg) {
+    color: #94a3b8;
+}
+
