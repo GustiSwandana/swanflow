@@ -28,72 +28,66 @@
                 </div>
             </div>
 
-            <!-- Header Action / Theme Toggle -->
-            <button type="button" 
-                    id="theme-toggle-btn"
-                    onclick="toggleSwanFlowTheme()" 
-                    aria-label="Ganti Tema Gelap atau Terang" 
-                    class="w-10 h-10 flex items-center justify-center rounded-[18px] liquid-glass text-white/90 hover:text-white bg-white/15 hover:bg-white/25 border border-white/30 dark:bg-slate-800/80 dark:border-white/10 active:scale-95 transition-all shadow-xs ios-press">
-                <svg class="theme-icon-dark w-5 h-5 text-amber-300 transition-transform duration-300 transform rotate-0 hover:rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
-                </svg>
-                <svg class="theme-icon-light w-5 h-5 text-white transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
-                </svg>
-            </button>
+            <!-- Right Actions: Tambah & Theme Toggle -->
+            <div class="flex items-center gap-2 shrink-0">
+                <button type="button" 
+                        onclick="openAddModal()" 
+                        class="w-10 h-10 rounded-[18px] bg-gradient-to-tr from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 active:scale-95 text-white shadow-lg shadow-emerald-500/30 border border-white/25 flex items-center justify-center transition-all cursor-pointer ios-press" 
+                        title="Tambah Aktivitas" 
+                        aria-label="Tambah Aktivitas">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                </button>
+                <button type="button" 
+                        id="theme-toggle-btn"
+                        onclick="toggleSwanFlowTheme()" 
+                        aria-label="Ganti Tema Gelap atau Terang" 
+                        class="w-10 h-10 flex items-center justify-center rounded-[18px] liquid-glass text-white/90 hover:text-white bg-white/15 hover:bg-white/25 border border-white/30 dark:bg-slate-800/80 dark:border-white/10 active:scale-95 transition-all shadow-xs ios-press">
+                    <svg class="theme-icon-dark w-5 h-5 text-amber-300 transition-transform duration-300 transform rotate-0 hover:rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+                    </svg>
+                    <svg class="theme-icon-light w-5 h-5 text-white transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+                    </svg>
+                </button>
+            </div>
         </div>
     </div>
 @endsection
 
 @section('content')
-<div class="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-2xl rounded-t-[36px] pt-5 px-4 pb-[max(7.5rem,calc(6.5rem+var(--sab,0px)))] shadow-2xl -mt-5 relative z-10 border-t border-slate-200/80 dark:border-white/10 flex-1 flex flex-col min-h-full space-y-5 text-slate-800 dark:text-white transition-colors animate-swan-in">
+<div class="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-2xl rounded-t-[36px] pt-5 px-4 pb-[max(7.5rem,calc(6.5rem+var(--sab,0px)))] shadow-2xl -mt-5 relative z-10 border-t border-slate-200/80 dark:border-white/10 flex-1 flex flex-col min-h-full space-y-4 text-slate-800 dark:text-white transition-colors animate-swan-in">
     <!-- Grab Handle -->
     <div class="w-10 h-1.5 bg-slate-300/80 dark:bg-slate-700/80 rounded-full mx-auto mb-1"></div>
 
-    {{-- 1. Summary Cards (Apple Liquid Glass Cards) --}}
-    <div class="grid grid-cols-3 gap-3">
-        <a href="{{ route('todos.index', ['tab' => 'today']) }}"
-           class="overflow-hidden rounded-[24px] p-4 border transition-all flex flex-col justify-between active:scale-95 shadow-sm {{ $tab === 'today' ? 'bg-amber-500 text-white border-amber-600 shadow-amber-500/20' : 'liquid-card bg-white/80 dark:bg-slate-900/75 hover:bg-white dark:hover:bg-slate-800 border-white/60 dark:border-white/10 backdrop-blur-2xl' }}">
-            <div class="flex items-center justify-between">
-                <span class="text-[10px] font-bold uppercase tracking-wider {{ $tab === 'today' ? 'text-amber-100' : 'text-slate-500 dark:text-slate-400' }}">Hari Ini</span>
-                <span class="w-2 h-2 rounded-full {{ $tab === 'today' ? 'bg-white' : 'bg-amber-400' }} {{ $todayTodos->count() > 0 ? 'animate-pulse' : '' }}"></span>
-            </div>
-            <p class="text-2xl font-black tracking-tight mt-2 {{ $tab === 'today' ? 'text-white' : 'text-slate-800 dark:text-white' }}">{{ $todayTodos->count() }}</p>
-        </a>
+    {{-- 1. TAB NAVIGATION & ADD ACTION (Apple iOS Segmented Control - matches Kategori & Drive) --}}
+    <div class="flex items-center justify-between gap-2.5">
+        <div class="ios-segmented-track p-1 rounded-[22px] flex items-center gap-1 flex-1 bg-slate-200/60 dark:bg-white/5 backdrop-blur-xl border border-white/50 dark:border-white/10 shadow-inner">
+            <a href="{{ route('todos.index', ['tab' => 'today']) }}"
+               class="flex-1 py-2 px-1.5 rounded-[18px] text-xs font-black text-center transition-all flex items-center justify-center gap-1.5 ios-press {{ $tab === 'today' ? 'ios-segmented-thumb bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-md ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white font-bold' }}">
+                <span>Hari Ini</span>
+                <span class="text-[10px] px-1.5 py-0.2 rounded-full font-black {{ $tab === 'today' ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300' : 'bg-slate-300/60 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">{{ $todayTodos->count() }}</span>
+            </a>
 
-        <a href="{{ route('todos.index', ['tab' => 'upcoming']) }}"
-           class="overflow-hidden rounded-[24px] p-4 border transition-all flex flex-col justify-between active:scale-95 shadow-sm {{ $tab === 'upcoming' ? 'bg-sky-500 text-white border-sky-600 shadow-sky-500/20' : 'liquid-card bg-white/80 dark:bg-slate-900/75 hover:bg-white dark:hover:bg-slate-800 border-white/60 dark:border-white/10 backdrop-blur-2xl' }}">
-            <div class="flex items-center justify-between">
-                <span class="text-[10px] font-bold uppercase tracking-wider {{ $tab === 'upcoming' ? 'text-sky-100' : 'text-slate-500 dark:text-slate-400' }}">Mendatang</span>
-                <span class="w-2 h-2 rounded-full {{ $tab === 'upcoming' ? 'bg-white' : 'bg-sky-400' }}"></span>
-            </div>
-            <p class="text-2xl font-black tracking-tight mt-2 {{ $tab === 'upcoming' ? 'text-white' : 'text-slate-800 dark:text-white' }}">{{ $upcomingTodos->count() }}</p>
-        </a>
+            <a href="{{ route('todos.index', ['tab' => 'upcoming']) }}"
+               class="flex-1 py-2 px-1.5 rounded-[18px] text-xs font-black text-center transition-all flex items-center justify-center gap-1.5 ios-press {{ $tab === 'upcoming' ? 'ios-segmented-thumb bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-md ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white font-bold' }}">
+                <span>Mendatang</span>
+                <span class="text-[10px] px-1.5 py-0.2 rounded-full font-black {{ $tab === 'upcoming' ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300' : 'bg-slate-300/60 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">{{ $upcomingTodos->count() }}</span>
+            </a>
 
-        <a href="{{ route('todos.index', ['tab' => 'completed']) }}"
-           class="overflow-hidden rounded-[24px] p-4 border transition-all flex flex-col justify-between active:scale-95 shadow-sm {{ $tab === 'completed' ? 'bg-emerald-500 text-white border-emerald-600 shadow-emerald-500/20' : 'liquid-card bg-white/80 dark:bg-slate-900/75 hover:bg-white dark:hover:bg-slate-800 border-white/60 dark:border-white/10 backdrop-blur-2xl' }}">
-            <div class="flex items-center justify-between">
-                <span class="text-[10px] font-bold uppercase tracking-wider {{ $tab === 'completed' ? 'text-emerald-100' : 'text-slate-500 dark:text-slate-400' }}">Selesai</span>
-                <span class="w-2 h-2 rounded-full {{ $tab === 'completed' ? 'bg-white' : 'bg-emerald-400' }}"></span>
-            </div>
-            <p class="text-2xl font-black tracking-tight mt-2 {{ $tab === 'completed' ? 'text-white' : 'text-slate-800 dark:text-white' }}">{{ $completedTodos->count() }}</p>
-        </a>
-    </div>
+            <a href="{{ route('todos.index', ['tab' => 'completed']) }}"
+               class="flex-1 py-2 px-1.5 rounded-[18px] text-xs font-black text-center transition-all flex items-center justify-center gap-1.5 ios-press {{ $tab === 'completed' ? 'ios-segmented-thumb bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-md ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white font-bold' }}">
+                <span>Selesai</span>
+                <span class="text-[10px] px-1.5 py-0.2 rounded-full font-black {{ $tab === 'completed' ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300' : 'bg-slate-300/60 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">{{ $completedTodos->count() }}</span>
+            </a>
+        </div>
 
-    {{-- 2. Quick Add Card --}}
-    <div class="liquid-card p-2 rounded-[24px] bg-white/80 dark:bg-slate-900/75 border border-white/60 dark:border-white/10 shadow-xs flex items-center justify-between gap-3 transition-colors backdrop-blur-2xl">
-        <button type="button" onclick="openAddModal()" class="flex items-center gap-3 pl-2 min-w-0 flex-1 text-left group cursor-pointer">
-            <div class="w-10 h-10 rounded-[16px] bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-400 flex items-center justify-center shrink-0 group-hover:bg-emerald-50 dark:group-hover:bg-emerald-500/10 group-hover:text-emerald-500 transition-colors">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-            </div>
-            <div class="truncate">
-                <span class="text-sm font-bold text-slate-600 dark:text-slate-400 block truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Catat agenda baru...</span>
-            </div>
-        </button>
-        <button type="button" onclick="openAddModal()" aria-label="Catat Aktivitas Baru" class="h-10 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-sm shadow-emerald-600/20 active:scale-95 transition-all cursor-pointer">
-            Tambah
+        <button type="button" 
+                onclick="openAddModal()" 
+                class="min-h-[44px] px-4 py-2 rounded-[20px] bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-black text-xs shadow-lg shadow-emerald-500/25 flex items-center gap-1.5 shrink-0 ios-press active:scale-95 transition-all cursor-pointer">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+            <span>Tambah</span>
         </button>
     </div>
 

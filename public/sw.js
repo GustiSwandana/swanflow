@@ -1,5 +1,5 @@
 // SwanFlow PWA Service Worker (v1.0.16)
-const CACHE_NAME = 'swanflow-cache-v16';
+const CACHE_NAME = 'swanflow-cache-v17';
 
 const STATIC_ASSETS = [
     '/',

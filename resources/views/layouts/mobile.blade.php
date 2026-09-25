@@ -2571,7 +2571,7 @@
             // Register PWA Service Worker with auto-update
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
-                    navigator.serviceWorker.register('/sw.js?v=16')
+                    navigator.serviceWorker.register('/sw.js?v=17')
                         .then((reg) => {
                             reg.update();
                             console.log('SwanFlow Service Worker v16 active');
