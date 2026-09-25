@@ -330,14 +330,14 @@
 
     <!-- 3. MODERN BOTTOM NAVIGATION BAR (Apple Liquid Glass Dock) -->
     <nav class="fixed bottom-5 w-[92%] sm:w-[396px] liquid-dock-capsule rounded-[28px] px-6 py-2.5 z-40 transition-colors duration-300 left-1/2 -translate-x-1/2" style="margin-bottom: env(safe-area-inset-bottom, 0px);">
-        <div class="flex justify-between items-center w-full">
+        <div class="flex justify-between items-center w-full relative z-10">
 
             {{-- Tab 1: Home --}}
             @php $isActive = request()->routeIs('dashboard'); @endphp
             <a href="{{ route('dashboard') }}"
                class="flex flex-col items-center gap-1 group relative {{ $isActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200' }} transition-colors"
                aria-label="Home">
-                <div class="relative z-10 p-1.5 {{ $isActive ? 'bg-emerald-500/12 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-2xl' : '' }} transition-transform active:scale-95">
+                <div class="relative z-10 p-1.5 {{ $isActive ? 'bg-emerald-500/15 dark:bg-emerald-400/20 text-emerald-600 dark:text-emerald-400 rounded-2xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.25)]' : '' }} transition-transform active:scale-95">
                     <svg class="w-5.5 h-5.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path>
                         <polyline points="9 22 9 12 15 12 15 22"></polyline>
@@ -361,7 +361,7 @@
             <a href="{{ route('transactions.index') }}"
                class="flex flex-col items-center gap-1 group relative {{ $isFinanceActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200' }} transition-colors"
                aria-label="Finance">
-                <div class="relative z-10 p-1.5 {{ $isFinanceActive ? 'bg-emerald-500/12 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-2xl' : '' }} transition-transform active:scale-95">
+                <div class="relative z-10 p-1.5 {{ $isFinanceActive ? 'bg-emerald-500/15 dark:bg-emerald-400/20 text-emerald-600 dark:text-emerald-400 rounded-2xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.25)]' : '' }} transition-transform active:scale-95">
                     <svg class="w-5.5 h-5.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
@@ -373,7 +373,7 @@
             <div class="flex items-center justify-center shrink-0 -mt-8 relative z-50">
                 <button type="button"
                         onclick="openTransactionModal('expense')"
-                        class="w-13.5 h-13.5 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white flex items-center justify-center cursor-pointer shrink-0 shadow-lg shadow-emerald-500/35 border-[3.5px] border-white dark:border-slate-900 transition-transform hover:scale-105 active:scale-95"
+                        class="w-13.5 h-13.5 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white flex items-center justify-center cursor-pointer shrink-0 shadow-lg shadow-emerald-500/35 border-[3.5px] border-white/95 dark:border-white/25 ring-4 ring-emerald-500/20 dark:ring-emerald-400/25 transition-transform hover:scale-105 active:scale-95"
                         aria-label="Quick Action">
                     <svg class="w-6.5 h-6.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 4.5v15m7.5-7.5h-15"/>
@@ -386,7 +386,7 @@
             <a href="{{ route('drive.index') }}"
                class="flex flex-col items-center gap-1 group relative {{ $isActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200' }} transition-colors"
                aria-label="Drive">
-                <div class="relative z-10 p-1.5 {{ $isActive ? 'bg-emerald-500/12 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-2xl' : '' }} transition-transform active:scale-95">
+                <div class="relative z-10 p-1.5 {{ $isActive ? 'bg-emerald-500/15 dark:bg-emerald-400/20 text-emerald-600 dark:text-emerald-400 rounded-2xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.25)]' : '' }} transition-transform active:scale-95">
                     <svg class="w-5.5 h-5.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path>
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 12v6m0 0l-3-3m3 3l3-3M3 15V6a2 2 0 012-2h14a2 2 0 012 2v9"></path>
@@ -400,7 +400,7 @@
             <a href="{{ route('todos.index') }}"
                class="flex flex-col items-center gap-1 group relative {{ $isActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200' }} transition-colors"
                aria-label="Aktivitas">
-                <div class="relative z-10 p-1.5 {{ $isActive ? 'bg-emerald-500/12 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-2xl' : '' }} transition-transform active:scale-95">
+                <div class="relative z-10 p-1.5 {{ $isActive ? 'bg-emerald-500/15 dark:bg-emerald-400/20 text-emerald-600 dark:text-emerald-400 rounded-2xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.25)]' : '' }} transition-transform active:scale-95">
                     <svg class="w-5.5 h-5.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
