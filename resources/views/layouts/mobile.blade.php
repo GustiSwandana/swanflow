@@ -480,25 +480,35 @@
                         @csrf
 
                         <!-- Transaction Type Switcher (iOS Segmented Control) -->
-                        <div class="ios-segmented-track flex items-center w-full">
-                            <label class="flex-1 min-w-0 cursor-pointer">
-                                <input type="radio" name="type" value="expense" checked class="peer sr-only" onchange="updateModalType('expense')">
-                                <div class="min-h-[40px] flex items-center justify-center text-xs font-bold rounded-[13px] text-slate-500 dark:text-slate-400 peer-checked:ios-segmented-thumb peer-checked:text-rose-600 dark:peer-checked:text-rose-400 transition-all">
-                                    Pengeluaran
-                                </div>
-                            </label>
-                            <label class="flex-1 min-w-0 cursor-pointer">
-                                <input type="radio" name="type" value="income" class="peer sr-only" onchange="updateModalType('income')">
-                                <div class="min-h-[40px] flex items-center justify-center text-xs font-bold rounded-[13px] text-slate-500 dark:text-slate-400 peer-checked:ios-segmented-thumb peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 transition-all">
-                                    Pemasukan
-                                </div>
-                            </label>
-                            <label class="flex-1 min-w-0 cursor-pointer">
-                                <input type="radio" name="type" value="transfer" class="peer sr-only" onchange="updateModalType('transfer')">
-                                <div class="min-h-[40px] flex items-center justify-center text-xs font-bold rounded-[13px] text-slate-500 dark:text-slate-400 peer-checked:ios-segmented-thumb peer-checked:text-slate-800 dark:peer-checked:text-white transition-all">
-                                    Transfer
-                                </div>
-                            </label>
+                        <input type="hidden" name="type" id="add-transaction-type" value="expense">
+                        <div class="ios-segmented-track p-1 rounded-[20px] flex items-center gap-1 w-full bg-slate-200/70 dark:bg-slate-900/90 border border-slate-300/60 dark:border-white/10 shadow-inner backdrop-blur-xl">
+                            <button type="button"
+                                    id="type-btn-expense"
+                                    onclick="setTransactionType('expense')"
+                                    class="flex-1 min-w-0 min-h-[42px] py-2 px-1 text-center text-xs font-black rounded-[16px] transition-all flex items-center justify-center gap-1.5 cursor-pointer ios-press bg-rose-500 text-white shadow-md shadow-rose-500/25">
+                                <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 4.5l-15 15m0 0h11.25m-11.25 0V8.25" />
+                                </svg>
+                                <span class="truncate">Pengeluaran</span>
+                            </button>
+                            <button type="button"
+                                    id="type-btn-income"
+                                    onclick="setTransactionType('income')"
+                                    class="flex-1 min-w-0 min-h-[42px] py-2 px-1 text-center text-xs font-bold rounded-[16px] transition-all flex items-center justify-center gap-1.5 cursor-pointer ios-press bg-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white shadow-none ring-0">
+                                <svg class="w-3.5 h-3.5 shrink-0 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+                                </svg>
+                                <span class="truncate">Pemasukan</span>
+                            </button>
+                            <button type="button"
+                                    id="type-btn-transfer"
+                                    onclick="setTransactionType('transfer')"
+                                    class="flex-1 min-w-0 min-h-[42px] py-2 px-1 text-center text-xs font-bold rounded-[16px] transition-all flex items-center justify-center gap-1.5 cursor-pointer ios-press bg-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white shadow-none ring-0">
+                                <svg class="w-3.5 h-3.5 shrink-0 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+                                </svg>
+                                <span class="truncate">Transfer</span>
+                            </button>
                         </div>
 
                         <!-- Nominal Input (Large Display + Quick Pills) -->
@@ -658,25 +668,35 @@
                         @method('PUT')
 
                         <!-- Type Switcher (iOS Segmented Control) -->
-                        <div class="ios-segmented-track flex items-center w-full">
-                            <label class="flex-1 min-w-0 cursor-pointer">
-                                <input type="radio" name="type" id="edit-type-expense" value="expense" class="peer sr-only" onchange="updateEditModalType('expense')">
-                                <div class="min-h-[40px] flex items-center justify-center text-xs font-bold rounded-[13px] text-slate-500 dark:text-slate-400 peer-checked:ios-segmented-thumb peer-checked:text-rose-600 dark:peer-checked:text-rose-400 transition-all">
-                                    Pengeluaran
-                                </div>
-                            </label>
-                            <label class="flex-1 min-w-0 cursor-pointer">
-                                <input type="radio" name="type" id="edit-type-income" value="income" class="peer sr-only" onchange="updateEditModalType('income')">
-                                <div class="min-h-[40px] flex items-center justify-center text-xs font-bold rounded-[13px] text-slate-500 dark:text-slate-400 peer-checked:ios-segmented-thumb peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 transition-all">
-                                    Pemasukan
-                                </div>
-                            </label>
-                            <label class="flex-1 min-w-0 cursor-pointer">
-                                <input type="radio" name="type" id="edit-type-transfer" value="transfer" class="peer sr-only" onchange="updateEditModalType('transfer')">
-                                <div class="min-h-[40px] flex items-center justify-center text-xs font-bold rounded-[13px] text-slate-500 dark:text-slate-400 peer-checked:ios-segmented-thumb peer-checked:text-slate-800 dark:peer-checked:text-white transition-all">
-                                    Transfer
-                                </div>
-                            </label>
+                        <input type="hidden" name="type" id="edit-transaction-type" value="expense">
+                        <div class="ios-segmented-track p-1 rounded-[20px] flex items-center gap-1 w-full bg-slate-200/70 dark:bg-slate-900/90 border border-slate-300/60 dark:border-white/10 shadow-inner backdrop-blur-xl">
+                            <button type="button"
+                                    id="edit-type-btn-expense"
+                                    onclick="setEditTransactionType('expense')"
+                                    class="flex-1 min-w-0 min-h-[42px] py-2 px-1 text-center text-xs font-black rounded-[16px] transition-all flex items-center justify-center gap-1.5 cursor-pointer ios-press bg-rose-500 text-white shadow-md shadow-rose-500/25">
+                                <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 4.5l-15 15m0 0h11.25m-11.25 0V8.25" />
+                                </svg>
+                                <span class="truncate">Pengeluaran</span>
+                            </button>
+                            <button type="button"
+                                    id="edit-type-btn-income"
+                                    onclick="setEditTransactionType('income')"
+                                    class="flex-1 min-w-0 min-h-[42px] py-2 px-1 text-center text-xs font-bold rounded-[16px] transition-all flex items-center justify-center gap-1.5 cursor-pointer ios-press bg-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white shadow-none ring-0">
+                                <svg class="w-3.5 h-3.5 shrink-0 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+                                </svg>
+                                <span class="truncate">Pemasukan</span>
+                            </button>
+                            <button type="button"
+                                    id="edit-type-btn-transfer"
+                                    onclick="setEditTransactionType('transfer')"
+                                    class="flex-1 min-w-0 min-h-[42px] py-2 px-1 text-center text-xs font-bold rounded-[16px] transition-all flex items-center justify-center gap-1.5 cursor-pointer ios-press bg-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white shadow-none ring-0">
+                                <svg class="w-3.5 h-3.5 shrink-0 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+                                </svg>
+                                <span class="truncate">Transfer</span>
+                            </button>
                         </div>
 
                         <!-- Nominal Input -->
@@ -1270,6 +1290,103 @@
                 }, 3200);
             }
 
+            window.setTransactionType = function(type) {
+                const hiddenInput = document.getElementById('add-transaction-type');
+                if (hiddenInput) hiddenInput.value = type;
+
+                const btnExpense = document.getElementById('type-btn-expense');
+                const btnIncome = document.getElementById('type-btn-income');
+                const btnTransfer = document.getElementById('type-btn-transfer');
+
+                const activeClasses = {
+                    expense: 'bg-rose-500 text-white shadow-md shadow-rose-500/25 font-black',
+                    income: 'bg-emerald-500 text-white shadow-md shadow-emerald-500/25 font-black',
+                    transfer: 'bg-indigo-600 text-white shadow-md shadow-indigo-600/25 font-black',
+                };
+                const inactiveClass = 'bg-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-bold shadow-none ring-0';
+
+                const buttons = [
+                    { id: 'expense', el: btnExpense },
+                    { id: 'income', el: btnIncome },
+                    { id: 'transfer', el: btnTransfer }
+                ];
+
+                buttons.forEach(b => {
+                    if (!b.el) return;
+                    const svg = b.el.querySelector('svg');
+                    if (b.id === type) {
+                        b.el.className = `flex-1 min-w-0 min-h-[42px] py-2 px-1 text-center text-xs rounded-[16px] transition-all flex items-center justify-center gap-1.5 cursor-pointer ios-press ${activeClasses[type]}`;
+                        if (svg) svg.classList.remove('opacity-60');
+                    } else {
+                        b.el.className = `flex-1 min-w-0 min-h-[42px] py-2 px-1 text-center text-xs rounded-[16px] transition-all flex items-center justify-center gap-1.5 cursor-pointer ios-press ${inactiveClass}`;
+                        if (svg) svg.classList.add('opacity-60');
+                    }
+                });
+
+                // Update amount preview color
+                const amountPreview = document.getElementById('amount-input-formatted');
+                if (amountPreview) {
+                    amountPreview.classList.remove('text-rose-600', 'dark:text-rose-400', 'text-emerald-600', 'dark:text-emerald-400', 'text-indigo-600', 'dark:text-indigo-400');
+                    if (type === 'expense') {
+                        amountPreview.classList.add('text-rose-600', 'dark:text-rose-400');
+                    } else if (type === 'income') {
+                        amountPreview.classList.add('text-emerald-600', 'dark:text-emerald-400');
+                    } else {
+                        amountPreview.classList.add('text-indigo-600', 'dark:text-indigo-400');
+                    }
+                }
+
+                updateModalType(type);
+            };
+
+            window.setEditTransactionType = function(type) {
+                const hiddenInput = document.getElementById('edit-transaction-type');
+                if (hiddenInput) hiddenInput.value = type;
+
+                const btnExpense = document.getElementById('edit-type-btn-expense');
+                const btnIncome = document.getElementById('edit-type-btn-income');
+                const btnTransfer = document.getElementById('edit-type-btn-transfer');
+
+                const activeClasses = {
+                    expense: 'bg-rose-500 text-white shadow-md shadow-rose-500/25 font-black',
+                    income: 'bg-emerald-500 text-white shadow-md shadow-emerald-500/25 font-black',
+                    transfer: 'bg-indigo-600 text-white shadow-md shadow-indigo-600/25 font-black',
+                };
+                const inactiveClass = 'bg-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-bold shadow-none ring-0';
+
+                const buttons = [
+                    { id: 'expense', el: btnExpense },
+                    { id: 'income', el: btnIncome },
+                    { id: 'transfer', el: btnTransfer }
+                ];
+
+                buttons.forEach(b => {
+                    if (!b.el) return;
+                    const svg = b.el.querySelector('svg');
+                    if (b.id === type) {
+                        b.el.className = `flex-1 min-w-0 min-h-[42px] py-2 px-1 text-center text-xs rounded-[16px] transition-all flex items-center justify-center gap-1.5 cursor-pointer ios-press ${activeClasses[type]}`;
+                        if (svg) svg.classList.remove('opacity-60');
+                    } else {
+                        b.el.className = `flex-1 min-w-0 min-h-[42px] py-2 px-1 text-center text-xs rounded-[16px] transition-all flex items-center justify-center gap-1.5 cursor-pointer ios-press ${inactiveClass}`;
+                        if (svg) svg.classList.add('opacity-60');
+                    }
+                });
+
+                const amountPreview = document.getElementById('edit-amount-formatted');
+                if (amountPreview) {
+                    amountPreview.classList.remove('text-rose-600', 'dark:text-rose-400', 'text-emerald-600', 'dark:text-emerald-400', 'text-indigo-600', 'dark:text-indigo-400');
+                    if (type === 'expense') {
+                        amountPreview.classList.add('text-rose-600', 'dark:text-rose-400');
+                    } else if (type === 'income') {
+                        amountPreview.classList.add('text-emerald-600', 'dark:text-emerald-400');
+                    } else {
+                        amountPreview.classList.add('text-indigo-600', 'dark:text-indigo-400');
+                    }
+                }
+
+                updateEditModalType(type);
+            };
+
             function openTransactionModal(defaultType = 'expense', defaultAmount = null, defaultDescription = null, defaultCategory = null, defaultDate = null, defaultWallet = null) {
                 const modal = document.getElementById('transaction-modal');
                 const backdrop = document.getElementById('modal-backdrop');
@@ -1292,12 +1409,8 @@
                     panel.style.transform = 'translateY(0)';
                 });
 
-                // Set type
-                const radio = document.querySelector(`input[name="type"][value="${defaultType}"]`);
-                if (radio) {
-                    radio.checked = true;
-                    updateModalType(defaultType);
-                }
+                // Set type & update segmented control
+                setTransactionType(defaultType || 'expense');
 
                 // Pre-fill amount if provided
                 const amountInput = document.getElementById('amount-input');
@@ -1722,11 +1835,7 @@
                         const editWallet = document.getElementById('edit-wallet-select');
                         if (editWallet && walletId) editWallet.value = walletId;
 
-                        const radio = document.querySelector(`input[name="type"][id="edit-type-${type}"]`);
-                        if (radio) {
-                            radio.checked = true;
-                            updateEditModalType(type);
-                        }
+                        setEditTransactionType(type);
 
                         // Re-open edit modal
                         const modal = document.getElementById('edit-transaction-modal');
@@ -2039,11 +2148,7 @@
                 form.action = baseTxUrl + '/' + data.id;
 
                 const type = data.type || 'expense';
-                const radio = document.querySelector(`input[name="type"][id="edit-type-${type}"]`);
-                if (radio) {
-                    radio.checked = true;
-                }
-                updateEditModalType(type);
+                setEditTransactionType(type);
 
                 const amountInput = document.getElementById('edit-amount-input');
                 if (amountInput) {
