@@ -360,7 +360,7 @@
                     $isImage = in_array(strtolower($stFile->extension), ["jpg", "jpeg", "png", "gif", "webp", "svg"]);
                     $isPdf = strtolower($stFile->extension) === "pdf";
                 @endphp
-                <a href="{{ route('drive.index', $stFile->folder_id ? ['folder_id' => $stFile->folder_id] : []) }}" 
+                <a href="{{ route('drive.index', array_filter(['folder_id' => $stFile->folder_id, 'file_id' => $stFile->id])) }}#file-{{ $stFile->id }}" 
                    class="min-w-[130px] max-w-[150px] liquid-card bg-white/80 dark:bg-slate-900/75 border border-white/60 dark:border-white/10 rounded-[24px] p-3.5 shadow-xs hover:shadow-md hover:border-teal-400/40 snap-start shrink-0 flex flex-col justify-between cursor-pointer transition-all ios-press group">
                     <div class="w-10 h-10 rounded-2xl {{ $isPdf ? 'bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400' : ($isImage ? 'bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400' : 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400') }} flex items-center justify-center mb-2.5 group-hover:scale-105 transition-transform">
                         @if($isPdf)

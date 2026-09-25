@@ -472,7 +472,7 @@
                 @php
                     $meta = $file->categoryMeta();
                 @endphp
-                <div class="liquid-card rounded-[24px] bg-white/80 dark:bg-slate-900/75 border border-white/60 dark:border-white/10 shadow-sm hover:shadow-md hover:border-teal-400/40 backdrop-blur-2xl p-4 space-y-3">
+                <div id="file-{{ $file->id }}" data-file-id="{{ $file->id }}" class="liquid-card rounded-[24px] bg-white/80 dark:bg-slate-900/75 border border-white/60 dark:border-white/10 shadow-sm hover:shadow-md hover:border-teal-400/40 backdrop-blur-2xl p-4 space-y-3 transition-all duration-300">
                     <div class="flex items-start justify-between gap-3">
                         <!-- Icon + Name (Click to preview) -->
                         <div onclick="openPreviewModal('{{ $file->id }}', '{{ addslashes($file->title) }}', '{{ addslashes($file->original_name) }}', '{{ $file->formatted_size }}', '{{ strtolower($file->extension) }}', '{{ route('drive.preview', $file) }}', '{{ route('drive.download', $file) }}', '{{ $meta['label'] }}', '{{ addslashes($file->notes ?? '') }}', '{{ $file->created_at->format('d M Y, H:i') }}', '{{ route('drive.destroy', $file) }}', '{{ $file->share_url }}', {{ $file->is_public ? 'true' : 'false' }}, '{{ route('drive.share.toggle', $file) }}', '{{ $file->folder_id }}')"
@@ -2767,5 +2767,31 @@
             panel.classList.add('translate-y-0');
         });
     }
+
+    // Auto-focus and open preview if file_id or hash is in the URL (e.g. from Dashboard recent files widget)
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const targetFileId = urlParams.get('file_id') || (window.location.hash ? window.location.hash.replace('#file-', '') : null);
+        if (targetFileId) {
+            const targetCard = document.getElementById(`file-${targetFileId}`);
+            if (targetCard) {
+                setTimeout(() => {
+                    targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                    // Apple iOS pulse spotlight animation
+                    targetCard.classList.add('ring-4', 'ring-teal-500/80', 'dark:ring-teal-400/80', 'shadow-xl', 'shadow-teal-500/25', 'scale-[1.02]');
+                    setTimeout(() => {
+                        targetCard.classList.remove('ring-4', 'ring-teal-500/80', 'dark:ring-teal-400/80', 'shadow-xl', 'shadow-teal-500/25', 'scale-[1.02]');
+                    }, 4000);
+
+                    // Automatically open file preview modal
+                    const previewTrigger = targetCard.querySelector('[onclick^="openPreviewModal"]');
+                    if (previewTrigger) {
+                        previewTrigger.click();
+                    }
+                }, 400);
+            }
+        }
+    });
 </script>
 @endpush

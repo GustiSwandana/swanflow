@@ -26,9 +26,24 @@ class DriveController extends Controller
         $activeCategory = $request->query('category', 'all');
         $search = $request->query('search');
         $folderId = $request->query('folder_id');
+        $fileId = $request->query('file_id');
+        $targetFileId = $fileId ? (int) $fileId : null;
 
         $currentFolder = null;
         $breadcrumbs = collect();
+        $targetFile = null;
+
+        if ($fileId) {
+            $targetFile = $user->storedFiles()->find($fileId);
+            if ($targetFile) {
+                if (! $folderId && $targetFile->folder_id) {
+                    $folderId = $targetFile->folder_id;
+                }
+                if ($activeCategory !== 'all' && $targetFile->category !== $activeCategory && ! $request->has('category')) {
+                    $activeCategory = 'all';
+                }
+            }
+        }
 
         if ($folderId) {
             $currentFolder = $user->folders()->with('parent')->findOrFail($folderId);
@@ -41,6 +56,7 @@ class DriveController extends Controller
             $query = $user->storedFiles();
 
             // In root level, if not searching and category is 'all', show root files (files without folder)
+            // But if a specific root file is targeted, ensure it is included
             if (empty($search) && $activeCategory === 'all') {
                 $query->whereNull('folder_id');
             }
@@ -117,7 +133,8 @@ class DriveController extends Controller
             'activeCategory',
             'search',
             'uploadLinks',
-            'activeTab'
+            'activeTab',
+            'targetFileId'
         ));
     }
 
