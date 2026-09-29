@@ -4,12 +4,15 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\CalculatorController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ClientPortalController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DebtController;
 use App\Http\Controllers\DriveController;
 use App\Http\Controllers\DropLinkController;
 use App\Http\Controllers\FaceIdController;
 use App\Http\Controllers\InvestmentController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PayAdminApiController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReceiptScannerController;
 use App\Http\Controllers\ReportController;
@@ -17,7 +20,10 @@ use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\TodoController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\WalletController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Schema;
 
 // Public Authentication, PIN & Face ID Login Routes
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -37,6 +43,33 @@ Route::get('/manifest.json', function () {
     ]);
 });
 
+// Maintenance endpoint to clear view cache and wipe stale compiled templates
+Route::get('/swanflow-clear-view-cache', function () {
+    try {
+        Artisan::call('view:clear');
+        Artisan::call('route:clear');
+        Artisan::call('cache:clear');
+    } catch (Throwable $e) {
+    }
+
+    $files = glob(storage_path('framework/views/*.php'));
+    $deleted = 0;
+    if ($files) {
+        foreach ($files as $file) {
+            if (is_file($file)) {
+                @unlink($file);
+                $deleted++;
+            }
+        }
+    }
+
+    return response()->json([
+        'status' => 'success',
+        'deleted_views' => $deleted,
+        'message' => 'View cache and compiled templates purged successfully.',
+    ]);
+});
+
 // Public Share & File Transfer Routes (SwanDrive)
 Route::get('/share/{token}', [DriveController::class, 'sharedView'])->name('drive.shared.view');
 Route::get('/share/{token}/preview', [DriveController::class, 'sharedPreview'])->name('drive.shared.preview');
@@ -52,9 +85,45 @@ Route::get('/share/folder/{token}/zip', [DriveController::class, 'sharedFolderZi
 Route::get('/drop/{token}', [DropLinkController::class, 'show'])->name('drive.drop.view');
 Route::post('/drop/{token}', [DropLinkController::class, 'upload'])->name('drive.drop.upload');
 
+// Public Client Portal & File Deliverables (/p/{token})
+Route::get('/p/{token}', [ClientPortalController::class, 'show'])->name('orders.portal');
+Route::get('/api/p/{token}', [ClientPortalController::class, 'getProjectData'])->name('api.orders.portal.data');
+Route::post('/api/p/{token}/upload', [ClientPortalController::class, 'uploadProof'])->name('api.orders.portal.upload');
+Route::post('/p/{token}/upload', [ClientPortalController::class, 'uploadProof'])->name('orders.portal.upload');
+
+// Client File Delivery & Paywall Gateway Admin (/admin & /api/admin/*)
+Route::get('/admin', [PayAdminApiController::class, 'index'])->name('pay.admin');
+Route::get('/api/admin/me', [PayAdminApiController::class, 'me']);
+Route::post('/api/admin/login', [PayAdminApiController::class, 'login']);
+Route::post('/api/admin/logout', [PayAdminApiController::class, 'logout']);
+Route::get('/api/admin/settings', [PayAdminApiController::class, 'getSettings']);
+Route::post('/api/admin/settings', [PayAdminApiController::class, 'updateSettings']);
+Route::get('/api/admin/projects', [PayAdminApiController::class, 'getProjects']);
+Route::post('/api/admin/projects', [PayAdminApiController::class, 'createProject']);
+Route::put('/api/admin/projects/{id}', [PayAdminApiController::class, 'updateProject']);
+Route::delete('/api/admin/projects/{id}', [PayAdminApiController::class, 'deleteProject']);
+Route::post('/api/admin/projects/{id}/verify', [PayAdminApiController::class, 'verifyProject']);
+Route::post('/api/admin/projects/{id}/make-free', [PayAdminApiController::class, 'makeFree']);
+Route::get('/api/admin/bank-accounts', [PayAdminApiController::class, 'getBankAccounts']);
+Route::post('/api/admin/bank-accounts', [PayAdminApiController::class, 'createBankAccount']);
+Route::delete('/api/admin/bank-accounts/{id}', [PayAdminApiController::class, 'deleteBankAccount']);
+
+// Static Uploads Fallback for Payment Proofs
+Route::get('/uploads/{filename}', function ($filename) {
+    $publicPath = public_path('uploads/'.$filename);
+    if (file_exists($publicPath)) {
+        return response()->file($publicPath);
+    }
+    $storagePath = storage_path('app/public/payment_proofs/'.$filename);
+    if (file_exists($storagePath)) {
+        return response()->file($storagePath);
+    }
+    abort(404);
+})->where('filename', '[a-zA-Z0-9_\-\.]+');
+
 // Protected Application Routes (Requires Authentication & Session Timeout Protection)
 Route::middleware(['auth', 'session.timeout'])->group(function () {
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::match(['get', 'post'], '/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -62,6 +131,8 @@ Route::middleware(['auth', 'session.timeout'])->group(function () {
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
     Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
     Route::post('/transactions/scan-receipt', [ReceiptScannerController::class, 'scan'])->name('transactions.scan-receipt');
+    Route::post('/transactions/scan-receipt/async', [ReceiptScannerController::class, 'scanAsync'])->name('transactions.scan-receipt.async');
+    Route::get('/transactions/scan-receipt/status/{scanId}', [ReceiptScannerController::class, 'checkStatus'])->name('transactions.scan-receipt.status');
     Route::post('/transactions/scan-receipt/parse-text', [ReceiptScannerController::class, 'parseText'])->name('transactions.scan-receipt.parse-text');
     Route::put('/transactions/{transaction}', [TransactionController::class, 'update'])->name('transactions.update');
     Route::delete('/transactions/{transaction}', [TransactionController::class, 'destroy'])->name('transactions.destroy');
@@ -116,12 +187,16 @@ Route::middleware(['auth', 'session.timeout'])->group(function () {
     // SwanDrive (File Storage & Transfer)
     Route::get('/drive', [DriveController::class, 'index'])->name('drive.index');
     Route::post('/drive/upload', [DriveController::class, 'store'])->name('drive.store');
+    Route::post('/drive/upload-chunk', [DriveController::class, 'uploadChunk'])->name('drive.upload-chunk');
+    Route::get('/drive/connect-google', [DriveController::class, 'connectGoogle'])->name('drive.connect');
+    Route::get('/drive/callback', [DriveController::class, 'googleCallback'])->name('drive.callback');
     Route::patch('/drive/quota', [DriveController::class, 'updateQuota'])->name('drive.quota.update');
     Route::get('/drive/{file}/preview', [DriveController::class, 'preview'])->name('drive.preview');
     Route::get('/drive/{file}/download', [DriveController::class, 'download'])->name('drive.download');
     Route::patch('/drive/{file}/share', [DriveController::class, 'toggleShare'])->name('drive.share.toggle');
     Route::patch('/drive/{file}/move', [DriveController::class, 'moveFile'])->name('drive.file.move');
     Route::delete('/drive/{file}', [DriveController::class, 'destroy'])->name('drive.destroy');
+    Route::post('/drive/batch-destroy', [DriveController::class, 'batchDestroy'])->name('drive.batch.destroy');
 
     // Folder Management
     Route::post('/drive/folders', [DriveController::class, 'createFolder'])->name('drive.folders.store');
@@ -150,4 +225,25 @@ Route::middleware(['auth', 'session.timeout'])->group(function () {
     Route::post('/face-id/register/challenge', [FaceIdController::class, 'registerChallenge'])->name('faceid.register.challenge');
     Route::post('/face-id/register/verify', [FaceIdController::class, 'registerVerify'])->name('faceid.register.verify');
     Route::delete('/face-id/{credential}', [FaceIdController::class, 'destroy'])->name('faceid.destroy');
+
+    // Client Projects, Invoices & Deliverables (/orders)
+    Route::get('/orders', function (Request $request) {
+        if (class_exists(OrderController::class) && Schema::hasTable('orders')) {
+            return app(OrderController::class)->index($request);
+        }
+
+        return redirect()->route('dashboard');
+    })->name('orders.index');
+
+    if (class_exists(OrderController::class)) {
+        Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+        Route::put('/orders/{order}', [OrderController::class, 'update'])->name('orders.update');
+        Route::delete('/orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
+        Route::post('/orders/{order}/make-free', [OrderController::class, 'toggleFree'])->name('orders.toggle-free');
+        Route::post('/orders/{order}/verify', [OrderController::class, 'verify'])->name('orders.verify');
+        Route::post('/orders/{order}/reject', [OrderController::class, 'reject'])->name('orders.reject');
+        Route::post('/orders/settings', [OrderController::class, 'updateSettings'])->name('orders.settings.update');
+        Route::post('/orders/bank-accounts', [OrderController::class, 'storeBankAccount'])->name('orders.bank-accounts.store');
+        Route::delete('/orders/bank-accounts/{account}', [OrderController::class, 'destroyBankAccount'])->name('orders.bank-accounts.destroy');
+    }
 });

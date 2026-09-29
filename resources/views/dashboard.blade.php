@@ -13,6 +13,10 @@
         ['name' => 'Kategori', 'icon' => 'M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z M6 6h.008v.008H6V6z', 'route' => 'categories.index', 'classes' => 'text-amber-500 group-hover:bg-amber-500 dark:text-amber-400'],
     ];
 
+    $dashboardModules = array_values(array_filter($dashboardModules, function ($mod) {
+        return \Illuminate\Support\Facades\Route::has($mod['route']);
+    }));
+
     $localNow = now()->setTimezone('Asia/Makassar');
     $hour = (int) $localNow->format('H');
     $greetingTime = match(true) {
@@ -233,6 +237,16 @@
                     <span class="text-[11px] font-bold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white transition-colors text-center truncate max-w-full">{{ $mod['name'] }}</span>
                 </a>
             @endforeach
+
+            <!-- Tombol Semua Menu -->
+            <button type="button" onclick="window.openSheetModal('modal-all-menus')" class="flex flex-col items-center gap-1.5 group active:scale-95 transition-all cursor-pointer">
+                <div class="w-[58px] h-[58px] rounded-[22px] bg-slate-100 dark:bg-slate-800/80 backdrop-blur-2xl border border-white/60 dark:border-white/10 shadow-xs flex items-center justify-center text-slate-500 dark:text-slate-400 group-hover:bg-slate-200 dark:group-hover:bg-slate-700 transition-colors duration-300">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"></path>
+                    </svg>
+                </div>
+                <span class="text-[11px] font-bold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white transition-colors text-center truncate max-w-full">Semua Menu</span>
+            </button>
         </div>
     </section>
 
@@ -417,6 +431,8 @@
                         id: {{ $tx->id }},
                         type: "{{ is_string($tx->type) ? $tx->type : $tx->type->value }}",
                         amount: {{ $tx->amount }},
+                        admin_fee: {{ (float)($tx->admin_fee ?? 0) }},
+                        fee_payer: "{{ $tx->fee_payer ?? 'source' }}",
                         wallet_id: {{ $tx->wallet_id }},
                         target_wallet_id: {{ $tx->target_wallet_id ?: "null" }},
                         category_id: {{ $tx->category_id ?: "null" }},
@@ -457,13 +473,6 @@
             @endforelse
         </div>
     </section>
-
-    <!-- App Attribution Footer -->
-    <div class="pt-6 pb-2 text-center">
-        <p class="text-[11px] font-medium text-slate-400 dark:text-slate-500">
-            SwanFlow &bull; Dibuat oleh <strong class="font-bold text-slate-600 dark:text-slate-400">Gusti Swandana</strong>
-        </p>
-    </div>
 </div>
 
 @endsection
@@ -558,6 +567,45 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Semua Menu -->
+<div id="modal-all-menus" class="fixed inset-0 z-50 hidden transition-all duration-300" style="z-index: 9999;" aria-modal="true" role="dialog">
+    <div class="modal-backdrop fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity opacity-0 duration-300 z-10" id="modal-all-menus-bg" onclick="window.closeSheetModal('modal-all-menus')"></div>
+    <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none z-20">
+        <div class="modal-panel modal-sheet-safe w-full max-w-md bg-white/95 dark:bg-slate-900/95 backdrop-blur-3xl rounded-t-[36px] p-5 border-t border-white/60 dark:border-white/10 shadow-2xl transition-transform duration-300 transform translate-y-full flex flex-col max-h-[85vh] pointer-events-auto relative z-20" id="modal-all-menus-content">
+            <div class="w-10 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-4 cursor-pointer" onclick="window.closeSheetModal('modal-all-menus')"></div>
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800/80 mb-4">
+                <div>
+                    <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 block -mb-0.5">Eksplorasi</span>
+                    <h3 class="text-base font-extrabold text-slate-800 dark:text-white tracking-tight">Semua Fitur</h3>
+                </div>
+                <button type="button" onclick="window.closeSheetModal('modal-all-menus')" class="w-9 h-9 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800/80 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors ios-press cursor-pointer" aria-label="Tutup">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-4 gap-y-4 gap-x-2 overflow-y-auto no-scrollbar flex-1 pb-4">
+                @foreach($dashboardModules as $mod)
+                    <a href="{{ route($mod['route']) }}" class="flex flex-col items-center gap-1.5 group active:scale-95 transition-all cursor-pointer">
+                        <div class="w-[58px] h-[58px] rounded-[22px] bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-white/5 shadow-xs flex items-center justify-center {{ $mod['classes'] }} group-hover:text-white transition-colors duration-300">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="{{ $mod['icon'] }}"></path>
+                            </svg>
+                        </div>
+                        <span class="text-[11px] font-bold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white transition-colors text-center truncate max-w-full">{{ $mod['name'] }}</span>
+                    </a>
+                @endforeach
+            </div>
+
+            <!-- Attribution Footer -->
+            <div class="pt-3 pb-1 text-center border-t border-slate-100 dark:border-slate-800/80 mt-2">
+                <p class="text-[10px] font-medium text-slate-400 dark:text-slate-500">
+                    Aplikasi ini dibuat oleh <strong class="font-bold text-slate-600 dark:text-slate-400">Gusti Swandana</strong>
+                </p>
+            </div>
         </div>
     </div>
 </div>
