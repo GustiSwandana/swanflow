@@ -423,11 +423,24 @@ class OrderController extends Controller
             'bank_instructions' => 'nullable|string',
             'admin_pin' => 'nullable|string|max:20',
             'qris_image' => 'nullable|image|max:3072',
+            'midtrans_enabled' => 'nullable|boolean',
+            'midtrans_server_key' => 'nullable|string',
+            'midtrans_client_key' => 'nullable|string',
+            'midtrans_is_production' => 'nullable|boolean',
         ]);
 
         $settings = OrderSetting::firstOrCreate(['user_id' => $user->id]);
         $settings->studio_name = $validated['studio_name'];
         $settings->bank_instructions = $validated['bank_instructions'] ?? null;
+        $settings->midtrans_enabled = $request->boolean('midtrans_enabled');
+
+        if ($request->has('midtrans_server_key')) {
+            $settings->midtrans_server_key = $request->input('midtrans_server_key');
+        }
+        if ($request->has('midtrans_client_key')) {
+            $settings->midtrans_client_key = $request->input('midtrans_client_key');
+        }
+        $settings->midtrans_is_production = $request->boolean('midtrans_is_production');
 
         if (! empty($validated['admin_pin'])) {
             $settings->admin_pin = $validated['admin_pin'];

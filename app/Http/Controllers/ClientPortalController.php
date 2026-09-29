@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\OrderBankAccount;
 use App\Models\OrderSetting;
+use App\Services\MidtransService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -15,10 +16,7 @@ class ClientPortalController extends Controller
     /**
      * Show the public Client Portal page for a specific project token.
      */
-    /**
-     * Show the public Client Portal page for a specific project token.
-     */
-    public function show(string $token): View
+    public function show(string $token, MidtransService $midtransService): View
     {
         $order = Order::where('token', $token)
             ->with(['deliverables', 'storedFile', 'folder'])
@@ -34,6 +32,11 @@ class ClientPortalController extends Controller
             ->get();
 
         $downloadUrl = $this->resolveDownloadUrl($order);
+
+        $midtransEnabled = $midtransService->isEnabled($order->user_id);
+        $midtransClientKey = $midtransService->getClientKey($order->user_id);
+        $midtransIsProduction = $midtransService->isProduction($order->user_id);
+        $snapJsUrl = $midtransService->getSnapJsUrl($midtransIsProduction);
 
         // Deliverable metadata for SwanDrive integration
         $deliverableType = 'external';
@@ -68,13 +71,17 @@ class ClientPortalController extends Controller
             'fileCount' => $fileCount,
             'fileSizeFormatted' => $fileSizeFormatted,
             'token' => $token,
+            'midtransEnabled' => $midtransEnabled,
+            'midtransClientKey' => $midtransClientKey,
+            'midtransIsProduction' => $midtransIsProduction,
+            'snapJsUrl' => $snapJsUrl,
         ]);
     }
 
     /**
      * Get JSON data for the client portal (for polling and initial fetch).
      */
-    public function getProjectData(string $token): JsonResponse
+    public function getProjectData(string $token, MidtransService $midtransService): JsonResponse
     {
         $order = Order::where('token', $token)
             ->with(['deliverables', 'storedFile', 'folder'])
@@ -155,15 +162,54 @@ class ClientPortalController extends Controller
                 'studio_name' => $settings->studio_name,
                 'bank_instructions' => $settings->bank_instructions,
                 'qris_url' => $settings->qris_image_path ? Storage::url($settings->qris_image_path) : null,
+                'midtrans_enabled' => $midtransService->isEnabled($order->user_id),
+                'midtrans_client_key' => $midtransService->getClientKey($order->user_id),
+                'midtrans_is_production' => $midtransService->isProduction($order->user_id),
+                'snap_js_url' => $midtransService->getSnapJsUrl($midtransService->isProduction($order->user_id)),
             ],
             'bank_accounts' => $bankAccounts,
         ]);
     }
 
     /**
+     * Generate or return a Midtrans Snap Token for this order.
+     */
+    public function getSnapToken(string $token, MidtransService $midtransService): JsonResponse
+    {
+        $order = Order::where('token', $token)->first();
+
+        if (! $order) {
+            return response()->json(['error' => 'Proyek tidak ditemukan.'], 404);
+        }
+
+        if ($order->is_free || $order->status === 'verified') {
+            return response()->json([
+                'error' => 'Proyek sudah terverifikasi lunas atau gratis.',
+                'status' => 'APPROVED',
+            ], 400);
+        }
+
+        if ($order->final_amount <= 0) {
+            return response()->json([
+                'error' => 'Nominal tagihan proyek adalah 0.',
+            ], 400);
+        }
+
+        try {
+            $snapData = $midtransService->createSnapTransaction($order);
+
+            return response()->json($snapData);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'error' => $e->getMessage(),
+            ], 400);
+        }
+    }
+
+    /**
      * Handle payment proof upload from client.
      */
-    public function uploadProof(Request $request, string $token): JsonResponse
+    public function uploadProof(Request $request, string $token, MidtransService $midtransService): JsonResponse
     {
         $order = Order::where('token', $token)->first();
 
@@ -204,7 +250,7 @@ class ClientPortalController extends Controller
         $order->rejection_reason = null;
         $order->save();
 
-        return $this->getProjectData($token);
+        return $this->getProjectData($token, $midtransService);
     }
 
     /**

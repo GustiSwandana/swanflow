@@ -924,6 +924,19 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('settingsStudioName').value = currentSettings.studio_name || '';
     document.getElementById('settingsBankInstructions').value = currentSettings.bank_instructions || '';
     document.getElementById('settingsNewPin').value = '';
+
+    const midtransEnabledEl = document.getElementById('settingsMidtransEnabled');
+    if (midtransEnabledEl) midtransEnabledEl.checked = !!currentSettings.midtrans_enabled;
+
+    const midtransServerKeyEl = document.getElementById('settingsMidtransServerKey');
+    if (midtransServerKeyEl) midtransServerKeyEl.value = currentSettings.midtrans_server_key || '';
+
+    const midtransClientKeyEl = document.getElementById('settingsMidtransClientKey');
+    if (midtransClientKeyEl) midtransClientKeyEl.value = currentSettings.midtrans_client_key || '';
+
+    const midtransIsProdEl = document.getElementById('settingsMidtransIsProduction');
+    if (midtransIsProdEl) midtransIsProdEl.checked = !!currentSettings.midtrans_is_production;
+
     fetchBankAccounts();
     settingsModal.showModal();
   });
@@ -937,6 +950,18 @@ document.addEventListener('DOMContentLoaded', () => {
       studio_name: document.getElementById('settingsStudioName').value.trim(),
       bank_instructions: document.getElementById('settingsBankInstructions').value.trim()
     };
+
+    const midtransEnabledEl = document.getElementById('settingsMidtransEnabled');
+    if (midtransEnabledEl) payload.midtrans_enabled = midtransEnabledEl.checked;
+
+    const midtransServerKeyEl = document.getElementById('settingsMidtransServerKey');
+    if (midtransServerKeyEl) payload.midtrans_server_key = midtransServerKeyEl.value.trim();
+
+    const midtransClientKeyEl = document.getElementById('settingsMidtransClientKey');
+    if (midtransClientKeyEl) payload.midtrans_client_key = midtransClientKeyEl.value.trim();
+
+    const midtransIsProdEl = document.getElementById('settingsMidtransIsProduction');
+    if (midtransIsProdEl) payload.midtrans_is_production = midtransIsProdEl.checked;
 
     const newPin = document.getElementById('settingsNewPin').value.trim();
     if (newPin) {

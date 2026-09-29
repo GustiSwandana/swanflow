@@ -27,9 +27,14 @@ class Order extends Model
         'folder_id',
         'notes',
         'status',
+        'payment_gateway',
+        'payment_type',
+        'payment_reference',
+        'snap_token',
         'payment_proof_path',
         'payment_submitted_at',
         'verified_at',
+        'paid_at',
         'rejection_reason',
         'wallet_id',
         'transaction_id',
@@ -41,6 +46,7 @@ class Order extends Model
         'is_free' => 'boolean',
         'payment_submitted_at' => 'datetime',
         'verified_at' => 'datetime',
+        'paid_at' => 'datetime',
     ];
 
     protected static function boot()

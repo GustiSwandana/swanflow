@@ -123,6 +123,10 @@ class PayAdminApiController extends Controller
                 'studio_name' => $settings->studio_name,
                 'bank_instructions' => $settings->bank_instructions,
                 'qris_url' => $settings->qris_image_path ? Storage::url($settings->qris_image_path) : null,
+                'midtrans_enabled' => (bool) $settings->midtrans_enabled,
+                'midtrans_server_key' => $settings->midtrans_server_key,
+                'midtrans_client_key' => $settings->midtrans_client_key,
+                'midtrans_is_production' => (bool) $settings->midtrans_is_production,
             ],
         ]);
     }
@@ -142,6 +146,19 @@ class PayAdminApiController extends Controller
         $settings->studio_name = $request->input('studio_name', $settings->studio_name);
         $settings->bank_instructions = $request->input('bank_instructions', $settings->bank_instructions);
 
+        if ($request->has('midtrans_enabled')) {
+            $settings->midtrans_enabled = $request->boolean('midtrans_enabled');
+        }
+        if ($request->has('midtrans_server_key')) {
+            $settings->midtrans_server_key = $request->input('midtrans_server_key');
+        }
+        if ($request->has('midtrans_client_key')) {
+            $settings->midtrans_client_key = $request->input('midtrans_client_key');
+        }
+        if ($request->has('midtrans_is_production')) {
+            $settings->midtrans_is_production = $request->boolean('midtrans_is_production');
+        }
+
         $newPin = trim((string) $request->input('admin_pin', ''));
         if ($newPin !== '') {
             $settings->admin_pin = $newPin;
@@ -155,6 +172,10 @@ class PayAdminApiController extends Controller
                 'studio_name' => $settings->studio_name,
                 'bank_instructions' => $settings->bank_instructions,
                 'qris_url' => $settings->qris_image_path ? Storage::url($settings->qris_image_path) : null,
+                'midtrans_enabled' => (bool) $settings->midtrans_enabled,
+                'midtrans_server_key' => $settings->midtrans_server_key,
+                'midtrans_client_key' => $settings->midtrans_client_key,
+                'midtrans_is_production' => (bool) $settings->midtrans_is_production,
             ],
         ]);
     }

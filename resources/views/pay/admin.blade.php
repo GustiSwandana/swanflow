@@ -454,6 +454,41 @@
           <textarea id="settingsBankInstructions" class="form-control" placeholder="Petunjuk khusus sebelum/sesudah transfer..."></textarea>
         </div>
 
+        <!-- Midtrans Configuration Section -->
+        <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: var(--radius-sm); padding: 14px; margin-top: 14px; margin-bottom: 14px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; margin: 0;">
+              <input type="checkbox" id="settingsMidtransEnabled" style="width: 18px; height: 18px; accent-color: #10b981; cursor: pointer;">
+              <span style="font-weight: 700; font-size: 0.92rem; color: #34d399;">⚡ Pembayaran Otomatis (Midtrans)</span>
+            </label>
+          </div>
+          <small style="color: var(--text-secondary); font-size: 0.78rem; display: block; margin-bottom: 12px;">
+            Aktifkan agar klien dapat langsung membayar via QRIS, GoPay, ShopeePay, dan Virtual Account bank secara otomatis.
+          </small>
+
+          <div class="form-group" style="margin-bottom: 10px;">
+            <label class="form-label" for="settingsMidtransServerKey" style="font-size: 0.8rem;">Midtrans Server Key</label>
+            <input type="password" id="settingsMidtransServerKey" class="form-control" placeholder="SB-Mid-server-... atau Mid-server-..." style="font-family: monospace; font-size: 0.85rem;">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 10px;">
+            <label class="form-label" for="settingsMidtransClientKey" style="font-size: 0.8rem;">Midtrans Client Key</label>
+            <input type="text" id="settingsMidtransClientKey" class="form-control" placeholder="SB-Mid-client-... atau Mid-client-..." style="font-family: monospace; font-size: 0.85rem;">
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+            <label for="settingsMidtransIsProduction" style="font-size: 0.82rem; color: var(--text-secondary); cursor: pointer; margin: 0;">
+              Mode Produksi (Live)
+            </label>
+            <input type="checkbox" id="settingsMidtransIsProduction" style="width: 16px; height: 16px; accent-color: #10b981; cursor: pointer;">
+          </div>
+
+          <div style="background: rgba(0,0,0,0.3); padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-glass);">
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 2px;">Webhook Notification URL:</div>
+            <code style="font-size: 0.78rem; color: #34d399; font-family: monospace; word-break: break-all; user-select: all;">{{ url('/api/midtrans/webhook') }}</code>
+          </div>
+        </div>
+
         <div class="form-group" style="padding-top: 10px; border-top: 1px solid var(--border-glass);">
           <label class="form-label" for="settingsNewPin">Ganti PIN Admin (Opsional)</label>
           <input type="password" id="settingsNewPin" class="form-control" placeholder="Biarkan kosong jika tidak ingin mengubah PIN">

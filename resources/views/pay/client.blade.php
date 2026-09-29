@@ -17,6 +17,10 @@
     <!-- Canvas Confetti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
+    @if(!empty($midtransClientKey) && !empty($snapJsUrl))
+        <script src="{{ $snapJsUrl }}" data-client-key="{{ $midtransClientKey }}" id="midtransSnapScript"></script>
+    @endif
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
@@ -321,6 +325,52 @@
                 </p>
             </div>
 
+            <!-- Midtrans Instant Automated Payment (QRIS / GoPay / VA) -->
+            <div id="instantPaymentCard" class="{{ $midtransEnabled ? 'block' : 'hidden' }} bg-gradient-to-br from-emerald-500/10 via-teal-500/10 to-cyan-500/10 dark:from-emerald-950/40 dark:via-teal-950/30 dark:to-cyan-950/40 backdrop-blur-2xl rounded-[32px] p-6 border border-emerald-500/30 dark:border-emerald-500/20 shadow-xl space-y-4">
+                <div class="flex items-start justify-between gap-3">
+                    <div>
+                        <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black tracking-wide uppercase bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 mb-1.5 border border-emerald-500/30">
+                            ⚡ Otomatis & Bebas Antre
+                        </div>
+                        <h2 class="text-sm font-black text-slate-900 dark:text-white">Bayar Instan Langsung Buka File</h2>
+                        <p class="text-[11px] text-slate-600 dark:text-slate-300 mt-0.5">Konfirmasi real-time tanpa perlu unggah bukti transfer</p>
+                    </div>
+                    <span class="text-2xl shrink-0">💳</span>
+                </div>
+
+                <!-- Payment Channels Badges -->
+                <div class="flex flex-wrap gap-1.5 pt-1">
+                    <span class="px-2.5 py-1 rounded-lg bg-white/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-white/10 text-[10px] font-extrabold text-slate-700 dark:text-slate-200 shadow-2xs">QRIS (Semua E-Wallet)</span>
+                    <span class="px-2.5 py-1 rounded-lg bg-white/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-white/10 text-[10px] font-extrabold text-slate-700 dark:text-slate-200 shadow-2xs">GoPay</span>
+                    <span class="px-2.5 py-1 rounded-lg bg-white/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-white/10 text-[10px] font-extrabold text-slate-700 dark:text-slate-200 shadow-2xs">ShopeePay</span>
+                    <span class="px-2.5 py-1 rounded-lg bg-white/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-white/10 text-[10px] font-extrabold text-slate-700 dark:text-slate-200 shadow-2xs">BCA VA</span>
+                    <span class="px-2.5 py-1 rounded-lg bg-white/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-white/10 text-[10px] font-extrabold text-slate-700 dark:text-slate-200 shadow-2xs">Mandiri VA</span>
+                    <span class="px-2.5 py-1 rounded-lg bg-white/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-white/10 text-[10px] font-extrabold text-slate-700 dark:text-slate-200 shadow-2xs">BNI / BRI VA</span>
+                </div>
+
+                <!-- Action Button -->
+                <button type="button" 
+                        id="btnInstantPay"
+                        onclick="triggerInstantPayment()"
+                        class="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 active:scale-[0.98] text-white text-xs sm:text-sm font-black flex items-center justify-center gap-2.5 shadow-lg shadow-teal-500/25 transition-all ios-press cursor-pointer">
+                    <svg class="w-5 h-5 text-amber-300" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" />
+                    </svg>
+                    <span id="btnInstantPayText">Bayar Otomatis Sekarang (Rp {{ number_format($order->final_amount, 0, ',', '.') }})</span>
+                    <svg class="w-4 h-4 hidden animate-spin" id="instantPaySpinner" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Alternative Separator -->
+            <div id="manualTransferSeparator" class="{{ $midtransEnabled ? 'flex' : 'hidden' }} items-center gap-3 my-1">
+                <div class="flex-1 h-px bg-slate-200 dark:bg-white/10"></div>
+                <span class="text-[11px] font-semibold text-slate-400">atau transfer manual & unggah bukti</span>
+                <div class="flex-1 h-px bg-slate-200 dark:bg-white/10"></div>
+            </div>
+
             <!-- Payment Destination Accounts Card -->
             <section class="bg-white/85 dark:bg-slate-900/85 backdrop-blur-2xl rounded-[32px] p-6 border border-white/60 dark:border-white/10 shadow-xl space-y-4">
                 <div class="flex items-center justify-between">
@@ -442,6 +492,83 @@
         const TOKEN = "{{ $token }}";
         let isPolling = true;
         let lastKnownStatus = "{{ $isApproved ? 'APPROVED' : ($isWaiting ? 'PENDING_VERIFICATION' : ($isRejected ? 'REJECTED' : 'UNPAID')) }}";
+        let currentSnapJsUrl = "{{ $snapJsUrl ?? 'https://app.sandbox.midtrans.com/snap/snap.js' }}";
+        let currentClientKey = "{{ $midtransClientKey ?? '' }}";
+
+        function ensureSnapJsLoaded(callback) {
+            if (window.snap) {
+                callback();
+                return;
+            }
+            const script = document.createElement('script');
+            script.src = currentSnapJsUrl;
+            if (currentClientKey) {
+                script.setAttribute('data-client-key', currentClientKey);
+            }
+            script.onload = () => callback();
+            script.onerror = () => {
+                showToast('Gagal memuat gateway Midtrans. Silakan gunakan opsi transfer manual.');
+            };
+            document.head.appendChild(script);
+        }
+
+        async function triggerInstantPayment() {
+            const btn = document.getElementById('btnInstantPay');
+            const spinner = document.getElementById('instantPaySpinner');
+            const text = document.getElementById('btnInstantPayText');
+
+            if (!btn) return;
+
+            btn.disabled = true;
+            if (spinner) spinner.classList.remove('hidden');
+            if (text) text.innerText = 'Menyiapkan Pembayaran...';
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+            try {
+                const res = await fetch(`/api/p/${TOKEN}/snap-token`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.error || 'Gagal memulai transaksi otomatis.');
+                }
+
+                if (data.snap_js_url) currentSnapJsUrl = data.snap_js_url;
+                if (data.client_key) currentClientKey = data.client_key;
+
+                ensureSnapJsLoaded(() => {
+                    window.snap.pay(data.token, {
+                        onSuccess: function(result) {
+                            showToast('Pembayaran berhasil! Memverifikasi sistem...');
+                            pollProjectStatus();
+                        },
+                        onPending: function(result) {
+                            showToast('Menunggu pembayaran Anda...');
+                            pollProjectStatus();
+                        },
+                        onError: function(result) {
+                            showToast('Pembayaran dibatalkan atau bermasalah.');
+                        },
+                        onClose: function() {
+                            // User closed popup
+                        }
+                    });
+                });
+            } catch (err) {
+                alert(err.message || 'Terjadi kesalahan saat memulai pembayaran.');
+            } finally {
+                if (spinner) spinner.classList.add('hidden');
+                if (text) text.innerText = 'Bayar Otomatis Sekarang (Rp {{ number_format($order->final_amount, 0, ',', '.') }})';
+                btn.disabled = false;
+            }
+        }
 
         function showToast(msg) {
             const toast = document.getElementById('clientToast');
@@ -627,6 +754,25 @@
                 } else {
                     pendingBox.classList.add('hidden');
                     rejectedBox.classList.add('hidden');
+                }
+
+                // Update Midtrans payment card visibility dynamically
+                if (data.settings) {
+                    const instantCard = document.getElementById('instantPaymentCard');
+                    const separator = document.getElementById('manualTransferSeparator');
+                    if (instantCard && separator) {
+                        if (data.settings.midtrans_enabled) {
+                            instantCard.classList.remove('hidden');
+                            separator.classList.remove('hidden');
+                            separator.classList.add('flex');
+                        } else {
+                            instantCard.classList.add('hidden');
+                            separator.classList.add('hidden');
+                            separator.classList.remove('flex');
+                        }
+                    }
+                    if (data.settings.snap_js_url) currentSnapJsUrl = data.settings.snap_js_url;
+                    if (data.settings.midtrans_client_key) currentClientKey = data.settings.midtrans_client_key;
                 }
             }
         }

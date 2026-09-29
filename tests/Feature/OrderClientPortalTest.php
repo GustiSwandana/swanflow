@@ -322,4 +322,28 @@ class OrderClientPortalTest extends TestCase
         $response->assertViewHas('preselectedFolderId', $folder->id);
         $response->assertViewHas('autoCreate', true);
     }
+
+    public function test_user_can_update_orders_settings_with_midtrans(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->post(route('orders.settings.update'), [
+            'studio_name' => 'Lensa Art Studio Bali',
+            'bank_instructions' => 'Bayar via Midtrans QRIS atau VA.',
+            'midtrans_enabled' => '1',
+            'midtrans_server_key' => 'SB-Mid-server-test-999',
+            'midtrans_client_key' => 'SB-Mid-client-test-999',
+            'midtrans_is_production' => '1',
+        ]);
+
+        $response->assertRedirect(route('orders.index'));
+        $this->assertDatabaseHas('order_settings', [
+            'user_id' => $user->id,
+            'studio_name' => 'Lensa Art Studio Bali',
+            'midtrans_enabled' => true,
+            'midtrans_server_key' => 'SB-Mid-server-test-999',
+            'midtrans_client_key' => 'SB-Mid-client-test-999',
+            'midtrans_is_production' => true,
+        ]);
+    }
 }

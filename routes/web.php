@@ -11,6 +11,7 @@ use App\Http\Controllers\DriveController;
 use App\Http\Controllers\DropLinkController;
 use App\Http\Controllers\FaceIdController;
 use App\Http\Controllers\InvestmentController;
+use App\Http\Controllers\MidtransWebhookController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PayAdminApiController;
 use App\Http\Controllers\ProfileController;
@@ -88,8 +89,12 @@ Route::post('/drop/{token}', [DropLinkController::class, 'upload'])->name('drive
 // Public Client Portal & File Deliverables (/p/{token})
 Route::get('/p/{token}', [ClientPortalController::class, 'show'])->name('orders.portal');
 Route::get('/api/p/{token}', [ClientPortalController::class, 'getProjectData'])->name('api.orders.portal.data');
+Route::post('/api/p/{token}/snap-token', [ClientPortalController::class, 'getSnapToken'])->name('api.orders.portal.snap-token');
 Route::post('/api/p/{token}/upload', [ClientPortalController::class, 'uploadProof'])->name('api.orders.portal.upload');
 Route::post('/p/{token}/upload', [ClientPortalController::class, 'uploadProof'])->name('orders.portal.upload');
+
+// Midtrans Payment Gateway Webhook
+Route::post('/api/midtrans/webhook', [MidtransWebhookController::class, 'handleNotification'])->name('midtrans.webhook');
 
 // Client File Delivery & Paywall Gateway Admin (/admin & /api/admin/*)
 Route::get('/admin', [PayAdminApiController::class, 'index'])->name('pay.admin');

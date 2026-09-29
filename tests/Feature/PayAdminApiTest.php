@@ -62,12 +62,21 @@ class PayAdminApiTest extends TestCase
             'studio_name' => 'Swan Studio Premium',
             'bank_instructions' => 'Transfer via BCA atau Mandiri.',
             'admin_pin' => '998877',
+            'midtrans_enabled' => true,
+            'midtrans_server_key' => 'SB-Mid-server-testkey',
+            'midtrans_client_key' => 'SB-Mid-client-testkey',
+            'midtrans_is_production' => false,
         ]);
-        $updateRes->assertStatus(200)->assertJsonPath('settings.studio_name', 'Swan Studio Premium');
+        $updateRes->assertStatus(200)
+            ->assertJsonPath('settings.studio_name', 'Swan Studio Premium')
+            ->assertJsonPath('settings.midtrans_enabled', true)
+            ->assertJsonPath('settings.midtrans_server_key', 'SB-Mid-server-testkey');
 
         $this->assertDatabaseHas('order_settings', [
             'studio_name' => 'Swan Studio Premium',
             'admin_pin' => '998877',
+            'midtrans_enabled' => true,
+            'midtrans_server_key' => 'SB-Mid-server-testkey',
         ]);
     }
 

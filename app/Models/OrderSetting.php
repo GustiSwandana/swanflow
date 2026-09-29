@@ -16,6 +16,15 @@ class OrderSetting extends Model
         'bank_instructions',
         'qris_image_path',
         'admin_pin',
+        'midtrans_enabled',
+        'midtrans_server_key',
+        'midtrans_client_key',
+        'midtrans_is_production',
+    ];
+
+    protected $casts = [
+        'midtrans_enabled' => 'boolean',
+        'midtrans_is_production' => 'boolean',
     ];
 
     public function user(): BelongsTo

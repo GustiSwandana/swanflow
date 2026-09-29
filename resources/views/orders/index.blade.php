@@ -759,6 +759,46 @@
                     @endif
                 </div>
 
+                <!-- Midtrans Payment Gateway Section -->
+                <div class="p-3.5 rounded-2xl bg-teal-50/60 dark:bg-teal-950/20 border border-teal-200 dark:border-teal-800/50 space-y-2.5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-black text-teal-900 dark:text-teal-200 flex items-center gap-1.5">
+                            <span>⚡</span> Payment Gateway Otomatis (Midtrans)
+                        </span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" name="midtrans_enabled" value="1" {{ !empty($settings->midtrans_enabled) ? 'checked' : '' }} class="sr-only peer">
+                            <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-slate-600 peer-checked:bg-teal-500"></div>
+                        </label>
+                    </div>
+
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400">
+                        Otomatis memverifikasi pembayaran klien melalui QRIS, GoPay, ShopeePay, dan Virtual Account bank tanpa verifikasi manual.
+                    </p>
+
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">Midtrans Server Key</label>
+                        <input type="password" name="midtrans_server_key" value="{{ $settings->midtrans_server_key ?? '' }}" placeholder="SB-Mid-server-... atau Mid-server-..." class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs font-mono text-slate-900 dark:text-white">
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">Midtrans Client Key</label>
+                        <input type="text" name="midtrans_client_key" value="{{ $settings->midtrans_client_key ?? '' }}" placeholder="SB-Mid-client-... atau Mid-client-..." class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs font-mono text-slate-900 dark:text-white">
+                    </div>
+
+                    <div class="flex items-center justify-between pt-1">
+                        <label class="text-[11px] font-bold text-slate-700 dark:text-slate-300 cursor-pointer">
+                            Mode Produksi (Live)
+                        </label>
+                        <input type="checkbox" name="midtrans_is_production" value="1" {{ !empty($settings->midtrans_is_production) ? 'checked' : '' }} class="rounded text-teal-600 focus:ring-teal-500">
+                    </div>
+
+                    <div class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 text-[10px] space-y-1">
+                        <span class="font-bold text-slate-500 dark:text-slate-400 block">Webhook Notification URL:</span>
+                        <code class="block font-mono text-teal-600 dark:text-teal-400 select-all break-all">{{ url('/api/midtrans/webhook') }}</code>
+                        <span class="text-slate-400 block">Salin URL di atas ke Midtrans Dashboard > Settings > Configuration > Payment Notification URL</span>
+                    </div>
+                </div>
+
                 <button type="submit" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs cursor-pointer">
                     Simpan Pengaturan Studio
                 </button>
