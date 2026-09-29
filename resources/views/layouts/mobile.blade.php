@@ -294,6 +294,22 @@
         </header>
         @endif
 
+        <!-- Offline & Sync Status Floating Capsule (Apple Liquid Glass UI) -->
+        <div id="swan-offline-capsule" 
+             style="top: max(0.6rem, calc(var(--sat, 0px) + 0.45rem)); z-index: 99;" 
+             class="fixed left-1/2 -translate-x-1/2 max-w-[92%] sm:max-w-md hidden items-center gap-2 px-3.5 py-1.5 rounded-full shadow-2xl backdrop-blur-2xl border transition-all duration-300 cursor-pointer select-none text-xs font-semibold ios-press"
+             onclick="SwanFlowDB.syncPending(true)"
+             title="Klik untuk sinkronisasi transaksi offline">
+            <span id="swan-offline-dot" class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse"></span>
+            <span id="swan-offline-text" class="text-slate-800 dark:text-slate-100">Mode Offline</span>
+            <span id="swan-offline-badge" class="px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-amber-500/20 text-amber-700 dark:text-amber-300">0</span>
+        </div>
+
+        <!-- Universal Modern Glass Toast Notification Container -->
+        <div id="swan-toast-container" 
+             style="top: max(3.5rem, calc(var(--sat, 0px) + 3.2rem)); z-index: 102;" 
+             class="fixed left-1/2 -translate-x-1/2 w-[92%] sm:w-[380px] pointer-events-none flex flex-col gap-2 transition-all"></div>
+
         <!-- Toast Notification (Flash feedback) -->
         @if(session('success'))
             <div id="flash-toast" style="top: max(1rem, calc(var(--sat, 0px) + 0.65rem)); z-index: 100;" class="fixed left-1/2 -translate-x-1/2 w-[92%] sm:w-[380px] bg-slate-900/95 dark:bg-slate-900/95 text-white px-4 py-3 rounded-2xl shadow-2xl border border-slate-700/80 backdrop-blur-xl flex items-center justify-between transition-all duration-300">
@@ -3629,12 +3645,66 @@
             })();
 
             // ==========================================
-            // Offline Sync Engine (IndexedDB + Service Worker)
+            // Modern Liquid Glass Toast Notification
+            // ==========================================
+            window.showSwanToast = function(message, type = 'info', duration = 3500) {
+                const container = document.getElementById('swan-toast-container');
+                if (!container) return;
+
+                const toast = document.createElement('div');
+                toast.className = 'w-full px-4 py-3 rounded-2xl shadow-2xl backdrop-blur-2xl border flex items-center justify-between pointer-events-auto transform translate-y-2 opacity-0 transition-all duration-300 text-xs font-semibold';
+
+                let iconSvg = '';
+                let themeClasses = '';
+
+                if (type === 'success') {
+                    themeClasses = 'bg-emerald-950/90 text-emerald-100 border-emerald-500/30';
+                    iconSvg = `<span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg></span>`;
+                } else if (type === 'error') {
+                    themeClasses = 'bg-rose-950/90 text-rose-100 border-rose-500/30';
+                    iconSvg = `<span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-300 flex items-center justify-center shrink-0 font-bold text-xs">✕</span>`;
+                } else if (type === 'warning' || type === 'offline') {
+                    themeClasses = 'bg-amber-950/90 text-amber-100 border-amber-500/30';
+                    iconSvg = `<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-300 flex items-center justify-center shrink-0 font-bold text-xs">⚡</span>`;
+                } else {
+                    // info / sync
+                    themeClasses = 'bg-slate-900/90 text-slate-100 border-slate-700/80';
+                    iconSvg = `<span class="w-6 h-6 rounded-full bg-teal-500/20 text-teal-300 flex items-center justify-center shrink-0"><svg class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg></span>`;
+                }
+
+                toast.classList.add(...themeClasses.split(' '));
+                toast.innerHTML = `
+                    <div class="flex items-center gap-2.5 min-w-0 pr-2">
+                        ${iconSvg}
+                        <span class="truncate">${message}</span>
+                    </div>
+                    <button type="button" class="text-white/60 hover:text-white p-1 shrink-0 cursor-pointer" onclick="this.parentElement.remove()">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                `;
+
+                container.appendChild(toast);
+
+                requestAnimationFrame(() => {
+                    toast.classList.remove('translate-y-2', 'opacity-0');
+                    toast.classList.add('translate-y-0', 'opacity-100');
+                });
+
+                setTimeout(() => {
+                    toast.classList.remove('translate-y-0', 'opacity-100');
+                    toast.classList.add('translate-y-2', 'opacity-0');
+                    setTimeout(() => toast.remove(), 300);
+                }, duration);
+            };
+
+            // ==========================================
+            // Offline Sync Engine (IndexedDB + Background Sync)
             // ==========================================
             const SwanFlowDB = {
                 dbName: 'SwanFlowOfflineDB',
                 version: 1,
                 storeName: 'offline_transactions',
+                isSyncing: false,
 
                 async getDB() {
                     return new Promise((resolve, reject) => {
@@ -3642,7 +3712,8 @@
                         req.onupgradeneeded = (e) => {
                             const db = e.target.result;
                             if (!db.objectStoreNames.contains(this.storeName)) {
-                                db.createObjectStore(this.storeName, { keyPath: 'local_id', autoIncrement: true });
+                                const store = db.createObjectStore(this.storeName, { keyPath: 'local_id', autoIncrement: true });
+                                store.createIndex('client_uuid', 'client_uuid', { unique: true });
                             }
                         };
                         req.onsuccess = () => resolve(req.result);
@@ -3652,15 +3723,34 @@
 
                 async saveTransaction(data) {
                     const db = await this.getDB();
+                    // Generate unique client_uuid for idempotency
+                    const clientUuid = (window.crypto && crypto.randomUUID) 
+                        ? crypto.randomUUID() 
+                        : 'sf_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+                    
+                    const record = {
+                        ...data,
+                        client_uuid: data.client_uuid || clientUuid,
+                        saved_at: new Date().toISOString()
+                    };
+
                     return new Promise((resolve, reject) => {
                         const tx = db.transaction(this.storeName, 'readwrite');
                         const store = tx.objectStore(this.storeName);
-                        const record = {
-                            ...data,
-                            saved_at: new Date().toISOString()
-                        };
                         const req = store.add(record);
-                        req.onsuccess = () => resolve(req.result);
+                        req.onsuccess = async () => {
+                            // Register Background Sync if supported
+                            if ('serviceWorker' in navigator && 'SyncManager' in window) {
+                                try {
+                                    const reg = await navigator.serviceWorker.ready;
+                                    await reg.sync.register('sync-offline-transactions');
+                                } catch (syncErr) {
+                                    console.warn('Background sync registration info:', syncErr);
+                                }
+                            }
+                            this.updateStatusUI();
+                            resolve(record);
+                        };
                         req.onerror = () => reject(req.error);
                     });
                 },
@@ -3687,57 +3777,164 @@
                     });
                 },
 
-                isSyncing: false,
-                async syncPending() {
-                    if (this.isSyncing || !navigator.onLine) return;
+                async deleteTransactionsByUuids(uuids) {
+                    if (!uuids || uuids.length === 0) return;
+                    const items = await this.getAllTransactions();
+                    const uuidSet = new Set(uuids);
+                    for (const item of items) {
+                        if (uuidSet.has(item.client_uuid)) {
+                            await this.deleteTransaction(item.local_id);
+                        }
+                    }
+                    this.updateStatusUI();
+                },
+
+                async updateStatusUI() {
+                    const capsule = document.getElementById('swan-offline-capsule');
+                    const dot = document.getElementById('swan-offline-dot');
+                    const text = document.getElementById('swan-offline-text');
+                    const badge = document.getElementById('swan-offline-badge');
+                    if (!capsule || !dot || !text || !badge) return;
+
+                    let pending = [];
+                    try {
+                        pending = await this.getAllTransactions();
+                    } catch (e) {
+                        // ignore DB read error on init
+                    }
+
+                    const isOnline = navigator.onLine;
+
+                    if (!isOnline) {
+                        // Offline state
+                        capsule.className = 'fixed left-1/2 -translate-x-1/2 max-w-[92%] sm:max-w-md flex items-center gap-2 px-3.5 py-1.5 rounded-full shadow-2xl backdrop-blur-2xl border transition-all duration-300 cursor-pointer select-none text-xs font-semibold bg-amber-950/85 text-amber-100 border-amber-500/40';
+                        dot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse';
+                        text.textContent = 'Mode Offline';
+                        badge.className = 'px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-amber-500/20 text-amber-300';
+                        badge.textContent = pending.length + ' Tertunda';
+                        badge.classList.toggle('hidden', pending.length === 0);
+                        capsule.classList.remove('hidden');
+                    } else if (pending.length > 0) {
+                        // Online with pending queue
+                        capsule.className = 'fixed left-1/2 -translate-x-1/2 max-w-[92%] sm:max-w-md flex items-center gap-2 px-3.5 py-1.5 rounded-full shadow-2xl backdrop-blur-2xl border transition-all duration-300 cursor-pointer select-none text-xs font-semibold bg-slate-900/90 text-teal-100 border-teal-500/40';
+                        dot.className = this.isSyncing ? 'w-2.5 h-2.5 rounded-full bg-teal-400 animate-ping' : 'w-2.5 h-2.5 rounded-full bg-teal-400 animate-pulse';
+                        text.textContent = this.isSyncing ? 'Menyinkronkan...' : pending.length + ' Tertunda';
+                        badge.className = 'px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-teal-500/20 text-teal-300';
+                        badge.textContent = this.isSyncing ? 'Proses' : 'Sync';
+                        badge.classList.remove('hidden');
+                        capsule.classList.remove('hidden');
+                    } else {
+                        // Online with 0 pending
+                        capsule.classList.add('hidden');
+                    }
+                },
+
+                async syncPending(isManual = false) {
+                    if (this.isSyncing) return;
+                    if (!navigator.onLine) {
+                        if (isManual) {
+                            showSwanToast('Ponsel masih offline. Transaksi akan disinkronkan saat sinyal aktif.', 'warning');
+                        }
+                        this.updateStatusUI();
+                        return;
+                    }
+
                     this.isSyncing = true;
+                    this.updateStatusUI();
 
                     try {
                         const pending = await this.getAllTransactions();
                         if (pending.length === 0) {
+                            if (isManual) {
+                                showSwanToast('Semua transaksi sudah tersinkronisasi!', 'info');
+                            }
                             this.isSyncing = false;
+                            this.updateStatusUI();
                             return;
                         }
 
                         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
                             || '{{ csrf_token() }}';
 
-                        let syncedCount = 0;
-                        for (const item of pending) {
-                            const localId = item.local_id;
-                            const payload = { ...item };
-                            delete payload.local_id;
-                            delete payload.saved_at;
+                        // 1. Try Batch Sync to /transactions/sync
+                        let batchSuccess = false;
+                        try {
+                            const syncResponse = await fetch('{{ route('transactions.sync') }}', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': csrfToken,
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                    'Accept': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    transactions: pending.map(item => {
+                                        const p = { ...item };
+                                        delete p.local_id;
+                                        delete p.saved_at;
+                                        return p;
+                                    })
+                                })
+                            });
 
-                            try {
-                                const response = await fetch('{{ route('transactions.store') }}', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        'X-CSRF-TOKEN': csrfToken,
-                                        'X-Requested-With': 'XMLHttpRequest',
-                                        'Accept': 'application/json'
-                                    },
-                                    body: JSON.stringify(payload)
-                                });
-
-                                if (response.ok) {
-                                    await this.deleteTransaction(localId);
-                                    syncedCount++;
+                            if (syncResponse.ok) {
+                                const result = await syncResponse.json();
+                                if (result.synced_uuids && result.synced_uuids.length > 0) {
+                                    await this.deleteTransactionsByUuids(result.synced_uuids);
+                                } else {
+                                    for (const item of pending) {
+                                        await this.deleteTransaction(item.local_id);
+                                    }
                                 }
-                            } catch (err) {
-                                console.warn('Gagal sinkronisasi transaksi ID:', localId, err);
+                                batchSuccess = true;
+                                const count = (result.synced_count ?? 0) + (result.duplicate_count ?? 0);
+                                showSwanToast(`✓ ${count} transaksi offline berhasil disinkronkan ke server!`, 'success');
+                                window.dispatchEvent(new CustomEvent('swanflow:transactions-synced', { detail: result }));
                             }
+                        } catch (batchErr) {
+                            console.warn('Batch sync endpoint unavailable, falling back to item-by-item sync:', batchErr);
                         }
 
-                        if (syncedCount > 0) {
-                            alert(`Sinkronisasi Offline Selesai: ${syncedCount} transaksi tersimpan ke server!`);
-                            window.location.reload();
+                        // 2. Fallback to item-by-item store if batch sync failed
+                        if (!batchSuccess) {
+                            let singleSuccessCount = 0;
+                            for (const item of pending) {
+                                const localId = item.local_id;
+                                const payload = { ...item };
+                                delete payload.local_id;
+                                delete payload.saved_at;
+
+                                try {
+                                    const response = await fetch('{{ route('transactions.store') }}', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-CSRF-TOKEN': csrfToken,
+                                            'X-Requested-With': 'XMLHttpRequest',
+                                            'Accept': 'application/json'
+                                        },
+                                        body: JSON.stringify(payload)
+                                    });
+
+                                    if (response.ok) {
+                                        await this.deleteTransaction(localId);
+                                        singleSuccessCount++;
+                                    }
+                                } catch (err) {
+                                    console.warn('Gagal sinkronisasi transaksi ID:', localId, err);
+                                }
+                            }
+
+                            if (singleSuccessCount > 0) {
+                                showSwanToast(`✓ ${singleSuccessCount} transaksi offline berhasil disinkronkan ke server!`, 'success');
+                                window.dispatchEvent(new CustomEvent('swanflow:transactions-synced'));
+                            }
                         }
                     } catch (e) {
                         console.error('Error saat sinkronisasi offline:', e);
                     } finally {
                         this.isSyncing = false;
+                        this.updateStatusUI();
                     }
                 }
             };
@@ -3754,39 +3951,66 @@
                             if (key !== '_token') data[key] = value;
                         });
 
+                        // Basic client validation
+                        const amountStr = String(data.amount || '').replace(/[^0-9]/g, '');
+                        if (!amountStr || parseInt(amountStr, 10) <= 0) {
+                            showSwanToast('Nominal transaksi wajib diisi.', 'error');
+                            return;
+                        }
+
                         try {
                             await SwanFlowDB.saveTransaction(data);
-                            alert('📱 Mode Offline: Transaksi tersimpan lokal di HP Anda (IndexedDB) dan akan otomatis disinkronkan saat terhubung internet.');
+                            showSwanToast('📱 Mode Offline: Transaksi tersimpan lokal di HP dan akan otomatis disinkronkan saat ada sinyal.', 'warning', 4500);
                             if (typeof closeTransactionModal === 'function') {
                                 closeTransactionModal();
                             }
                             addTxForm.reset();
+                            const formattedPreview = document.getElementById('amount-input-formatted');
+                            if (formattedPreview) formattedPreview.textContent = 'Rp 0';
                         } catch (err) {
-                            alert('Gagal menyimpan transaksi offline: ' + err.message);
+                            showSwanToast('Gagal menyimpan transaksi offline: ' + err.message, 'error');
                         }
                     }
                 });
             }
 
-            // Listener otomatis ketika koneksi internet kembali aktif
+            // Listener otomatis ketika status koneksi berubah
             window.addEventListener('online', () => {
-                console.log('Koneksi online terdeteksi, memicu sinkronisasi offline...');
+                console.log('Koneksi internet kembali aktif. Memicu sinkronisasi...');
+                SwanFlowDB.updateStatusUI();
                 SwanFlowDB.syncPending();
+            });
+
+            window.addEventListener('offline', () => {
+                console.log('Perangkat offline.');
+                SwanFlowDB.updateStatusUI();
+                showSwanToast('⚡ Mode Offline aktif. Anda tetap bisa mencatat transaksi.', 'warning');
             });
 
             // Listener background sync dari Service Worker
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.addEventListener('message', (event) => {
                     if (event.data?.type === 'TRIGGER_OFFLINE_SYNC') {
+                        console.log('Menerima TRIGGER_OFFLINE_SYNC dari Service Worker.');
                         SwanFlowDB.syncPending();
                     }
                 });
             }
 
-            // Cek transaksi tertunda saat pertama kali halaman dimuat jika online
-            if (navigator.onLine) {
-                SwanFlowDB.syncPending();
-            }
+            // Periksa queue saat awal muat halaman
+            document.addEventListener('DOMContentLoaded', () => {
+                SwanFlowDB.updateStatusUI();
+                if (navigator.onLine) {
+                    setTimeout(() => SwanFlowDB.syncPending(), 1200);
+                }
+            });
+
+            // Interval periodic sync check (setiap 30 detik saat online)
+            setInterval(() => {
+                if (navigator.onLine && !SwanFlowDB.isSyncing) {
+                    SwanFlowDB.syncPending();
+                }
+            }, 30000);
 
 
                 // Strict Numeric Restriction: Keyboard pops up 0-9 digits only & non-digits are strictly blocked

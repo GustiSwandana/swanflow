@@ -80,6 +80,7 @@ class StoreTransactionRequest extends FormRequest
             'fee_payer' => ['nullable', 'in:source,destination'],
             'date' => ['required', 'date'],
             'description' => ['nullable', 'string', 'max:255'],
+            'client_uuid' => ['nullable', 'string', 'max:64'],
         ];
     }
 

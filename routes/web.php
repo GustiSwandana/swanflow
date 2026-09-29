@@ -153,6 +153,7 @@ Route::middleware(['auth', 'session.timeout'])->group(function () {
     // Transactions (CRUD)
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
     Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
+    Route::post('/transactions/sync', [TransactionController::class, 'sync'])->name('transactions.sync');
     Route::post('/transactions/scan-receipt', [ReceiptScannerController::class, 'scan'])->name('transactions.scan-receipt');
     Route::post('/transactions/scan-receipt/async', [ReceiptScannerController::class, 'scanAsync'])->name('transactions.scan-receipt.async');
     Route::get('/transactions/scan-receipt/status/{scanId}', [ReceiptScannerController::class, 'checkStatus'])->name('transactions.scan-receipt.status');

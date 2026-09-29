@@ -84,8 +84,30 @@ class TransactionController extends Controller
         $validated = $request->validated();
         $amount = (float) $validated['amount'];
         $type = $validated['type'];
+        $clientUuid = $validated['client_uuid'] ?? null;
 
-        DB::transaction(function () use ($user, $validated, $amount, $type) {
+        // Idempotency check for offline sync: avoid double insertion
+        if (! empty($clientUuid)) {
+            $existing = Transaction::where('user_id', $user->id)
+                ->where('client_uuid', $clientUuid)
+                ->first();
+
+            if ($existing) {
+                if ($request->wantsJson() || $request->ajax()) {
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Transaksi sudah tersinkronisasi sebelumnya.',
+                        'duplicate' => true,
+                        'transaction_id' => $existing->id,
+                        'client_uuid' => $existing->client_uuid,
+                    ]);
+                }
+
+                return back()->with('success', 'Transaksi sudah tersinkronisasi sebelumnya.');
+            }
+        }
+
+        DB::transaction(function () use ($user, $validated, $amount, $type, $clientUuid) {
             $wallet = Wallet::where('user_id', $user->id)->findOrFail($validated['wallet_id']);
 
             if ($type === TransactionType::Transfer->value) {
@@ -104,6 +126,7 @@ class TransactionController extends Controller
                     'type' => $type,
                     'date' => $validated['date'],
                     'description' => $validated['description'] ?? null,
+                    'client_uuid' => $clientUuid,
                 ]);
 
                 if ($feePayer === 'destination') {
@@ -125,6 +148,7 @@ class TransactionController extends Controller
                     'type' => $type,
                     'date' => $validated['date'],
                     'description' => $validated['description'] ?? null,
+                    'client_uuid' => $clientUuid,
                 ]);
 
                 if ($type === TransactionType::Income->value) {
@@ -302,5 +326,138 @@ class TransactionController extends Controller
         }
 
         return back()->with('success', $message);
+    }
+
+    /**
+     * Batch synchronize offline transactions queue idempotently.
+     */
+    public function sync(Request $request): JsonResponse
+    {
+        /** @var User $user */
+        $user = $request->user() ?? User::first() ?? User::getPrimaryUser();
+
+        $transactionsData = $request->input('transactions', []);
+        if (! is_array($transactionsData) || empty($transactionsData)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tidak ada antrean transaksi untuk disinkronkan.',
+                'synced_count' => 0,
+            ], 422);
+        }
+
+        $syncedCount = 0;
+        $duplicateCount = 0;
+        $failedCount = 0;
+        $syncedUuids = [];
+        $errors = [];
+
+        foreach ($transactionsData as $index => $item) {
+            $clientUuid = $item['client_uuid'] ?? null;
+
+            if ($clientUuid) {
+                $alreadyExists = Transaction::where('user_id', $user->id)
+                    ->where('client_uuid', $clientUuid)
+                    ->exists();
+
+                if ($alreadyExists) {
+                    $duplicateCount++;
+                    $syncedUuids[] = $clientUuid;
+
+                    continue;
+                }
+            }
+
+            try {
+                DB::transaction(function () use ($user, $item, $clientUuid) {
+                    $wallet = Wallet::where('user_id', $user->id)->findOrFail($item['wallet_id']);
+                    $type = $item['type'] ?? TransactionType::Expense->value;
+
+                    // Clean amount if string formatted
+                    $rawAmount = $item['amount'] ?? 0;
+                    if (is_string($rawAmount)) {
+                        $rawAmount = preg_replace('/[^0-9\.]/', '', $rawAmount);
+                    }
+                    $amount = (float) $rawAmount;
+
+                    if ($amount <= 0) {
+                        throw new \InvalidArgumentException('Nominal transaksi harus lebih dari 0.');
+                    }
+
+                    if ($type === TransactionType::Transfer->value) {
+                        $targetWallet = Wallet::where('user_id', $user->id)->findOrFail($item['target_wallet_id']);
+                        $rawFee = $item['admin_fee'] ?? 0;
+                        if (is_string($rawFee)) {
+                            $rawFee = preg_replace('/[^0-9\.]/', '', $rawFee);
+                        }
+                        $adminFee = (float) $rawFee;
+                        $feePayer = $item['fee_payer'] ?? 'source';
+
+                        Transaction::create([
+                            'user_id' => $user->id,
+                            'wallet_id' => $wallet->id,
+                            'target_wallet_id' => $targetWallet->id,
+                            'category_id' => $item['category_id'] ?? null,
+                            'amount' => $amount,
+                            'admin_fee' => $adminFee,
+                            'fee_payer' => $feePayer,
+                            'type' => $type,
+                            'date' => $item['date'] ?? now()->toDateString(),
+                            'description' => $item['description'] ?? null,
+                            'client_uuid' => $clientUuid,
+                        ]);
+
+                        if ($feePayer === 'destination') {
+                            $wallet->decrement('balance', $amount);
+                            $targetWallet->increment('balance', max(0, $amount - $adminFee));
+                        } else {
+                            $wallet->decrement('balance', $amount + $adminFee);
+                            $targetWallet->increment('balance', $amount);
+                        }
+                    } else {
+                        Transaction::create([
+                            'user_id' => $user->id,
+                            'wallet_id' => $wallet->id,
+                            'target_wallet_id' => null,
+                            'category_id' => $item['category_id'] ?? null,
+                            'amount' => $amount,
+                            'admin_fee' => 0,
+                            'fee_payer' => 'source',
+                            'type' => $type,
+                            'date' => $item['date'] ?? now()->toDateString(),
+                            'description' => $item['description'] ?? null,
+                            'client_uuid' => $clientUuid,
+                        ]);
+
+                        if ($type === TransactionType::Income->value) {
+                            $wallet->increment('balance', $amount);
+                        } else {
+                            $wallet->decrement('balance', $amount);
+                        }
+                    }
+                });
+
+                $syncedCount++;
+                if ($clientUuid) {
+                    $syncedUuids[] = $clientUuid;
+                }
+            } catch (\Throwable $e) {
+                $failedCount++;
+                $errors[] = [
+                    'index' => $index,
+                    'client_uuid' => $clientUuid,
+                    'error' => $e->getMessage(),
+                ];
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => "Sinkronisasi selesai: {$syncedCount} transaksi tersimpan, {$duplicateCount} sudah tercatat sebelumnya, {$failedCount} gagal.",
+            'synced_count' => $syncedCount,
+            'duplicate_count' => $duplicateCount,
+            'failed_count' => $failedCount,
+            'synced_uuids' => $syncedUuids,
+            'errors' => $errors,
+        ]);
     }
 }

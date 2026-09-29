@@ -1,5 +1,5 @@
-// SwanFlow PWA Service Worker (v1.0.31 - Mobile Standalone Optimized)
-const CACHE_NAME = 'swanflow-cache-v31';
+// SwanFlow PWA Service Worker (v1.0.32 - Offline-First & Background Sync)
+const CACHE_NAME = 'swanflow-cache-v32';
 const OFFLINE_URL = '/offline.html';
 
 const STATIC_ASSETS = [
@@ -55,15 +55,27 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // A. Navigation / Page Requests (HTML): Network-First with Offline Fallback
+    // A. Navigation / Page Requests (HTML): Network-First with Cache Fallback and Offline Shell Fallback
     if (request.mode === 'navigate') {
         event.respondWith(
             fetch(request)
                 .then((networkResponse) => {
+                    if (networkResponse && networkResponse.status === 200) {
+                        const responseClone = networkResponse.clone();
+                        caches.open(CACHE_NAME).then((cache) => {
+                            cache.put(request, responseClone);
+                        });
+                    }
                     return networkResponse;
                 })
                 .catch(async () => {
                     const cache = await caches.open(CACHE_NAME);
+                    // 1. Try cached page first (e.g. dashboard, transactions)
+                    const cachedPage = await cache.match(request);
+                    if (cachedPage) {
+                        return cachedPage;
+                    }
+                    // 2. Fallback to generic offline shell
                     const offlineShell = await cache.match(OFFLINE_URL);
                     return offlineShell || new Response('Offline', { status: 503, statusText: 'Offline' });
                 })
