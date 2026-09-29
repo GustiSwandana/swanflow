@@ -73,7 +73,7 @@
 @endsection
 
 @section('content')
-<div class="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-2xl rounded-t-[36px] pt-5 px-4 pb-[max(6.5rem,calc(5.5rem+var(--sab,0px)))] shadow-2xl -mt-5 relative z-10 border-t border-slate-200/80 dark:border-white/10 flex-1 flex flex-col min-h-full space-y-4 text-slate-800 dark:text-white transition-colors animate-swan-in">
+<div class="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-2xl rounded-t-[36px] pt-5 px-4 pb-[max(11rem,calc(10rem+var(--sab,0px)))] shadow-2xl -mt-5 relative z-10 border-t border-slate-200/80 dark:border-white/10 flex-1 flex flex-col min-h-[calc(100dvh-14rem)] space-y-4 text-slate-800 dark:text-white transition-colors animate-swan-in">
     <!-- Grab Handle -->
     <div class="w-10 h-1.5 bg-slate-300/80 dark:bg-slate-700/80 rounded-full mx-auto mb-1"></div>
 
@@ -197,9 +197,15 @@
                 <div class="flex items-center justify-between pt-1">
                     <div class="flex items-center gap-1.5">
                         <button type="button" 
-                                onclick='openEditDebtModal(@json($item))' 
+                                data-id="{{ $item->id }}"
+                                data-person-name="{{ $item->person_name }}"
+                                data-amount="{{ (int) round($item->amount) }}"
+                                data-due-date="{{ $item->due_date ? $item->due_date->format('Y-m-d') : '' }}"
+                                data-wallet-id="{{ $item->wallet_id ?? '' }}"
+                                data-notes="{{ $item->notes ?? '' }}"
+                                onclick="openEditDebtModalFromBtn(this)" 
                                 aria-label="Edit Catatan"
-                                class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-emerald-500 dark:text-slate-400 dark:hover:text-emerald-400 bg-slate-100/80 hover:bg-emerald-50 dark:bg-slate-800/80 dark:hover:bg-emerald-500/20 rounded-xl transition-all active:scale-95">
+                                class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-emerald-500 dark:text-slate-400 dark:hover:text-emerald-400 bg-slate-100/80 hover:bg-emerald-50 dark:bg-slate-800/80 dark:hover:bg-emerald-500/20 rounded-xl transition-all active:scale-95 cursor-pointer">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
                             </svg>
@@ -228,10 +234,21 @@
                 </div>
             </div>
         @empty
-            <div class="text-center py-12 liquid-card bg-white/80 dark:bg-slate-900/60 rounded-[26px] border border-slate-200/80 dark:border-white/10 p-6 space-y-2">
-                <p class="text-xs font-bold text-slate-600 dark:text-slate-300">Belum ada catatan utang maupun piutang.</p>
-                <button type="button" onclick="openAddDebtModal()" class="mt-2 text-xs font-black text-emerald-600 dark:text-emerald-400 hover:underline">
-                    + Buat Catatan Pertama
+            <div class="py-12 px-6 text-center space-y-4 liquid-card rounded-[30px] bg-white/70 dark:bg-slate-900/60 border border-white/60 dark:border-white/10 backdrop-blur-2xl my-2 shadow-xs">
+                <div class="w-16 h-16 mx-auto rounded-[24px] bg-gradient-to-br from-emerald-500/10 to-teal-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-500/20 shadow-xs ring-8 ring-emerald-500/5">
+                    <svg class="w-8 h-8 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.75">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+                    </svg>
+                </div>
+                <div>
+                    <h4 class="text-base font-black text-slate-800 dark:text-white tracking-tight">Belum Ada Catatan Utang / Piutang</h4>
+                    <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1 max-w-[260px] mx-auto leading-relaxed">Catat pinjaman atau hak uang Anda agar selalu tertata rapi dan tepat waktu.</p>
+                </div>
+                <button type="button" 
+                        onclick="openAddDebtModal()" 
+                        class="mt-2 px-6 py-3 rounded-[20px] bg-slate-900 dark:bg-emerald-600 hover:bg-slate-800 dark:hover:bg-emerald-500 text-white font-black text-xs shadow-md shadow-slate-900/15 dark:shadow-emerald-500/25 border border-white/20 inline-flex items-center gap-2 active:scale-95 transition-all ios-press cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                    <span>Catat Utang / Piutang Baru</span>
                 </button>
             </div>
         @endforelse
@@ -280,14 +297,69 @@
                     <input type="text" name="person_name" required placeholder="Contoh: Budi, Teman Kantor, Toko Elektronik" class="w-full h-12 px-4 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
                 </div>
 
-                <div class="grid grid-cols-2 gap-2.5">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Nominal (Rp)</label>
-                        <input type="number" name="amount" min="1" step="any" required placeholder="500000" class="w-full h-12 px-4 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Nominal (Rp)</label>
+                    <input type="text" name="amount" inputmode="numeric" data-numeric-only="true" autocomplete="off" required placeholder="500000" class="w-full h-12 px-4 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label class="text-xs font-bold text-slate-700 dark:text-slate-300">Jatuh Tempo (Opsional)</label>
+                        <div class="flex items-center gap-1.5 relative z-20">
+                            <button type="button" 
+                                    data-date-target="add-debt-due-date" 
+                                    data-date-preset="tomorrow"
+                                    onclick="setDatePreset('add-debt-due-date', 'tomorrow')" 
+                                    class="date-preset-btn text-[11px] font-medium px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all cursor-pointer">
+                                Besok
+                            </button>
+                            <button type="button" 
+                                    data-date-target="add-debt-due-date" 
+                                    data-date-preset="in_7_days"
+                                    onclick="setDatePreset('add-debt-due-date', 'in_7_days')" 
+                                    class="date-preset-btn text-[11px] font-medium px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all cursor-pointer">
+                                +1 Mgg
+                            </button>
+                            <button type="button" 
+                                    data-date-target="add-debt-due-date" 
+                                    data-date-preset="clear"
+                                    onclick="setDatePreset('add-debt-due-date', 'clear')" 
+                                    class="date-preset-btn text-[11px] font-bold px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all cursor-pointer shadow-2xs">
+                                Kosongkan
+                            </button>
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Jatuh Tempo (Opsional)</label>
-                        <input type="date" name="due_date" class="w-full h-12 px-4 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
+
+                    <div class="relative group">
+                        <div id="add-debt-due-date-display" class="flex items-center justify-between w-full min-h-[48px] px-3.5 py-2 bg-slate-50/90 dark:bg-slate-800/80 hover:bg-slate-100/90 dark:hover:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-2xl transition-all shadow-xs group-focus-within:border-emerald-500 group-focus-within:ring-2 group-focus-within:ring-emerald-500/20">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <div class="w-8 h-8 rounded-xl bg-emerald-500/10 dark:bg-emerald-400/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-2xs">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                                    </svg>
+                                </div>
+                                <div class="flex flex-col min-w-0">
+                                    <span id="add-debt-due-date-label" class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate">
+                                        Pilih Tanggal
+                                    </span>
+                                    <span id="add-debt-due-date-sublabel" class="text-[10px] font-semibold text-slate-400 dark:text-slate-500">
+                                        Opsional
+                                    </span>
+                                </div>
+                            </div>
+                            <svg class="w-3.5 h-3.5 text-slate-400 shrink-0 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                            </svg>
+                        </div>
+
+                        <input id="add-debt-due-date" 
+                               type="date" 
+                               name="due_date" 
+                               value="" 
+                               aria-label="Pilih Jatuh Tempo"
+                               onchange="syncDateDisplay('add-debt-due-date')"
+                               onclick="try { this.showPicker(); } catch(e) {}"
+                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 [color-scheme:light] dark:[color-scheme:dark]">
                     </div>
                 </div>
 
@@ -349,7 +421,7 @@
 
                 <div>
                     <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Nominal yang Dibayarkan (Rp)</label>
-                    <input type="number" id="repay-amount-input" name="payment_amount" min="1" step="any" required class="w-full h-12 px-4 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
+                    <input type="text" id="repay-amount-input" name="payment_amount" inputmode="numeric" data-numeric-only="true" autocomplete="off" required class="w-full h-12 px-4 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
                 </div>
 
                 <div>
@@ -362,8 +434,58 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Tanggal Pembayaran</label>
-                    <input type="date" name="date" value="{{ date('Y-m-d') }}" required class="w-full h-12 px-4 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label class="text-xs font-bold text-slate-700 dark:text-slate-300">Tanggal Pembayaran</label>
+                        <div class="flex items-center gap-1.5 relative z-20">
+                            <button type="button" 
+                                    data-date-target="repay-debt-date" 
+                                    data-date-preset="yesterday"
+                                    onclick="setDatePreset('repay-debt-date', 'yesterday')" 
+                                    class="date-preset-btn text-[11px] font-medium px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all cursor-pointer">
+                                Kemarin
+                            </button>
+                            <button type="button" 
+                                    data-date-target="repay-debt-date" 
+                                    data-date-preset="today"
+                                    onclick="setDatePreset('repay-debt-date', 'today')" 
+                                    class="date-preset-btn text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 dark:bg-emerald-400/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 transition-all cursor-pointer shadow-2xs">
+                                Hari Ini
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="relative group">
+                        <div id="repay-debt-date-display" class="flex items-center justify-between w-full min-h-[48px] px-3.5 py-2 bg-slate-50/90 dark:bg-slate-800/80 hover:bg-slate-100/90 dark:hover:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-2xl transition-all shadow-xs group-focus-within:border-emerald-500 group-focus-within:ring-2 group-focus-within:ring-emerald-500/20">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <div class="w-8 h-8 rounded-xl bg-emerald-500/10 dark:bg-emerald-400/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-2xs">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                                    </svg>
+                                </div>
+                                <div class="flex flex-col min-w-0">
+                                    <span id="repay-debt-date-label" class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate">
+                                        {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d M Y') }}
+                                    </span>
+                                    <span id="repay-debt-date-sublabel" class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
+                                        Hari ini
+                                    </span>
+                                </div>
+                            </div>
+                            <svg class="w-3.5 h-3.5 text-slate-400 shrink-0 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                            </svg>
+                        </div>
+
+                        <input id="repay-debt-date" 
+                               type="date" 
+                               name="date" 
+                               value="{{ date('Y-m-d') }}" 
+                               required 
+                               aria-label="Pilih Tanggal Pembayaran"
+                               onchange="syncDateDisplay('repay-debt-date')"
+                               onclick="try { this.showPicker(); } catch(e) {}"
+                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 [color-scheme:light] dark:[color-scheme:dark]">
+                    </div>
                 </div>
 
                 <div class="pt-4">
@@ -401,14 +523,69 @@
                     <input type="text" id="edit-debt-person" name="person_name" required class="w-full h-12 px-4 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
                 </div>
 
-                <div class="grid grid-cols-2 gap-2.5">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Total Nominal (Rp)</label>
-                        <input type="number" id="edit-debt-amount" name="amount" min="1" step="any" required class="w-full h-12 px-4 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Total Nominal (Rp)</label>
+                    <input type="text" id="edit-debt-amount" name="amount" inputmode="numeric" data-numeric-only="true" autocomplete="off" required class="w-full h-12 px-4 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label class="text-xs font-bold text-slate-700 dark:text-slate-300">Jatuh Tempo (Opsional)</label>
+                        <div class="flex items-center gap-1.5 relative z-20">
+                            <button type="button" 
+                                    data-date-target="edit-debt-due-date" 
+                                    data-date-preset="tomorrow"
+                                    onclick="setDatePreset('edit-debt-due-date', 'tomorrow')" 
+                                    class="date-preset-btn text-[11px] font-medium px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all cursor-pointer">
+                                Besok
+                            </button>
+                            <button type="button" 
+                                    data-date-target="edit-debt-due-date" 
+                                    data-date-preset="in_7_days"
+                                    onclick="setDatePreset('edit-debt-due-date', 'in_7_days')" 
+                                    class="date-preset-btn text-[11px] font-medium px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all cursor-pointer">
+                                +1 Mgg
+                            </button>
+                            <button type="button" 
+                                    data-date-target="edit-debt-due-date" 
+                                    data-date-preset="clear"
+                                    onclick="setDatePreset('edit-debt-due-date', 'clear')" 
+                                    class="date-preset-btn text-[11px] font-bold px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all cursor-pointer shadow-2xs">
+                                Kosongkan
+                            </button>
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Jatuh Tempo</label>
-                        <input type="date" id="edit-debt-due-date" name="due_date" class="w-full h-12 px-4 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
+
+                    <div class="relative group">
+                        <div id="edit-debt-due-date-display" class="flex items-center justify-between w-full min-h-[48px] px-3.5 py-2 bg-slate-50/90 dark:bg-slate-800/80 hover:bg-slate-100/90 dark:hover:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-2xl transition-all shadow-xs group-focus-within:border-emerald-500 group-focus-within:ring-2 group-focus-within:ring-emerald-500/20">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <div class="w-8 h-8 rounded-xl bg-emerald-500/10 dark:bg-emerald-400/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-2xs">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                                    </svg>
+                                </div>
+                                <div class="flex flex-col min-w-0">
+                                    <span id="edit-debt-due-date-label" class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate">
+                                        Pilih Tanggal
+                                    </span>
+                                    <span id="edit-debt-due-date-sublabel" class="text-[10px] font-semibold text-slate-400 dark:text-slate-500">
+                                        Opsional
+                                    </span>
+                                </div>
+                            </div>
+                            <svg class="w-3.5 h-3.5 text-slate-400 shrink-0 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                            </svg>
+                        </div>
+
+                        <input id="edit-debt-due-date" 
+                               type="date" 
+                               name="due_date" 
+                               value="" 
+                               aria-label="Pilih Jatuh Tempo"
+                               onchange="syncDateDisplay('edit-debt-due-date')"
+                               onclick="try { this.showPicker(); } catch(e) {}"
+                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 [color-scheme:light] dark:[color-scheme:dark]">
                     </div>
                 </div>
 
@@ -456,16 +633,42 @@
     }
 
     function openAddDebtModal() {
+        const d = new Date();
+        const todayStr = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+        const addDueDate = document.getElementById('add-debt-due-date');
+        if (addDueDate) addDueDate.value = todayStr;
+        syncDateDisplay('add-debt-due-date');
         window.openSheetModal('modal-add-debt');
     }
     function closeAddDebtModal() {
         window.closeSheetModal('modal-add-debt');
     }
+    function openEditDebtModalFromBtn(btn) {
+        if (!btn) return;
+        const ds = btn.dataset;
+        document.getElementById('form-edit-debt').action = "{{ url('/debts') }}/" + ds.id;
+        document.getElementById('edit-debt-person').value = ds.personName || '';
+        const debtAmountInput1 = document.getElementById('edit-debt-amount');
+        debtAmountInput1.value = Math.round(Number(ds.amount) || 0);
+        debtAmountInput1.dispatchEvent(new Event('input', { bubbles: true }));
+        document.getElementById('edit-debt-due-date').value = ds.dueDate || '';
+        syncDateDisplay('edit-debt-due-date');
+        if (ds.walletId) {
+            document.getElementById('edit-debt-wallet').value = ds.walletId;
+        }
+        document.getElementById('edit-debt-notes').value = ds.notes || '';
+        window.openSheetModal('modal-edit-debt');
+    }
+
     function openEditDebtModal(item) {
-        document.getElementById('form-edit-debt').action = '/debts/' + item.id;
-        document.getElementById('edit-debt-person').value = item.person_name;
-        document.getElementById('edit-debt-amount').value = item.amount;
+        if (!item) return;
+        document.getElementById('form-edit-debt').action = "{{ url('/debts') }}/" + item.id;
+        document.getElementById('edit-debt-person').value = item.person_name || '';
+        const debtAmountInput2 = document.getElementById('edit-debt-amount');
+        debtAmountInput2.value = Math.round(Number(item.amount) || 0);
+        debtAmountInput2.dispatchEvent(new Event('input', { bubbles: true }));
         document.getElementById('edit-debt-due-date').value = item.due_date ? item.due_date.substring(0, 10) : '';
+        syncDateDisplay('edit-debt-due-date');
         if (item.wallet_id) {
             document.getElementById('edit-debt-wallet').value = item.wallet_id;
         }
@@ -489,11 +692,21 @@
         const input = document.getElementById('repay-amount-input');
         input.max = remaining;
         input.value = remaining;
+        const d = new Date();
+        const todayStr = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+        const repayDateInput = document.getElementById('repay-debt-date');
+        if (repayDateInput) repayDateInput.value = todayStr;
+        syncDateDisplay('repay-debt-date');
         window.openSheetModal('modal-repay-debt');
     }
     function closeRepayDebtModal() {
         window.closeSheetModal('modal-repay-debt');
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        syncDateDisplay('add-debt-due-date');
+        syncDateDisplay('repay-debt-date');
+    });
 </script>
 @endsection
 

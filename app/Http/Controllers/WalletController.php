@@ -44,6 +44,10 @@ class WalletController extends Controller
         /** @var User $user */
         $user = $request->user() ?? User::first() ?? User::getPrimaryUser();
 
+        if ($request->has('balance')) {
+            $request->merge(['balance' => $this->cleanNumericInput($request->input('balance'))]);
+        }
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:100'],
             'type' => ['required', 'string', 'in:bank,ewallet,cash,investment,other'],
@@ -70,6 +74,10 @@ class WalletController extends Controller
         $user = $request->user() ?? User::first() ?? User::getPrimaryUser();
 
         abort_if($wallet->user_id !== $user->id, 403, 'Akses tidak diizinkan.');
+
+        if ($request->has('balance')) {
+            $request->merge(['balance' => $this->cleanNumericInput($request->input('balance'))]);
+        }
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:100'],

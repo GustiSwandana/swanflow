@@ -61,7 +61,7 @@
 
 @section('content')
 <!-- Main Sheet Container (Apple connected sheet rounded-t-[36px]) -->
-<div class="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-2xl rounded-t-[36px] pt-5 px-4 pb-[max(6.5rem,calc(5.5rem+var(--sab,0px)))] shadow-2xl -mt-5 relative z-10 border-t border-slate-200/80 dark:border-white/10 flex-1 flex flex-col min-h-full space-y-5 text-slate-800 dark:text-white transition-colors animate-swan-in">
+<div class="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-2xl rounded-t-[36px] pt-5 px-4 pb-[max(11rem,calc(10rem+var(--sab,0px)))] shadow-2xl -mt-5 relative z-10 border-t border-slate-200/80 dark:border-white/10 flex-1 flex flex-col min-h-[calc(100dvh-14rem)] space-y-5 text-slate-800 dark:text-white transition-colors animate-swan-in">
     <!-- Grab Handle -->
     <div class="w-10 h-1.5 bg-slate-300/80 dark:bg-slate-700/80 rounded-full mx-auto mb-1"></div>
 
@@ -209,6 +209,8 @@
                         'id' => $tx->id,
                         'type' => is_string($tx->type) ? $tx->type : $tx->type->value,
                         'amount' => (float) $tx->amount,
+                        'admin_fee' => (float) ($tx->admin_fee ?? 0),
+                        'fee_payer' => $tx->fee_payer ?? 'source',
                         'wallet_id' => $tx->wallet_id,
                         'target_wallet_id' => $tx->target_wallet_id,
                         'category_id' => $tx->category_id,

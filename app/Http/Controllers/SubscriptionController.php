@@ -57,6 +57,13 @@ class SubscriptionController extends Controller
         /** @var User $user */
         $user = $request->user() ?? User::first() ?? User::getPrimaryUser();
 
+        if ($request->has('amount')) {
+            $request->merge(['amount' => $this->cleanNumericInput($request->input('amount'))]);
+        }
+        if ($request->has('billing_date')) {
+            $request->merge(['billing_date' => $this->cleanNumericInput($request->input('billing_date'))]);
+        }
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:100'],
             'amount' => ['required', 'numeric', 'min:1'],
@@ -92,6 +99,13 @@ class SubscriptionController extends Controller
         $user = $request->user() ?? User::first() ?? User::getPrimaryUser();
 
         abort_if($subscription->user_id !== $user->id, 403, 'Akses tidak diizinkan.');
+
+        if ($request->has('amount')) {
+            $request->merge(['amount' => $this->cleanNumericInput($request->input('amount'))]);
+        }
+        if ($request->has('billing_date')) {
+            $request->merge(['billing_date' => $this->cleanNumericInput($request->input('billing_date'))]);
+        }
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:100'],

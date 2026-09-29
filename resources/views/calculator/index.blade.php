@@ -120,6 +120,8 @@
                 <input id="sim-start-balance" 
                        type="text" 
                        inputmode="numeric" 
+                       pattern="[0-9]*"
+                       data-numeric-only="true"
                        value="{{ number_format($totalBalance, 0, ',', '.') }}" 
                        oninput="handleStartBalanceInput(this)"
                        placeholder="0"
@@ -295,8 +297,10 @@
                 <div class="relative rounded-[20px] bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 p-3 flex items-center focus-within:border-emerald-500 dark:focus-within:border-emerald-400 focus-within:ring-2 focus-within:ring-emerald-500/20 transition-all">
                     <span class="text-sm font-extrabold text-slate-400 mr-2">Rp</span>
                     <input id="split-subtotal" 
-                           type="number" 
-                           inputmode="decimal" 
+                           type="text" 
+                           inputmode="numeric" 
+                           pattern="[0-9]*"
+                           data-numeric-only="true"
                            value="200000" 
                            oninput="recalculateSplit()"
                            placeholder="0"
@@ -320,8 +324,10 @@
                 <div class="flex items-center gap-2">
                     <div class="relative flex-1 rounded-[18px] bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 px-3.5 py-2.5 flex items-center">
                         <input id="split-tax-percent" 
-                               type="number" 
+                               type="text" 
                                inputmode="decimal" 
+                               pattern="[0-9]*"
+                               data-allow-decimal="true"
                                value="10" 
                                oninput="recalculateSplit()"
                                class="w-full text-sm font-bold text-slate-900 dark:text-white bg-transparent border-none outline-hidden focus:ring-0">
@@ -349,8 +355,10 @@
                 <div class="flex items-center gap-2">
                     <div class="relative flex-1 rounded-[18px] bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 px-3.5 py-2.5 flex items-center">
                         <input id="split-service-percent" 
-                               type="number" 
+                               type="text" 
                                inputmode="decimal" 
+                               pattern="[0-9]*"
+                               data-allow-decimal="true"
                                value="5" 
                                oninput="recalculateSplit()"
                                class="w-full text-sm font-bold text-slate-900 dark:text-white bg-transparent border-none outline-hidden focus:ring-0">
@@ -371,8 +379,10 @@
                     <div class="relative rounded-[18px] bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 px-3 py-2 flex items-center">
                         <span class="text-xs font-bold text-rose-500 mr-1">-Rp</span>
                         <input id="split-discount" 
-                               type="number" 
-                               inputmode="decimal" 
+                               type="text" 
+                               inputmode="numeric" 
+                               pattern="[0-9]*"
+                               data-numeric-only="true"
                                value="0" 
                                oninput="recalculateSplit()"
                                placeholder="0"
@@ -386,8 +396,10 @@
                     <div class="relative rounded-[18px] bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 px-3 py-2 flex items-center">
                         <span class="text-xs font-bold text-slate-400 mr-1">+Rp</span>
                         <input id="split-other-fee" 
-                               type="number" 
-                               inputmode="decimal" 
+                               type="text" 
+                               inputmode="numeric" 
+                               pattern="[0-9]*"
+                               data-numeric-only="true"
                                value="0" 
                                oninput="recalculateSplit()"
                                placeholder="0"
@@ -410,7 +422,10 @@
                             -
                         </button>
                         <input id="split-people-count" 
-                               type="number" 
+                               type="text" 
+                               inputmode="numeric" 
+                               pattern="[0-9]*"
+                               data-numeric-only="true"
                                min="1" 
                                max="100" 
                                value="4" 
@@ -763,6 +778,8 @@
                             <span class="text-xs font-bold text-slate-400 mr-1.5">Rp</span>
                             <input type="text" 
                                    inputmode="numeric"
+                                   pattern="[0-9]*"
+                                   data-numeric-only="true"
                                    value="${item.amount ? formatRupiah(item.amount) : ''}" 
                                    oninput="handleItemAmountInput(${item.id}, this)"
                                    placeholder="0" 

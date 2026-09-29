@@ -1,12 +1,14 @@
-<div class="py-12 px-6 text-center liquid-card rounded-[28px] bg-white/85 dark:bg-slate-900/80 border border-white/60 dark:border-white/10 shadow-md backdrop-blur-2xl flex-1 flex flex-col items-center justify-center min-h-[220px] my-2">
-    <div class="w-16 h-16 mx-auto mb-4 rounded-[22px] bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center ring-8 ring-emerald-500/10 border border-emerald-500/20 shadow-xs">
-        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+<div class="py-10 px-6 text-center rounded-[30px] bg-white/50 dark:bg-slate-800/30 border border-white/60 dark:border-white/5 shadow-xs backdrop-blur-3xl flex-1 flex flex-col items-center justify-center min-h-[240px] my-2 transition-all">
+    <div class="w-16 h-16 mx-auto mb-4 rounded-[24px] bg-gradient-to-br from-emerald-500/10 to-teal-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center ring-8 ring-emerald-500/5 border border-emerald-500/20 shadow-inner">
+        <svg class="w-8 h-8 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.75">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />
         </svg>
     </div>
-    <h4 class="text-sm font-black text-slate-800 dark:text-white tracking-tight">{{ $message }}</h4>
-    <p class="text-xs font-semibold text-slate-400 dark:text-slate-400 mt-1 max-w-xs mx-auto leading-relaxed">{{ $hint }}</p>
-    <button type="button" onclick="openAddModal()" class="mt-4 px-4 py-2.5 rounded-[18px] bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-xs font-black shadow-md shadow-emerald-600/30 ios-press active:scale-95 transition-all inline-flex items-center gap-1.5 cursor-pointer border border-white/20">
+    
+    <h4 class="text-base font-black text-slate-800 dark:text-white tracking-tight mb-1">{{ $message }}</h4>
+    <p class="text-xs font-medium text-slate-500 dark:text-slate-400 max-w-[250px] mx-auto leading-relaxed">{{ $hint }}</p>
+    
+    <button type="button" onclick="openAddModal()" class="mt-5 px-5 py-3 rounded-[18px] bg-slate-900 dark:bg-emerald-500 hover:bg-slate-800 dark:hover:bg-emerald-400 text-white text-xs font-black shadow-md shadow-slate-900/15 dark:shadow-emerald-500/25 ios-press active:scale-95 transition-all inline-flex items-center gap-2 cursor-pointer border border-white/10">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
         <span>Tambah Aktivitas</span>
     </button>

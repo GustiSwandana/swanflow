@@ -8,15 +8,24 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 
 class AuthController extends Controller
 {
     /**
      * Show the mobile-first login form.
      */
-    public function showLoginForm(): View|RedirectResponse
+    public function showLoginForm(Request $request): View|RedirectResponse
     {
-        if (Auth::check()) {
+        if ($request->has('expired') || $request->has('timeout') || session('session_expired')) {
+            if (Auth::check()) {
+                $recallerName = Auth::guard()->getRecallerName();
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+                Cookie::expire($recallerName);
+            }
+        } elseif (Auth::check()) {
             return redirect()->route('dashboard');
         }
 
@@ -64,12 +73,23 @@ class AuthController extends Controller
      */
     public function logout(Request $request): RedirectResponse
     {
+        $recallerName = Auth::guard()->getRecallerName();
         Auth::logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login')->with('success', 'Anda telah berhasil keluar.');
+        $forgetCookie = Cookie::forget($recallerName);
+
+        if ($request->has('expired') || $request->has('timeout')) {
+            return redirect()->route('login', ['expired' => 1])
+                ->with('warning', 'Sesi Anda telah berakhir karena tidak aktif selama 5 menit demi keamanan akun keuangan Anda.')
+                ->withCookie($forgetCookie);
+        }
+
+        return redirect()->route('login')
+            ->with('success', 'Anda telah berhasil keluar.')
+            ->withCookie($forgetCookie);
     }
 
     /**
@@ -98,7 +118,7 @@ class AuthController extends Controller
             return back()->withErrors(['pin' => 'PIN yang Anda masukkan salah.']);
         }
 
-        Auth::login($user, true);
+        Auth::login($user, false);
         $request->session()->regenerate();
         $request->session()->put('last_activity_time', now()->timestamp);
 

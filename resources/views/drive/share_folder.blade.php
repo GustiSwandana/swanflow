@@ -44,14 +44,17 @@
 </head>
 <body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-full flex flex-col justify-between selection:bg-teal-500 selection:text-white antialiased transition-colors duration-200">
 
+    <!-- Dynamic Island & iOS Status Bar Scrim -->
+    <div id="status-bar-scrim" class="fixed top-0 left-0 right-0 z-40 pointer-events-none transition-opacity duration-200 opacity-0 bg-slate-100/90 dark:bg-slate-950/90 backdrop-blur-xl border-b border-black/5 dark:border-white/5" style="height: env(safe-area-inset-top, 0px);"></div>
+
     <!-- Ambient Liquid Orbs Background -->
     <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
         <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[34rem] h-[34rem] bg-teal-400/20 dark:bg-teal-500/15 rounded-full blur-3xl animate-liquid-orb-1"></div>
         <div class="absolute -bottom-32 left-1/2 -translate-x-1/2 w-[30rem] h-[30rem] bg-emerald-400/20 dark:bg-emerald-500/15 rounded-full blur-3xl animate-liquid-orb-2"></div>
     </div>
 
-    <!-- Top Navigation Header -->
-    <header class="relative z-10 w-full max-w-4xl mx-auto px-4 pt-4 sm:pt-6 flex items-center justify-between">
+    <!-- Top Navigation Header (Dynamic Island Safe Area Aware) -->
+    <header class="relative z-10 w-full max-w-4xl mx-auto px-4 pt-[calc(env(safe-area-inset-top,0px)+16px)] pb-2 flex items-center justify-between">
         <a href="/" class="flex items-center gap-2.5 group">
             <div class="w-9 h-9 rounded-[14px] bg-gradient-to-tr from-teal-500 to-emerald-400 flex items-center justify-center text-white shadow-lg shadow-teal-500/25 group-hover:scale-105 transition-transform">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.3">
@@ -69,6 +72,18 @@
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                 <span>Folder Publik</span>
             </span>
+
+            <!-- Share Button (Native Share Sheet / Copy) -->
+            <button type="button" 
+                    id="header-share-folder-btn"
+                    onclick="shareFolderPageNative()" 
+                    aria-label="Bagikan Folder Ini" 
+                    title="Bagikan Tautan Folder"
+                    class="w-9 h-9 flex items-center justify-center rounded-[14px] bg-white/80 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-700 text-teal-600 dark:text-teal-400 border border-slate-200 dark:border-white/10 active:scale-95 transition-all shadow-xs ios-press cursor-pointer">
+                <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
+                </svg>
+            </button>
 
             <!-- Theme Toggle Button -->
             <button type="button" 
@@ -148,18 +163,28 @@
                     </a>
                 @endif
 
+                <button type="button" 
+                        onclick="shareFolderPageNative()"
+                        class="py-3 px-4 rounded-[18px] bg-teal-500/10 hover:bg-teal-500/20 text-teal-700 dark:text-teal-300 border border-teal-500/30 text-xs font-black flex items-center justify-center gap-1.5 active:scale-95 transition-all cursor-pointer shadow-xs">
+                    <svg class="w-4 h-4 text-teal-600 dark:text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.3">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
+                    </svg>
+                    <span>Bagikan Folder</span>
+                </button>
+
                 <button type="button" onclick="copyCurrentUrl()"
                         class="py-3 px-4 rounded-[18px] bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800/80 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-white/15 flex items-center justify-center gap-1.5 active:scale-95 transition-all cursor-pointer shadow-xs">
                     <svg class="w-4 h-4 text-teal-600 dark:text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.849a2.25 2.25 0 00-3.332 0l-4.5 4.5a2.25 2.25 0 003.182 3.182l1.5-1.5m4.5-4.5l1.5-1.5a2.25 2.25 0 013.182 3.182l-4.5 4.5a2.25 2.25 0 01-3.182 0" />
                     </svg>
-                    <span>Salin Tautan Folder</span>
+                    <span>Salin Tautan</span>
                 </button>
 
-                <a href="https://api.whatsapp.com/send?text={{ urlencode('Halo! Buka folder "' . $folder->name . '" (' . $files->count() . ' berkas) di SwanDrive: ' . url()->current()) }}"
+                <a href="https://wa.me/?text={{ urlencode('Halo! Buka folder "' . $folder->name . '" (' . $files->count() . ' berkas) di SwanDrive: ' . url()->current()) }}"
                    target="_blank"
-                   class="py-3 px-4 rounded-[18px] bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-600/30 dark:hover:bg-emerald-600/40 text-emerald-700 dark:text-emerald-300 text-xs font-bold border border-emerald-200 dark:border-emerald-500/30 flex items-center justify-center gap-1.5 active:scale-95 transition-all cursor-pointer shadow-xs">
-                    <svg class="w-4 h-4 fill-current text-emerald-600 dark:text-emerald-400" viewBox="0 0 24 24">
+                   rel="noopener noreferrer"
+                   class="py-3 px-4 rounded-[18px] bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95 transition-all cursor-pointer shadow-xs">
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
                         <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.025 3.284l-.707 2.582 2.658-.697c1.002.581 1.777.832 2.792.832 3.182 0 5.767-2.587 5.768-5.768 0-3.182-2.586-5.768-5.768-5.768zm3.364 8.169c-.145.408-.847.784-1.173.834-.325.051-.735.083-2.164-.509-1.428-.592-2.339-2.029-2.41-2.124-.071-.095-.572-.761-.572-1.451 0-.691.362-1.03.491-1.173.129-.143.282-.179.376-.179.094 0 .188.001.27.006.088.005.206-.033.322.247.123.298.421 1.027.458 1.102.037.075.061.163.012.261-.049.098-.073.159-.146.244-.073.085-.154.19-.22.256-.073.073-.149.153-.064.299.085.146.377.621.808 1.005.556.495 1.025.648 1.171.721.146.073.232.061.318-.037.086-.098.368-.428.466-.575.098-.147.196-.123.328-.074.132.049.837.395.981.467.144.072.24.108.276.17.036.062.036.357-.109.765z"/>
                     </svg>
                     <span>WhatsApp</span>
@@ -453,19 +478,62 @@
             document.getElementById('pv-container').innerHTML = '';
         }
 
-        function copyCurrentUrl() {
+        async function shareFolderPageNative() {
             const url = window.location.href;
-            if (navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.writeText(url).then(() => showToast('Tautan folder berhasil disalin!'));
-            } else {
-                const input = document.createElement('input');
-                input.value = url;
-                document.body.appendChild(input);
-                input.select();
-                document.execCommand('copy');
-                document.body.removeChild(input);
-                showToast('Tautan folder berhasil disalin!');
+            const name = @json($folder->name);
+            const count = @json($files->count());
+
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: name,
+                        text: `Halo! Buka folder "${name}" (${count} berkas) di SwanDrive:`,
+                        url: url
+                    });
+                    return;
+                } catch (err) {
+                    if (err.name === 'AbortError') return;
+                }
             }
+            copyCurrentUrl();
+        }
+
+        async function copyCurrentUrl() {
+            const url = window.location.href;
+            const handleSuccess = () => showToast('Tautan folder berhasil disalin!');
+
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(url);
+                    handleSuccess();
+                    return;
+                }
+            } catch (e) {
+                // fallback below
+            }
+
+            try {
+                const textarea = document.createElement('textarea');
+                textarea.value = url;
+                textarea.style.position = 'fixed';
+                textarea.style.left = '-9999px';
+                textarea.style.top = '0';
+                textarea.setAttribute('readonly', '');
+                document.body.appendChild(textarea);
+                textarea.focus();
+                textarea.select();
+                textarea.setSelectionRange(0, 99999);
+                const successful = document.execCommand('copy');
+                document.body.removeChild(textarea);
+                if (successful) {
+                    handleSuccess();
+                    return;
+                }
+            } catch (err) {
+                // fallback below
+            }
+
+            prompt('Salin link ini:', url);
         }
 
         function showToast(msg) {
@@ -483,6 +551,20 @@
             const modal = document.getElementById('qr-modal');
             modal.classList.toggle('hidden');
         }
+
+        // Dynamic Island status bar scrim on scroll
+        window.addEventListener('scroll', () => {
+            const scrim = document.getElementById('status-bar-scrim');
+            if (scrim) {
+                if (window.scrollY > 15) {
+                    scrim.classList.remove('opacity-0');
+                    scrim.classList.add('opacity-100');
+                } else {
+                    scrim.classList.remove('opacity-100');
+                    scrim.classList.add('opacity-0');
+                }
+            }
+        }, { passive: true });
     </script>
 </body>
 </html>

@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Wallet;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class ReceiptScannerTest extends TestCase
@@ -31,6 +32,31 @@ class ReceiptScannerTest extends TestCase
 
     public function test_user_can_upload_receipt_image_and_receives_json_response(): void
     {
+        Http::fake([
+            'https://generativelanguage.googleapis.com/*' => Http::response([
+                'candidates' => [
+                    [
+                        'content' => [
+                            'parts' => [
+                                [
+                                    'text' => json_encode([
+                                        'amount' => 52500,
+                                        'date' => '2026-09-26',
+                                        'merchant' => 'Indomaret Tebet',
+                                        'description' => 'Belanja di Indomaret Tebet',
+                                        'type' => 'expense',
+                                        'category_guess' => 'Belanja Harian',
+                                        'items' => ['Roti Tawar', 'Susu Ultra'],
+                                        'notes' => 'QRIS BCA',
+                                    ]),
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ], 200),
+        ]);
+
         $user = User::factory()->create();
         Category::create([
             'name' => 'Belanja Harian',
@@ -52,6 +78,8 @@ class ReceiptScannerTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertJsonStructure(['success', 'source', 'categories', 'wallets']);
+        $this->assertEquals(52500, $response->json('amount'));
+        $this->assertEquals('2026-09-26', $response->json('date'));
     }
 
     public function test_user_can_parse_receipt_text_via_heuristic_parser(): void
@@ -169,5 +197,120 @@ class ReceiptScannerTest extends TestCase
         $this->assertEquals(250000, $response->json('amount'));
         $this->assertEquals('2026-09-06', $response->json('date'));
         $this->assertEquals('Transfer ke Budi Santoso', $response->json('merchant'));
+    }
+
+    public function test_async_receipt_scan_returns_instant_payload(): void
+    {
+        Http::fake([
+            'https://generativelanguage.googleapis.com/*' => Http::response([
+                'candidates' => [
+                    [
+                        'content' => [
+                            'parts' => [
+                                [
+                                    'text' => json_encode([
+                                        'amount' => '45.000',
+                                        'date' => '26/09/2026',
+                                        'merchant' => 'Alfamart',
+                                        'description' => 'Belanja di Alfamart',
+                                        'type' => 'expense',
+                                        'category_guess' => 'Belanja Harian',
+                                        'items' => ['Kopi', 'Snack'],
+                                        'notes' => 'BCA',
+                                    ]),
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ], 200),
+        ]);
+
+        $user = User::factory()->create();
+        Category::create([
+            'name' => 'Belanja Harian',
+            'type' => TransactionType::Expense,
+            'user_id' => $user->id,
+        ]);
+        Wallet::create([
+            'name' => 'Dompet Utama',
+            'type' => 'cash',
+            'balance' => 500000,
+            'user_id' => $user->id,
+        ]);
+
+        $image = UploadedFile::fake()->image('struk_alfa.jpg', 600, 800);
+
+        $response = $this->actingAs($user)->postJson(route('transactions.scan-receipt.async'), [
+            'image' => $image,
+        ]);
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            'success' => true,
+            'status' => 'completed',
+        ]);
+        $response->assertJsonStructure([
+            'success',
+            'scan_id',
+            'status',
+            'data' => [
+                'status',
+                'success',
+                'source',
+                'amount',
+                'date',
+                'merchant',
+                'wallets',
+                'categories',
+            ],
+        ]);
+
+        // Assert amount and date normalization from string
+        $this->assertEquals(45000, $response->json('amount'));
+        $this->assertEquals('2026-09-26', $response->json('date'));
+
+        $scanId = $response->json('scan_id');
+        $statusResponse = $this->actingAs($user)->getJson(route('transactions.scan-receipt.status', ['scanId' => $scanId]));
+        $statusResponse->assertStatus(200);
+        $statusResponse->assertJson([
+            'success' => true,
+            'status' => 'completed',
+        ]);
+    }
+
+    public function test_scan_accepts_heic_image(): void
+    {
+        Http::fake([
+            'https://generativelanguage.googleapis.com/*' => Http::response([
+                'candidates' => [
+                    [
+                        'content' => [
+                            'parts' => [
+                                [
+                                    'text' => json_encode([
+                                        'amount' => 75000,
+                                        'date' => '2026-09-26',
+                                        'merchant' => 'Cafe Swan',
+                                        'type' => 'expense',
+                                        'category_guess' => 'Makanan & Minuman',
+                                    ]),
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ], 200),
+        ]);
+
+        $user = User::factory()->create();
+        $heicFile = UploadedFile::fake()->create('receipt.heic', 1024, 'image/heic');
+
+        $response = $this->actingAs($user)->postJson(route('transactions.scan-receipt.async'), [
+            'image' => $heicFile,
+        ]);
+
+        $response->assertStatus(200);
+        $response->assertJson(['success' => true, 'status' => 'completed']);
     }
 }

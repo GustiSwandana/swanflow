@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['user_id', 'category_id', 'amount', 'month', 'notes'])]
+#[Fillable(['user_id', 'category_id', 'amount', 'month', 'start_date', 'end_date', 'notes'])]
 class Budget extends Model
 {
     use HasFactory;
@@ -21,6 +21,8 @@ class Budget extends Model
     {
         return [
             'amount' => 'decimal:2',
+            'start_date' => 'date',
+            'end_date' => 'date',
         ];
     }
 

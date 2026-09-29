@@ -13,7 +13,7 @@
         <div class="absolute -bottom-10 -left-10 w-48 h-48 bg-teal-500/20 rounded-full blur-3xl pointer-events-none animate-liquid-orb-2"></div>
 
         <!-- Top Navigation Bar -->
-        <div class="relative z-10 flex items-center justify-between mb-2">
+        <div class="relative z-10 flex items-center justify-between mb-4">
             <div class="flex items-center gap-3">
                 <a href="{{ route('dashboard') }}" class="w-10 h-10 rounded-[18px] liquid-glass bg-white/15 hover:bg-white/25 active:scale-95 flex items-center justify-center transition-all border border-white/30 shrink-0 shadow-xs ios-press" aria-label="Kembali ke Beranda">
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
@@ -21,15 +21,16 @@
                     </svg>
                 </a>
                 <div class="flex flex-col">
-                    <h1 class="text-lg font-black text-white tracking-tight leading-tight">
-                        Aktivitas
-                    </h1>
-                    <span class="text-[11px] font-semibold text-emerald-300/80">Daftar tugas & kegiatan</span>
+                    <div class="flex items-center gap-1.5">
+                        <h1 class="text-base font-black text-white tracking-tight leading-tight">Aktivitas</h1>
+                        <span class="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-400/25 text-emerald-200 border border-emerald-300/30 shadow-2xs backdrop-blur-md shrink-0">To-Do</span>
+                    </div>
+                    <span class="text-[11px] font-semibold text-emerald-200/80">Daftar tugas & target harian</span>
                 </div>
             </div>
 
             <!-- Right Actions: Tambah & Theme Toggle -->
-            <div class="flex items-center gap-2 shrink-0">
+            <div class="flex items-center gap-1.5 shrink-0">
                 <button type="button" 
                         onclick="openAddModal()" 
                         class="w-10 h-10 rounded-[18px] bg-gradient-to-tr from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 active:scale-95 text-white shadow-lg shadow-emerald-500/30 border border-white/25 flex items-center justify-center transition-all cursor-pointer ios-press" 
@@ -53,45 +54,77 @@
                 </button>
             </div>
         </div>
+
+        @php
+            $todayCount = $todayTodos->count();
+            $completedCount = $completedTodos->count();
+            $totalTracked = $todayCount + $completedCount;
+            $progressPercent = $totalTracked > 0 ? round(($completedCount / $totalTracked) * 100) : 0;
+        @endphp
+
+        <!-- Hero Productivity Card (Liquid Glass - Matches SwanDrive & Dashboard layout) -->
+        <div class="relative z-10 liquid-glass rounded-[26px] p-4 border border-white/25 shadow-xl space-y-3 bg-white/10 backdrop-blur-2xl">
+            <div class="flex items-center justify-between gap-2 min-w-0">
+                <span class="text-[10px] font-extrabold uppercase tracking-wider text-emerald-200/90 truncate">Status Produktivitas</span>
+                <span class="text-[10px] font-black px-2.5 py-0.5 rounded-full border shadow-2xs {{ $progressPercent >= 100 && $totalTracked > 0 ? 'bg-emerald-400/30 text-emerald-100 border-emerald-300/40' : 'bg-white/15 text-white border-white/20' }}">
+                    {{ $progressPercent }}% Selesai
+                </span>
+            </div>
+
+            <div class="flex items-baseline justify-between gap-2 min-w-0">
+                <div class="flex items-baseline gap-1.5 min-w-0 truncate">
+                    <span class="text-2xl sm:text-3xl font-black text-white tracking-tight truncate">{{ $todayCount }}</span>
+                    <span class="text-xs font-bold text-emerald-200/80 shrink-0">Tugas Hari Ini</span>
+                </div>
+                <div class="flex items-center gap-2 shrink-0 text-[11px] text-emerald-100/90 font-bold">
+                    <span>{{ $completedCount }} Selesai</span>
+                    <span class="text-white/40">•</span>
+                    <span>{{ $upcomingTodos->count() }} Mendatang</span>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div>
+                <div class="w-full bg-slate-950/60 rounded-full h-2.5 overflow-hidden p-0.5 border border-white/15">
+                    <div class="h-full rounded-full transition-all duration-500 bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-200"
+                         style="width: {{ max(4, $progressPercent) }}%"></div>
+                </div>
+                <div class="flex items-center justify-between text-[10px] text-emerald-200/80 mt-1 font-semibold">
+                    <span>{{ $todayCount === 0 ? 'Semua tugas hari ini beres!' : $todayCount . ' tugas menunggu diselesaikan' }}</span>
+                    <span>Target: 100%</span>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
 
 @section('content')
-<div class="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-2xl rounded-t-[36px] pt-5 px-4 pb-[max(7.5rem,calc(6.5rem+var(--sab,0px)))] shadow-2xl -mt-5 relative z-10 border-t border-slate-200/80 dark:border-white/10 flex-1 flex flex-col min-h-full space-y-4 text-slate-800 dark:text-white transition-colors animate-swan-in">
+<div class="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-2xl rounded-t-[36px] pt-5 px-4 pb-[max(11rem,calc(10rem+var(--sab,0px)))] shadow-2xl -mt-5 relative z-10 border-t border-slate-200/80 dark:border-white/10 flex-1 flex flex-col min-h-[calc(100dvh-12rem)] space-y-4 text-slate-800 dark:text-white transition-colors animate-swan-in">
     <!-- Grab Handle -->
     <div class="w-10 h-1.5 bg-slate-300/80 dark:bg-slate-700/80 rounded-full mx-auto mb-1"></div>
 
-    {{-- 1. TAB NAVIGATION & ADD ACTION (Apple iOS Segmented Control - matches Kategori & Drive) --}}
-    <div class="flex items-center justify-between gap-2.5">
-        <div class="ios-segmented-track p-1 rounded-[22px] flex items-center gap-1 flex-1 bg-slate-200/60 dark:bg-white/5 backdrop-blur-xl border border-white/50 dark:border-white/10 shadow-inner">
-            <a href="{{ route('todos.index', ['tab' => 'today']) }}"
-               class="flex-1 py-2 px-1.5 rounded-[18px] text-xs font-black text-center transition-all flex items-center justify-center gap-1.5 ios-press {{ $tab === 'today' ? 'ios-segmented-thumb bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-md ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white font-bold' }}">
-                <span>Hari Ini</span>
-                <span class="text-[10px] px-1.5 py-0.2 rounded-full font-black {{ $tab === 'today' ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300' : 'bg-slate-300/60 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">{{ $todayTodos->count() }}</span>
-            </a>
+    {{-- 1. TAB NAVIGATION (Apple iOS Segmented Control - matches Kategori & Drive) --}}
+    <div class="ios-segmented-track p-1 rounded-[22px] flex items-center gap-1 w-full bg-slate-200/60 dark:bg-white/5 backdrop-blur-xl border border-white/50 dark:border-white/10 shadow-inner">
+        <a href="{{ route('todos.index', ['tab' => 'today']) }}"
+           class="flex-1 py-2 px-1.5 rounded-[18px] text-xs font-black text-center transition-all flex items-center justify-center gap-1.5 ios-press {{ $tab === 'today' ? 'ios-segmented-thumb bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-md ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white font-bold' }}">
+            <span>Hari Ini</span>
+            <span class="text-[10px] px-1.5 py-0.2 rounded-full font-black {{ $tab === 'today' ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300' : 'bg-slate-300/60 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">{{ $todayTodos->count() }}</span>
+        </a>
 
-            <a href="{{ route('todos.index', ['tab' => 'upcoming']) }}"
-               class="flex-1 py-2 px-1.5 rounded-[18px] text-xs font-black text-center transition-all flex items-center justify-center gap-1.5 ios-press {{ $tab === 'upcoming' ? 'ios-segmented-thumb bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-md ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white font-bold' }}">
-                <span>Mendatang</span>
-                <span class="text-[10px] px-1.5 py-0.2 rounded-full font-black {{ $tab === 'upcoming' ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300' : 'bg-slate-300/60 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">{{ $upcomingTodos->count() }}</span>
-            </a>
+        <a href="{{ route('todos.index', ['tab' => 'upcoming']) }}"
+           class="flex-1 py-2 px-1.5 rounded-[18px] text-xs font-black text-center transition-all flex items-center justify-center gap-1.5 ios-press {{ $tab === 'upcoming' ? 'ios-segmented-thumb bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-md ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white font-bold' }}">
+            <span>Mendatang</span>
+            <span class="text-[10px] px-1.5 py-0.2 rounded-full font-black {{ $tab === 'upcoming' ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300' : 'bg-slate-300/60 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">{{ $upcomingTodos->count() }}</span>
+        </a>
 
-            <a href="{{ route('todos.index', ['tab' => 'completed']) }}"
-               class="flex-1 py-2 px-1.5 rounded-[18px] text-xs font-black text-center transition-all flex items-center justify-center gap-1.5 ios-press {{ $tab === 'completed' ? 'ios-segmented-thumb bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-md ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white font-bold' }}">
-                <span>Selesai</span>
-                <span class="text-[10px] px-1.5 py-0.2 rounded-full font-black {{ $tab === 'completed' ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300' : 'bg-slate-300/60 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">{{ $completedTodos->count() }}</span>
-            </a>
-        </div>
-
-        <button type="button" 
-                onclick="openAddModal()" 
-                class="min-h-[44px] px-4 py-2 rounded-[20px] bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-black text-xs shadow-lg shadow-emerald-500/25 flex items-center gap-1.5 shrink-0 ios-press active:scale-95 transition-all cursor-pointer">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
-            <span>Tambah</span>
-        </button>
+        <a href="{{ route('todos.index', ['tab' => 'completed']) }}"
+           class="flex-1 py-2 px-1.5 rounded-[18px] text-xs font-black text-center transition-all flex items-center justify-center gap-1.5 ios-press {{ $tab === 'completed' ? 'ios-segmented-thumb bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-md ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white font-bold' }}">
+            <span>Selesai</span>
+            <span class="text-[10px] px-1.5 py-0.2 rounded-full font-black {{ $tab === 'completed' ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300' : 'bg-slate-300/60 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">{{ $completedTodos->count() }}</span>
+        </a>
     </div>
 
-    {{-- 3. Content List Area --}}
+    {{-- 2. Content List Area --}}
     <div class="space-y-3 flex-1 flex flex-col pt-2 pb-4">
         @if($tab === 'today')
             @forelse($todayTodos as $todo)
@@ -173,18 +206,70 @@
                 </div>
 
                 <div>
-                    <div class="flex items-center justify-between mb-2">
-                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300">Tanggal Deadline</label>
-                        <span class="text-[11px] text-slate-400 font-semibold">Opsional</span>
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label class="text-xs font-bold text-slate-700 dark:text-slate-300">Tanggal Deadline</label>
+                        <div class="flex items-center gap-1.5 relative z-20">
+                            <button type="button" 
+                                    data-date-target="addDueDate" 
+                                    data-date-preset="today"
+                                    onclick="setDatePreset('addDueDate', 'today')" 
+                                    class="date-preset-btn text-[11px] font-medium px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all cursor-pointer">
+                                Hari Ini
+                            </button>
+                            <button type="button" 
+                                    data-date-target="addDueDate" 
+                                    data-date-preset="tomorrow"
+                                    onclick="setDatePreset('addDueDate', 'tomorrow')" 
+                                    class="date-preset-btn text-[11px] font-medium px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all cursor-pointer">
+                                Besok
+                            </button>
+                            <button type="button" 
+                                    data-date-target="addDueDate" 
+                                    data-date-preset="in_7_days"
+                                    onclick="setDatePreset('addDueDate', 'in_7_days')" 
+                                    class="date-preset-btn text-[11px] font-medium px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all cursor-pointer">
+                                +1 Mgg
+                            </button>
+                            <button type="button" 
+                                    data-date-target="addDueDate" 
+                                    data-date-preset="clear"
+                                    onclick="setDatePreset('addDueDate', 'clear')" 
+                                    class="date-preset-btn text-[11px] font-bold px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all cursor-pointer shadow-2xs">
+                                Kosongkan
+                            </button>
+                        </div>
                     </div>
-                    <input type="date" name="due_date" id="addDueDate"
-                        class="w-full h-12 px-4 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 text-sm font-semibold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 transition-all">
-                    
-                    <div class="flex items-center gap-2 mt-2 flex-wrap">
-                        <button type="button" onclick="setQuickDate('addDueDate', 'today')" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-500/20 text-slate-600 dark:text-slate-300 text-[11px] font-bold active:scale-95 transition-all">Hari Ini</button>
-                        <button type="button" onclick="setQuickDate('addDueDate', 'tomorrow')" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-500/20 text-slate-600 dark:text-slate-300 text-[11px] font-bold active:scale-95 transition-all">Besok</button>
-                        <button type="button" onclick="setQuickDate('addDueDate', 'next_week')" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-500/20 text-slate-600 dark:text-slate-300 text-[11px] font-bold active:scale-95 transition-all">+1 Minggu</button>
-                        <button type="button" onclick="clearDate('addDueDate')" class="px-2 py-1 text-slate-400 hover:text-rose-500 text-[11px] font-bold transition-all ml-auto">Bersihkan</button>
+
+                    <div class="relative group">
+                        <div id="addDueDate-display" class="flex items-center justify-between w-full min-h-[48px] px-3.5 py-2 bg-slate-50/90 dark:bg-slate-800/80 hover:bg-slate-100/90 dark:hover:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-2xl transition-all shadow-xs group-focus-within:border-emerald-500 group-focus-within:ring-2 group-focus-within:ring-emerald-500/20">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <div class="w-8 h-8 rounded-xl bg-emerald-500/10 dark:bg-emerald-400/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-2xs">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                                    </svg>
+                                </div>
+                                <div class="flex flex-col min-w-0">
+                                    <span id="addDueDate-label" class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate">
+                                        Pilih Tanggal
+                                    </span>
+                                    <span id="addDueDate-sublabel" class="text-[10px] font-semibold text-slate-400 dark:text-slate-500">
+                                        Opsional
+                                    </span>
+                                </div>
+                            </div>
+                            <svg class="w-3.5 h-3.5 text-slate-400 shrink-0 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                            </svg>
+                        </div>
+
+                        <input id="addDueDate" 
+                               type="date" 
+                               name="due_date" 
+                               value="{{ now()->format('Y-m-d') }}" 
+                               aria-label="Pilih Tanggal Deadline"
+                               onchange="syncDateDisplay('addDueDate')"
+                               onclick="try { this.showPicker(); } catch(e) {}"
+                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 [color-scheme:light] dark:[color-scheme:dark]">
                     </div>
                 </div>
 
@@ -255,18 +340,70 @@
                 </div>
 
                 <div>
-                    <div class="flex items-center justify-between mb-2">
-                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300">Tanggal Deadline</label>
-                        <span class="text-[11px] text-slate-400 font-semibold">Opsional</span>
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label class="text-xs font-bold text-slate-700 dark:text-slate-300">Tanggal Deadline</label>
+                        <div class="flex items-center gap-1.5 relative z-20">
+                            <button type="button" 
+                                    data-date-target="editDueDate" 
+                                    data-date-preset="today"
+                                    onclick="setDatePreset('editDueDate', 'today')" 
+                                    class="date-preset-btn text-[11px] font-medium px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all cursor-pointer">
+                                Hari Ini
+                            </button>
+                            <button type="button" 
+                                    data-date-target="editDueDate" 
+                                    data-date-preset="tomorrow"
+                                    onclick="setDatePreset('editDueDate', 'tomorrow')" 
+                                    class="date-preset-btn text-[11px] font-medium px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all cursor-pointer">
+                                Besok
+                            </button>
+                            <button type="button" 
+                                    data-date-target="editDueDate" 
+                                    data-date-preset="in_7_days"
+                                    onclick="setDatePreset('editDueDate', 'in_7_days')" 
+                                    class="date-preset-btn text-[11px] font-medium px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all cursor-pointer">
+                                +1 Mgg
+                            </button>
+                            <button type="button" 
+                                    data-date-target="editDueDate" 
+                                    data-date-preset="clear"
+                                    onclick="setDatePreset('editDueDate', 'clear')" 
+                                    class="date-preset-btn text-[11px] font-bold px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all cursor-pointer shadow-2xs">
+                                Kosongkan
+                            </button>
+                        </div>
                     </div>
-                    <input type="date" name="due_date" id="editDueDate"
-                        class="w-full h-12 px-4 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 text-sm font-semibold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 transition-all">
-                    
-                    <div class="flex items-center gap-2 mt-2 flex-wrap">
-                        <button type="button" onclick="setQuickDate('editDueDate', 'today')" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-500/20 text-slate-600 dark:text-slate-300 text-[11px] font-bold active:scale-95 transition-all">Hari Ini</button>
-                        <button type="button" onclick="setQuickDate('editDueDate', 'tomorrow')" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-500/20 text-slate-600 dark:text-slate-300 text-[11px] font-bold active:scale-95 transition-all">Besok</button>
-                        <button type="button" onclick="setQuickDate('editDueDate', 'next_week')" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-500/20 text-slate-600 dark:text-slate-300 text-[11px] font-bold active:scale-95 transition-all">+1 Minggu</button>
-                        <button type="button" onclick="clearDate('editDueDate')" class="px-2 py-1 text-slate-400 hover:text-rose-500 text-[11px] font-bold transition-all ml-auto">Bersihkan</button>
+
+                    <div class="relative group">
+                        <div id="editDueDate-display" class="flex items-center justify-between w-full min-h-[48px] px-3.5 py-2 bg-slate-50/90 dark:bg-slate-800/80 hover:bg-slate-100/90 dark:hover:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-2xl transition-all shadow-xs group-focus-within:border-emerald-500 group-focus-within:ring-2 group-focus-within:ring-emerald-500/20">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <div class="w-8 h-8 rounded-xl bg-emerald-500/10 dark:bg-emerald-400/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-2xs">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                                    </svg>
+                                </div>
+                                <div class="flex flex-col min-w-0">
+                                    <span id="editDueDate-label" class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate">
+                                        Pilih Tanggal
+                                    </span>
+                                    <span id="editDueDate-sublabel" class="text-[10px] font-semibold text-slate-400 dark:text-slate-500">
+                                        Opsional
+                                    </span>
+                                </div>
+                            </div>
+                            <svg class="w-3.5 h-3.5 text-slate-400 shrink-0 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                            </svg>
+                        </div>
+
+                        <input id="editDueDate" 
+                               type="date" 
+                               name="due_date" 
+                               value="" 
+                               aria-label="Pilih Tanggal Deadline"
+                               onchange="syncDateDisplay('editDueDate')"
+                               onclick="try { this.showPicker(); } catch(e) {}"
+                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 [color-scheme:light] dark:[color-scheme:dark]">
                     </div>
                 </div>
 
@@ -291,6 +428,12 @@
 <script>
 
 function openAddModal() {
+    const dueInput = document.getElementById('addDueDate');
+    if (dueInput && !dueInput.value) {
+        const now = new Date();
+        dueInput.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    }
+    syncDateDisplay('addDueDate');
     window.openSheetModal('addModal');
 }
 function closeAddModal() {
@@ -316,6 +459,7 @@ function openEditModal(target) {
         document.getElementById('editDueDate').value = dueDate || '';
         document.getElementById('editDescription').value = description || '';
     }
+    syncDateDisplay('editDueDate');
     window.openSheetModal('editModal');
 }
 function closeEditModal() {
@@ -323,24 +467,23 @@ function closeEditModal() {
 }
 
 function setQuickDate(inputId, type) {
-    const input = document.getElementById(inputId);
-    if (!input) return;
-    const d = new Date();
-    if (type === 'tomorrow') {
-        d.setDate(d.getDate() + 1);
+    if (type === 'today') {
+        setDatePreset(inputId, 'today');
+    } else if (type === 'tomorrow') {
+        setDatePreset(inputId, 'tomorrow');
     } else if (type === 'next_week') {
-        d.setDate(d.getDate() + 7);
+        setDatePreset(inputId, 'in_7_days');
     }
-    const yyyy = d.getFullYear();
-    const mm = String(d.getMonth() + 1).padStart(2, '0');
-    const dd = String(d.getDate()).padStart(2, '0');
-    input.value = `${yyyy}-${mm}-${dd}`;
 }
 
 function clearDate(inputId) {
-    const input = document.getElementById(inputId);
-    if (input) input.value = '';
+    setDatePreset(inputId, 'clear');
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    syncDateDisplay('addDueDate');
+    syncDateDisplay('editDueDate');
+});
 
 document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {

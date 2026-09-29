@@ -72,7 +72,7 @@ class ReportController extends Controller
             });
 
         // Transactions list for the selected month and type
-        $monthTransactions = Transaction::with(['wallet', 'category'])
+        $monthTransactions = Transaction::with(['wallet', 'targetWallet', 'category'])
             ->where('user_id', $user->id)
             ->where('type', $targetEnum)
             ->whereYear('date', $year)

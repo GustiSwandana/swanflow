@@ -13,6 +13,12 @@ class DriveTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Storage::fake('local');
+    }
+
     public function test_guest_is_redirected_to_login(): void
     {
         $response = $this->get(route('drive.index'));
@@ -168,6 +174,28 @@ class DriveTest extends TestCase
         // Toggle back
         $this->actingAs($user)->patch(route('drive.share.toggle', $storedFile));
         $this->assertFalse($storedFile->fresh()->is_public);
+
+        // Explicit is_public via JSON request
+        $jsonResponse = $this->actingAs($user)->patchJson(route('drive.share.toggle', $storedFile), [
+            'is_public' => true,
+        ]);
+        $jsonResponse->assertOk()
+            ->assertJson([
+                'success' => true,
+                'is_public' => true,
+            ]);
+        $this->assertTrue($storedFile->fresh()->is_public);
+
+        // Explicit false
+        $jsonResponseFalse = $this->actingAs($user)->patchJson(route('drive.share.toggle', $storedFile), [
+            'is_public' => false,
+        ]);
+        $jsonResponseFalse->assertOk()
+            ->assertJson([
+                'success' => true,
+                'is_public' => false,
+            ]);
+        $this->assertFalse($storedFile->fresh()->is_public);
     }
 
     public function test_public_user_can_view_and_download_shared_file_when_active(): void
@@ -318,5 +346,113 @@ class DriveTest extends TestCase
         $response->assertSessionHas('success');
 
         $this->assertEquals(2048, $user->fresh()->storage_quota_mb);
+    }
+
+    public function test_user_can_filter_shared_files_and_see_share_indicators(): void
+    {
+        $user = User::factory()->create();
+
+        $sharedFile = StoredFile::factory()->create([
+            'user_id' => $user->id,
+            'title' => 'Berkas Publik Saya',
+            'is_public' => true,
+        ]);
+
+        $privateFile = StoredFile::factory()->create([
+            'user_id' => $user->id,
+            'title' => 'Berkas Rahasia Saya',
+            'is_public' => false,
+        ]);
+
+        // General view sees both with respective indicators
+        $response = $this->actingAs($user)->get(route('drive.index'));
+        $response->assertStatus(200);
+        $response->assertSee('Berkas Publik Saya');
+        $response->assertSee('Berkas Rahasia Saya');
+        $response->assertSee('Dibagikan');
+        $response->assertSee('Privat');
+
+        // Filter category 'shared' only sees shared file
+        $sharedFilter = $this->actingAs($user)->get(route('drive.index', ['category' => 'shared']));
+        $sharedFilter->assertStatus(200);
+        $sharedFilter->assertSee('Berkas Publik Saya');
+        $sharedFilter->assertDontSee('Berkas Rahasia Saya');
+    }
+
+    public function test_user_can_filter_by_source_my_and_received(): void
+    {
+        $user = User::factory()->create();
+
+        // Own file
+        $myFile = StoredFile::factory()->create([
+            'user_id' => $user->id,
+            'title' => 'Dokumen Pribadi Saya',
+            'upload_link_id' => null,
+            'uploader_name' => null,
+        ]);
+
+        // Received file from external party
+        $receivedFile = StoredFile::factory()->create([
+            'user_id' => $user->id,
+            'title' => 'Dokumen Dari Klien Eksternal',
+            'uploader_name' => 'Budi Santoso',
+        ]);
+
+        // Filter source 'my'
+        $myResponse = $this->actingAs($user)->get(route('drive.index', ['source' => 'my']));
+        $myResponse->assertStatus(200);
+        $myResponse->assertSee('Dokumen Pribadi Saya');
+        $myResponse->assertDontSee('Dokumen Dari Klien Eksternal');
+
+        // Filter source 'received'
+        $recResponse = $this->actingAs($user)->get(route('drive.index', ['source' => 'received']));
+        $recResponse->assertStatus(200);
+        $recResponse->assertSee('Dokumen Dari Klien Eksternal');
+        $recResponse->assertDontSee('Dokumen Pribadi Saya');
+    }
+
+    public function test_user_can_batch_delete_files_and_folders(): void
+    {
+        Storage::fake('local');
+        $user = User::factory()->create();
+
+        $file1 = UploadedFile::fake()->create('file1.pdf', 100);
+        $path1 = $file1->store('drive/'.$user->id, 'local');
+        $stored1 = StoredFile::factory()->create([
+            'user_id' => $user->id,
+            'file_path' => $path1,
+        ]);
+
+        $file2 = UploadedFile::fake()->create('file2.png', 100);
+        $path2 = $file2->store('drive/'.$user->id, 'local');
+        $stored2 = StoredFile::factory()->create([
+            'user_id' => $user->id,
+            'file_path' => $path2,
+        ]);
+
+        $folder = $user->folders()->create([
+            'name' => 'Folder Hapus Massal',
+            'color' => 'teal',
+            'share_token' => 'folder-token-bulk-1',
+            'is_public' => false,
+        ]);
+
+        $response = $this->actingAs($user)->postJson(route('drive.batch.destroy'), [
+            'file_ids' => [$stored1->id, $stored2->id],
+            'folder_ids' => [$folder->id],
+        ]);
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            'success' => true,
+            'deleted_files_count' => 2,
+            'deleted_folders_count' => 1,
+        ]);
+
+        $this->assertDatabaseMissing('stored_files', ['id' => $stored1->id]);
+        $this->assertDatabaseMissing('stored_files', ['id' => $stored2->id]);
+        $this->assertDatabaseMissing('folders', ['id' => $folder->id]);
+        Storage::disk('local')->assertMissing($path1);
+        Storage::disk('local')->assertMissing($path2);
     }
 }

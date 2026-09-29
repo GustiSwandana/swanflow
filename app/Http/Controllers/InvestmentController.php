@@ -77,6 +77,17 @@ class InvestmentController extends Controller
         /** @var User $user */
         $user = $request->user() ?? User::first() ?? User::getPrimaryUser();
 
+        if ($request->has('initial_amount')) {
+            $request->merge(['initial_amount' => $this->cleanNumericInput($request->input('initial_amount'))]);
+        }
+        if ($request->filled('current_value')) {
+            $request->merge(['current_value' => $this->cleanNumericInput($request->input('current_value'))]);
+        }
+        if ($request->has('target_amount')) {
+            $cleanedTarget = $this->cleanNumericInput($request->input('target_amount'));
+            $request->merge(['target_amount' => $cleanedTarget === '' ? null : $cleanedTarget]);
+        }
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:150'],
             'platform' => ['nullable', 'string', 'max:100'],
@@ -164,6 +175,10 @@ class InvestmentController extends Controller
         $user = $request->user() ?? User::first() ?? User::getPrimaryUser();
         abort_unless($investment->user_id === $user->id, 403);
 
+        if ($request->has('amount')) {
+            $request->merge(['amount' => $this->cleanNumericInput($request->input('amount'))]);
+        }
+
         $validated = $request->validate([
             'amount' => ['required', 'numeric', 'min:1'],
             'date' => ['required', 'date'],
@@ -230,6 +245,10 @@ class InvestmentController extends Controller
         /** @var User $user */
         $user = $request->user() ?? User::first() ?? User::getPrimaryUser();
         abort_unless($investment->user_id === $user->id, 403);
+
+        if ($request->has('amount')) {
+            $request->merge(['amount' => $this->cleanNumericInput($request->input('amount'))]);
+        }
 
         $validated = $request->validate([
             'amount' => ['required', 'numeric', 'min:1'],
@@ -303,6 +322,10 @@ class InvestmentController extends Controller
         $user = $request->user() ?? User::first() ?? User::getPrimaryUser();
         abort_unless($investment->user_id === $user->id, 403);
 
+        if ($request->has('current_value')) {
+            $request->merge(['current_value' => $this->cleanNumericInput($request->input('current_value'))]);
+        }
+
         $validated = $request->validate([
             'current_value' => ['required', 'numeric', 'min:0'],
         ], [
@@ -325,6 +348,11 @@ class InvestmentController extends Controller
         /** @var User $user */
         $user = $request->user() ?? User::first() ?? User::getPrimaryUser();
         abort_unless($investment->user_id === $user->id, 403);
+
+        if ($request->has('target_amount')) {
+            $cleanedTarget = $this->cleanNumericInput($request->input('target_amount'));
+            $request->merge(['target_amount' => $cleanedTarget === '' ? null : $cleanedTarget]);
+        }
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:150'],

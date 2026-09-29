@@ -90,6 +90,8 @@ class TransactionController extends Controller
 
             if ($type === TransactionType::Transfer->value) {
                 $targetWallet = Wallet::where('user_id', $user->id)->findOrFail($validated['target_wallet_id']);
+                $adminFee = isset($validated['admin_fee']) ? (float) $validated['admin_fee'] : 0.0;
+                $feePayer = $validated['fee_payer'] ?? 'source';
 
                 Transaction::create([
                     'user_id' => $user->id,
@@ -97,13 +99,20 @@ class TransactionController extends Controller
                     'target_wallet_id' => $targetWallet->id,
                     'category_id' => $validated['category_id'] ?? null,
                     'amount' => $amount,
+                    'admin_fee' => $adminFee,
+                    'fee_payer' => $feePayer,
                     'type' => $type,
                     'date' => $validated['date'],
                     'description' => $validated['description'] ?? null,
                 ]);
 
-                $wallet->decrement('balance', $amount);
-                $targetWallet->increment('balance', $amount);
+                if ($feePayer === 'destination') {
+                    $wallet->decrement('balance', $amount);
+                    $targetWallet->increment('balance', max(0, $amount - $adminFee));
+                } else {
+                    $wallet->decrement('balance', $amount + $adminFee);
+                    $targetWallet->increment('balance', $amount);
+                }
             } else {
                 Transaction::create([
                     'user_id' => $user->id,
@@ -111,6 +120,8 @@ class TransactionController extends Controller
                     'target_wallet_id' => null,
                     'category_id' => $validated['category_id'],
                     'amount' => $amount,
+                    'admin_fee' => 0,
+                    'fee_payer' => 'source',
                     'type' => $type,
                     'date' => $validated['date'],
                     'description' => $validated['description'] ?? null,
@@ -156,10 +167,22 @@ class TransactionController extends Controller
 
         DB::transaction(function () use ($user, $transaction, $validated, $newAmount, $newType) {
             // 1. Revert previous transaction effects on old wallet(s)
-            if ($transaction->type === TransactionType::Transfer || $transaction->type === 'transfer') {
-                $transaction->wallet?->increment('balance', (float) $transaction->amount);
-                $transaction->targetWallet?->decrement('balance', (float) $transaction->amount);
-            } elseif ($transaction->type === TransactionType::Income || $transaction->type === 'income') {
+            $isOldTransfer = $transaction->type === TransactionType::Transfer || $transaction->type === 'transfer' || ($transaction->type instanceof TransactionType && $transaction->type === TransactionType::Transfer);
+            $isOldIncome = $transaction->type === TransactionType::Income || $transaction->type === 'income' || ($transaction->type instanceof TransactionType && $transaction->type === TransactionType::Income);
+
+            if ($isOldTransfer) {
+                $oldAmount = (float) $transaction->amount;
+                $oldFee = (float) ($transaction->admin_fee ?? 0);
+                $oldFeePayer = $transaction->fee_payer ?? 'source';
+
+                if ($oldFeePayer === 'destination') {
+                    $transaction->wallet?->increment('balance', $oldAmount);
+                    $transaction->targetWallet?->decrement('balance', max(0, $oldAmount - $oldFee));
+                } else {
+                    $transaction->wallet?->increment('balance', $oldAmount + $oldFee);
+                    $transaction->targetWallet?->decrement('balance', $oldAmount);
+                }
+            } elseif ($isOldIncome) {
                 $transaction->wallet?->decrement('balance', (float) $transaction->amount);
             } else {
                 $transaction->wallet?->increment('balance', (float) $transaction->amount);
@@ -170,25 +193,36 @@ class TransactionController extends Controller
 
             if ($newType === TransactionType::Transfer->value) {
                 $newTargetWallet = Wallet::where('user_id', $user->id)->findOrFail($validated['target_wallet_id']);
+                $newFee = isset($validated['admin_fee']) ? (float) $validated['admin_fee'] : 0.0;
+                $newFeePayer = $validated['fee_payer'] ?? 'source';
 
                 $transaction->update([
                     'wallet_id' => $newWallet->id,
                     'target_wallet_id' => $newTargetWallet->id,
                     'category_id' => null,
                     'amount' => $newAmount,
+                    'admin_fee' => $newFee,
+                    'fee_payer' => $newFeePayer,
                     'type' => $newType,
                     'date' => $validated['date'],
                     'description' => $validated['description'] ?? null,
                 ]);
 
-                $newWallet->decrement('balance', $newAmount);
-                $newTargetWallet->increment('balance', $newAmount);
+                if ($newFeePayer === 'destination') {
+                    $newWallet->decrement('balance', $newAmount);
+                    $newTargetWallet->increment('balance', max(0, $newAmount - $newFee));
+                } else {
+                    $newWallet->decrement('balance', $newAmount + $newFee);
+                    $newTargetWallet->increment('balance', $newAmount);
+                }
             } else {
                 $transaction->update([
                     'wallet_id' => $newWallet->id,
                     'target_wallet_id' => null,
                     'category_id' => $validated['category_id'],
                     'amount' => $newAmount,
+                    'admin_fee' => 0,
+                    'fee_payer' => 'source',
                     'type' => $newType,
                     'date' => $validated['date'],
                     'description' => $validated['description'] ?? null,
@@ -232,8 +266,17 @@ class TransactionController extends Controller
             $isIncome = $transaction->type === TransactionType::Income || $transaction->type === 'income' || ($transaction->type instanceof TransactionType && $transaction->type === TransactionType::Income);
 
             if ($isTransfer) {
-                $transaction->wallet?->increment('balance', (float) $transaction->amount);
-                $transaction->targetWallet?->decrement('balance', (float) $transaction->amount);
+                $amount = (float) $transaction->amount;
+                $fee = (float) ($transaction->admin_fee ?? 0);
+                $feePayer = $transaction->fee_payer ?? 'source';
+
+                if ($feePayer === 'destination') {
+                    $transaction->wallet?->increment('balance', $amount);
+                    $transaction->targetWallet?->decrement('balance', max(0, $amount - $fee));
+                } else {
+                    $transaction->wallet?->increment('balance', $amount + $fee);
+                    $transaction->targetWallet?->decrement('balance', $amount);
+                }
             } else {
                 $wallet = $transaction->wallet;
 

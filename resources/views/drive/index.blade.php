@@ -75,12 +75,27 @@
             <!-- Row 1: Label & Ubah Ukuran button -->
             <div class="flex items-center justify-between gap-2 min-w-0">
                 <span class="text-[10px] font-extrabold uppercase tracking-wider text-teal-200/90 truncate">Kapasitas Penyimpanan</span>
-                <button type="button" onclick="openQuotaModal()" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/15 hover:bg-white/25 text-teal-100 hover:text-white text-[10px] font-black border border-white/20 active:scale-95 transition-all cursor-pointer shadow-xs shrink-0 ios-press backdrop-blur-md" title="Ubah Kapasitas Kuota">
-                    <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
-                    </svg>
-                    <span>Ubah Ukuran</span>
-                </button>
+                <div class="flex items-center gap-1.5 shrink-0">
+                    @if(empty(config('filesystems.disks.google.refreshToken')))
+                    <a href="{{ route('drive.connect') }}" class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white text-[10px] font-black border border-white/30 active:scale-95 transition-all cursor-pointer shadow-md ios-press backdrop-blur-md animate-pulse" title="Sambungkan Akun Google 5TB">
+                        <svg class="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"/>
+                        </svg>
+                        <span>Sambung Google</span>
+                    </a>
+                    @else
+                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/25 text-emerald-200 text-[10px] font-black border border-emerald-400/40">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                        <span>Google 5TB</span>
+                    </span>
+                    @endif
+                    <button type="button" onclick="openQuotaModal()" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/15 hover:bg-white/25 text-teal-100 hover:text-white text-[10px] font-black border border-white/20 active:scale-95 transition-all cursor-pointer shadow-xs ios-press backdrop-blur-md" title="Ubah Kapasitas Kuota">
+                        <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
+                        </svg>
+                        <span>Ubah Ukuran</span>
+                    </button>
+                </div>
             </div>
 
             <!-- Row 2: Numbers & Percentage Badge -->
@@ -116,6 +131,50 @@
 <div class="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-2xl rounded-t-[36px] pt-5 px-4 pb-[max(12rem,calc(11rem+var(--sab,0px)))] shadow-2xl -mt-5 relative z-10 border-t border-slate-200/80 dark:border-white/10 flex-1 flex flex-col min-h-full space-y-5 text-slate-800 dark:text-white transition-colors animate-swan-in">
     <!-- Pull handle indicator for authentic iOS sheet aesthetic -->
     <div class="w-10 h-1.5 bg-slate-300/80 dark:bg-slate-700/80 rounded-full mx-auto mb-1"></div>
+
+    @if(empty(config('filesystems.disks.google.refreshToken')))
+    <!-- Google Drive 5TB Connection Card -->
+    <div class="relative overflow-hidden rounded-[26px] p-4 bg-gradient-to-br from-amber-500/15 via-orange-500/10 to-amber-500/5 dark:from-amber-950/40 dark:via-orange-950/20 dark:to-slate-900/40 border border-amber-500/30 dark:border-amber-400/30 shadow-lg backdrop-blur-xl">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="flex items-start gap-3">
+                <div class="w-11 h-11 rounded-[18px] bg-gradient-to-tr from-amber-500 to-orange-500 flex items-center justify-center text-white shrink-0 shadow-lg shadow-orange-500/25 border border-white/30">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"/>
+                    </svg>
+                </div>
+                <div class="min-w-0">
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <h4 class="text-sm font-black text-slate-900 dark:text-white leading-tight">Sambungkan Google Drive (5TB)</h4>
+                        <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-500 text-white shadow-xs">Perlu Tindakan</span>
+                    </div>
+                    <p class="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
+                        Akun Google Anda belum terhubung. Sambungkan sekarang agar file upload langsung masuk ke kapasitas 5TB Anda.
+                    </p>
+                </div>
+            </div>
+            <a href="{{ route('drive.connect') }}" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-[18px] bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white text-xs font-black shadow-lg shadow-orange-500/25 border border-white/20 active:scale-95 transition-all cursor-pointer shrink-0 ios-press">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"/>
+                </svg>
+                <span>Sambung Sekarang</span>
+            </a>
+        </div>
+    </div>
+    @else
+    <!-- Google Drive Connected Badge -->
+    <div class="flex items-center justify-between px-4 py-2.5 rounded-[20px] bg-emerald-500/10 dark:bg-emerald-950/30 border border-emerald-500/25 shadow-xs text-xs">
+        <div class="flex items-center gap-2 text-emerald-700 dark:text-emerald-300 font-bold">
+            <span class="relative flex h-2.5 w-2.5">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+            </span>
+            <span>Google Drive 5TB Terhubung & Siap</span>
+        </div>
+        <a href="{{ route('drive.connect') }}" class="text-[11px] font-bold text-slate-500 hover:text-emerald-600 dark:text-slate-400 dark:hover:text-emerald-300 underline" title="Hubungkan ulang akun jika perlu">
+            Hubungkan Ulang
+        </a>
+    </div>
+    @endif
 
     <!-- TAB SWITCHER: Berkas Saya vs Link Terima File (iOS Segmented Control) -->
     <div class="ios-segmented-track p-1 rounded-[22px] flex items-center gap-1 w-full bg-slate-200/60 dark:bg-white/5 backdrop-blur-xl border border-white/50 dark:border-white/10 shadow-inner">
@@ -288,12 +347,18 @@
                             </div>
                             <div class="flex items-center gap-2 mt-0.5">
                                 <h2 class="text-base font-black text-slate-900 dark:text-white truncate">{{ $currentFolder->name }}</h2>
-                                @if($currentFolder->is_public)
-                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 flex items-center gap-1">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                                        Dibagikan
-                                    </span>
-                                @endif
+                                <div id="current-folder-share-badge">
+                                    @if($currentFolder->is_public)
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 flex items-center gap-1 shadow-2xs">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                            Dibagikan
+                                        </span>
+                                    @else
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 flex items-center gap-1">
+                                            Privat
+                                        </span>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -344,6 +409,7 @@
                     <input type="hidden" name="folder_id" value="{{ $currentFolder->id }}">
                 @endif
                 <input type="hidden" name="category" value="{{ $activeCategory }}">
+                <input type="hidden" name="source" value="{{ $activeSource }}">
                 <input type="text" name="search" value="{{ $search }}" placeholder="Cari nama file, ekstensi, pengirim, atau catatan..."
                        class="w-full pl-9 pr-8 py-2.5 text-xs rounded-[20px] liquid-card bg-white/80 dark:bg-slate-900/75 border border-white/60 dark:border-white/10 text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 shadow-xs backdrop-blur-2xl font-medium">
                 <span class="absolute left-3.5 top-3 text-slate-400">
@@ -358,29 +424,48 @@
                 @endif
             </form>
 
+            <!-- Sumber Berkas (Ownership / Origin Filter) -->
+            <div class="ios-segmented-track p-1 rounded-[20px] flex items-center gap-1 w-full bg-slate-200/70 dark:bg-white/5 backdrop-blur-xl border border-white/50 dark:border-white/10 shadow-inner">
+                <a href="{{ route('drive.index', array_filter(['tab' => 'files', 'source' => 'all', 'category' => $activeCategory !== 'received' ? $activeCategory : null, 'search' => $search, 'folder_id' => $currentFolder?->id])) }}"
+                   class="flex-1 py-1.5 rounded-[16px] text-[11px] font-black text-center transition-all flex items-center justify-center gap-1.5 ios-press {{ $activeSource === 'all' ? 'ios-segmented-thumb bg-white dark:bg-slate-800 text-teal-600 dark:text-teal-400 shadow-sm ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white font-bold' }}">
+                    <span>🌐 Semua</span>
+                    <span class="text-[9px] px-1.5 py-0.2 rounded-full font-black {{ $activeSource === 'all' ? 'bg-teal-100 dark:bg-teal-950/80 text-teal-700 dark:text-teal-300' : 'bg-slate-300/60 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">{{ $sourceCounts['all'] }}</span>
+                </a>
+                <a href="{{ route('drive.index', array_filter(['tab' => 'files', 'source' => 'my', 'category' => $activeCategory !== 'received' ? $activeCategory : null, 'search' => $search, 'folder_id' => $currentFolder?->id])) }}"
+                   class="flex-1 py-1.5 rounded-[16px] text-[11px] font-black text-center transition-all flex items-center justify-center gap-1.5 ios-press {{ $activeSource === 'my' ? 'ios-segmented-thumb bg-white dark:bg-slate-800 text-teal-600 dark:text-teal-400 shadow-sm ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white font-bold' }}">
+                    <span>👤 Berkas Saya</span>
+                    <span class="text-[9px] px-1.5 py-0.2 rounded-full font-black {{ $activeSource === 'my' ? 'bg-teal-100 dark:bg-teal-950/80 text-teal-700 dark:text-teal-300' : 'bg-slate-300/60 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">{{ $sourceCounts['my'] }}</span>
+                </a>
+                <a href="{{ route('drive.index', array_filter(['tab' => 'files', 'source' => 'received', 'category' => $activeCategory !== 'received' ? $activeCategory : null, 'search' => $search, 'folder_id' => $currentFolder?->id])) }}"
+                   class="flex-1 py-1.5 rounded-[16px] text-[11px] font-black text-center transition-all flex items-center justify-center gap-1.5 ios-press {{ $activeSource === 'received' ? 'ios-segmented-thumb bg-white dark:bg-slate-800 text-amber-600 dark:text-amber-400 shadow-sm ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white font-bold' }}">
+                    <span>📥 Dari Pihak Luar</span>
+                    <span class="text-[9px] px-1.5 py-0.2 rounded-full font-black {{ $activeSource === 'received' ? 'bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300' : 'bg-slate-300/60 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">{{ $sourceCounts['received'] }}</span>
+                </a>
+            </div>
+
             <!-- Category Filter Pills -->
             <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 -mx-1 px-1">
-                <a href="{{ route('drive.index', array_filter(['tab' => 'files', 'category' => 'all', 'search' => $search, 'folder_id' => $currentFolder?->id])) }}"
+                <a href="{{ route('drive.index', array_filter(['tab' => 'files', 'source' => $activeSource !== 'all' ? $activeSource : null, 'category' => 'all', 'search' => $search, 'folder_id' => $currentFolder?->id])) }}"
                    class="px-3.5 py-1.5 rounded-[16px] text-xs font-black shrink-0 transition-all ios-press {{ $activeCategory === 'all' ? 'bg-teal-500 text-white shadow-sm ring-1 ring-teal-400/30' : 'liquid-glass bg-white/70 dark:bg-slate-900/75 text-slate-600 dark:text-slate-400 border border-white/50 dark:border-white/10 hover:bg-white/90' }}">
                     Semua ({{ $categoryCounts['all'] }})
                 </a>
-                <a href="{{ route('drive.index', array_filter(['tab' => 'files', 'category' => 'received', 'search' => $search, 'folder_id' => $currentFolder?->id])) }}"
-                   class="px-3.5 py-1.5 rounded-[16px] text-xs font-black shrink-0 transition-all ios-press {{ $activeCategory === 'received' ? 'bg-amber-500 text-white shadow-sm ring-1 ring-amber-400/40' : 'liquid-glass bg-amber-50/60 dark:bg-amber-950/30 text-amber-700 dark:text-amber-300 border border-amber-300/40 dark:border-amber-700/40 hover:bg-amber-100/80' }}">
-                    📥 Dari Orang Lain ({{ $categoryCounts['received'] ?? 0 }})
+                <a href="{{ route('drive.index', array_filter(['tab' => 'files', 'source' => $activeSource !== 'all' ? $activeSource : null, 'category' => 'shared', 'search' => $search, 'folder_id' => $currentFolder?->id])) }}"
+                   class="px-3.5 py-1.5 rounded-[16px] text-xs font-black shrink-0 transition-all ios-press {{ $activeCategory === 'shared' ? 'bg-emerald-600 text-white shadow-sm ring-1 ring-emerald-400/40' : 'liquid-glass bg-emerald-50/70 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-300/50 dark:border-emerald-700/50 hover:bg-emerald-100/80' }}">
+                    🔗 Dibagikan ({{ $categoryCounts['shared'] ?? 0 }})
                 </a>
-                <a href="{{ route('drive.index', array_filter(['tab' => 'files', 'category' => 'document', 'search' => $search, 'folder_id' => $currentFolder?->id])) }}"
+                <a href="{{ route('drive.index', array_filter(['tab' => 'files', 'source' => $activeSource !== 'all' ? $activeSource : null, 'category' => 'document', 'search' => $search, 'folder_id' => $currentFolder?->id])) }}"
                    class="px-3.5 py-1.5 rounded-[16px] text-xs font-black shrink-0 transition-all ios-press {{ $activeCategory === 'document' ? 'bg-emerald-600 text-white shadow-sm ring-1 ring-emerald-400/30' : 'liquid-glass bg-white/70 dark:bg-slate-900/75 text-slate-600 dark:text-slate-400 border border-white/50 dark:border-white/10 hover:bg-white/90' }}">
                     📄 Dokumen ({{ $categoryCounts['document'] }})
                 </a>
-                <a href="{{ route('drive.index', array_filter(['tab' => 'files', 'category' => 'image', 'search' => $search, 'folder_id' => $currentFolder?->id])) }}"
+                <a href="{{ route('drive.index', array_filter(['tab' => 'files', 'source' => $activeSource !== 'all' ? $activeSource : null, 'category' => 'image', 'search' => $search, 'folder_id' => $currentFolder?->id])) }}"
                    class="px-3.5 py-1.5 rounded-[16px] text-xs font-black shrink-0 transition-all ios-press {{ $activeCategory === 'image' ? 'bg-purple-600 text-white shadow-sm ring-1 ring-purple-400/30' : 'liquid-glass bg-white/70 dark:bg-slate-900/75 text-slate-600 dark:text-slate-400 border border-white/50 dark:border-white/10 hover:bg-white/90' }}">
                     🖼️ Gambar ({{ $categoryCounts['image'] }})
                 </a>
-                <a href="{{ route('drive.index', array_filter(['tab' => 'files', 'category' => 'archive', 'search' => $search, 'folder_id' => $currentFolder?->id])) }}"
+                <a href="{{ route('drive.index', array_filter(['tab' => 'files', 'source' => $activeSource !== 'all' ? $activeSource : null, 'category' => 'archive', 'search' => $search, 'folder_id' => $currentFolder?->id])) }}"
                    class="px-3.5 py-1.5 rounded-[16px] text-xs font-black shrink-0 transition-all ios-press {{ $activeCategory === 'archive' ? 'bg-amber-600 text-white shadow-sm ring-1 ring-amber-400/30' : 'liquid-glass bg-white/70 dark:bg-slate-900/70 text-slate-600 dark:text-slate-400 border border-white/50 dark:border-white/10 hover:bg-white/90' }}">
                     📦 Arsip ({{ $categoryCounts['archive'] }})
                 </a>
-                <a href="{{ route('drive.index', array_filter(['tab' => 'files', 'category' => 'other', 'search' => $search, 'folder_id' => $currentFolder?->id])) }}"
+                <a href="{{ route('drive.index', array_filter(['tab' => 'files', 'source' => $activeSource !== 'all' ? $activeSource : null, 'category' => 'other', 'search' => $search, 'folder_id' => $currentFolder?->id])) }}"
                    class="px-3.5 py-1.5 rounded-[16px] text-xs font-black shrink-0 transition-all ios-press {{ $activeCategory === 'other' ? 'bg-slate-700 text-white shadow-sm ring-1 ring-slate-400/30' : 'liquid-glass bg-white/70 dark:bg-slate-900/70 text-slate-600 dark:text-slate-400 border border-white/50 dark:border-white/10 hover:bg-white/90' }}">
                     📎 Lainnya ({{ $categoryCounts['other'] }})
                 </a>
@@ -394,12 +479,23 @@
                     <span>{{ $currentFolder ? 'Sub-Folder' : 'Folder Saya' }}</span>
                     <span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold">{{ $folders->count() }}</span>
                 </h2>
-                <button type="button" onclick="openCreateFolderModal()" class="text-xs font-black text-teal-600 dark:text-teal-400 hover:underline flex items-center gap-1 ios-press cursor-pointer">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                    </svg>
-                    <span>Folder Baru</span>
-                </button>
+                <div class="flex items-center gap-2">
+                    <button type="button" 
+                            id="btn-toggle-multi-select"
+                            onclick="toggleMultiSelectMode()" 
+                            class="px-2.5 py-1 rounded-full bg-slate-200/80 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold flex items-center gap-1.5 transition-all ios-press cursor-pointer">
+                        <svg class="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span id="btn-toggle-multi-select-text">Pilih Banyak</span>
+                    </button>
+                    <button type="button" onclick="openCreateFolderModal()" class="text-xs font-black text-teal-600 dark:text-teal-400 hover:underline flex items-center gap-1 ios-press cursor-pointer">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        <span>Folder Baru</span>
+                    </button>
+                </div>
             </div>
 
             @if($folders->isNotEmpty())
@@ -409,7 +505,20 @@
                             $fldColor = $fld->colorMeta();
                             $isDropFolder = $fld->isDropFolder();
                         @endphp
-                        <div class="liquid-card rounded-[22px] bg-white/80 dark:bg-slate-900/75 border {{ $isDropFolder ? 'border-amber-400/60 dark:border-amber-500/50 shadow-xs shadow-amber-500/10' : 'border-white/60 dark:border-white/10 shadow-xs' }} hover:shadow-md hover:border-teal-400/40 p-3 space-y-2.5 transition-all group relative">
+                        <div id="folder-card-{{ $fld->id }}" class="liquid-card rounded-[22px] bg-white/80 dark:bg-slate-900/75 border {{ $isDropFolder ? 'border-amber-400/60 dark:border-amber-500/50 shadow-xs shadow-amber-500/10' : 'border-white/60 dark:border-white/10 shadow-xs' }} hover:shadow-md hover:border-teal-400/40 p-3 space-y-2.5 transition-all group relative">
+                            <!-- Multi-Select Checkbox for Folder -->
+                            <div class="batch-select-checkbox-container hidden absolute top-2 right-2 z-20">
+                                <label class="relative flex items-center justify-center p-1 cursor-pointer">
+                                    <input type="checkbox" 
+                                           name="batch_folders[]" 
+                                           value="{{ $fld->id }}" 
+                                           data-type="folder"
+                                           data-name="{{ addslashes($fld->name) }}"
+                                           onchange="handleItemSelect(this)" 
+                                           class="w-5 h-5 rounded-lg border-2 border-teal-500 text-teal-600 focus:ring-teal-500/20 bg-white/90 dark:bg-slate-800 cursor-pointer shadow-sm">
+                                </label>
+                            </div>
+
                             <a href="{{ route('drive.index', ['folder_id' => $fld->id]) }}" class="block space-y-2">
                                 <div class="flex items-start justify-between gap-1.5">
                                     <div class="w-10 h-10 rounded-[14px] {{ $isDropFolder ? 'bg-amber-500/20 text-amber-600 dark:text-amber-400' : $fldColor['iconBg'] }} flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
@@ -427,9 +536,18 @@
                                                 Drop
                                             </span>
                                         @endif
-                                        @if($fld->is_public)
-                                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse mt-1" title="Folder dibagikan publik"></span>
-                                        @endif
+                                        <div id="folder-share-badge-{{ $fld->id }}">
+                                            @if($fld->is_public)
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-black bg-emerald-100 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 border border-emerald-300/60 dark:border-emerald-700/60 shadow-2xs" title="Folder dibagikan publik">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                                    <span>🔗 Dibagikan</span>
+                                                </span>
+                                            @else
+                                                <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-slate-100 dark:bg-slate-800/80 text-slate-400 dark:text-slate-500 border border-slate-200/60 dark:border-slate-700/60" title="Folder privat">
+                                                    <span>🔒 Privat</span>
+                                                </span>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="min-w-0">
@@ -444,10 +562,18 @@
 
                             <!-- Folder Quick Actions Menu -->
                             <div class="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-slate-800/80">
+                                <a href="{{ route('orders.index', ['folder_id' => $fld->id, 'create' => 1]) }}"
+                                   class="p-1.5 rounded-lg text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-colors cursor-pointer"
+                                   title="Kirim ke Klien (Buat Paywall)">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6H2.25m0 0v1.5c0 .414.336.75.75.75h.75m0 0h12m-12 0a2.25 2.25 0 00-2.25 2.25v7.5a2.25 2.25 0 002.25 2.25h12a2.25 2.25 0 002.25-2.25v-7.5a2.25 2.25 0 00-2.25-2.25m-12 0h12" />
+                                    </svg>
+                                </a>
                                 <button type="button"
+                                        id="folder-share-btn-{{ $fld->id }}"
                                         onclick="openFolderShareModal('{{ $fld->id }}', '{{ addslashes($fld->name) }}', '{{ $fld->formatted_size }}', '{{ $fld->share_url }}', {{ $fld->is_public ? 'true' : 'false' }}, '{{ route('drive.folders.share.toggle', $fld) }}')"
-                                        class="p-1.5 rounded-lg text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-                                        title="Bagikan Folder">
+                                        class="p-1.5 rounded-lg {{ $fld->is_public ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 ring-1 ring-emerald-400/30' : 'text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-slate-100 dark:hover:bg-slate-800' }} transition-colors cursor-pointer"
+                                        title="{{ $fld->is_public ? 'Folder Dibagikan (Tautan Aktif)' : 'Bagikan Folder' }}">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
                                     </svg>
@@ -489,7 +615,7 @@
                     $meta = $file->categoryMeta();
                     $isReceivedFromOther = !empty($file->upload_link_id) || !empty($file->uploader_name);
                 @endphp
-                <div id="file-{{ $file->id }}" data-file-id="{{ $file->id }}" class="liquid-card rounded-[24px] {{ $isReceivedFromOther ? 'bg-gradient-to-br from-amber-500/10 via-white/85 to-white/80 dark:from-amber-950/30 dark:via-slate-900/80 dark:to-slate-900/75 border-amber-400/50 dark:border-amber-500/40 shadow-xs ring-1 ring-amber-400/20' : 'bg-white/80 dark:bg-slate-900/75 border border-white/60 dark:border-white/10 shadow-sm' }} hover:shadow-md hover:border-teal-400/40 backdrop-blur-2xl p-4 space-y-3 transition-all duration-300">
+                <div id="file-{{ $file->id }}" data-file-id="{{ $file->id }}" data-is-public="{{ $file->is_public ? 'true' : 'false' }}" @if($isReceivedFromOther) data-received-from-other="1" @endif class="liquid-card rounded-[24px] {{ $isReceivedFromOther ? 'bg-gradient-to-br from-amber-500/10 via-white/85 to-white/80 dark:from-amber-950/30 dark:via-slate-900/80 dark:to-slate-900/75 border-amber-400/50 dark:border-amber-500/40 shadow-xs ring-1 ring-amber-400/20' : ($file->is_public ? 'bg-white/85 dark:bg-slate-900/80 border border-emerald-300/50 dark:border-emerald-500/30 shadow-sm ring-1 ring-emerald-500/15' : 'bg-white/80 dark:bg-slate-900/75 border border-white/60 dark:border-white/10 shadow-sm') }} hover:shadow-md hover:border-teal-400/40 backdrop-blur-2xl p-4 space-y-3 transition-all duration-300">
                     
                     @if($isReceivedFromOther)
                         <!-- Distinct Header Banner for Files Received from Others -->
@@ -508,8 +634,29 @@
                         <!-- Icon + Name (Click to preview) -->
                         <div onclick="openPreviewModal('{{ $file->id }}', '{{ addslashes($file->title) }}', '{{ addslashes($file->original_name) }}', '{{ $file->formatted_size }}', '{{ strtolower($file->extension) }}', '{{ route('drive.preview', $file) }}', '{{ route('drive.download', $file) }}', '{{ $meta['label'] }}', '{{ addslashes($file->notes ?? '') }}', '{{ $file->created_at->format('d M Y, H:i') }}', '{{ route('drive.destroy', $file) }}', '{{ $file->share_url }}', {{ $file->is_public ? 'true' : 'false' }}, '{{ route('drive.share.toggle', $file) }}', '{{ $file->folder_id }}')"
                              class="flex items-start gap-3 min-w-0 flex-1 cursor-pointer group">
-                            <div class="w-10 h-10 rounded-[18px] {{ $meta['bg'] }} {{ $meta['text'] }} border {{ $meta['border'] }} flex items-center justify-center shrink-0 font-black text-xs uppercase shadow-2xs group-hover:scale-105 transition-transform">
-                                {{ substr($file->extension, 0, 4) }}
+                            <div class="relative shrink-0">
+                                <div class="w-10 h-10 rounded-[18px] {{ $meta['bg'] }} {{ $meta['text'] }} border {{ $meta['border'] }} flex items-center justify-center font-black text-xs uppercase shadow-2xs group-hover:scale-105 transition-transform overflow-hidden">
+                                    @if($file->category === 'image')
+                                        <img src="{{ route('drive.preview', ['file' => $file->id, 'thumb' => 1]) }}" alt="{{ $file->title }}" class="w-full h-full object-cover rounded-[18px]" loading="lazy" onerror="this.style.display='none'">
+                                    @else
+                                        {{ substr($file->extension, 0, 4) }}
+                                    @endif
+                                </div>
+                                <div id="file-icon-share-{{ $file->id }}" class="absolute -bottom-1 -right-1 z-10 pointer-events-none">
+                                    @if($file->is_public)
+                                        <span class="w-4 h-4 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-xs ring-2 ring-white dark:ring-slate-900" title="Dibagikan (Tautan Publik Aktif)">
+                                            <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.8">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
+                                            </svg>
+                                        </span>
+                                    @else
+                                        <span class="w-4 h-4 rounded-full bg-slate-300 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center shadow-xs ring-2 ring-white dark:ring-slate-900" title="Privat (Hanya Anda)">
+                                            <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.8">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                                            </svg>
+                                        </span>
+                                    @endif
+                                </div>
                             </div>
                             <div class="min-w-0">
                                 <h3 class="text-sm font-bold text-slate-900 dark:text-white truncate leading-tight group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors" title="{{ $file->title }}">
@@ -535,18 +682,39 @@
                             </div>
                         </div>
 
-                        <!-- Status Badge (Public Share or Received via Drop) -->
-                        <div class="shrink-0 flex flex-col items-end gap-1">
-                            @if($file->is_public)
-                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                                    Berbagi Aktif
-                                </span>
-                            @else
-                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100/80 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
-                                    Privat
-                                </span>
-                            @endif
+                        <!-- Status Badge & Multi-Select Checkbox -->
+                        <div class="shrink-0 flex flex-col items-end gap-1.5">
+                            <!-- Multi-Select Checkbox for File -->
+                            <div class="batch-select-checkbox-container hidden">
+                                <label class="relative flex items-center justify-center cursor-pointer p-0.5">
+                                    <input type="checkbox" 
+                                           name="batch_files[]" 
+                                           value="{{ $file->id }}" 
+                                           data-type="file"
+                                           data-name="{{ addslashes($file->title) }}"
+                                           onchange="handleItemSelect(this)" 
+                                           class="w-5 h-5 rounded-lg border-2 border-teal-500 text-teal-600 focus:ring-teal-500/20 bg-white/90 dark:bg-slate-800 cursor-pointer shadow-sm">
+                                </label>
+                            </div>
+
+                            <div id="file-share-badge-{{ $file->id }}">
+                                @if($file->is_public)
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 border border-emerald-300/70 dark:border-emerald-700/60 shadow-2xs">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                        <svg class="w-2.5 h-2.5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
+                                        </svg>
+                                        <span>Dibagikan</span>
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800/90 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700/80">
+                                        <svg class="w-2.5 h-2.5 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                                        </svg>
+                                        <span>Privat</span>
+                                    </span>
+                                @endif
+                            </div>
 
                             @if($file->upload_link_id)
                                 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800" title="Diterima dari link drop: {{ $file->uploadLink?->title }}">
@@ -600,13 +768,14 @@
                         <div class="flex items-center gap-2">
                             <!-- Share Transfer -->
                             <button type="button"
+                                    id="file-share-btn-{{ $file->id }}"
                                     onclick="openShareModal('{{ $file->id }}', '{{ addslashes($file->title) }}', '{{ $file->formatted_size }}', '{{ $file->share_url }}', {{ $file->is_public ? 'true' : 'false' }}, '{{ route('drive.share.toggle', $file) }}')"
-                                    class="flex-1 py-2 px-3 rounded-[16px] bg-slate-100/80 hover:bg-slate-200 dark:bg-slate-800/80 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200/70 dark:border-white/10 flex items-center justify-center gap-1.5 active:scale-[0.98] transition-all cursor-pointer ios-press"
-                                    title="Bagi / Transfer Berkas">
-                                <svg class="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2">
+                                    class="flex-1 py-2 px-3 rounded-[16px] {{ $file->is_public ? 'bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-300/80 dark:border-emerald-800/80' : 'bg-slate-100/80 hover:bg-slate-200 dark:bg-slate-800/80 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200/70 dark:border-white/10' }} text-xs font-bold flex items-center justify-center gap-1.5 active:scale-[0.98] transition-all cursor-pointer ios-press"
+                                    title="{{ $file->is_public ? 'Tautan Aktif (Bisa Diunduh Publik)' : 'Bagikan Link (Privat)' }}">
+                                <svg class="w-3.5 h-3.5 {{ $file->is_public ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
                                 </svg>
-                                <span>Bagikan Link</span>
+                                <span>{{ $file->is_public ? '🔗 Tautan Aktif' : '🔒 Bagikan' }}</span>
                             </button>
 
                             <!-- Move to Folder Trigger Button -->
@@ -618,6 +787,15 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 00-1.883 2.542l.857 6a2.25 2.25 0 002.227 1.932H19.05a2.25 2.25 0 002.227-1.932l.857-6a2.25 2.25 0 00-1.883-2.542m-16.5 0V6A2.25 2.25 0 016 3.75h3.879a1.5 1.5 0 011.06.44l2.122 2.12a1.5 1.5 0 001.06.44H18A2.25 2.25 0 0120.25 9v.776" />
                                 </svg>
                             </button>
+
+                            <!-- Paywall Client Release Button -->
+                            <a href="{{ route('orders.index', ['file_id' => $file->id, 'create' => 1]) }}"
+                               class="w-9 h-9 shrink-0 rounded-[14px] bg-slate-100/80 hover:bg-emerald-50 dark:bg-slate-800/80 dark:hover:bg-emerald-950/40 text-slate-500 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200/70 dark:border-white/10 flex items-center justify-center active:scale-90 transition-all cursor-pointer ios-press"
+                               title="Kirim ke Klien (Buat Paywall)">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6H2.25m0 0v1.5c0 .414.336.75.75.75h.75m0 0h12m-12 0a2.25 2.25 0 00-2.25 2.25v7.5a2.25 2.25 0 002.25 2.25h12a2.25 2.25 0 002.25-2.25v-7.5a2.25 2.25 0 00-2.25-2.25m-12 0h12" />
+                                </svg>
+                            </a>
 
                             <!-- Safe In-App Delete Button -->
                             <button type="button"
@@ -832,6 +1010,40 @@
         </div>
     @endif
 
+    <!-- Floating Batch Multi-Select Action Bar (Sticky Inline - Above Folders) -->
+    <div id="batch-action-bar" class="sticky top-0 z-30 -mx-4 px-4 py-2 hidden transition-all duration-300 ease-out" style="margin-top: -0.25rem;">
+        <div class="rounded-[24px] bg-slate-900/95 dark:bg-slate-950/95 text-white p-3 shadow-2xl backdrop-blur-3xl border border-teal-500/40 ring-1 ring-white/15 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2.5 min-w-0">
+                <span class="w-8 h-8 rounded-full bg-teal-500/30 border border-teal-400/50 text-teal-300 flex items-center justify-center text-xs font-black shrink-0 shadow-inner" id="batch-selected-count">
+                    0
+                </span>
+                <div class="min-w-0">
+                    <span class="text-xs font-black text-white block leading-tight truncate">Item Dipilih</span>
+                    <button type="button" onclick="selectAllBatchItems()" class="text-[10px] text-teal-300 font-bold hover:underline" id="batch-select-all-btn">
+                        Pilih Semua
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0">
+                <button type="button" 
+                        onclick="exitMultiSelectMode()" 
+                        class="px-3 py-2 rounded-2xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold active:scale-95 transition-all cursor-pointer">
+                    Batal
+                </button>
+                <button type="button" 
+                        id="btn-trigger-batch-delete"
+                        onclick="openBatchDeleteModal()" 
+                        class="px-4 py-2 rounded-2xl bg-rose-500 hover:bg-rose-600 active:scale-95 text-white text-xs font-black shadow-lg shadow-rose-500/40 flex items-center gap-1.5 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                    </svg>
+                    <span>Hapus</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- App Attribution Footer & Generous Bottom Spacer for Mobile Dock Clearance -->
     <div class="pt-8 pb-3 text-center">
         <p class="text-[11px] font-medium text-slate-400 dark:text-slate-500">
@@ -843,55 +1055,83 @@
 @endsection
 
 @push('modals')
-<!-- MODAL 1: SHARE & TRANSFER FILE (Existing) -->
+<!-- MODAL 1: SHARE & TRANSFER FILE (AJAX-Enabled & Native Share Supported) -->
 <div id="share-modal" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true" role="dialog">
     <div id="share-backdrop" onclick="closeShareModal()" class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity duration-300 opacity-0"></div>
     <div class="fixed bottom-0 left-0 right-0 z-30 flex justify-center pointer-events-none">
         <div id="share-panel" class="w-full max-w-md bg-white/95 dark:bg-slate-900/95 rounded-t-[36px] backdrop-blur-3xl shadow-2xl p-5 modal-sheet-safe border-t border-white/60 dark:border-white/10 pointer-events-auto transform translate-y-full transition-transform duration-300 space-y-4 max-h-[90vh] overflow-y-auto no-scrollbar">
             <div class="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-3 cursor-pointer" onclick="closeShareModal()"></div>
+            
             <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
-                <div>
-                    <h2 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                        <span>Transfer & Bagikan Berkas</span>
-                    </h2>
-                    <p class="text-[11px] text-slate-500 dark:text-slate-400" id="modal-file-info">Informasi berkas...</p>
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-2xl bg-teal-50 dark:bg-teal-950/50 text-teal-600 dark:text-teal-400 border border-teal-200/80 dark:border-teal-900/60 flex items-center justify-center shrink-0 shadow-2xs">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-sm font-extrabold text-slate-900 dark:text-white">Bagikan & Transfer Berkas</h2>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate max-w-[200px] sm:max-w-xs" id="modal-file-info">Informasi berkas...</p>
+                    </div>
                 </div>
-                <button type="button" onclick="closeShareModal()" aria-label="Tutup modal" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center justify-center active:scale-95 transition-all">
+                <button type="button" onclick="closeShareModal()" aria-label="Tutup modal" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center justify-center active:scale-95 transition-all cursor-pointer">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
             </div>
 
-            <form id="toggle-share-form" method="POST" action="">
-                @csrf
-                @method('PATCH')
-                <div class="bg-slate-50 dark:bg-slate-950 rounded-2xl p-3 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
-                    <div>
-                        <span class="text-xs font-bold text-slate-800 dark:text-slate-200 block">Tautan Transfer Publik</span>
-                        <span class="text-[10px] text-slate-500 dark:text-slate-400" id="share-status-desc">
-                            Siapa saja dengan tautan dapat mengunduh berkas ini.
+            <!-- Public Access Status Toggle Card -->
+            <div onclick="toggleFileShareStatus()" class="p-3.5 rounded-2xl bg-teal-500/5 dark:bg-teal-500/10 border border-teal-500/20 flex items-center justify-between gap-3 cursor-pointer select-none hover:bg-teal-500/10 dark:hover:bg-teal-500/15 active:scale-[0.99] transition-all">
+                <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-2 mb-0.5">
+                        <span class="text-xs font-black text-slate-900 dark:text-white">Akses Berbagi Publik</span>
+                        <span id="file-share-badge" class="px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300">
+                            Publik
                         </span>
                     </div>
-                    <button type="submit" id="toggle-btn" class="px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all">
-                        Ubah Status
-                    </button>
+                    <span class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed block" id="share-status-desc">
+                        Siapa saja yang memiliki tautan dapat membuka & mengunduh berkas ini langsung tanpa login.
+                    </span>
                 </div>
-            </form>
+                <button type="button" id="btn-file-share-switch" aria-label="Toggle akses berbagi publik" class="relative inline-flex items-center shrink-0 cursor-pointer focus:outline-none">
+                    <input type="checkbox" id="file-share-toggle" class="sr-only pointer-events-none">
+                    <div id="file-share-track" class="w-11 h-6 bg-slate-300 dark:bg-slate-700 rounded-full transition-colors relative pointer-events-none">
+                        <div id="file-share-knob" class="w-5 h-5 bg-white rounded-full shadow-md absolute top-0.5 left-0.5 transition-transform duration-200 ease-out pointer-events-none"></div>
+                    </div>
+                </button>
+            </div>
 
+            <!-- Active Public Share Section -->
             <div id="active-share-section" class="space-y-3">
+                <!-- Native Share Sheet CTA -->
+                <button type="button" 
+                        id="btn-native-share"
+                        onclick="shareCurrentFileNative()" 
+                        class="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-teal-500 via-emerald-500 to-teal-600 hover:from-teal-400 hover:to-emerald-400 active:scale-[0.98] text-white text-xs sm:text-sm font-black flex items-center justify-center gap-2 shadow-lg shadow-teal-500/25 transition-all cursor-pointer">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.3">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
+                    </svg>
+                    <span>Bagikan Tautan (Share Sheet)</span>
+                </button>
+
+                <!-- URL Copy Input Box -->
                 <div>
-                    <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Tautan Unduhan Langsung</label>
+                    <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">Tautan Unduhan Langsung</label>
                     <div class="flex items-center gap-1.5">
-                        <input type="text" id="share-url-input" readonly class="flex-1 px-3 py-2 text-xs rounded-xl bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-mono select-all">
-                        <button type="button" onclick="copyToClipboard(document.getElementById('share-url-input').value, this)" class="px-3 py-2 rounded-xl bg-teal-500 hover:bg-teal-600 text-white text-xs font-bold active:scale-95 transition-all shrink-0 flex items-center gap-1 shadow-sm">
+                        <input type="text" id="share-url-input" readonly class="flex-1 px-3 py-2 text-xs rounded-xl bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-mono select-all focus:outline-none">
+                        <button type="button" id="btn-copy-file-url" onclick="copyToClipboard(document.getElementById('share-url-input').value, this)" class="px-3.5 py-2 rounded-xl bg-teal-500 hover:bg-teal-600 text-white text-xs font-bold active:scale-95 transition-all shrink-0 flex items-center gap-1 shadow-xs cursor-pointer">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.849a2.25 2.25 0 00-3.332 0l-4.5 4.5a2.25 2.25 0 003.182 3.182l1.5-1.5m4.5-4.5l1.5-1.5a2.25 2.25 0 013.182 3.182l-4.5 4.5a2.25 2.25 0 01-3.182 0" />
+                            </svg>
                             <span>Salin</span>
                         </button>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-2 pt-1">
-                    <a id="btn-wa-share" href="#" target="_blank" class="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95 transition-all shadow-sm">
+                <!-- Shortcuts (WhatsApp & Open Link) -->
+                <div class="grid grid-cols-2 gap-2 pt-0.5">
+                    <a id="btn-wa-share" href="#" target="_blank" class="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95 transition-all shadow-xs">
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.025 3.284l-.707 2.582 2.658-.697c1.002.581 1.777.832 2.792.832 3.182 0 5.767-2.587 5.768-5.768 0-3.182-2.586-5.768-5.768-5.768zm3.364 8.169c-.145.408-.847.784-1.173.834-.325.051-.735.083-2.164-.509-1.428-.592-2.339-2.029-2.41-2.124-.071-.095-.572-.761-.572-1.451 0-.691.362-1.03.491-1.173.129-.143.282-.179.376-.179.094 0 .188.001.27.006.088.005.206-.033.322.247.123.298.421 1.027.458 1.102.037.075.061.163.012.261-.049.098-.073.159-.146.244-.073.085-.154.19-.22.256-.073.073-.149.153-.064.299.085.146.377.621.808 1.005.556.495 1.025.648 1.171.721.146.073.232.061.318-.037.086-.098.368-.428.466-.575.098-.147.196-.123.328-.074.132.049.837.395.981.467.144.072.24.108.276.17.036.062.036.357-.109.765z"/>
                         </svg>
@@ -901,6 +1141,15 @@
                         <span>Buka Link ↗</span>
                     </a>
                 </div>
+
+                <!-- Buat Paywall Klien CTA -->
+                <a id="btn-paywall-share" href="#"
+                   class="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-black flex items-center justify-center gap-2 active:scale-95 transition-all text-center shadow-xs">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6H2.25m0 0v1.5c0 .414.336.75.75.75h.75m0 0h12m-12 0a2.25 2.25 0 00-2.25 2.25v7.5a2.25 2.25 0 002.25 2.25h12a2.25 2.25 0 002.25-2.25v-7.5a2.25 2.25 0 00-2.25-2.25m-12 0h12" />
+                    </svg>
+                    <span>💼 Buat Paywall Klien (Kirim Link Berkas)</span>
+                </a>
 
                 <!-- QR Code Toggle Button -->
                 <button type="button" id="btn-toggle-share-qr" onclick="toggleShareQrCode()" class="w-full py-2.5 px-3 rounded-xl bg-teal-50 dark:bg-teal-950/40 hover:bg-teal-100 dark:hover:bg-teal-900/50 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/80 text-xs font-bold flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer">
@@ -924,7 +1173,7 @@
                             <svg class="w-3.5 h-3.5 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
                             <span>Unduh QR</span>
                         </a>
-                        <button type="button" onclick="copyToClipboard(document.getElementById('share-url-input').value, this)" class="px-3.5 py-1.5 rounded-xl bg-teal-500 text-white hover:bg-teal-600 text-xs font-bold inline-flex items-center gap-1.5 shadow-2xs active:scale-95 transition-all">
+                        <button type="button" onclick="copyToClipboard(document.getElementById('share-url-input').value, this)" class="px-3.5 py-1.5 rounded-xl bg-teal-500 text-white hover:bg-teal-600 text-xs font-bold inline-flex items-center gap-1.5 shadow-2xs active:scale-95 transition-all cursor-pointer">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.849A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.599m7.332 0c.055.194.084.4.084.615v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.215.03-.42.084-.615m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" /></svg>
                             <span>Salin Link</span>
                         </button>
@@ -932,9 +1181,24 @@
                 </div>
             </div>
 
-            <div id="inactive-share-notice" class="hidden p-3 bg-amber-50 dark:bg-amber-950/30 rounded-xl border border-amber-200 dark:border-amber-800 text-xs text-amber-800 dark:text-amber-300">
-                <span class="font-bold block mb-0.5">🔒 File bersifat privat</span>
-                Aktifkan tombol "Ubah Status" di atas agar link transfer dapat diakses oleh penerima tanpa login.
+            <!-- Inactive Private Share Notice with 1-Click Activate & Share Button -->
+            <div id="inactive-share-notice" class="hidden p-4 bg-amber-50 dark:bg-amber-950/30 rounded-2xl border border-amber-200 dark:border-amber-800 text-xs text-amber-900 dark:text-amber-200 space-y-3">
+                <div>
+                    <span class="font-bold flex items-center gap-1.5 mb-1 text-amber-800 dark:text-amber-300">
+                        <span>🔒</span> File Bersifat Privat
+                    </span>
+                    <p class="text-[11px] text-amber-700 dark:text-amber-400 leading-relaxed">
+                        Tautan transfer berkas saat ini dinonaktifkan. Aktifkan akses publik agar penerima dapat melihat atau mengunduh berkas tanpa perlu akun.
+                    </p>
+                </div>
+                <button type="button" 
+                        onclick="toggleFileShareStatus(true)" 
+                        class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-white font-black text-xs flex items-center justify-center gap-2 active:scale-95 transition-all shadow-md cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.3">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5V6.75a4.5 4.5 0 119 0v3.75M3.75 21.75h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H3.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                    </svg>
+                    <span>Aktifkan & Bagikan Tautan Sekarang</span>
+                </button>
             </div>
         </div>
     </div>
@@ -1220,9 +1484,12 @@
                         TXT
                     </div>
                     <div class="min-w-0 flex-1">
-                        <h2 id="pv-title" class="text-sm sm:text-base font-bold text-slate-900 dark:text-white truncate leading-tight">
-                            Nama Berkas
-                        </h2>
+                        <div class="flex items-center gap-2">
+                            <h2 id="pv-title" class="text-sm sm:text-base font-bold text-slate-900 dark:text-white truncate leading-tight">
+                                Nama Berkas
+                            </h2>
+                            <div id="pv-share-badge" class="shrink-0"></div>
+                        </div>
                         <div class="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5 font-medium">
                             <span id="pv-size">0 KB</span>
                             <span>•</span>
@@ -1353,6 +1620,57 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: KONFIRMASI HAPUS BANYAK (BATCH DELETE MODAL) -->
+<div id="batch-delete-modal" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true" role="dialog">
+    <div id="batch-delete-backdrop" onclick="closeBatchDeleteModal()" class="fixed inset-0 bg-slate-950/75 backdrop-blur-xs transition-opacity duration-300 opacity-0"></div>
+    <div class="fixed bottom-0 left-0 right-0 z-30 flex justify-center pointer-events-none">
+        <div id="batch-delete-panel" class="w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-100 dark:border-slate-800 pointer-events-auto transform translate-y-full transition-transform duration-300 space-y-4 text-slate-800 dark:text-white">
+            <div class="w-12 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-2 cursor-pointer" onclick="closeBatchDeleteModal()"></div>
+            
+            <div class="flex items-start gap-3">
+                <div class="w-11 h-11 rounded-2xl bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 border border-rose-200/80 dark:border-rose-900/60 flex items-center justify-center shrink-0 shadow-xs">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                    </svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h3 class="text-sm font-extrabold text-slate-900 dark:text-white" id="batch-delete-modal-title">Hapus Semua Item Terpilih?</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
+                        Folder dan berkas yang dipilih akan dihapus secara permanen beserta seluruh isinya.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Target Summary -->
+            <div class="p-3 bg-slate-50 dark:bg-slate-950/70 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2">
+                <div class="flex items-center justify-between text-xs font-bold">
+                    <span class="text-slate-600 dark:text-slate-400">Total Item Terpilih:</span>
+                    <span class="text-rose-600 dark:text-rose-400 font-black" id="batch-delete-summary-text">0 item</span>
+                </div>
+                <div id="batch-delete-items-list" class="max-h-32 overflow-y-auto no-scrollbar space-y-1 text-[11px] text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-200/60 dark:border-slate-800">
+                    <!-- Populated dynamically via JS -->
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 pt-1">
+                <button type="button" id="btn-confirm-batch-delete" onclick="executeBatchDelete()" class="flex-1 py-3 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 active:scale-[0.98] text-white text-xs font-extrabold shadow-md shadow-rose-600/25 flex items-center justify-center gap-1.5 transition-all cursor-pointer">
+                    <svg class="w-4 h-4" id="batch-delete-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                    </svg>
+                    <svg class="w-4 h-4 animate-spin hidden" id="batch-delete-spinner" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                    </svg>
+                    <span id="batch-delete-btn-text">Ya, Hapus Semua Terpilih</span>
+                </button>
+                <button type="button" onclick="closeBatchDeleteModal()" class="py-3 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold active:scale-95 transition-all cursor-pointer">
+                    Batal
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -1601,6 +1919,17 @@
 
             <!-- Share URL Container (Visible when public) -->
             <div id="folder-share-url-container" class="space-y-3">
+                <!-- Native Share Sheet CTA -->
+                <button type="button" 
+                        id="btn-native-folder-share"
+                        onclick="shareFolderNative()" 
+                        class="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-teal-500 via-emerald-500 to-teal-600 hover:from-teal-400 hover:to-emerald-400 active:scale-[0.98] text-white text-xs sm:text-sm font-black flex items-center justify-center gap-2 shadow-lg shadow-teal-500/25 transition-all cursor-pointer">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.3">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
+                    </svg>
+                    <span>Bagikan Tautan Folder (Share Sheet)</span>
+                </button>
+
                 <div>
                     <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1.5">
                         Tautan Berbagi Folder
@@ -1628,13 +1957,22 @@
                         <span>Buka Tautan</span>
                     </a>
                     <a id="folder-share-wa-btn" href="#" target="_blank"
-                       class="py-2.5 px-3 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-xs font-bold flex items-center justify-center gap-2 active:scale-95 transition-all text-center">
+                       class="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-2 active:scale-95 transition-all text-center shadow-xs">
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.698.058-2.073-.509-1.633-.674-2.686-2.339-2.767-2.449-.081-.11-.662-.881-.662-1.68 0-.798.419-1.192.569-1.353.15-.16.329-.2.438-.2.11 0 .22.001.317.006.103.005.241-.039.378.291.144.346.49 1.198.533 1.286.043.088.072.191.014.306-.058.115-.088.187-.174.288-.087.102-.184.227-.263.305-.088.087-.18.181-.077.358.103.177.46 1.082 1.344 1.868.514.457.946.598 1.08.686.134.088.212.077.291-.014.079-.092.34-.395.431-.531.092-.136.183-.114.306-.068.123.045.783.369.917.436.134.067.224.1.257.156.033.056.033.568-.111.973z"/>
                         </svg>
-                        <span>Kirim WhatsApp</span>
+                        <span>WhatsApp</span>
                     </a>
                 </div>
+
+                <!-- Buat Paywall Klien CTA -->
+                <a id="folder-share-paywall-btn" href="#"
+                   class="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-black flex items-center justify-center gap-2 active:scale-95 transition-all text-center shadow-xs">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6H2.25m0 0v1.5c0 .414.336.75.75.75h.75m0 0h12m-12 0a2.25 2.25 0 00-2.25 2.25v7.5a2.25 2.25 0 002.25 2.25h12a2.25 2.25 0 002.25-2.25v-7.5a2.25 2.25 0 00-2.25-2.25m-12 0h12" />
+                    </svg>
+                    <span>💼 Buat Paywall Klien (Kirim Link Folder)</span>
+                </a>
 
                 <!-- QR Code Toggle Button -->
                 <button type="button" id="btn-toggle-folder-share-qr" onclick="toggleFolderShareQrCode()" class="w-full py-2.5 px-3 rounded-xl bg-teal-50 dark:bg-teal-950/40 hover:bg-teal-100 dark:hover:bg-teal-900/50 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/80 text-xs font-bold flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer">
@@ -1658,7 +1996,7 @@
                             <svg class="w-3.5 h-3.5 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
                             <span>Unduh QR</span>
                         </a>
-                        <button type="button" onclick="copyFolderShareLink()" class="px-3.5 py-1.5 rounded-xl bg-teal-500 text-white hover:bg-teal-600 text-xs font-bold inline-flex items-center gap-1.5 shadow-2xs active:scale-95 transition-all">
+                        <button type="button" onclick="copyFolderShareLink()" class="px-3.5 py-1.5 rounded-xl bg-teal-500 text-white hover:bg-teal-600 text-xs font-bold inline-flex items-center gap-1.5 shadow-2xs active:scale-95 transition-all cursor-pointer">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.849A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.599m7.332 0c.055.194.084.4.084.615v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.215.03-.42.084-.615m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" /></svg>
                             <span>Salin Link</span>
                         </button>
@@ -1666,12 +2004,24 @@
                 </div>
             </div>
 
-            <!-- Disabled State Notice (When private) -->
-            <div id="folder-share-private-notice" class="hidden p-4 rounded-2xl bg-slate-100 dark:bg-slate-800/60 text-center space-y-1.5">
-                <span class="text-xs font-bold text-slate-700 dark:text-slate-300 block">Folder ini Sedang Privat</span>
-                <p class="text-[11px] text-slate-500 dark:text-slate-400">
-                    Aktifkan toggle di atas untuk menghasilkan tautan publik dan membagikan folder ini kepada orang lain.
-                </p>
+            <!-- Disabled State Notice (When private) with 1-Click Activate Button -->
+            <div id="folder-share-private-notice" class="hidden p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-200 space-y-3">
+                <div>
+                    <span class="text-xs font-bold flex items-center gap-1.5 mb-1 text-amber-800 dark:text-amber-300">
+                        <span>📁</span> Folder ini Sedang Privat
+                    </span>
+                    <p class="text-[11px] text-amber-700 dark:text-amber-400 leading-relaxed">
+                        Aktifkan akses publik agar siapa saja yang memiliki tautan dapat membuka atau mengunduh isi folder ini.
+                    </p>
+                </div>
+                <button type="button" 
+                        onclick="toggleFolderShareStatus(true)" 
+                        class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-white font-black text-xs flex items-center justify-center gap-2 active:scale-95 transition-all shadow-md cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.3">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5V6.75a4.5 4.5 0 119 0v3.75M3.75 21.75h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H3.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                    </svg>
+                    <span>Aktifkan & Bagikan Folder Sekarang</span>
+                </button>
             </div>
         </div>
     </div>
@@ -1856,7 +2206,79 @@
                 progressBar.style.width = '0%';
                 progressPercent.innerText = '0%';
                 statusText.innerText = 'Mengunggah berkas...';
-                progressBytes.innerText = `0 KB / ${formatBytes(totalUploadSize)}`;
+                if (progressBytes) progressBytes.innerText = `0 KB / ${formatBytes(totalUploadSize)}`;
+            }
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+                || document.querySelector('input[name="_token"]')?.value;
+
+            // Chunked upload for files > 2MB for cellular / mobile performance
+            if (fileInput.files.length === 1 && fileInput.files[0].size > 2 * 1024 * 1024) {
+                const singleFile = fileInput.files[0];
+                const folderId = document.getElementById('upload-target-folder')?.value || '';
+                const CHUNK_SIZE = 1024 * 1024; // 1MB per chunk
+                const totalChunks = Math.ceil(singleFile.size / CHUNK_SIZE);
+                const fileUuid = 'sf_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
+                let currentChunk = 0;
+
+                async function sendNextChunk() {
+                    if (currentChunk >= totalChunks) return;
+
+                    const start = currentChunk * CHUNK_SIZE;
+                    const end = Math.min(start + CHUNK_SIZE, singleFile.size);
+                    const chunkBlob = singleFile.slice(start, end);
+
+                    const chunkFormData = new FormData();
+                    chunkFormData.append('chunk', chunkBlob, singleFile.name);
+                    chunkFormData.append('chunk_index', currentChunk);
+                    chunkFormData.append('total_chunks', totalChunks);
+                    chunkFormData.append('file_uuid', fileUuid);
+                    chunkFormData.append('file_name', singleFile.name);
+                    if (folderId) chunkFormData.append('folder_id', folderId);
+
+                    try {
+                        const response = await fetch("{{ route('drive.upload-chunk') }}", {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': csrfToken,
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            },
+                            body: chunkFormData
+                        });
+
+                        const result = await response.json();
+                        if (!response.ok) {
+                            throw new Error(result.error || result.message || 'Gagal mengunggah potongan berkas');
+                        }
+
+                        currentChunk++;
+                        const percent = Math.min(100, Math.round((currentChunk / totalChunks) * 100));
+                        if (progressBar) progressBar.style.width = percent + '%';
+                        if (progressPercent) progressPercent.innerText = percent + '%';
+                        if (progressBytes) progressBytes.innerText = `${formatBytes(end)} / ${formatBytes(singleFile.size)}`;
+                        if (statusText) {
+                            statusText.innerText = currentChunk < totalChunks 
+                                ? `Mengunggah potongan ${currentChunk}/${totalChunks} (Chunked)...`
+                                : 'Menggabungkan & memproses WebP...';
+                        }
+
+                        if (currentChunk < totalChunks) {
+                            sendNextChunk();
+                        } else {
+                            if (statusText) statusText.innerText = 'Unggahan chunk berhasil!';
+                            setTimeout(() => {
+                                window.location.href = "{{ route('drive.index', ['tab' => 'files']) }}";
+                            }, 500);
+                        }
+                    } catch (err) {
+                        alert(err.message || 'Terjadi kendala jaringan saat pengunggahan berkas.');
+                        resetUploadState();
+                    }
+                }
+
+                sendNextChunk();
+                return;
             }
 
             const formData = new FormData(uploadForm);
@@ -1864,8 +2286,6 @@
 
             xhr.open('POST', uploadForm.action, true);
             xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
-                || document.querySelector('input[name="_token"]')?.value;
             if (csrfToken) {
                 xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
             }
@@ -1960,42 +2380,32 @@
     }
 
     // Share Modal
+    let currentShareFile = null;
+
     function openShareModal(id, title, size, url, isPublic, toggleAction) {
+        // Read dynamic status from card element dataset if available to avoid stale arguments
+        const fileCard = document.getElementById(`file-${id}`);
+        const livePublic = fileCard ? (fileCard.dataset.isPublic === 'true') : (isPublic === true || isPublic === 'true');
+
+        currentShareFile = {
+            id: id,
+            title: title,
+            size: size,
+            url: url,
+            isPublic: livePublic,
+            toggleAction: toggleAction
+        };
+
         document.getElementById('modal-file-info').innerText = `${title} • ${size}`;
         document.getElementById('share-url-input').value = url;
-        document.getElementById('toggle-share-form').action = toggleAction;
+        const toggleCheckbox = document.getElementById('file-share-toggle');
+        if (toggleCheckbox) toggleCheckbox.checked = livePublic;
 
-        const toggleBtn = document.getElementById('toggle-btn');
-        const activeSection = document.getElementById('active-share-section');
-        const inactiveNotice = document.getElementById('inactive-share-notice');
-        const statusDesc = document.getElementById('share-status-desc');
+        updateFileShareUI(livePublic, title, size, url);
 
-        if (isPublic) {
-            toggleBtn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-100 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 hover:bg-rose-200';
-            toggleBtn.innerText = 'Nonaktifkan';
-            statusDesc.innerText = 'Tautan publik sedang aktif. Siapa saja dengan link dapat mengunduh.';
-            activeSection.classList.remove('hidden');
-            inactiveNotice.classList.add('hidden');
-
-            const waText = encodeURIComponent(`Halo, berikut tautan berkas "${title}" (${size}):\n${url}`);
-            document.getElementById('btn-wa-share').href = `https://api.whatsapp.com/send?text=${waText}`;
-            document.getElementById('btn-preview-share').href = url;
-
-            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(url)}`;
-            const qrImg = document.getElementById('share-qr-image');
-            if (qrImg) qrImg.src = qrUrl;
-            const qrDownloadBtn = document.getElementById('btn-download-share-qr');
-            if (qrDownloadBtn) qrDownloadBtn.href = qrUrl;
-            const qrContainer = document.getElementById('share-qr-container');
-            if (qrContainer) qrContainer.classList.add('hidden');
-            const qrLabel = document.getElementById('btn-qr-label');
-            if (qrLabel) qrLabel.innerText = 'Pindai / Tampilkan QR Code';
-        } else {
-            toggleBtn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-white shadow-xs hover:bg-emerald-600';
-            toggleBtn.innerText = 'Aktifkan';
-            statusDesc.innerText = 'Tautan transfer sedang privat dan dinonaktifkan.';
-            activeSection.classList.add('hidden');
-            inactiveNotice.classList.remove('hidden');
+        const paywallBtn = document.getElementById('btn-paywall-share');
+        if (paywallBtn) {
+            paywallBtn.href = "{{ route('orders.index') }}?file_id=" + id + "&create=1";
         }
 
         const modal = document.getElementById('share-modal');
@@ -2011,6 +2421,210 @@
                 panel.classList.add('translate-y-0');
             });
         });
+    }
+
+    function updateFileShareUI(isPublic, title, size, url) {
+        const badge = document.getElementById('file-share-badge');
+        const activeSection = document.getElementById('active-share-section');
+        const inactiveNotice = document.getElementById('inactive-share-notice');
+        const statusDesc = document.getElementById('share-status-desc');
+        const track = document.getElementById('file-share-track');
+        const knob = document.getElementById('file-share-knob');
+        const toggleCheckbox = document.getElementById('file-share-toggle');
+
+        if (toggleCheckbox) toggleCheckbox.checked = !!isPublic;
+
+        if (track && knob) {
+            if (isPublic) {
+                track.className = 'w-11 h-6 bg-teal-500 rounded-full transition-colors relative cursor-pointer';
+                knob.style.transform = 'translateX(20px)';
+            } else {
+                track.className = 'w-11 h-6 bg-slate-300 dark:bg-slate-700 rounded-full transition-colors relative cursor-pointer';
+                knob.style.transform = 'translateX(0px)';
+            }
+        }
+
+        if (isPublic) {
+            if (badge) {
+                badge.innerText = 'Publik';
+                badge.className = 'px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300';
+            }
+            if (statusDesc) {
+                statusDesc.innerText = 'Tautan transfer aktif. Siapa saja dengan tautan dapat mengunduh berkas ini langsung.';
+            }
+            if (activeSection) activeSection.classList.remove('hidden');
+            if (inactiveNotice) inactiveNotice.classList.add('hidden');
+
+            const waText = encodeURIComponent(`Halo, berikut tautan berkas "${title}" (${size}) di SwanDrive:\n${url}`);
+            const waBtn = document.getElementById('btn-wa-share');
+            if (waBtn) waBtn.href = `https://wa.me/?text=${waText}`;
+
+            const previewBtn = document.getElementById('btn-preview-share');
+            if (previewBtn) previewBtn.href = url;
+
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(url)}`;
+            const qrImg = document.getElementById('share-qr-image');
+            if (qrImg) qrImg.src = qrUrl;
+            const qrDownloadBtn = document.getElementById('btn-download-share-qr');
+            if (qrDownloadBtn) qrDownloadBtn.href = qrUrl;
+            const qrContainer = document.getElementById('share-qr-container');
+            if (qrContainer) qrContainer.classList.add('hidden');
+            const qrLabel = document.getElementById('btn-qr-label');
+            if (qrLabel) qrLabel.innerText = 'Pindai / Tampilkan QR Code';
+        } else {
+            if (badge) {
+                badge.innerText = 'Privat';
+                badge.className = 'px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300';
+            }
+            if (statusDesc) {
+                statusDesc.innerText = 'Tautan transfer sedang privat dan dinonaktifkan.';
+            }
+            if (activeSection) activeSection.classList.add('hidden');
+            if (inactiveNotice) inactiveNotice.classList.remove('hidden');
+        }
+    }
+
+    function updateCardShareStatus(id, isPublic, shareUrl) {
+        // 0. Update fileCard dataset
+        const fileCard = document.getElementById(`file-${id}`);
+        if (fileCard) {
+            fileCard.dataset.isPublic = isPublic ? 'true' : 'false';
+            if (!fileCard.dataset.receivedFromOther) {
+                if (isPublic) {
+                    fileCard.classList.add('border-emerald-300/50', 'dark:border-emerald-500/30', 'ring-1', 'ring-emerald-500/15');
+                } else {
+                    fileCard.classList.remove('border-emerald-300/50', 'dark:border-emerald-500/30', 'ring-1', 'ring-emerald-500/15');
+                }
+            }
+        }
+
+        // 1. File icon overlay badge on thumbnail
+        const iconShare = document.getElementById(`file-icon-share-${id}`);
+        if (iconShare) {
+            if (isPublic) {
+                iconShare.innerHTML = `<span class="w-4 h-4 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-xs ring-2 ring-white dark:ring-slate-900" title="Dibagikan (Tautan Publik Aktif)"><svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.8"><path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" /></svg></span>`;
+            } else {
+                iconShare.innerHTML = `<span class="w-4 h-4 rounded-full bg-slate-300 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center shadow-xs ring-2 ring-white dark:ring-slate-900" title="Privat (Hanya Anda)"><svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg></span>`;
+            }
+        }
+
+        // 2. Card header right badge
+        const shareBadge = document.getElementById(`file-share-badge-${id}`);
+        if (shareBadge) {
+            if (isPublic) {
+                shareBadge.innerHTML = `<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 border border-emerald-300/70 dark:border-emerald-700/60 shadow-2xs"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span><svg class="w-2.5 h-2.5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" /></svg><span>Dibagikan</span></span>`;
+            } else {
+                shareBadge.innerHTML = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800/90 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700/80"><svg class="w-2.5 h-2.5 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg><span>Privat</span></span>`;
+            }
+        }
+
+        // 3. Card bottom action button
+        const shareBtn = document.getElementById(`file-share-btn-${id}`);
+        if (shareBtn) {
+            if (isPublic) {
+                shareBtn.className = "flex-1 py-2 px-3 rounded-[16px] bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-300/80 dark:border-emerald-800/80 text-xs font-bold flex items-center justify-center gap-1.5 active:scale-[0.98] transition-all cursor-pointer ios-press";
+                shareBtn.title = "Tautan Aktif (Bisa Diunduh Publik)";
+                shareBtn.innerHTML = `<svg class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" /></svg><span>🔗 Tautan Aktif</span>`;
+            } else {
+                shareBtn.className = "flex-1 py-2 px-3 rounded-[16px] bg-slate-100/80 hover:bg-slate-200 dark:bg-slate-800/80 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200/70 dark:border-white/10 text-xs font-bold flex items-center justify-center gap-1.5 active:scale-[0.98] transition-all cursor-pointer ios-press";
+                shareBtn.title = "Bagikan Link (Privat)";
+                shareBtn.innerHTML = `<svg class="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" /></svg><span>🔒 Bagikan</span>`;
+            }
+        }
+
+        // 4. Update preview modal badge & share button if open
+        if (typeof currentPreviewFile !== 'undefined' && currentPreviewFile && currentPreviewFile.id == id) {
+            currentPreviewFile.isPublic = isPublic;
+            currentPreviewFile.shareUrl = shareUrl;
+            const pvShareBadge = document.getElementById('pv-share-badge');
+            if (pvShareBadge) {
+                if (isPublic) {
+                    pvShareBadge.innerHTML = `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-black bg-emerald-100 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 border border-emerald-300/70 dark:border-emerald-700/60 shadow-2xs"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>🔗 Dibagikan</span>`;
+                } else {
+                    pvShareBadge.innerHTML = `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 shadow-2xs">🔒 Privat</span>`;
+                }
+            }
+            const pvShareBtn = document.getElementById('pv-share-btn');
+            if (pvShareBtn) {
+                if (isPublic) {
+                    pvShareBtn.innerHTML = `<svg class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" /></svg><span>🔗 Tautan Aktif</span>`;
+                } else {
+                    pvShareBtn.innerHTML = `<svg class="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" /></svg><span>Bagikan</span>`;
+                }
+            }
+        }
+    }
+
+    async function toggleFileShareStatus(andShareAfter = false) {
+        if (!currentShareFile || !currentShareFile.toggleAction) return;
+
+        const previousState = !!currentShareFile.isPublic;
+        const targetState = andShareAfter ? true : !previousState;
+
+        // Optimistically update toggle UI for snappy feel
+        updateFileShareUI(targetState, currentShareFile.title, currentShareFile.size, currentShareFile.url);
+
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+            || document.querySelector('input[name="_token"]')?.value;
+
+        try {
+            const response = await fetch(currentShareFile.toggleAction, {
+                method: 'PATCH',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ is_public: targetState })
+            });
+            const data = await response.json();
+            if (data.success) {
+                currentShareFile.isPublic = data.is_public;
+                currentShareFile.url = data.share_url;
+                const shareInput = document.getElementById('share-url-input');
+                if (shareInput) shareInput.value = data.share_url;
+
+                updateFileShareUI(data.is_public, currentShareFile.title, currentShareFile.size, data.share_url);
+                updateCardShareStatus(currentShareFile.id, data.is_public, data.share_url);
+
+                if (typeof showSwanToast === 'function') {
+                    showSwanToast(data.message || 'Status berbagi berkas diperbarui.');
+                }
+                if (andShareAfter && data.is_public) {
+                    shareCurrentFileNative();
+                }
+            } else {
+                currentShareFile.isPublic = previousState;
+                updateFileShareUI(previousState, currentShareFile.title, currentShareFile.size, currentShareFile.url);
+                alert(data.message || 'Gagal mengubah status berbagi berkas.');
+            }
+        } catch (err) {
+            currentShareFile.isPublic = previousState;
+            updateFileShareUI(previousState, currentShareFile.title, currentShareFile.size, currentShareFile.url);
+            alert('Terjadi kesalahan jaringan saat memperbarui status.');
+        }
+    }
+
+    async function shareCurrentFileNative() {
+        if (!currentShareFile) return;
+        const url = currentShareFile.url;
+        const title = currentShareFile.title;
+        const size = currentShareFile.size;
+
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: title,
+                    text: `Halo, berikut tautan berkas "${title}" (${size}) di SwanDrive:`,
+                    url: url
+                });
+                return;
+            } catch (err) {
+                if (err.name === 'AbortError') return;
+            }
+        }
+        copyToClipboard(url, document.getElementById('btn-copy-file-url'));
     }
 
     function toggleShareQrCode() {
@@ -2146,9 +2760,10 @@
         }
     }
 
-    // Generic Copy to Clipboard Helper
-    function copyToClipboard(text, btnElement) {
-        navigator.clipboard.writeText(text).then(() => {
+    // Generic Copy to Clipboard Helper (Bulletproof for iOS Safari & Secure Contexts)
+    async function copyToClipboard(text, btnElement) {
+        if (!text) return;
+        const handleSuccess = () => {
             if (typeof showSwanToast === 'function') {
                 showSwanToast('Tautan berhasil disalin ke papan klip!');
             }
@@ -2159,9 +2774,40 @@
                     btnElement.innerHTML = originalHtml;
                 }, 2000);
             }
-        }).catch(() => {
-            prompt('Salin link ini:', text);
-        });
+        };
+
+        try {
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(text);
+                handleSuccess();
+                return;
+            }
+        } catch (e) {
+            // fallback below
+        }
+
+        try {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.left = '-9999px';
+            textarea.style.top = '0';
+            textarea.setAttribute('readonly', '');
+            document.body.appendChild(textarea);
+            textarea.focus();
+            textarea.select();
+            textarea.setSelectionRange(0, 99999);
+            const successful = document.execCommand('copy');
+            document.body.removeChild(textarea);
+            if (successful) {
+                handleSuccess();
+                return;
+            }
+        } catch (err) {
+            // fallback below
+        }
+
+        prompt('Salin link ini:', text);
     }
 
     // Preview Modal Handlers
@@ -2216,10 +2862,23 @@
         const shareBtn = document.getElementById('pv-share-btn');
         if (shareBtn) {
             shareBtn.style.display = shareToggleUrl ? '' : 'none';
+            if (isPublic) {
+                shareBtn.innerHTML = `<svg class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" /></svg><span>🔗 Tautan Aktif</span>`;
+            } else {
+                shareBtn.innerHTML = `<svg class="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" /></svg><span>Bagikan</span>`;
+            }
         }
 
         // Populate header info
         document.getElementById('pv-title').innerText = title || originalName;
+        const pvShareBadge = document.getElementById('pv-share-badge');
+        if (pvShareBadge) {
+            if (isPublic) {
+                pvShareBadge.innerHTML = `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-black bg-emerald-100 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 border border-emerald-300/70 dark:border-emerald-700/60 shadow-2xs"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>🔗 Dibagikan</span>`;
+            } else {
+                pvShareBadge.innerHTML = `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 shadow-2xs">🔒 Privat</span>`;
+            }
+        }
         document.getElementById('pv-size').innerText = size;
         document.getElementById('pv-ext-badge').innerText = (ext || 'FILE').toUpperCase().substring(0, 4);
         document.getElementById('pv-ext-label').innerText = label || (ext ? ext.toUpperCase() : 'BERKAS');
@@ -2611,6 +3270,11 @@
 
         updateFolderShareUI(isPublic, name, url);
 
+        const paywallFolderBtn = document.getElementById('folder-share-paywall-btn');
+        if (paywallFolderBtn) {
+            paywallFolderBtn.href = "{{ route('orders.index') }}?folder_id=" + id + "&create=1";
+        }
+
         const modal = document.getElementById('folder-share-modal');
         const backdrop = document.getElementById('folder-share-backdrop');
         const panel = document.getElementById('folder-share-panel');
@@ -2640,8 +3304,8 @@
             privateNotice.classList.add('hidden');
 
             openBtn.href = url;
-            const waText = encodeURIComponent(`Halo, berikut tautan folder berkas SwanDrive "${name}":\n${url}`);
-            waBtn.href = `https://api.whatsapp.com/send?text=${waText}`;
+            const waText = encodeURIComponent(`Halo, berikut tautan folder berkas "${name}" di SwanDrive:\n${url}`);
+            waBtn.href = `https://wa.me/?text=${waText}`;
 
             const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(url)}`;
             const qrImg = document.getElementById('folder-share-qr-image');
@@ -2688,42 +3352,100 @@
         }, 300);
     }
 
-    function toggleFolderShareStatus() {
+    function updateFolderCardShareStatus(id, isPublic, shareUrl) {
+        const badge = document.getElementById(`folder-share-badge-${id}`);
+        if (badge) {
+            if (isPublic) {
+                badge.innerHTML = `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-black bg-emerald-100 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 border border-emerald-300/60 dark:border-emerald-700/60 shadow-2xs" title="Folder dibagikan publik"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span><span>🔗 Dibagikan</span></span>`;
+            } else {
+                badge.innerHTML = `<span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-slate-100 dark:bg-slate-800/80 text-slate-400 dark:text-slate-500 border border-slate-200/60 dark:border-slate-700/60" title="Folder privat"><span>🔒 Privat</span></span>`;
+            }
+        }
+        const shareBtn = document.getElementById(`folder-share-btn-${id}`);
+        if (shareBtn) {
+            if (isPublic) {
+                shareBtn.className = "p-1.5 rounded-lg text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 ring-1 ring-emerald-400/30 transition-colors cursor-pointer";
+                shareBtn.title = "Folder Dibagikan (Tautan Aktif)";
+            } else {
+                shareBtn.className = "p-1.5 rounded-lg text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer";
+                shareBtn.title = "Bagikan Folder";
+            }
+        }
+        const currentFolderBadge = document.getElementById('current-folder-share-badge');
+        if (currentFolderBadge && currentSharedFolder && currentSharedFolder.id == '{{ $currentFolder?->id }}') {
+            if (isPublic) {
+                currentFolderBadge.innerHTML = `<span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 flex items-center gap-1 shadow-2xs"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>Dibagikan</span>`;
+            } else {
+                currentFolderBadge.innerHTML = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 flex items-center gap-1">Privat</span>`;
+            }
+        }
+    }
+
+    async function toggleFolderShareStatus(andShareAfter = false) {
         if (!currentSharedFolder || !currentSharedFolder.toggleUrl) return;
 
         const toggleCheckbox = document.getElementById('folder-share-toggle');
-        const desiredState = toggleCheckbox.checked;
+        const previousState = currentSharedFolder.isPublic;
+        const desiredState = andShareAfter ? true : (toggleCheckbox ? toggleCheckbox.checked : !previousState);
 
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
             || document.querySelector('input[name="_token"]')?.value;
 
-        fetch(currentSharedFolder.toggleUrl, {
-            method: 'PATCH',
-            headers: {
-                'X-CSRF-TOKEN': csrfToken,
-                'X-Requested-With': 'XMLHttpRequest',
-                'Accept': 'application/json'
-            }
-        })
-        .then(res => res.json())
-        .then(data => {
+        try {
+            const res = await fetch(currentSharedFolder.toggleUrl, {
+                method: 'PATCH',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            });
+            const data = await res.json();
             if (data.success) {
                 currentSharedFolder.isPublic = data.is_public;
                 currentSharedFolder.url = data.share_url;
-                document.getElementById('folder-share-url-input').value = data.share_url;
+                const input = document.getElementById('folder-share-url-input');
+                if (input) input.value = data.share_url;
+                if (toggleCheckbox) toggleCheckbox.checked = data.is_public;
+
                 updateFolderShareUI(data.is_public, currentSharedFolder.name, data.share_url);
+                updateFolderCardShareStatus(currentSharedFolder.id, data.is_public, data.share_url);
+
                 if (typeof showSwanToast === 'function') {
                     showSwanToast(data.message || 'Status berbagi folder diperbarui.');
                 }
+                if (andShareAfter && data.is_public) {
+                    shareFolderNative();
+                }
             } else {
-                toggleCheckbox.checked = !desiredState;
+                if (toggleCheckbox) toggleCheckbox.checked = previousState;
                 alert('Gagal memperbarui status berbagi folder.');
             }
-        })
-        .catch(err => {
-            toggleCheckbox.checked = !desiredState;
+        } catch (err) {
+            if (toggleCheckbox) toggleCheckbox.checked = previousState;
             alert('Terjadi kesalahan jaringan.');
-        });
+        }
+    }
+
+    async function shareFolderNative() {
+        if (!currentSharedFolder) return;
+        const url = currentSharedFolder.url;
+        const name = currentSharedFolder.name;
+        const info = currentSharedFolder.info;
+
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: name,
+                    text: `Halo, berikut tautan folder "${name}" (${info}) di SwanDrive:`,
+                    url: url
+                });
+                return;
+            } catch (err) {
+                if (err.name === 'AbortError') return;
+            }
+        }
+        copyFolderShareLink();
     }
 
     function copyFolderShareLink() {
@@ -2804,6 +3526,297 @@
             panel.classList.remove('translate-y-full');
             panel.classList.add('translate-y-0');
         });
+    }
+
+    // 6. Batch Multi-Select Mode & Simultaneous Deletion
+    let isMultiSelectMode = false;
+    const selectedFiles = new Set();
+    const selectedFolders = new Set();
+    const itemNamesMap = new Map();
+
+    function toggleMultiSelectMode() {
+        if (isMultiSelectMode) {
+            exitMultiSelectMode();
+        } else {
+            enterMultiSelectMode();
+        }
+    }
+
+    function enterMultiSelectMode() {
+        isMultiSelectMode = true;
+        const btn = document.getElementById('btn-toggle-multi-select');
+        const btnText = document.getElementById('btn-toggle-multi-select-text');
+        if (btn) {
+            btn.classList.remove('bg-slate-200/80', 'dark:bg-slate-800', 'text-slate-700', 'dark:text-slate-200');
+            btn.classList.add('bg-teal-500', 'text-white', 'shadow-xs');
+        }
+        if (btnText) btnText.innerText = 'Selesai';
+
+        // Show all checkbox containers
+        document.querySelectorAll('.batch-select-checkbox-container').forEach(el => {
+            el.classList.remove('hidden');
+        });
+
+        // Show sticky batch action bar
+        const bar = document.getElementById('batch-action-bar');
+        if (bar) {
+            bar.classList.remove('hidden');
+            bar.style.opacity = '0';
+            bar.style.transform = 'scale(0.95)';
+            requestAnimationFrame(() => {
+                bar.style.opacity = '1';
+                bar.style.transform = 'scale(1)';
+            });
+        }
+
+        updateBatchActionBar();
+    }
+
+    function exitMultiSelectMode() {
+        isMultiSelectMode = false;
+        const btn = document.getElementById('btn-toggle-multi-select');
+        const btnText = document.getElementById('btn-toggle-multi-select-text');
+        if (btn) {
+            btn.classList.remove('bg-teal-500', 'text-white', 'shadow-xs');
+            btn.classList.add('bg-slate-200/80', 'dark:bg-slate-800', 'text-slate-700', 'dark:text-slate-200');
+        }
+        if (btnText) btnText.innerText = 'Pilih Banyak';
+
+        // Uncheck all and hide checkboxes
+        document.querySelectorAll('input[name="batch_files[]"], input[name="batch_folders[]"]').forEach(chk => {
+            chk.checked = false;
+        });
+
+        selectedFiles.clear();
+        selectedFolders.clear();
+        itemNamesMap.clear();
+
+        document.querySelectorAll('.batch-select-checkbox-container').forEach(el => {
+            el.classList.add('hidden');
+        });
+
+        // Remove card active rings
+        document.querySelectorAll('[id^="file-"], [id^="folder-card-"]').forEach(el => {
+            el.classList.remove('ring-2', 'ring-teal-500', 'dark:ring-teal-400');
+        });
+
+        // Hide sticky batch action bar
+        const bar = document.getElementById('batch-action-bar');
+        if (bar) {
+            bar.style.opacity = '0';
+            bar.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                bar.classList.add('hidden');
+                bar.style.opacity = '';
+                bar.style.transform = '';
+            }, 300);
+        }
+    }
+
+    function handleItemSelect(checkbox) {
+        const type = checkbox.getAttribute('data-type');
+        const id = parseInt(checkbox.value, 10);
+        const name = checkbox.getAttribute('data-name') || '';
+
+        const cardId = type === 'folder' ? `folder-card-${id}` : `file-${id}`;
+        const card = document.getElementById(cardId);
+
+        if (checkbox.checked) {
+            if (type === 'folder') {
+                selectedFolders.add(id);
+                itemNamesMap.set(`folder-${id}`, `📁 ${name}`);
+            } else {
+                selectedFiles.add(id);
+                itemNamesMap.set(`file-${id}`, `📄 ${name}`);
+            }
+            if (card) card.classList.add('ring-2', 'ring-teal-500', 'dark:ring-teal-400');
+        } else {
+            if (type === 'folder') {
+                selectedFolders.delete(id);
+                itemNamesMap.delete(`folder-${id}`);
+            } else {
+                selectedFiles.delete(id);
+                itemNamesMap.delete(`file-${id}`);
+            }
+            if (card) card.classList.remove('ring-2', 'ring-teal-500', 'dark:ring-teal-400');
+        }
+
+        updateBatchActionBar();
+    }
+
+    function selectAllBatchItems() {
+        const fileCheckboxes = document.querySelectorAll('input[name="batch_files[]"]');
+        const folderCheckboxes = document.querySelectorAll('input[name="batch_folders[]"]');
+        const totalAvailable = fileCheckboxes.length + folderCheckboxes.length;
+        const currentSelected = selectedFiles.size + selectedFolders.size;
+
+        const shouldCheckAll = currentSelected < totalAvailable;
+
+        fileCheckboxes.forEach(chk => {
+            chk.checked = shouldCheckAll;
+            handleItemSelect(chk);
+        });
+
+        folderCheckboxes.forEach(chk => {
+            chk.checked = shouldCheckAll;
+            handleItemSelect(chk);
+        });
+    }
+
+    function updateBatchActionBar() {
+        const total = selectedFiles.size + selectedFolders.size;
+        const countBadge = document.getElementById('batch-selected-count');
+        const deleteBtn = document.getElementById('btn-trigger-batch-delete');
+        const selectAllBtn = document.getElementById('batch-select-all-btn');
+
+        if (countBadge) countBadge.innerText = total;
+
+        if (deleteBtn) {
+            deleteBtn.disabled = total === 0;
+        }
+
+        const fileCheckboxes = document.querySelectorAll('input[name="batch_files[]"]');
+        const folderCheckboxes = document.querySelectorAll('input[name="batch_folders[]"]');
+        const totalAvailable = fileCheckboxes.length + folderCheckboxes.length;
+
+        if (selectAllBtn) {
+            selectAllBtn.innerText = (total > 0 && total >= totalAvailable) ? 'Batalkan Pilihan' : 'Pilih Semua';
+        }
+    }
+
+    function openBatchDeleteModal() {
+        const total = selectedFiles.size + selectedFolders.size;
+        if (total === 0) return;
+
+        const modal = document.getElementById('batch-delete-modal');
+        const backdrop = document.getElementById('batch-delete-backdrop');
+        const panel = document.getElementById('batch-delete-panel');
+        const summaryText = document.getElementById('batch-delete-summary-text');
+        const itemsList = document.getElementById('batch-delete-items-list');
+
+        let summaryParts = [];
+        if (selectedFolders.size > 0) summaryParts.push(`${selectedFolders.size} folder`);
+        if (selectedFiles.size > 0) summaryParts.push(`${selectedFiles.size} berkas`);
+        if (summaryText) summaryText.innerText = summaryParts.join(' & ') + ` (${total} total)`;
+
+        if (itemsList) {
+            itemsList.innerHTML = '';
+            Array.from(itemNamesMap.values()).slice(0, 15).forEach(name => {
+                const div = document.createElement('div');
+                div.className = 'truncate py-0.5';
+                div.innerText = name;
+                itemsList.appendChild(div);
+            });
+            if (itemNamesMap.size > 15) {
+                const moreDiv = document.createElement('div');
+                moreDiv.className = 'italic text-[10px] text-slate-400 pt-0.5';
+                moreDiv.innerText = `...dan ${itemNamesMap.size - 15} item lainnya`;
+                itemsList.appendChild(moreDiv);
+            }
+        }
+
+        modal.classList.remove('hidden');
+        requestAnimationFrame(() => {
+            backdrop.classList.remove('opacity-0');
+            backdrop.classList.add('opacity-100');
+            panel.classList.remove('translate-y-full');
+            panel.classList.add('translate-y-0');
+        });
+    }
+
+    function closeBatchDeleteModal() {
+        const backdrop = document.getElementById('batch-delete-backdrop');
+        const panel = document.getElementById('batch-delete-panel');
+
+        backdrop.classList.remove('opacity-100');
+        backdrop.classList.add('opacity-0');
+        panel.classList.remove('translate-y-0');
+        panel.classList.add('translate-y-full');
+
+        setTimeout(() => {
+            document.getElementById('batch-delete-modal').classList.add('hidden');
+        }, 300);
+    }
+
+    async function executeBatchDelete() {
+        const total = selectedFiles.size + selectedFolders.size;
+        if (total === 0) return;
+
+        const btnConfirm = document.getElementById('btn-confirm-batch-delete');
+        const icon = document.getElementById('batch-delete-icon');
+        const spinner = document.getElementById('batch-delete-spinner');
+        const btnText = document.getElementById('batch-delete-btn-text');
+
+        if (btnConfirm) btnConfirm.disabled = true;
+        if (icon) icon.classList.add('hidden');
+        if (spinner) spinner.classList.remove('hidden');
+        if (btnText) btnText.innerText = 'Menghapus...';
+
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
+
+        try {
+            const response = await fetch("{{ route('drive.batch.destroy') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: JSON.stringify({
+                    file_ids: Array.from(selectedFiles),
+                    folder_ids: Array.from(selectedFolders),
+                })
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                // Remove elements from DOM smoothly
+                selectedFiles.forEach(id => {
+                    const card = document.getElementById(`file-${id}`);
+                    if (card) {
+                        card.style.transition = 'all 0.3s ease';
+                        card.style.opacity = '0';
+                        card.style.transform = 'scale(0.9)';
+                        setTimeout(() => card.remove(), 300);
+                    }
+                });
+
+                selectedFolders.forEach(id => {
+                    const card = document.getElementById(`folder-card-${id}`);
+                    if (card) {
+                        card.style.transition = 'all 0.3s ease';
+                        card.style.opacity = '0';
+                        card.style.transform = 'scale(0.9)';
+                        setTimeout(() => card.remove(), 300);
+                    }
+                });
+
+                closeBatchDeleteModal();
+                exitMultiSelectMode();
+
+                if (typeof showSwanToast === 'function') {
+                    showSwanToast(result.message || 'Item terpilih berhasil dihapus.');
+                }
+
+                setTimeout(() => {
+                    window.location.reload();
+                }, 800);
+            } else {
+                alert(result.message || 'Gagal menghapus beberapa item terpilih.');
+                if (btnConfirm) btnConfirm.disabled = false;
+                if (icon) icon.classList.remove('hidden');
+                if (spinner) spinner.classList.add('hidden');
+                if (btnText) btnText.innerText = 'Ya, Hapus Semua Terpilih';
+            }
+        } catch (err) {
+            alert('Terjadi kesalahan jaringan saat menghapus item.');
+            if (btnConfirm) btnConfirm.disabled = false;
+            if (icon) icon.classList.remove('hidden');
+            if (spinner) spinner.classList.add('hidden');
+            if (btnText) btnText.innerText = 'Ya, Hapus Semua Terpilih';
+        }
     }
 
     // Auto-focus and open preview if file_id or hash is in the URL (e.g. from Dashboard recent files widget)

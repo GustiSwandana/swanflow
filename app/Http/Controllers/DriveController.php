@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Folder;
 use App\Models\StoredFile;
+use Google\Client;
+use Google\Service\Drive;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -45,14 +48,16 @@ class DriveController extends Controller
             }
         }
 
+        $activeSource = $request->query('source', 'all'); // 'all', 'my', 'received'
+
         if ($folderId) {
             $currentFolder = $user->folders()->with('parent')->findOrFail($folderId);
             $breadcrumbs = $currentFolder->breadcrumbs();
-            $folders = $currentFolder->children()->withCount('files')->latest()->get();
+            $folderQuery = $currentFolder->children()->withCount('files')->latest();
             $query = $currentFolder->files();
         } else {
             // Root level folders
-            $folders = $user->folders()->whereNull('parent_id')->withCount('files')->latest()->get();
+            $folderQuery = $user->folders()->whereNull('parent_id')->withCount('files')->latest();
             $query = $user->storedFiles();
 
             // In root level, if not searching and category is 'all', show root files (files without folder)
@@ -62,11 +67,36 @@ class DriveController extends Controller
             }
         }
 
+        // Filter by source (Ownership / Asal Berkas)
+        if ($activeSource === 'my') {
+            // User's own folders (not starting with 📥 and not drop folders)
+            $folderQuery->where('name', 'not like', '📥%')
+                ->whereDoesntHave('uploadLinks');
+            // User's own files (not from upload link and no uploader name)
+            $query->whereNull('upload_link_id')
+                ->whereNull('uploader_name');
+        } elseif ($activeSource === 'received') {
+            // Received / external folders (drop folders or starting with 📥)
+            $folderQuery->where(function ($q) {
+                $q->where('name', 'like', '📥%')
+                    ->orWhereHas('uploadLinks');
+            });
+            // External files (uploaded via link or has uploader name)
+            $query->where(function ($q) {
+                $q->whereNotNull('upload_link_id')
+                    ->orWhereNotNull('uploader_name');
+            });
+        }
+
+        $folders = $folderQuery->get();
+
         if ($activeCategory === 'received') {
             $query->where(function ($q) {
                 $q->whereNotNull('upload_link_id')
                     ->orWhereNotNull('uploader_name');
             });
+        } elseif ($activeCategory === 'shared') {
+            $query->where('is_public', true);
         } elseif ($activeCategory !== 'all' && in_array($activeCategory, ['document', 'image', 'archive', 'other'])) {
             $query->where('category', $activeCategory);
         }
@@ -82,17 +112,27 @@ class DriveController extends Controller
 
         $files = $query->with(['folder', 'uploadLink'])->latest()->get();
 
-        $allFiles = $user->storedFiles()->get(['category', 'size_bytes', 'upload_link_id', 'uploader_name']);
+        $allFiles = $user->storedFiles()->get(['category', 'size_bytes', 'upload_link_id', 'uploader_name', 'is_public']);
         $totalBytes = $allFiles->sum('size_bytes');
         $totalFiles = $allFiles->count();
 
         $categoryCounts = [
             'all' => $totalFiles,
+            'shared' => $allFiles->where('is_public', true)->count(),
             'received' => $allFiles->filter(fn ($f) => ! empty($f->upload_link_id) || ! empty($f->uploader_name))->count(),
             'document' => $allFiles->where('category', 'document')->count(),
             'image' => $allFiles->where('category', 'image')->count(),
             'archive' => $allFiles->where('category', 'archive')->count(),
             'other' => $allFiles->where('category', 'other')->count(),
+        ];
+
+        // Source counts (Berkas Saya vs Dari Pihak Luar)
+        $receivedFilesCount = $categoryCounts['received'];
+        $myFilesCount = max(0, $totalFiles - $receivedFilesCount);
+        $sourceCounts = [
+            'all' => $totalFiles,
+            'my' => $myFilesCount,
+            'received' => $receivedFilesCount,
         ];
 
         // Storage quota calculation
@@ -138,11 +178,67 @@ class DriveController extends Controller
             'storagePercent',
             'categoryCounts',
             'activeCategory',
+            'activeSource',
+            'sourceCounts',
             'search',
             'uploadLinks',
             'activeTab',
             'targetFileId'
         ));
+    }
+
+    public function connectGoogle(Request $request)
+    {
+        $client = new Client;
+        $client->setClientId(config('filesystems.disks.google.clientId'));
+        $client->setClientSecret(config('filesystems.disks.google.clientSecret'));
+        $client->setRedirectUri(route('drive.callback'));
+        $client->addScope(Drive::DRIVE);
+        $client->setAccessType('offline');
+        $client->setPrompt('consent select_account');
+
+        return redirect()->away($client->createAuthUrl());
+    }
+
+    public function googleCallback(Request $request)
+    {
+        if ($request->has('code')) {
+            $client = new Client;
+            $client->setClientId(config('filesystems.disks.google.clientId'));
+            $client->setClientSecret(config('filesystems.disks.google.clientSecret'));
+            $client->setRedirectUri(route('drive.callback'));
+
+            $token = $client->fetchAccessTokenWithAuthCode($request->get('code'));
+
+            Log::info('Google OAuth Callback Token:', is_array($token) ? $token : ['raw' => $token]);
+
+            if (isset($token['error'])) {
+                $errMsg = $token['error_description'] ?? $token['error'];
+
+                return redirect()->route('drive.index')->with('error', 'Google OAuth Error: '.$errMsg);
+            }
+
+            if (isset($token['refresh_token'])) {
+                // Save to .env
+                $envPath = base_path('.env');
+                $envContent = file_get_contents($envPath);
+
+                if (preg_match('/GOOGLE_DRIVE_REFRESH_TOKEN=(.*)/', $envContent)) {
+                    $envContent = preg_replace('/GOOGLE_DRIVE_REFRESH_TOKEN=(.*)/', 'GOOGLE_DRIVE_REFRESH_TOKEN='.$token['refresh_token'], $envContent);
+                } else {
+                    $envContent .= "\nGOOGLE_DRIVE_REFRESH_TOKEN=".$token['refresh_token']."\n";
+                }
+
+                file_put_contents($envPath, $envContent);
+                Artisan::call('config:clear');
+
+                return redirect()->route('drive.index')->with('success', 'Google Drive berhasil disambungkan dengan mode OAuth 5TB!');
+            }
+
+            return redirect()->route('drive.index')->with('error', 'Google tidak mengirimkan Refresh Token. Buka https://myaccount.google.com/connections, hapus izin swanflow, lalu klik Sambung Google lagi.');
+        }
+
+        return redirect()->route('drive.index')->with('error', 'Otorisasi dibatalkan.');
     }
 
     /**
@@ -216,13 +312,22 @@ class DriveController extends Controller
                 ? $customTitle
                 : pathinfo($originalName, PATHINFO_FILENAME);
 
-            $path = $uploadedFile->store('drive/'.$request->user()->id, 'local');
+            $disk = config('filesystems.default');
+
+            $thumbnailPath = null;
+            if ($category === 'image') {
+                $thumbnailPath = $this->generateWebpThumbnail($uploadedFile->getRealPath(), $request->user()->id, $disk);
+            }
+
+            // Upload directly to cloud storage (Google Drive) without touching local server storage
+            $path = $uploadedFile->store('drive/'.$request->user()->id, $disk);
 
             $request->user()->storedFiles()->create([
                 'folder_id' => $folderId,
                 'title' => $title,
                 'original_name' => $originalName,
                 'file_path' => $path,
+                'thumbnail_path' => $thumbnailPath,
                 'mime_type' => $mimeType,
                 'extension' => strtolower($extension),
                 'size_bytes' => $sizeBytes,
@@ -339,8 +444,8 @@ class DriveController extends Controller
     {
         foreach ($folder->files as $file) {
             try {
-                if (Storage::disk('local')->exists($file->file_path)) {
-                    Storage::disk('local')->delete($file->file_path);
+                if (Storage::disk(config('filesystems.default'))->exists($file->file_path)) {
+                    Storage::disk(config('filesystems.default'))->delete($file->file_path);
                 }
             } catch (\Throwable $e) {
                 Log::warning('Gagal menghapus file saat hapus folder di SwanDrive: '.$e->getMessage(), [
@@ -422,13 +527,21 @@ class DriveController extends Controller
             abort(403, 'Akses ditolak.');
         }
 
-        if (! Storage::disk('local')->exists($file->file_path)) {
+        if ($request->boolean('thumb') && $file->thumbnail_path && Storage::disk(config('filesystems.default'))->exists($file->thumbnail_path)) {
+            return Storage::disk(config('filesystems.default'))->response($file->thumbnail_path, pathinfo($file->original_name, PATHINFO_FILENAME).'_thumb.webp', [
+                'Content-Type' => 'image/webp',
+                'Content-Disposition' => 'inline',
+                'Cache-Control' => 'public, max-age=86400',
+            ]);
+        }
+
+        if (! Storage::disk(config('filesystems.default'))->exists($file->file_path)) {
             abort(404, 'File fisik tidak ditemukan pada server.');
         }
 
-        $mimeType = $file->mime_type ?: Storage::disk('local')->mimeType($file->file_path) ?: 'application/octet-stream';
+        $mimeType = $file->mime_type ?: Storage::disk(config('filesystems.default'))->mimeType($file->file_path) ?: 'application/octet-stream';
 
-        return Storage::disk('local')->response($file->file_path, $file->original_name, [
+        return Storage::disk(config('filesystems.default'))->response($file->file_path, $file->original_name, [
             'Content-Type' => $mimeType,
             'Content-Disposition' => 'inline; filename="'.addslashes($file->original_name).'"',
             'Cache-Control' => 'private, max-age=3600',
@@ -444,25 +557,30 @@ class DriveController extends Controller
             abort(403, 'Akses ditolak.');
         }
 
-        if (! Storage::disk('local')->exists($file->file_path)) {
+        if (! Storage::disk(config('filesystems.default'))->exists($file->file_path)) {
             abort(404, 'File fisik tidak ditemukan pada server.');
         }
 
         $file->increment('download_count');
 
-        return Storage::disk('local')->download($file->file_path, $file->original_name);
+        return Storage::disk(config('filesystems.default'))->download($file->file_path, $file->original_name);
     }
 
     /**
      * Toggle the public share/transfer link for a file.
      */
-    public function toggleShare(Request $request, StoredFile $file): RedirectResponse
+    public function toggleShare(Request $request, StoredFile $file): JsonResponse|RedirectResponse
     {
         if ($file->user_id !== $request->user()->id) {
+            if ($request->expectsJson() || $request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => 'Akses ditolak.'], 403);
+            }
             abort(403, 'Akses ditolak.');
         }
 
-        $newStatus = ! $file->is_public;
+        $newStatus = $request->has('is_public')
+            ? $request->boolean('is_public')
+            : ! $file->is_public;
 
         $file->update([
             'is_public' => $newStatus,
@@ -472,6 +590,15 @@ class DriveController extends Controller
         $message = $newStatus
             ? 'Tautan transfer diaktifkan! Siap disalin atau dibagikan.'
             : 'Tautan transfer dinonaktifkan.';
+
+        if ($request->expectsJson() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'is_public' => $newStatus,
+                'share_url' => $file->share_url,
+                'message' => $message,
+            ]);
+        }
 
         return back()->with('success', $message);
     }
@@ -489,8 +616,8 @@ class DriveController extends Controller
         }
 
         try {
-            if (Storage::disk('local')->exists($file->file_path)) {
-                Storage::disk('local')->delete($file->file_path);
+            if (Storage::disk(config('filesystems.default'))->exists($file->file_path)) {
+                Storage::disk(config('filesystems.default'))->delete($file->file_path);
             }
         } catch (\Throwable $e) {
             Log::warning('Gagal menghapus file fisik di SwanDrive: '.$e->getMessage(), [
@@ -513,6 +640,89 @@ class DriveController extends Controller
             : route('drive.index');
 
         return redirect($redirect)->with('success', 'File berhasil dihapus dari SwanDrive.');
+    }
+
+    /**
+     * Batch delete multiple files and/or folders simultaneously.
+     */
+    public function batchDestroy(Request $request): JsonResponse|RedirectResponse
+    {
+        $validated = $request->validate([
+            'file_ids' => ['nullable', 'array'],
+            'file_ids.*' => ['integer'],
+            'folder_ids' => ['nullable', 'array'],
+            'folder_ids.*' => ['integer'],
+        ]);
+
+        $fileIds = $validated['file_ids'] ?? [];
+        $folderIds = $validated['folder_ids'] ?? [];
+
+        if (empty($fileIds) && empty($folderIds)) {
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tidak ada berkas atau folder yang dipilih untuk dihapus.',
+                ], 422);
+            }
+
+            return back()->with('error', 'Tidak ada berkas atau folder yang dipilih untuk dihapus.');
+        }
+
+        $user = $request->user();
+        $deletedFilesCount = 0;
+        $deletedFoldersCount = 0;
+
+        // 1. Delete selected files
+        if (! empty($fileIds)) {
+            $files = $user->storedFiles()->whereIn('id', $fileIds)->get();
+            foreach ($files as $file) {
+                try {
+                    if (Storage::disk(config('filesystems.default'))->exists($file->file_path)) {
+                        Storage::disk(config('filesystems.default'))->delete($file->file_path);
+                    }
+                    if ($file->thumbnail_path && Storage::disk(config('filesystems.default'))->exists($file->thumbnail_path)) {
+                        Storage::disk(config('filesystems.default'))->delete($file->thumbnail_path);
+                    }
+                } catch (\Throwable $e) {
+                    Log::warning('Gagal menghapus file saat batch delete SwanDrive: '.$e->getMessage(), [
+                        'file_id' => $file->id,
+                        'file_path' => $file->file_path,
+                    ]);
+                }
+
+                $file->delete();
+                $deletedFilesCount++;
+            }
+        }
+
+        // 2. Delete selected folders recursively
+        if (! empty($folderIds)) {
+            $folders = $user->folders()->whereIn('id', $folderIds)->get();
+            foreach ($folders as $folder) {
+                $this->deleteFolderRecursively($folder);
+                $deletedFoldersCount++;
+            }
+        }
+
+        $messageParts = [];
+        if ($deletedFoldersCount > 0) {
+            $messageParts[] = "{$deletedFoldersCount} folder";
+        }
+        if ($deletedFilesCount > 0) {
+            $messageParts[] = "{$deletedFilesCount} berkas";
+        }
+        $summaryText = implode(' dan ', $messageParts).' berhasil dihapus dari SwanDrive.';
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $summaryText,
+                'deleted_files_count' => $deletedFilesCount,
+                'deleted_folders_count' => $deletedFoldersCount,
+            ]);
+        }
+
+        return back()->with('success', $summaryText);
     }
 
     /**
@@ -540,13 +750,13 @@ class DriveController extends Controller
             abort(404, 'Tautan transfer ini tidak aktif.');
         }
 
-        if (! Storage::disk('local')->exists($file->file_path)) {
+        if (! Storage::disk(config('filesystems.default'))->exists($file->file_path)) {
             abort(404, 'File fisik tidak ditemukan pada server.');
         }
 
-        $mimeType = $file->mime_type ?: Storage::disk('local')->mimeType($file->file_path) ?: 'application/octet-stream';
+        $mimeType = $file->mime_type ?: Storage::disk(config('filesystems.default'))->mimeType($file->file_path) ?: 'application/octet-stream';
 
-        return Storage::disk('local')->response($file->file_path, $file->original_name, [
+        return Storage::disk(config('filesystems.default'))->response($file->file_path, $file->original_name, [
             'Content-Type' => $mimeType,
             'Content-Disposition' => 'inline; filename="'.addslashes($file->original_name).'"',
             'Cache-Control' => 'public, max-age=3600',
@@ -564,13 +774,13 @@ class DriveController extends Controller
             abort(404, 'Tautan transfer ini tidak aktif.');
         }
 
-        if (! Storage::disk('local')->exists($file->file_path)) {
+        if (! Storage::disk(config('filesystems.default'))->exists($file->file_path)) {
             abort(404, 'File fisik tidak ditemukan pada server.');
         }
 
         $file->increment('download_count');
 
-        return Storage::disk('local')->download($file->file_path, $file->original_name);
+        return Storage::disk(config('filesystems.default'))->download($file->file_path, $file->original_name);
     }
 
     /**
@@ -600,13 +810,13 @@ class DriveController extends Controller
             abort(404, 'Berkas tidak ditemukan dalam folder ini.');
         }
 
-        if (! Storage::disk('local')->exists($file->file_path)) {
+        if (! Storage::disk(config('filesystems.default'))->exists($file->file_path)) {
             abort(404, 'File fisik tidak ditemukan pada server.');
         }
 
-        $mimeType = $file->mime_type ?: Storage::disk('local')->mimeType($file->file_path) ?: 'application/octet-stream';
+        $mimeType = $file->mime_type ?: Storage::disk(config('filesystems.default'))->mimeType($file->file_path) ?: 'application/octet-stream';
 
-        return Storage::disk('local')->response($file->file_path, $file->original_name, [
+        return Storage::disk(config('filesystems.default'))->response($file->file_path, $file->original_name, [
             'Content-Type' => $mimeType,
             'Content-Disposition' => 'inline; filename="'.addslashes($file->original_name).'"',
             'Cache-Control' => 'public, max-age=3600',
@@ -624,13 +834,13 @@ class DriveController extends Controller
             abort(404, 'Berkas tidak ditemukan dalam folder ini.');
         }
 
-        if (! Storage::disk('local')->exists($file->file_path)) {
+        if (! Storage::disk(config('filesystems.default'))->exists($file->file_path)) {
             abort(404, 'File fisik tidak ditemukan pada server.');
         }
 
         $file->increment('download_count');
 
-        return Storage::disk('local')->download($file->file_path, $file->original_name);
+        return Storage::disk(config('filesystems.default'))->download($file->file_path, $file->original_name);
     }
 
     /**
@@ -647,20 +857,271 @@ class DriveController extends Controller
 
         $zipFileName = Str::slug($folder->name).'_'.date('YmdHis').'.zip';
         $tempZipPath = tempnam(sys_get_temp_dir(), 'swanflow_zip_');
+        $tempFiles = [];
 
         $zip = new ZipArchive;
         if ($zip->open($tempZipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
+            $disk = config('filesystems.default');
             foreach ($files as $file) {
-                if (Storage::disk('local')->exists($file->file_path)) {
-                    $zip->addFile(Storage::disk('local')->path($file->file_path), $file->original_name);
+                if (Storage::disk($disk)->exists($file->file_path)) {
+                    if ($disk === 'local') {
+                        $zip->addFile(Storage::disk('local')->path($file->file_path), $file->original_name);
+                    } else {
+                        // Download to temp file first to prevent OOM
+                        $tempFile = tempnam(sys_get_temp_dir(), 'swanflow_file_');
+                        $tempFiles[] = $tempFile;
+
+                        $stream = Storage::disk($disk)->readStream($file->file_path);
+                        $out = fopen($tempFile, 'w');
+                        stream_copy_to_stream($stream, $out);
+                        fclose($out);
+                        fclose($stream);
+
+                        $zip->addFile($tempFile, $file->original_name);
+                    }
                     $file->increment('download_count');
                 }
             }
             $zip->close();
         }
 
+        // Clean up temporary files after zip is closed
+        foreach ($tempFiles as $tf) {
+            @unlink($tf);
+        }
+
         return response()->download($tempZipPath, $zipFileName, [
             'Content-Type' => 'application/zip',
         ])->deleteFileAfterSend(true);
+    }
+
+    /**
+     * Handle chunked file uploads for large files over cellular/high-latency networks.
+     */
+    public function uploadChunk(Request $request): JsonResponse
+    {
+        $request->validate([
+            'chunk' => ['required', 'file'],
+            'chunk_index' => ['required', 'integer', 'min:0'],
+            'total_chunks' => ['required', 'integer', 'min:1'],
+            'file_uuid' => ['required', 'string', 'regex:/^[a-zA-Z0-9_-]+$/'],
+            'file_name' => ['required', 'string', 'max:255'],
+            'folder_id' => ['nullable', 'integer', 'exists:folders,id'],
+        ]);
+
+        $user = $request->user();
+        $folderId = $request->input('folder_id');
+        if ($folderId && ! $user->folders()->where('id', $folderId)->exists()) {
+            return response()->json(['error' => 'Folder tidak valid'], 403);
+        }
+
+        $chunkIndex = (int) $request->input('chunk_index');
+        $totalChunks = (int) $request->input('total_chunks');
+        $fileUuid = $request->input('file_uuid');
+        $originalName = $request->input('file_name');
+
+        $tempDir = 'temp_chunks/'.$user->id.'/'.$fileUuid;
+        $chunkFile = $request->file('chunk');
+        $chunkFileName = "chunk_{$chunkIndex}.part";
+
+        // Save incoming chunk to temporary storage
+        Storage::disk('local')->putFileAs($tempDir, $chunkFile, $chunkFileName);
+
+        // If not all chunks are uploaded yet, return progress status
+        if ($chunkIndex + 1 < $totalChunks) {
+            return response()->json([
+                'status' => 'chunk_saved',
+                'chunk_index' => $chunkIndex,
+                'total_chunks' => $totalChunks,
+                'progress' => round((($chunkIndex + 1) / $totalChunks) * 100),
+            ]);
+        }
+
+        // All chunks arrived, assemble the complete file
+        $extension = pathinfo($originalName, PATHINFO_EXTENSION);
+        $safeExtension = $extension ? strtolower($extension) : 'bin';
+        $finalFilename = Str::uuid().'.'.$safeExtension;
+        $finalRelativePath = 'drive/'.$user->id.'/'.$finalFilename;
+        $finalFullPath = Storage::disk('local')->path($finalRelativePath);
+
+        // Ensure user's destination folder exists
+        $destDir = dirname($finalFullPath);
+        if (! is_dir($destDir)) {
+            mkdir($destDir, 0755, true);
+        }
+
+        $outHandle = fopen($finalFullPath, 'wb');
+        if (! $outHandle) {
+            return response()->json(['error' => 'Gagal membuat berkas final.'], 500);
+        }
+
+        for ($i = 0; $i < $totalChunks; $i++) {
+            $partPath = Storage::disk('local')->path("{$tempDir}/chunk_{$i}.part");
+            if (! file_exists($partPath)) {
+                fclose($outHandle);
+
+                return response()->json(['error' => "Potongan berkas ke-{$i} hilang."], 400);
+            }
+
+            $inHandle = fopen($partPath, 'rb');
+            if ($inHandle) {
+                while (! feof($inHandle)) {
+                    $buffer = fread($inHandle, 1048576); // 1MB buffer
+                    fwrite($outHandle, $buffer);
+                }
+                fclose($inHandle);
+            }
+        }
+        fclose($outHandle);
+
+        // Clean up temporary chunk files
+        Storage::disk('local')->deleteDirectory($tempDir);
+
+        $sizeBytes = filesize($finalFullPath);
+        $mimeType = mime_content_type($finalFullPath) ?: 'application/octet-stream';
+        $category = StoredFile::detectCategory($safeExtension, $mimeType);
+
+        // Generate webp thumbnail if file is an image
+        $thumbnailPath = null;
+        if ($category === 'image') {
+            $thumbnailPath = $this->generateWebpThumbnail($finalRelativePath, $user->id);
+        }
+
+        $disk = config('filesystems.default');
+        if ($disk !== 'local') {
+            $fileStream = fopen($finalFullPath, 'r');
+            Storage::disk($disk)->put($finalRelativePath, $fileStream);
+            if (is_resource($fileStream)) {
+                fclose($fileStream);
+            }
+            Storage::disk('local')->delete($finalRelativePath);
+
+            if ($thumbnailPath && Storage::disk('local')->exists($thumbnailPath)) {
+                $thumbStream = fopen(Storage::disk('local')->path($thumbnailPath), 'r');
+                Storage::disk($disk)->put($thumbnailPath, $thumbStream);
+                if (is_resource($thumbStream)) {
+                    fclose($thumbStream);
+                }
+                Storage::disk('local')->delete($thumbnailPath);
+            }
+        }
+
+        $storedFile = $user->storedFiles()->create([
+            'folder_id' => $folderId,
+            'title' => pathinfo($originalName, PATHINFO_FILENAME),
+            'original_name' => $originalName,
+            'file_path' => $finalRelativePath,
+            'thumbnail_path' => $thumbnailPath,
+            'mime_type' => $mimeType,
+            'extension' => $safeExtension,
+            'size_bytes' => $sizeBytes,
+            'category' => $category,
+            'share_token' => Str::random(40),
+            'is_public' => false,
+            'download_count' => 0,
+        ]);
+
+        return response()->json([
+            'status' => 'completed',
+            'progress' => 100,
+            'message' => 'Berkas berhasil diunggah dengan teknik chunking!',
+            'file' => [
+                'id' => $storedFile->id,
+                'title' => $storedFile->title,
+                'size_formatted' => $storedFile->formatted_size,
+            ],
+        ]);
+    }
+
+    /**
+     * Generate an optimized WebP thumbnail for images using PHP's native GD extension and upload directly to target disk.
+     */
+    protected function generateWebpThumbnail(string $sourcePath, int $userId, string $disk = 'google'): ?string
+    {
+        if (! extension_loaded('gd') || ! function_exists('imagewebp')) {
+            return null;
+        }
+
+        if (! file_exists($sourcePath)) {
+            return null;
+        }
+
+        $imageInfo = @getimagesize($sourcePath);
+        if (! $imageInfo) {
+            return null;
+        }
+
+        [$origWidth, $origHeight, $imageType] = $imageInfo;
+        if ($origWidth <= 0 || $origHeight <= 0) {
+            return null;
+        }
+
+        $srcImage = null;
+        switch ($imageType) {
+            case IMAGETYPE_JPEG:
+                $srcImage = @imagecreatefromjpeg($sourcePath);
+                break;
+            case IMAGETYPE_PNG:
+                $srcImage = @imagecreatefrompng($sourcePath);
+                break;
+            case IMAGETYPE_WEBP:
+                $srcImage = @imagecreatefromwebp($sourcePath);
+                break;
+            case IMAGETYPE_GIF:
+                $srcImage = @imagecreatefromgif($sourcePath);
+                break;
+        }
+
+        if (! $srcImage) {
+            return null;
+        }
+
+        // Target thumbnail max dimension: 320px
+        $maxDimension = 320;
+        $scalingFactor = min($maxDimension / $origWidth, $maxDimension / $origHeight, 1.0);
+        $newWidth = max(1, (int) round($origWidth * $scalingFactor));
+        $newHeight = max(1, (int) round($origHeight * $scalingFactor));
+
+        $thumbImage = imagecreatetruecolor($newWidth, $newHeight);
+        if (! $thumbImage) {
+            imagedestroy($srcImage);
+
+            return null;
+        }
+
+        // Preserve alpha transparency for PNG/WebP
+        imagealphablending($thumbImage, false);
+        imagesavealpha($thumbImage, true);
+        $transparent = imagecolorallocatealpha($thumbImage, 255, 255, 255, 127);
+        imagefilledrectangle($thumbImage, 0, 0, $newWidth, $newHeight, $transparent);
+        imagealphablending($thumbImage, true);
+
+        imagecopyresampled(
+            $thumbImage,
+            $srcImage,
+            0, 0, 0, 0,
+            $newWidth,
+            $newHeight,
+            $origWidth,
+            $origHeight
+        );
+
+        $thumbFilename = 'thumb_'.Str::uuid().'.webp';
+        $thumbRelativePath = "drive/{$userId}/thumbs/{$thumbFilename}";
+
+        ob_start();
+        imagewebp($thumbImage, null, 82);
+        $thumbData = ob_get_clean();
+
+        imagedestroy($srcImage);
+        imagedestroy($thumbImage);
+
+        if ($thumbData) {
+            Storage::disk($disk)->put($thumbRelativePath, $thumbData);
+
+            return $thumbRelativePath;
+        }
+
+        return null;
     }
 }

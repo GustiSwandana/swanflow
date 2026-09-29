@@ -73,7 +73,7 @@
 @endsection
 
 @section('content')
-<div class="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-2xl rounded-t-[36px] pt-5 px-4 pb-[max(6.5rem,calc(5.5rem+var(--sab,0px)))] shadow-2xl -mt-5 relative z-10 border-t border-slate-200/80 dark:border-white/10 flex-1 flex flex-col min-h-full space-y-5 text-slate-800 dark:text-white transition-colors animate-swan-in">
+<div class="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-2xl rounded-t-[36px] pt-5 px-4 pb-[max(11rem,calc(10rem+var(--sab,0px)))] shadow-2xl -mt-5 relative z-10 border-t border-slate-200/80 dark:border-white/10 flex-1 flex flex-col min-h-[calc(100dvh-14rem)] space-y-5 text-slate-800 dark:text-white transition-colors animate-swan-in">
     <!-- Grab Handle -->
     <div class="w-10 h-1.5 bg-slate-300/80 dark:bg-slate-700/80 rounded-full mx-auto mb-1"></div>
 
@@ -133,8 +133,12 @@
                 <div class="flex items-center gap-2 shrink-0">
                     <!-- Edit Button -->
                     <button type="button" 
-                            onclick='openEditWalletModal(@json($wallet))'
-                            class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-emerald-500 dark:text-slate-400 dark:hover:text-emerald-400 bg-slate-100/80 hover:bg-emerald-50 dark:bg-slate-800/80 dark:hover:bg-emerald-500/20 rounded-xl transition-all active:scale-95" 
+                            data-id="{{ $wallet->id }}"
+                            data-name="{{ $wallet->name }}"
+                            data-type="{{ $wallet->type }}"
+                            data-balance="{{ (int) round($wallet->balance) }}"
+                            onclick="openEditWalletModalFromBtn(this)"
+                            class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-emerald-500 dark:text-slate-400 dark:hover:text-emerald-400 bg-slate-100/80 hover:bg-emerald-50 dark:bg-slate-800/80 dark:hover:bg-emerald-500/20 rounded-xl transition-all active:scale-95 cursor-pointer" 
                             aria-label="Edit Dompet">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
@@ -206,7 +210,7 @@
 
                 <div>
                     <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Saldo Awal (Rp)</label>
-                    <input type="number" name="balance" step="any" min="0" required placeholder="0" class="w-full h-12 px-4 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
+                    <input type="text" name="balance" inputmode="numeric" data-numeric-only="true" autocomplete="off" required placeholder="0" class="w-full h-12 px-4 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
                 </div>
 
                 <div class="pt-4">
@@ -254,7 +258,7 @@
 
                 <div>
                     <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Penyesuaian Saldo (Rp)</label>
-                    <input type="number" id="edit-wallet-balance" name="balance" step="any" min="0" required class="w-full h-12 px-4 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
+                    <input type="text" id="edit-wallet-balance" name="balance" inputmode="numeric" data-numeric-only="true" autocomplete="off" required class="w-full h-12 px-4 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
                 </div>
 
                 <div class="pt-4">
@@ -274,11 +278,26 @@
     function closeAddWalletModal() {
         window.closeSheetModal('modal-add-wallet');
     }
+    function openEditWalletModalFromBtn(btn) {
+        if (!btn) return;
+        const ds = btn.dataset;
+        document.getElementById('form-edit-wallet').action = "{{ url('/wallets') }}/" + ds.id;
+        document.getElementById('edit-wallet-name').value = ds.name || '';
+        document.getElementById('edit-wallet-type').value = ds.type || 'bank';
+        const balInput1 = document.getElementById('edit-wallet-balance');
+        balInput1.value = Math.round(Number(ds.balance) || 0);
+        balInput1.dispatchEvent(new Event('input', { bubbles: true }));
+        window.openSheetModal('modal-edit-wallet');
+    }
+
     function openEditWalletModal(wallet) {
-        document.getElementById('form-edit-wallet').action = '/wallets/' + wallet.id;
-        document.getElementById('edit-wallet-name').value = wallet.name;
-        document.getElementById('edit-wallet-type').value = wallet.type;
-        document.getElementById('edit-wallet-balance').value = wallet.balance;
+        if (!wallet) return;
+        document.getElementById('form-edit-wallet').action = "{{ url('/wallets') }}/" + wallet.id;
+        document.getElementById('edit-wallet-name').value = wallet.name || '';
+        document.getElementById('edit-wallet-type').value = wallet.type || 'bank';
+        const balInput2 = document.getElementById('edit-wallet-balance');
+        balInput2.value = Math.round(Number(wallet.balance) || 0);
+        balInput2.dispatchEvent(new Event('input', { bubbles: true }));
         window.openSheetModal('modal-edit-wallet');
     }
     function closeEditWalletModal() {

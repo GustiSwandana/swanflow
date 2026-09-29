@@ -49,8 +49,8 @@
         <div class="absolute -bottom-32 left-1/2 -translate-x-1/2 w-96 h-96 bg-emerald-400/20 dark:bg-emerald-500/15 rounded-full blur-3xl animate-liquid-orb-2"></div>
     </div>
 
-    <!-- Top Navigation Header -->
-    <header class="relative z-10 w-full max-w-lg mx-auto px-4 pt-4 sm:pt-6 flex items-center justify-between">
+    <!-- Top Navigation Header (Dynamic Island Safe Area Aware) -->
+    <header class="relative z-10 w-full max-w-lg mx-auto px-4 pt-[calc(env(safe-area-inset-top,0px)+16px)] pb-2 flex items-center justify-between">
         <a href="/" class="flex items-center gap-2.5 group">
             <div class="w-9 h-9 rounded-[14px] bg-gradient-to-tr from-teal-500 to-emerald-400 flex items-center justify-center text-white shadow-lg shadow-teal-500/25 group-hover:scale-105 transition-transform">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.3">

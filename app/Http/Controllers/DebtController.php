@@ -68,6 +68,10 @@ class DebtController extends Controller
         /** @var User $user */
         $user = $request->user() ?? User::first() ?? User::getPrimaryUser();
 
+        if ($request->has('amount')) {
+            $request->merge(['amount' => $this->cleanNumericInput($request->input('amount'))]);
+        }
+
         $validated = $request->validate([
             'type' => ['required', 'string', 'in:debt,receivable'],
             'person_name' => ['required', 'string', 'max:100'],
@@ -140,6 +144,10 @@ class DebtController extends Controller
 
         abort_if($debt->user_id !== $user->id, 403, 'Akses tidak diizinkan.');
 
+        if ($request->has('amount')) {
+            $request->merge(['amount' => $this->cleanNumericInput($request->input('amount'))]);
+        }
+
         $validated = $request->validate([
             'person_name' => ['required', 'string', 'max:100'],
             'amount' => ['required', 'numeric', 'min:'.((float) $debt->paid_amount ?: 1)],
@@ -206,6 +214,10 @@ class DebtController extends Controller
         abort_if($debt->user_id !== $user->id, 403, 'Akses tidak diizinkan.');
 
         $remaining = $debt->remaining_amount;
+
+        if ($request->has('payment_amount')) {
+            $request->merge(['payment_amount' => $this->cleanNumericInput($request->input('payment_amount'))]);
+        }
 
         $validated = $request->validate([
             'payment_amount' => ['required', 'numeric', 'min:1', 'max:'.$remaining],

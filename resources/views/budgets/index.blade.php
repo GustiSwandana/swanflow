@@ -86,7 +86,7 @@
 @endsection
 
 @section('content')
-<div class="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-2xl rounded-t-[36px] pt-5 px-4 pb-[max(6.5rem,calc(5.5rem+var(--sab,0px)))] shadow-2xl -mt-5 relative z-10 border-t border-slate-200/80 dark:border-white/10 flex-1 flex flex-col min-h-full space-y-5 text-slate-800 dark:text-white transition-colors animate-swan-in">
+<div class="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-2xl rounded-t-[36px] pt-5 px-4 pb-[max(11rem,calc(10rem+var(--sab,0px)))] shadow-2xl -mt-5 relative z-10 border-t border-slate-200/80 dark:border-white/10 flex-1 flex flex-col min-h-[calc(100dvh-14rem)] space-y-5 text-slate-800 dark:text-white transition-colors animate-swan-in">
     <!-- Grab Handle -->
     <div class="w-10 h-1.5 bg-slate-300/80 dark:bg-slate-700/80 rounded-full mx-auto mb-1"></div>
 
@@ -168,7 +168,13 @@
                                 {{ $b->category->name ?? 'Kategori' }}
                             </h3>
                             <span class="text-[10px] font-semibold text-slate-400 dark:text-slate-500 block">
-                                {{ $b->month ? 'Khusus ' . \Carbon\Carbon::createFromFormat('Y-m', $b->month)->translatedFormat('M Y') : 'Rutin Tiap Bulan' }}
+                                @if($b->start_date && $b->end_date)
+                                    <span class="text-teal-600 dark:text-teal-400 font-bold">30 Hari: {{ $b->start_date->format('d M') }} - {{ $b->end_date->format('d M Y') }}</span>
+                                @elseif($b->month)
+                                    Khusus {{ \Carbon\Carbon::createFromFormat('Y-m', $b->month)->translatedFormat('M Y') }}
+                                @else
+                                    Rutin Tiap Bulan
+                                @endif
                             </span>
                         </div>
                     </div>
@@ -180,9 +186,15 @@
 
                         <!-- Edit Button -->
                         <button type="button" 
-                                onclick='openEditBudgetModal(@json($b))'
+                                data-id="{{ $b->id }}"
+                                data-category-name="{{ $b->category->name ?? 'Kategori' }}"
+                                data-amount="{{ (int) round($b->amount) }}"
+                                data-notes="{{ $b->notes ?? '' }}"
+                                data-start-date="{{ $b->start_date ? $b->start_date->format('Y-m-d') : '' }}"
+                                data-end-date="{{ $b->end_date ? $b->end_date->format('Y-m-d') : '' }}"
+                                onclick="openEditBudgetModalFromBtn(this)"
                                 aria-label="Edit Anggaran"
-                                class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-emerald-500 dark:text-slate-400 dark:hover:text-emerald-400 bg-slate-100/80 hover:bg-emerald-50 dark:bg-slate-800/80 dark:hover:bg-emerald-500/20 rounded-xl transition-all active:scale-95">
+                                class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-emerald-500 dark:text-slate-400 dark:hover:text-emerald-400 bg-slate-100/80 hover:bg-emerald-50 dark:bg-slate-800/80 dark:hover:bg-emerald-500/20 rounded-xl transition-all active:scale-95 cursor-pointer">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
                             </svg>
@@ -225,21 +237,22 @@
                 </div>
             </div>
         @empty
-            <div class="p-10 text-center space-y-3.5 liquid-card rounded-[28px] bg-white/80 dark:bg-slate-900/75 border border-white/60 dark:border-white/10 backdrop-blur-2xl">
-                <div class="w-14 h-14 mx-auto rounded-[22px] liquid-glass text-emerald-500 flex items-center justify-center border border-white/60 dark:border-white/10 shadow-xs">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <div class="py-12 px-6 text-center space-y-4 liquid-card rounded-[30px] bg-white/70 dark:bg-slate-900/60 border border-white/60 dark:border-white/10 backdrop-blur-2xl my-2 shadow-xs">
+                <div class="w-16 h-16 mx-auto rounded-[24px] bg-gradient-to-br from-emerald-500/10 to-teal-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-500/20 shadow-xs ring-8 ring-emerald-500/5">
+                    <svg class="w-8 h-8 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.75">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z" />
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z" />
                     </svg>
                 </div>
                 <div>
-                    <p class="text-sm font-bold text-slate-800 dark:text-white">Belum ada anggaran bulanan</p>
-                    <p class="text-xs text-slate-400 dark:text-slate-500 mt-1">Atur batas belanja per kategori agar keuangan Anda terkontrol rapi.</p>
+                    <h4 class="text-base font-black text-slate-800 dark:text-white tracking-tight">Belum Ada Anggaran</h4>
+                    <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1 max-w-[260px] mx-auto leading-relaxed">Atur batas belanja per kategori agar keuangan Anda terkontrol rapi.</p>
                 </div>
                 <button type="button" 
                         onclick="openAddBudgetModal()" 
-                        class="px-5 py-2.5 rounded-[20px] bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-black text-xs shadow-lg shadow-emerald-500/25 border border-white/20 inline-flex items-center gap-2 active:scale-95 transition-all ios-press">
-                    + Buat Anggaran Pertama
+                        class="mt-2 px-6 py-3 rounded-[20px] bg-slate-900 dark:bg-emerald-600 hover:bg-slate-800 dark:hover:bg-emerald-500 text-white font-black text-xs shadow-md shadow-slate-900/15 dark:shadow-emerald-500/25 border border-white/20 inline-flex items-center gap-2 active:scale-95 transition-all ios-press cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                    <span>Buat Anggaran Pertama</span>
                 </button>
             </div>
         @endforelse
@@ -251,11 +264,11 @@
 <div id="modal-add-budget" class="fixed inset-0 z-50 hidden transition-all duration-300" style="z-index: 9999;" aria-modal="true" role="dialog">
     <div class="modal-backdrop fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity duration-300 opacity-0" onclick="closeAddBudgetModal()"></div>
     <div class="fixed bottom-0 left-0 right-0 z-30 flex justify-center pointer-events-none">
-        <div class="modal-panel modal-sheet-safe w-full max-w-md bg-white/95 dark:bg-slate-900/95 backdrop-blur-3xl rounded-t-[36px] shadow-2xl p-6 border-t border-slate-200/80 dark:border-white/10 pointer-events-auto transform translate-y-full transition-transform duration-300 overflow-y-auto max-h-[85vh] no-scrollbar text-slate-800 dark:text-slate-100">
+        <div class="modal-panel modal-sheet-safe w-full max-w-md bg-white/95 dark:bg-slate-900/95 backdrop-blur-3xl rounded-t-[36px] shadow-2xl p-6 border-t border-slate-200/80 dark:border-white/10 pointer-events-auto transform translate-y-full transition-transform duration-300 overflow-y-auto max-h-[88vh] no-scrollbar text-slate-800 dark:text-slate-100">
             <div class="w-10 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-5 cursor-pointer" onclick="closeAddBudgetModal()"></div>
             
             <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-white/10 mb-5">
-                <h3 class="text-lg font-bold text-slate-900 dark:text-white tracking-tight">Atur Anggaran Bulanan Baru</h3>
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white tracking-tight">Atur Anggaran Baru</h3>
                 <button type="button" onclick="closeAddBudgetModal()" aria-label="Tutup modal" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center justify-center transition-all cursor-pointer">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -277,14 +290,46 @@
 
                 <div>
                     <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Target Batas Anggaran (Rp)</label>
-                    <input type="number" name="amount" min="1" step="any" required placeholder="Contoh: 1500000" class="w-full h-12 px-4 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
+                    <input type="text" name="amount" inputmode="numeric" data-numeric-only="true" autocomplete="off" required placeholder="Contoh: 1500000" class="w-full h-12 px-4 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
                 </div>
 
+                <!-- Tipe Periode -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Periode Berlaku</label>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Tipe Siklus Anggaran</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="flex items-center gap-2 p-3 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 rounded-2xl cursor-pointer text-xs font-bold text-slate-800 dark:text-slate-200">
+                            <input type="radio" name="period_type" value="custom_range" checked onchange="toggleBudgetPeriodInputs(this.value)" class="text-emerald-600 focus:ring-emerald-500">
+                            <span>Siklus 30 Hari</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-3 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 rounded-2xl cursor-pointer text-xs font-bold text-slate-800 dark:text-slate-200">
+                            <input type="radio" name="period_type" value="monthly" onchange="toggleBudgetPeriodInputs(this.value)" class="text-emerald-600 focus:ring-emerald-500">
+                            <span>Bulan Kalender</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 30 Days Inputs -->
+                <div id="budget-custom-range-wrapper" class="space-y-3 p-3.5 bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-500/20 rounded-2xl">
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label class="text-[11px] font-bold text-emerald-800 dark:text-emerald-300">Tanggal Mulai (Contoh: Tgl 28)</label>
+                            <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">Otomatis 30 Hari</span>
+                        </div>
+                        <input type="date" id="add-budget-start-date" name="start_date" value="{{ date('Y-m-d') }}" onchange="handleStartDateChange(this.value)" class="w-full h-11 px-3 bg-white dark:bg-slate-800 border border-emerald-300 dark:border-emerald-600/50 rounded-xl text-xs font-semibold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-emerald-800 dark:text-emerald-300 mb-1.5">Tanggal Selesai</label>
+                        <input type="date" id="add-budget-end-date" name="end_date" value="{{ date('Y-m-d', strtotime('+30 days')) }}" class="w-full h-11 px-3 bg-white dark:bg-slate-800 border border-emerald-300 dark:border-emerald-600/50 rounded-xl text-xs font-semibold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    <p class="text-[10px] text-emerald-700 dark:text-emerald-400 leading-tight">Pengeluaran kategori ini akan dihitung dari tanggal mulai hingga tanggal selesai.</p>
+                </div>
+
+                <!-- Monthly Selector Input -->
+                <div id="budget-monthly-wrapper" class="hidden">
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Bulan Berlaku</label>
                     <select name="month" class="w-full h-12 px-4 appearance-none bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
-                        <option value="">Rutin Tiap Bulan (Default)</option>
-                        <option value="{{ $selectedMonth }}" selected>Bulan Ini Saja ({{ \Carbon\Carbon::createFromFormat('Y-m', $selectedMonth)->translatedFormat('F Y') }})</option>
+                        <option value="{{ $selectedMonth }}" selected>Bulan Terpilih ({{ \Carbon\Carbon::createFromFormat('Y-m', $selectedMonth)->translatedFormat('F Y') }})</option>
+                        <option value="">Rutin Tiap Bulan (Default Kalender)</option>
                     </select>
                 </div>
 
@@ -307,7 +352,7 @@
 <div id="modal-edit-budget" class="fixed inset-0 z-50 hidden transition-all duration-300" style="z-index: 9999;" aria-modal="true" role="dialog">
     <div class="modal-backdrop fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity duration-300 opacity-0" onclick="closeEditBudgetModal()"></div>
     <div class="fixed bottom-0 left-0 right-0 z-30 flex justify-center pointer-events-none">
-        <div class="modal-panel modal-sheet-safe w-full max-w-md bg-white/95 dark:bg-slate-900/95 backdrop-blur-3xl rounded-t-[36px] shadow-2xl p-6 border-t border-slate-200/80 dark:border-white/10 pointer-events-auto transform translate-y-full transition-transform duration-300 overflow-y-auto max-h-[85vh] no-scrollbar text-slate-800 dark:text-slate-100">
+        <div class="modal-panel modal-sheet-safe w-full max-w-md bg-white/95 dark:bg-slate-900/95 backdrop-blur-3xl rounded-t-[36px] shadow-2xl p-6 border-t border-slate-200/80 dark:border-white/10 pointer-events-auto transform translate-y-full transition-transform duration-300 overflow-y-auto max-h-[88vh] no-scrollbar text-slate-800 dark:text-slate-100">
             <div class="w-10 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-5 cursor-pointer" onclick="closeEditBudgetModal()"></div>
             
             <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-white/10 mb-5">
@@ -324,7 +369,21 @@
                 @method('PUT')
                 <div>
                     <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Target Batas Anggaran (Rp)</label>
-                    <input type="number" id="edit-budget-amount" name="amount" min="1" step="any" required class="w-full h-12 px-4 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
+                    <input type="text" id="edit-budget-amount" name="amount" inputmode="numeric" data-numeric-only="true" autocomplete="off" required class="w-full h-12 px-4 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
+                </div>
+
+                <div class="space-y-3 p-3.5 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-white/10 rounded-2xl">
+                    <span class="block text-xs font-bold text-slate-700 dark:text-slate-300">Periode Anggaran (Opsional)</span>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 mb-1">Mulai</label>
+                            <input type="date" id="edit-budget-start-date" name="start_date" class="w-full h-10 px-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl text-xs font-semibold text-slate-900 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 mb-1">Selesai</label>
+                            <input type="date" id="edit-budget-end-date" name="end_date" class="w-full h-10 px-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl text-xs font-semibold text-slate-900 dark:text-white">
+                        </div>
+                    </div>
                 </div>
 
                 <div>
@@ -343,17 +402,77 @@
 </div>
 
 <script>
+    function toggleBudgetPeriodInputs(type) {
+        const rangeWrapper = document.getElementById('budget-custom-range-wrapper');
+        const monthlyWrapper = document.getElementById('budget-monthly-wrapper');
+        if (type === 'custom_range') {
+            rangeWrapper.classList.remove('hidden');
+            monthlyWrapper.classList.add('hidden');
+        } else {
+            rangeWrapper.classList.add('hidden');
+            monthlyWrapper.classList.remove('hidden');
+        }
+    }
+
+    function handleStartDateChange(startDateStr) {
+        if (!startDateStr) return;
+        const start = new Date(startDateStr);
+        // Automatically add 30 days
+        const end = new Date(start);
+        end.setDate(end.getDate() + 30);
+        const yyyy = end.getFullYear();
+        const mm = String(end.getMonth() + 1).padStart(2, '0');
+        const dd = String(end.getDate()).padStart(2, '0');
+        document.getElementById('add-budget-end-date').value = `${yyyy}-${mm}-${dd}`;
+    }
+
     function openAddBudgetModal() {
+        const now = new Date();
+        const startStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+        const startEl = document.getElementById('add-budget-start-date');
+        if (startEl) {
+            startEl.value = startStr;
+            handleStartDateChange(startStr);
+        }
         window.openSheetModal('modal-add-budget');
     }
     function closeAddBudgetModal() {
         window.closeSheetModal('modal-add-budget');
     }
+    function openEditBudgetModalFromBtn(btn) {
+        if (!btn) return;
+        const ds = btn.dataset;
+        document.getElementById('edit-budget-title').innerText = 'Perbarui Anggaran: ' + (ds.categoryName || 'Kategori');
+        const amountInput = document.getElementById('edit-budget-amount');
+        if (amountInput) {
+            amountInput.value = Math.round(Number(ds.amount) || 0);
+            amountInput.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        const notesInput = document.getElementById('edit-budget-notes');
+        if (notesInput) notesInput.value = ds.notes || '';
+        
+        const startInput = document.getElementById('edit-budget-start-date');
+        if (startInput) startInput.value = ds.startDate || '';
+        
+        const endInput = document.getElementById('edit-budget-end-date');
+        if (endInput) endInput.value = ds.endDate || '';
+        
+        const form = document.getElementById('form-edit-budget');
+        if (form) form.action = "{{ url('/budgets') }}/" + ds.id;
+        
+        window.openSheetModal('modal-edit-budget');
+    }
+
     function openEditBudgetModal(budget) {
+        if (!budget) return;
         document.getElementById('edit-budget-title').innerText = 'Perbarui Anggaran: ' + (budget.category?.name || 'Kategori');
-        document.getElementById('edit-budget-amount').value = budget.amount;
+        const amountInput = document.getElementById('edit-budget-amount');
+        amountInput.value = Math.round(Number(budget.amount) || 0);
+        amountInput.dispatchEvent(new Event('input', { bubbles: true }));
         document.getElementById('edit-budget-notes').value = budget.notes || '';
-        document.getElementById('form-edit-budget').action = '/budgets/' + budget.id;
+        document.getElementById('edit-budget-start-date').value = budget.start_date ? budget.start_date.substring(0, 10) : '';
+        document.getElementById('edit-budget-end-date').value = budget.end_date ? budget.end_date.substring(0, 10) : '';
+        document.getElementById('form-edit-budget').action = "{{ url('/budgets') }}/" + budget.id;
         window.openSheetModal('modal-edit-budget');
     }
     function closeEditBudgetModal() {

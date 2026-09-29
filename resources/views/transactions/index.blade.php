@@ -44,7 +44,7 @@
 @endsection
 
 @section('content')
-<div class="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-2xl rounded-t-[36px] pt-5 px-4 pb-[max(6.5rem,calc(5.5rem+var(--sab,0px)))] shadow-2xl -mt-5 relative z-10 border-t border-slate-200/80 dark:border-white/10 flex-1 flex flex-col min-h-full space-y-6 text-slate-800 dark:text-white transition-colors animate-swan-in">
+<div class="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-2xl rounded-t-[36px] pt-5 px-4 pb-[max(11rem,calc(10rem+var(--sab,0px)))] shadow-2xl -mt-5 relative z-10 border-t border-slate-200/80 dark:border-white/10 flex-1 flex flex-col min-h-[calc(100dvh-14rem)] space-y-6 text-slate-800 dark:text-white transition-colors animate-swan-in">
     <!-- Grab Handle -->
     <div class="w-10 h-1.5 bg-slate-300/80 dark:bg-slate-700/80 rounded-full mx-auto mb-1"></div>
 
@@ -193,6 +193,8 @@
                     'id' => $tx->id,
                     'type' => is_string($tx->type) ? $tx->type : $tx->type->value,
                     'amount' => (float) $tx->amount,
+                    'admin_fee' => (float) ($tx->admin_fee ?? 0),
+                    'fee_payer' => $tx->fee_payer ?? 'source',
                     'wallet_id' => $tx->wallet_id,
                     'target_wallet_id' => $tx->target_wallet_id,
                     'category_id' => $tx->category_id,
@@ -237,7 +239,7 @@
                                 {{ $tx->description ?: ($tx->category->name ?? 'Transaksi') }}
                             @endif
                         </p>
-                        <div class="flex items-center gap-1.5 mt-0.5">
+                        <div class="flex items-center gap-1.5 mt-0.5 flex-wrap">
                             <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400 truncate">
                                 @if($isTransfer)
                                     {{ $tx->wallet->name ?? 'Dompet' }} ➔ {{ $tx->targetWallet->name ?? 'Dompet' }}
@@ -245,6 +247,11 @@
                                     {{ $tx->wallet->name ?? 'Dompet' }}
                                 @endif
                             </span>
+                            @if($isTransfer && (float)($tx->admin_fee ?? 0) > 0)
+                                <span class="inline-flex items-center px-1.5 py-0.5 rounded-md text-[9px] font-extrabold bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">
+                                    Fee Rp {{ number_format($tx->admin_fee, 0, ',', '.') }} ({{ $tx->fee_payer === 'destination' ? 'Tujuan' : 'Asal' }})
+                                </span>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -255,6 +262,15 @@
                         <span class="text-xs sm:text-[13px] font-black tracking-tight {{ $isIncome ? 'text-emerald-600 dark:text-emerald-400' : ($isTransfer ? 'text-cyan-600 dark:text-cyan-400' : 'text-slate-900 dark:text-white') }}">
                             {{ $isIncome ? '+ ' : ($isTransfer ? '' : '- ') }}Rp {{ number_format($tx->amount, 0, ',', '.') }}
                         </span>
+                        @if($isTransfer && (float)($tx->admin_fee ?? 0) > 0)
+                            <span class="block text-[10px] font-medium text-slate-400 dark:text-slate-500">
+                                @if($tx->fee_payer === 'destination')
+                                    Terima: Rp {{ number_format(max(0, $tx->amount - $tx->admin_fee), 0, ',', '.') }}
+                                @else
+                                    Total: Rp {{ number_format($tx->amount + $tx->admin_fee, 0, ',', '.') }}
+                                @endif
+                            </span>
+                        @endif
                     </div>
 
                     <div class="flex flex-col gap-1 border-l border-slate-200/80 dark:border-white/10 pl-2 ml-1">

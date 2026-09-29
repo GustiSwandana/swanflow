@@ -16,6 +16,45 @@ class StoreTransactionRequest extends FormRequest
     }
 
     /**
+     * Clean formatted numeric inputs while preserving negative values and native numeric inputs.
+     */
+    protected function cleanNumericInput(mixed $val): mixed
+    {
+        if ($val === null || $val === '') {
+            return $val;
+        }
+
+        if (is_numeric($val)) {
+            return $val;
+        }
+
+        $str = trim((string) $val);
+        $isNegative = str_starts_with($str, '-');
+        $cleaned = preg_replace('/[^0-9]/', '', $str);
+
+        if ($cleaned === '') {
+            return $val;
+        }
+
+        return $isNegative ? "-$cleaned" : $cleaned;
+    }
+
+    /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('amount')) {
+            $this->merge(['amount' => $this->cleanNumericInput($this->input('amount'))]);
+        }
+
+        if ($this->has('admin_fee') && $this->input('admin_fee') !== null && $this->input('admin_fee') !== '') {
+            $adminFee = $this->cleanNumericInput($this->input('admin_fee'));
+            $this->merge(['admin_fee' => $adminFee !== '' ? $adminFee : 0]);
+        }
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, array<mixed>>
@@ -37,6 +76,8 @@ class StoreTransactionRequest extends FormRequest
             ],
             'type' => ['required', 'in:income,expense,transfer'],
             'amount' => ['required', 'numeric', 'min:1'],
+            'admin_fee' => ['nullable', 'numeric', 'min:0'],
+            'fee_payer' => ['nullable', 'in:source,destination'],
             'date' => ['required', 'date'],
             'description' => ['nullable', 'string', 'max:255'],
         ];

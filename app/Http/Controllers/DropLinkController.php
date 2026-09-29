@@ -177,7 +177,7 @@ class DropLinkController extends Controller
             $sizeBytes = $uploadedFile->getSize();
             $category = StoredFile::detectCategory($extension, $mimeType);
 
-            $path = $uploadedFile->store('drive/'.$link->user_id, 'local');
+            $path = $uploadedFile->store('drive/'.$link->user_id, config('filesystems.default'));
             $title = pathinfo($originalName, PATHINFO_FILENAME);
 
             $link->user->storedFiles()->create([

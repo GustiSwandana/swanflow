@@ -30,9 +30,58 @@ button, a, input, select, textarea, [role="button"], .ios-press, .liquid-action-
     -webkit-tap-highlight-color: transparent;
 }
 
+/* Mobile Form & Native Date Picker Polish (iOS Safari & Android PWA) */
+input[type="date"],
+input[type="month"],
+input[type="datetime-local"] {
+    color-scheme: light;
+}
+
+:where(.dark, .dark *) input[type="date"],
+:where(.dark, .dark *) input[type="month"],
+:where(.dark, .dark *) input[type="datetime-local"] {
+    color-scheme: dark;
+}
+
+input[type="date"]::-webkit-date-and-time-value {
+    text-align: left;
+    min-height: 1.4em;
+    color: inherit;
+}
+
 /* ==========================================================================
    Apple iOS / visionOS Liquid Design System (Interactive & Smooth Motion)
    ========================================================================== */
+
+/* GPU Hardware Acceleration for 60fps Liquid Glass Rendering (iOS Safari & Android Chrome) */
+.liquid-glass,
+.liquid-card,
+.liquid-pill,
+.liquid-action-fab,
+.modal-panel,
+[class*="backdrop-blur-"] {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+
+/* Universal Safe Area Insets (iPhone 15 Dynamic Island & Home Indicator Support) */
+.pt-safe {
+    padding-top: max(16px, env(safe-area-inset-top, 16px));
+}
+
+.pb-safe {
+    padding-bottom: max(16px, env(safe-area-inset-bottom, 16px));
+}
+
+.top-safe {
+    top: max(0px, env(safe-area-inset-top, 0px));
+}
+
+.bottom-safe {
+    bottom: max(0px, env(safe-area-inset-bottom, 0px));
+}
 
 /* 1. Liquid Glass Base Surfaces (Buttons, Badges, Headers) */
 .liquid-glass {

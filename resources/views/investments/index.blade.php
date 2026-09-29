@@ -83,7 +83,7 @@
 @endsection
 
 @section('content')
-<div class="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-2xl rounded-t-[36px] pt-5 px-4 pb-[max(6.5rem,calc(5.5rem+var(--sab,0px)))] shadow-2xl -mt-5 relative z-10 border-t border-slate-200/80 dark:border-white/10 flex-1 flex flex-col min-h-full space-y-5 text-slate-800 dark:text-white transition-colors animate-swan-in">
+<div class="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-2xl rounded-t-[36px] pt-5 px-4 pb-[max(11rem,calc(10rem+var(--sab,0px)))] shadow-2xl -mt-5 relative z-10 border-t border-slate-200/80 dark:border-white/10 flex-1 flex flex-col min-h-[calc(100dvh-14rem)] space-y-5 text-slate-800 dark:text-white transition-colors animate-swan-in">
     <!-- Grab Handle -->
     <div class="w-10 h-1.5 bg-slate-300/80 dark:bg-slate-700/80 rounded-full mx-auto mb-1"></div>
 
@@ -112,7 +112,7 @@
 
         <!-- Tambah Investasi Button -->
         <button type="button" 
-                onclick="openSheetModal('modal-add-investment')" 
+                onclick="openAddInvestmentModal()" 
                 class="min-h-[42px] px-4 py-2 rounded-[20px] bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs shadow-lg shadow-emerald-500/25 border border-white/20 flex items-center gap-2 shrink-0 active:scale-95 transition-all cursor-pointer ios-press">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -240,7 +240,7 @@
 
                     <!-- Tarik Dana -->
                     <button type="button" 
-                            onclick="openWithdrawModal({{ $item->id }}, '{{ addslashes($item->name) }}', {{ $item->current_value }}, {{ $item->wallet_id ?? 'null' }})"
+                            onclick="openWithdrawModal({{ $item->id }}, '{{ addslashes($item->name) }}', {{ (int) round($item->current_value) }}, {{ $item->wallet_id ?? 'null' }})"
                             class="flex-1 min-h-[38px] py-1.5 px-2.5 rounded-[16px] bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-300 font-black text-xs border border-amber-500/25 active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer ios-press">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12h-15" /></svg>
                         <span>- Tarik</span>
@@ -248,7 +248,7 @@
 
                     <!-- Sesuaikan Saldo Terkini -->
                     <button type="button" 
-                            onclick="openUpdateValueModal({{ $item->id }}, '{{ addslashes($item->name) }}', {{ $item->current_value }})"
+                            onclick="openUpdateValueModal({{ $item->id }}, '{{ addslashes($item->name) }}', {{ (int) round($item->current_value) }})"
                             class="min-h-[38px] px-3 rounded-[16px] liquid-glass text-slate-700 dark:text-slate-200 font-bold text-xs border border-white/60 dark:border-white/10 active:scale-95 transition-all flex items-center justify-center gap-1 cursor-pointer ios-press"
                             title="Sesuaikan Saldo Terkini">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>
@@ -261,7 +261,7 @@
                             data-name="{{ $item->name }}"
                             data-platform="{{ $item->platform }}"
                             data-type="{{ $item->type }}"
-                            data-target="{{ $item->target_amount }}"
+                            data-target="{{ $item->target_amount ? (int) round($item->target_amount) : '' }}"
                             data-status="{{ $item->status }}"
                             data-wallet-id="{{ $item->wallet_id }}"
                             data-notes="{{ $item->notes }}"
@@ -288,7 +288,7 @@
                     </p>
                 </div>
                 <button type="button" 
-                        onclick="openSheetModal('modal-add-investment')" 
+                        onclick="openAddInvestmentModal()" 
                         class="min-h-[44px] px-5 py-2.5 rounded-[20px] bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs shadow-lg shadow-emerald-500/25 border border-white/20 inline-flex items-center gap-2 active:scale-95 transition-all cursor-pointer ios-press">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
                     <span>Mulai Catat Investasi</span>
@@ -358,13 +358,62 @@
                 <!-- Saldo Awal (Full Width) -->
                 <div>
                     <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Saldo Awal (Rp) <span class="text-rose-500">*</span></label>
-                    <input type="number" id="add-initial-amount" name="initial_amount" min="0" step="any" required placeholder="1000000" class="w-full min-h-[46px] px-4 py-2.5 bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 rounded-[20px] text-sm font-semibold text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all">
+                    <input type="text" id="add-initial-amount" name="initial_amount" inputmode="numeric" data-numeric-only="true" autocomplete="off" required placeholder="1000000" class="w-full min-h-[46px] px-4 py-2.5 bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 rounded-[20px] text-sm font-semibold text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all">
                 </div>
 
                 <!-- Tanggal Mulai (Full Width) -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Tanggal Mulai</label>
-                    <input type="date" name="date" value="{{ date('Y-m-d') }}" class="block w-full min-w-0 min-h-[46px] px-4 py-2.5 bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 rounded-[20px] text-sm font-semibold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label class="text-xs font-bold text-slate-700 dark:text-slate-300">Tanggal Mulai</label>
+                        <div class="flex items-center gap-1.5 relative z-20">
+                            <button type="button" 
+                                    data-date-target="add-investment-date" 
+                                    data-date-preset="yesterday"
+                                    onclick="setDatePreset('add-investment-date', 'yesterday')" 
+                                    class="date-preset-btn text-[11px] font-medium px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all cursor-pointer">
+                                Kemarin
+                            </button>
+                            <button type="button" 
+                                    data-date-target="add-investment-date" 
+                                    data-date-preset="today"
+                                    onclick="setDatePreset('add-investment-date', 'today')" 
+                                    class="date-preset-btn text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 dark:bg-emerald-400/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 transition-all cursor-pointer shadow-2xs">
+                                Hari Ini
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="relative group">
+                        <div id="add-investment-date-display" class="flex items-center justify-between w-full min-h-[48px] px-3.5 py-2 bg-slate-50/90 dark:bg-slate-800/80 hover:bg-slate-100/90 dark:hover:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-2xl transition-all shadow-xs group-focus-within:border-emerald-500 group-focus-within:ring-2 group-focus-within:ring-emerald-500/20">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <div class="w-8 h-8 rounded-xl bg-emerald-500/10 dark:bg-emerald-400/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-2xs">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                                    </svg>
+                                </div>
+                                <div class="flex flex-col min-w-0">
+                                    <span id="add-investment-date-label" class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate">
+                                        {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d M Y') }}
+                                    </span>
+                                    <span id="add-investment-date-sublabel" class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
+                                        Hari ini
+                                    </span>
+                                </div>
+                            </div>
+                            <svg class="w-3.5 h-3.5 text-slate-400 shrink-0 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                            </svg>
+                        </div>
+
+                        <input id="add-investment-date" 
+                               type="date" 
+                               name="date" 
+                               value="{{ date('Y-m-d') }}" 
+                               aria-label="Pilih Tanggal Mulai"
+                               onchange="syncDateDisplay('add-investment-date')"
+                               onclick="try { this.showPicker(); } catch(e) {}"
+                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 [color-scheme:light] dark:[color-scheme:dark]">
+                    </div>
                 </div>
 
                 <!-- Catatan (Full Width) -->
@@ -411,13 +460,63 @@
                 <!-- Nominal Top Up -->
                 <div>
                     <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Nominal Tambah Saldo / Setor (Rp) <span class="text-rose-500">*</span></label>
-                    <input type="number" name="amount" min="1" step="any" required placeholder="Contoh: 500000" class="w-full min-h-[46px] px-4 py-2.5 bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 rounded-[20px] text-sm font-semibold text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all">
+                    <input type="text" name="amount" inputmode="numeric" data-numeric-only="true" autocomplete="off" required placeholder="Contoh: 500000" class="w-full min-h-[46px] px-4 py-2.5 bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 rounded-[20px] text-sm font-semibold text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all">
                 </div>
 
                 <!-- Tanggal -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Tanggal Transaksi</label>
-                    <input type="date" name="date" value="{{ date('Y-m-d') }}" required class="w-full min-h-[46px] px-4 py-2.5 bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 rounded-[20px] text-sm font-semibold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label class="text-xs font-bold text-slate-700 dark:text-slate-300">Tanggal Transaksi</label>
+                        <div class="flex items-center gap-1.5 relative z-20">
+                            <button type="button" 
+                                    data-date-target="topup-investment-date" 
+                                    data-date-preset="yesterday"
+                                    onclick="setDatePreset('topup-investment-date', 'yesterday')" 
+                                    class="date-preset-btn text-[11px] font-medium px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all cursor-pointer">
+                                Kemarin
+                            </button>
+                            <button type="button" 
+                                    data-date-target="topup-investment-date" 
+                                    data-date-preset="today"
+                                    onclick="setDatePreset('topup-investment-date', 'today')" 
+                                    class="date-preset-btn text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 dark:bg-emerald-400/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 transition-all cursor-pointer shadow-2xs">
+                                Hari Ini
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="relative group">
+                        <div id="topup-investment-date-display" class="flex items-center justify-between w-full min-h-[48px] px-3.5 py-2 bg-slate-50/90 dark:bg-slate-800/80 hover:bg-slate-100/90 dark:hover:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-2xl transition-all shadow-xs group-focus-within:border-emerald-500 group-focus-within:ring-2 group-focus-within:ring-emerald-500/20">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <div class="w-8 h-8 rounded-xl bg-emerald-500/10 dark:bg-emerald-400/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-2xs">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                                    </svg>
+                                </div>
+                                <div class="flex flex-col min-w-0">
+                                    <span id="topup-investment-date-label" class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate">
+                                        {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d M Y') }}
+                                    </span>
+                                    <span id="topup-investment-date-sublabel" class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
+                                        Hari ini
+                                    </span>
+                                </div>
+                            </div>
+                            <svg class="w-3.5 h-3.5 text-slate-400 shrink-0 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                            </svg>
+                        </div>
+
+                        <input id="topup-investment-date" 
+                               type="date" 
+                               name="date" 
+                               value="{{ date('Y-m-d') }}" 
+                               required 
+                               aria-label="Pilih Tanggal Transaksi"
+                               onchange="syncDateDisplay('topup-investment-date')"
+                               onclick="try { this.showPicker(); } catch(e) {}"
+                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 [color-scheme:light] dark:[color-scheme:dark]">
+                    </div>
                 </div>
 
                 <!-- Dompet Sumber & Checkboxes -->
@@ -491,7 +590,7 @@
 
                 <div>
                     <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Saldo Terkini (Rp) <span class="text-rose-500">*</span></label>
-                    <input type="number" id="update-value-input" name="current_value" min="0" step="any" required placeholder="0" class="w-full min-h-[48px] px-4 py-2.5 bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 rounded-[20px] text-base font-black text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all">
+                    <input type="text" id="update-value-input" name="current_value" inputmode="numeric" data-numeric-only="true" autocomplete="off" required placeholder="0" class="w-full min-h-[48px] px-4 py-2.5 bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 rounded-[20px] text-base font-black text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all">
                     <p class="text-[11px] font-medium text-slate-400 dark:text-slate-500 mt-1.5">
                         Masukkan saldo atau nilai terkini aset Anda jika ada perubahan nilai pasar, bagi hasil, atau dividen.
                     </p>
@@ -535,14 +634,64 @@
                 <!-- Nominal Penarikan -->
                 <div>
                     <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Nominal Ditarik (Rp) <span class="text-rose-500">*</span></label>
-                    <input type="number" id="withdraw-amount-input" name="amount" min="1" step="any" required placeholder="0" class="w-full min-h-[46px] px-4 py-2.5 bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 rounded-[20px] text-sm font-semibold text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500 transition-all">
+                    <input type="text" id="withdraw-amount-input" name="amount" inputmode="numeric" data-numeric-only="true" autocomplete="off" required placeholder="0" class="w-full min-h-[46px] px-4 py-2.5 bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 rounded-[20px] text-sm font-semibold text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500 transition-all">
                     <p id="withdraw-max-hint" class="text-[11px] font-semibold text-slate-400 mt-1"></p>
                 </div>
 
                 <!-- Tanggal -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Tanggal Penarikan</label>
-                    <input type="date" name="date" value="{{ date('Y-m-d') }}" required class="w-full min-h-[46px] px-4 py-2.5 bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 rounded-[20px] text-sm font-semibold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500 transition-all">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label class="text-xs font-bold text-slate-700 dark:text-slate-300">Tanggal Penarikan</label>
+                        <div class="flex items-center gap-1.5 relative z-20">
+                            <button type="button" 
+                                    data-date-target="withdraw-investment-date" 
+                                    data-date-preset="yesterday"
+                                    onclick="setDatePreset('withdraw-investment-date', 'yesterday')" 
+                                    class="date-preset-btn text-[11px] font-medium px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all cursor-pointer">
+                                Kemarin
+                            </button>
+                            <button type="button" 
+                                    data-date-target="withdraw-investment-date" 
+                                    data-date-preset="today"
+                                    onclick="setDatePreset('withdraw-investment-date', 'today')" 
+                                    class="date-preset-btn text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 dark:bg-emerald-400/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 transition-all cursor-pointer shadow-2xs">
+                                Hari Ini
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="relative group">
+                        <div id="withdraw-investment-date-display" class="flex items-center justify-between w-full min-h-[48px] px-3.5 py-2 bg-slate-50/90 dark:bg-slate-800/80 hover:bg-slate-100/90 dark:hover:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-2xl transition-all shadow-xs group-focus-within:border-emerald-500 group-focus-within:ring-2 group-focus-within:ring-emerald-500/20">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <div class="w-8 h-8 rounded-xl bg-emerald-500/10 dark:bg-emerald-400/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-2xs">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                                    </svg>
+                                </div>
+                                <div class="flex flex-col min-w-0">
+                                    <span id="withdraw-investment-date-label" class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate">
+                                        {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d M Y') }}
+                                    </span>
+                                    <span id="withdraw-investment-date-sublabel" class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
+                                        Hari ini
+                                    </span>
+                                </div>
+                            </div>
+                            <svg class="w-3.5 h-3.5 text-slate-400 shrink-0 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                            </svg>
+                        </div>
+
+                        <input id="withdraw-investment-date" 
+                               type="date" 
+                               name="date" 
+                               value="{{ date('Y-m-d') }}" 
+                               required 
+                               aria-label="Pilih Tanggal Penarikan"
+                               onchange="syncDateDisplay('withdraw-investment-date')"
+                               onclick="try { this.showPicker(); } catch(e) {}"
+                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 [color-scheme:light] dark:[color-scheme:dark]">
+                    </div>
                 </div>
 
                 <!-- Dompet Tujuan Pencairan -->
@@ -642,7 +791,7 @@
                 <div class="grid grid-cols-2 gap-2.5">
                     <div>
                         <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Target Nominal (Opsional)</label>
-                        <input type="number" id="edit-target" name="target_amount" min="0" step="any" class="w-full min-h-[46px] px-4 py-2.5 bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 rounded-[20px] text-xs sm:text-sm font-semibold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all">
+                        <input type="text" id="edit-target" name="target_amount" inputmode="numeric" data-numeric-only="true" autocomplete="off" class="w-full min-h-[46px] px-4 py-2.5 bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 rounded-[20px] text-xs sm:text-sm font-semibold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Status</label>
@@ -704,19 +853,35 @@
         this.dataset.manual = 'true';
     });
 
+    function openAddInvestmentModal() {
+        const d = new Date();
+        const todayStr = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+        const dateInput = document.getElementById('add-investment-date');
+        if (dateInput) dateInput.value = todayStr;
+        syncDateDisplay('add-investment-date');
+        openSheetModal('modal-add-investment');
+    }
+
     function openTopupModal(id, name, walletId) {
         document.getElementById('topup-form').action = `/investments/${id}/topup`;
         document.getElementById('topup-investment-name').textContent = name;
         if (walletId) {
             document.getElementById('topup-wallet-select').value = walletId;
         }
+        const d = new Date();
+        const todayStr = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+        const dateInput = document.getElementById('topup-investment-date');
+        if (dateInput) dateInput.value = todayStr;
+        syncDateDisplay('topup-investment-date');
         openSheetModal('modal-topup-investment');
     }
 
     function openUpdateValueModal(id, name, currentValue) {
         document.getElementById('update-value-form').action = `/investments/${id}/value`;
         document.getElementById('value-investment-name').textContent = name;
-        document.getElementById('update-value-input').value = currentValue;
+        const valInput = document.getElementById('update-value-input');
+        valInput.value = currentValue ? Math.round(Number(currentValue) || 0) : '';
+        valInput.dispatchEvent(new Event('input', { bubbles: true }));
         openSheetModal('modal-update-value');
     }
 
@@ -728,6 +893,11 @@
         if (walletId) {
             document.getElementById('withdraw-wallet-select').value = walletId;
         }
+        const d = new Date();
+        const todayStr = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+        const dateInput = document.getElementById('withdraw-investment-date');
+        if (dateInput) dateInput.value = todayStr;
+        syncDateDisplay('withdraw-investment-date');
         openSheetModal('modal-withdraw-investment');
     }
 
@@ -738,7 +908,9 @@
         document.getElementById('edit-name').value = ds.name || '';
         document.getElementById('edit-platform').value = ds.platform || '';
         document.getElementById('edit-type').value = ds.type || 'mutual_fund';
-        document.getElementById('edit-target').value = ds.target || '';
+        const targetInput1 = document.getElementById('edit-target');
+        targetInput1.value = ds.target ? Math.round(Number(ds.target) || 0) : '';
+        targetInput1.dispatchEvent(new Event('input', { bubbles: true }));
         document.getElementById('edit-status').value = ds.status || 'active';
         document.getElementById('edit-wallet-id').value = ds.walletId || '';
         document.getElementById('edit-notes').value = ds.notes || '';
@@ -752,12 +924,20 @@
         document.getElementById('edit-name').value = item.name || '';
         document.getElementById('edit-platform').value = item.platform || '';
         document.getElementById('edit-type').value = item.type || 'mutual_fund';
-        document.getElementById('edit-target').value = item.target_amount || '';
+        const targetInput2 = document.getElementById('edit-target');
+        targetInput2.value = item.target_amount ? Math.round(Number(item.target_amount) || 0) : '';
+        targetInput2.dispatchEvent(new Event('input', { bubbles: true }));
         document.getElementById('edit-status').value = item.status || 'active';
         document.getElementById('edit-wallet-id').value = item.wallet_id || '';
         document.getElementById('edit-notes').value = item.notes || '';
 
         openSheetModal('modal-edit-investment');
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        syncDateDisplay('add-investment-date');
+        syncDateDisplay('topup-investment-date');
+        syncDateDisplay('withdraw-investment-date');
+    });
 </script>
 @endsection

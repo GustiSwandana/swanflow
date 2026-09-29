@@ -32,7 +32,7 @@ class SessionTimeoutTest extends TestCase
             ->withSession(['last_activity_time' => now()->timestamp - 960])
             ->get('/');
 
-        $response->assertRedirect('/login');
+        $response->assertRedirect('/login?expired=1');
         $response->assertSessionHas('warning');
         $this->assertGuest();
     }
@@ -59,5 +59,27 @@ class SessionTimeoutTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('Sesi Anda telah berakhir');
+    }
+
+    public function test_authenticated_user_visiting_login_with_expired_flag_is_logged_out(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->get('/login?expired=1');
+
+        $response->assertStatus(200);
+        $this->assertGuest();
+        $response->assertSee('Sesi Anda telah berakhir');
+    }
+
+    public function test_logout_via_get_with_expired_flag_redirects_to_login_with_warning(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->get('/logout?expired=1');
+
+        $response->assertRedirect('/login?expired=1');
+        $response->assertSessionHas('warning');
+        $this->assertGuest();
     }
 }

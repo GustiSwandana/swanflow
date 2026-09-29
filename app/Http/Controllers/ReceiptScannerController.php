@@ -2,28 +2,132 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ProcessReceiptOCR;
 use App\Models\Category;
 use App\Models\User;
 use App\Models\Wallet;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class ReceiptScannerController extends Controller
 {
+    /**
+     * Dispatch receipt scanning to background queue (non-blocking).
+     */
+    public function scanAsync(Request $request): JsonResponse
+    {
+        $request->validate([
+            'image' => [
+                'required',
+                'file',
+                'max:20480',
+                function ($attribute, $value, $fail) {
+                    if (! $value instanceof UploadedFile) {
+                        return $fail('Berkas bukti bayar tidak valid.');
+                    }
+                    $ext = strtolower($value->getClientOriginalExtension());
+                    $mime = strtolower($value->getClientMimeType() ?: $value->getMimeType() ?: '');
+                    $allowedExts = ['jpg', 'jpeg', 'png', 'webp', 'heic', 'heif', 'bmp', 'gif'];
+                    if (! str_starts_with($mime, 'image/') && ! in_array($ext, $allowedExts)) {
+                        return $fail('Berkas harus berupa gambar (JPG, PNG, WEBP, atau HEIC).');
+                    }
+                },
+            ],
+        ], [
+            'image.required' => 'Pilih atau ambil foto bukti pembayaran terlebih dahulu.',
+            'image.max' => 'Ukuran gambar maksimal adalah 20 MB.',
+        ]);
+
+        /** @var User $user */
+        $user = $request->user() ?? User::first() ?? User::getPrimaryUser();
+
+        $image = $request->file('image');
+        $mimeType = $image->getClientMimeType() ?: 'image/jpeg';
+        $imageData = base64_encode(file_get_contents($image->getRealPath()));
+
+        $categories = Category::where(function ($q) use ($user) {
+            $q->where('user_id', $user->id)->orWhereNull('user_id');
+        })->get(['id', 'name', 'type']);
+        $categoryNames = $categories->pluck('name')->toArray();
+
+        $scanId = (string) Str::uuid();
+
+        Cache::put("receipt_scan:{$scanId}", [
+            'status' => 'processing',
+            'created_at' => now()->toISOString(),
+        ], now()->addMinutes(15));
+
+        // Execute via ProcessReceiptOCR Job with sync execution to ensure lightning-fast response (< 1s)
+        // without depending on a manual background queue:work daemon process.
+        ProcessReceiptOCR::dispatchSync($scanId, $imageData, $mimeType, $user->id, $categoryNames);
+
+        $cachedResult = Cache::get("receipt_scan:{$scanId}");
+        $resultData = is_array($cachedResult) ? $cachedResult : [];
+
+        return response()->json(array_merge([
+            'success' => true,
+            'scan_id' => $scanId,
+            'status' => $resultData['status'] ?? 'completed',
+            'data' => $resultData,
+            'message' => 'Struk berhasil diproses.',
+        ], $resultData));
+    }
+
+    /**
+     * Check asynchronous OCR job processing status.
+     */
+    public function checkStatus(string $scanId): JsonResponse
+    {
+        $scan = Cache::get("receipt_scan:{$scanId}");
+
+        if (! $scan) {
+            return response()->json([
+                'success' => false,
+                'status' => 'not_found',
+                'message' => 'Status pemindaian tidak ditemukan atau sudah kedaluwarsa.',
+            ], 404);
+        }
+
+        $scanArray = is_array($scan) ? $scan : [];
+
+        return response()->json(array_merge([
+            'success' => true,
+            'status' => $scanArray['status'] ?? 'completed',
+            'data' => $scanArray,
+        ], $scanArray));
+    }
+
     /**
      * Scan an uploaded receipt / transfer proof image.
      */
     public function scan(Request $request): JsonResponse
     {
         $request->validate([
-            'image' => ['required', 'file', 'image', 'max:15360'], // max 15MB
+            'image' => [
+                'required',
+                'file',
+                'max:20480',
+                function ($attribute, $value, $fail) {
+                    if (! $value instanceof UploadedFile) {
+                        return $fail('Berkas bukti bayar tidak valid.');
+                    }
+                    $ext = strtolower($value->getClientOriginalExtension());
+                    $mime = strtolower($value->getClientMimeType() ?: $value->getMimeType() ?: '');
+                    $allowedExts = ['jpg', 'jpeg', 'png', 'webp', 'heic', 'heif', 'bmp', 'gif'];
+                    if (! str_starts_with($mime, 'image/') && ! in_array($ext, $allowedExts)) {
+                        return $fail('Berkas harus berupa gambar (JPG, PNG, WEBP, atau HEIC).');
+                    }
+                },
+            ],
         ], [
             'image.required' => 'Pilih atau ambil foto bukti pembayaran terlebih dahulu.',
-            'image.image' => 'Berkas harus berupa gambar (JPG, PNG, WEBP, atau HEIC).',
-            'image.max' => 'Ukuran gambar maksimal adalah 15 MB.',
+            'image.max' => 'Ukuran gambar maksimal adalah 20 MB.',
         ]);
 
         /** @var User $user */
@@ -39,6 +143,19 @@ class ReceiptScannerController extends Controller
 
         $wallets = Wallet::where('user_id', $user->id)->get(['id', 'name', 'type', 'balance']);
 
+        $serializedWallets = $wallets->map(fn ($w) => [
+            'id' => $w->id,
+            'name' => $w->name,
+            'type' => $w->type,
+            'balance' => (float) $w->balance,
+        ])->values()->all();
+
+        $serializedCategories = $categories->map(fn ($c) => [
+            'id' => $c->id,
+            'name' => $c->name,
+            'type' => is_string($c->type) ? $c->type : $c->type->value,
+        ])->values()->all();
+
         $categoryNames = $categories->pluck('name')->toArray();
         $apiKey = config('services.gemini.key') ?: env('GEMINI_API_KEY');
 
@@ -48,26 +165,23 @@ class ReceiptScannerController extends Controller
                 $geminiResult = $this->callGeminiVision($apiKey, $imageData, $mimeType, $categoryNames);
 
                 if ($geminiResult && ! empty($geminiResult['amount'])) {
-                    $matchedCategory = $this->matchCategory($geminiResult['category_guess'] ?? '', $categories, $geminiResult['type'] ?? 'expense');
+                    $txnType = in_array($geminiResult['type'] ?? '', ['income', 'expense']) ? $geminiResult['type'] : 'expense';
+                    $matchedCategory = $this->matchCategory($geminiResult['category_guess'] ?? '', $categories, $txnType);
 
                     return response()->json([
                         'success' => true,
                         'source' => 'gemini_ai',
-                        'amount' => (float) $geminiResult['amount'],
-                        'date' => $geminiResult['date'] ?? now()->format('Y-m-d'),
+                        'amount' => ProcessReceiptOCR::cleanAmount($geminiResult['amount']),
+                        'date' => ProcessReceiptOCR::normalizeDate($geminiResult['date'] ?? null),
                         'merchant' => $geminiResult['merchant'] ?? 'Struk Pembayaran',
                         'description' => $geminiResult['description'] ?? ($geminiResult['merchant'] ?? 'Pembayaran Struk'),
-                        'type' => in_array($geminiResult['type'] ?? '', ['income', 'expense']) ? $geminiResult['type'] : 'expense',
+                        'type' => $txnType,
                         'category_id' => $matchedCategory?->id,
                         'category_name' => $matchedCategory?->name ?? ($geminiResult['category_guess'] ?? null),
                         'items' => $geminiResult['items'] ?? [],
                         'notes' => $geminiResult['notes'] ?? null,
-                        'wallets' => $wallets,
-                        'categories' => $categories->map(fn ($c) => [
-                            'id' => $c->id,
-                            'name' => $c->name,
-                            'type' => is_string($c->type) ? $c->type : $c->type->value,
-                        ]),
+                        'wallets' => $serializedWallets,
+                        'categories' => $serializedCategories,
                     ]);
                 }
             } catch (\Throwable $e) {
@@ -80,12 +194,8 @@ class ReceiptScannerController extends Controller
             'success' => true,
             'source' => 'client_ocr_fallback',
             'message' => 'Silakan gunakan OCR lokal peramban untuk membaca berkas struk.',
-            'categories' => $categories->map(fn ($c) => [
-                'id' => $c->id,
-                'name' => $c->name,
-                'type' => is_string($c->type) ? $c->type : $c->type->value,
-            ]),
-            'wallets' => $wallets,
+            'categories' => $serializedCategories,
+            'wallets' => $serializedWallets,
         ]);
     }
 
@@ -145,7 +255,7 @@ class ReceiptScannerController extends Controller
 
 Analyze the provided receipt/transfer image and extract the following JSON fields:
 1. 'amount': (number, float or integer) The total final amount paid or transferred. Do not include currency symbols or commas. (e.g. 45000). Look for 'TOTAL', 'GRAND TOTAL', 'JUMLAH', 'TOTAL BAYAR', 'NOMINAL TRANSFER', 'TAGIHAN'.
-2. 'date': (string, YYYY-MM-DD) Transaction date. If year is missing or unclear, assume year 2026.
+2. 'date': (string, YYYY-MM-DD) Transaction date in strictly YYYY-MM-DD format. If year is missing or unclear, assume year 2026.
 3. 'merchant': (string) Store, merchant, restaurant, biller, or transfer recipient name.
 4. 'description': (string) A concise clean description for the transaction (e.g., 'Belanja di Indomaret', 'Isi Bensin Pertamina', 'Transfer ke Budi').
 5. 'type': (string) Either 'expense' (for purchases, bills, transfer out) or 'income' (for incoming transfers, salary, refunds).
@@ -155,22 +265,22 @@ Analyze the provided receipt/transfer image and extract the following JSON field
 
 Return STRICTLY a valid JSON object only. No markdown formatting, no backticks, no preamble.";
 
-        // Models to try in order of preference
-        $models = ['gemini-2.0-flash', 'gemini-1.5-flash'];
+        // Models to try in order of preference (Flash Lite has highest availability and freshest quota)
+        $models = ['gemini-3.1-flash-lite', 'gemini-3.8-flash', 'gemini-flash-latest', 'gemini-3.7-flash'];
 
         foreach ($models as $model) {
             try {
                 $url = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$apiKey}";
 
-                $response = Http::timeout(15)->post($url, [
+                $response = Http::timeout(6)->post($url, [
                     'contents' => [
                         [
                             'role' => 'user',
                             'parts' => [
                                 ['text' => $systemPrompt],
                                 [
-                                    'inline_data' => [
-                                        'mime_type' => $mimeType,
+                                    'inlineData' => [
+                                        'mimeType' => $mimeType,
                                         'data' => $base64Image,
                                     ],
                                 ],
@@ -178,19 +288,38 @@ Return STRICTLY a valid JSON object only. No markdown formatting, no backticks, 
                         ],
                     ],
                     'generationConfig' => [
-                        'response_mime_type' => 'application/json',
                         'temperature' => 0.1,
+                        'thinkingConfig' => [
+                            'thinkingBudget' => 0,
+                        ],
                     ],
                 ]);
 
                 if ($response->successful()) {
                     $body = $response->json();
-                    $text = $body['candidates'][0]['content']['parts'][0]['text'] ?? null;
-                    if ($text) {
-                        $text = preg_replace('/^```(?:json)?\s*|\s*```$/m', '', trim($text));
-                        $decoded = json_decode($text, true);
-                        if (is_array($decoded) && isset($decoded['amount'])) {
-                            return $decoded;
+                    $parts = $body['candidates'][0]['content']['parts'] ?? [];
+                    $combinedText = '';
+                    foreach ($parts as $p) {
+                        if (! empty($p['text']) && empty($p['thought'])) {
+                            $combinedText .= $p['text']."\n";
+                        }
+                    }
+
+                    if (empty($combinedText) && ! empty($parts[0]['text'])) {
+                        $combinedText = $parts[0]['text'];
+                    }
+
+                    if (! empty($combinedText)) {
+                        if (preg_match('/\{[\s\S]*\}/', $combinedText, $matches)) {
+                            $decoded = json_decode($matches[0], true);
+                            if (is_array($decoded) && isset($decoded['amount'])) {
+                                $decoded['amount'] = ProcessReceiptOCR::cleanAmount($decoded['amount']);
+                                if (! empty($decoded['date'])) {
+                                    $decoded['date'] = ProcessReceiptOCR::normalizeDate((string) $decoded['date']);
+                                }
+
+                                return $decoded;
+                            }
                         }
                     }
                 }

@@ -61,7 +61,7 @@
 @endsection
 
 @section('content')
-<div class="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-2xl rounded-t-[36px] pt-5 px-4 pb-[max(6.5rem,calc(5.5rem+var(--sab,0px)))] shadow-2xl -mt-5 relative z-10 border-t border-slate-200/80 dark:border-white/10 flex-1 flex flex-col min-h-full space-y-4 text-slate-800 dark:text-white transition-colors animate-swan-in">
+<div class="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-2xl rounded-t-[36px] pt-5 px-4 pb-[max(11rem,calc(10rem+var(--sab,0px)))] shadow-2xl -mt-5 relative z-10 border-t border-slate-200/80 dark:border-white/10 flex-1 flex flex-col min-h-[calc(100dvh-14rem)] space-y-4 text-slate-800 dark:text-white transition-colors animate-swan-in">
     <!-- Grab Handle -->
     <div class="w-10 h-1.5 bg-slate-300/80 dark:bg-slate-700/80 rounded-full mx-auto mb-1"></div>
 
@@ -140,9 +140,17 @@
                 <div class="flex items-center justify-between pt-1">
                     <div class="flex items-center gap-1.5">
                         <button type="button" 
-                                onclick='openEditSubscriptionModal(@json($sub))'
+                                data-id="{{ $sub->id }}"
+                                data-name="{{ $sub->name }}"
+                                data-amount="{{ (int) round($sub->amount) }}"
+                                data-cycle="{{ $sub->cycle }}"
+                                data-billing-date="{{ $sub->billing_date }}"
+                                data-next-due-date="{{ $sub->next_due_date ? $sub->next_due_date->format('Y-m-d') : '' }}"
+                                data-wallet-id="{{ $sub->wallet_id ?? '' }}"
+                                data-status="{{ $sub->status ?? 'active' }}"
+                                onclick="openEditSubscriptionModalFromBtn(this)"
                                 aria-label="Edit Langganan"
-                                class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-emerald-500 dark:text-slate-400 dark:hover:text-emerald-400 bg-slate-100/80 hover:bg-emerald-50 dark:bg-slate-800/80 dark:hover:bg-emerald-500/20 rounded-xl transition-all active:scale-95">
+                                class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-emerald-500 dark:text-slate-400 dark:hover:text-emerald-400 bg-slate-100/80 hover:bg-emerald-50 dark:bg-slate-800/80 dark:hover:bg-emerald-500/20 rounded-xl transition-all active:scale-95 cursor-pointer">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
                             </svg>
@@ -208,7 +216,7 @@
                 <div class="grid grid-cols-2 gap-2.5">
                     <div>
                         <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Nominal (Rp)</label>
-                        <input type="number" name="amount" min="1" step="any" required placeholder="186000" class="w-full h-12 px-4 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
+                        <input type="text" name="amount" inputmode="numeric" data-numeric-only="true" autocomplete="off" required placeholder="186000" class="w-full h-12 px-4 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Siklus</label>
@@ -220,14 +228,64 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-2.5">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Tanggal Tagihan (1-31)</label>
-                        <input type="number" name="billing_date" min="1" max="31" value="{{ date('j') }}" required class="w-full h-12 px-4 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Tanggal Tagihan (1-31)</label>
+                        <input type="text" name="billing_date" inputmode="numeric" data-numeric-only="true" autocomplete="off" value="{{ date('j') }}" required placeholder="Contoh: 25" class="w-full h-12 px-4 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Jatuh Tempo</label>
-                        <input type="date" name="next_due_date" value="{{ date('Y-m-d') }}" required class="w-full h-12 px-4 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label class="text-xs font-bold text-slate-700 dark:text-slate-300">Jatuh Tempo</label>
+                            <div class="flex items-center gap-1.5 relative z-20">
+                                <button type="button" 
+                                        data-date-target="add-sub-due-date" 
+                                        data-date-preset="today"
+                                        onclick="setDatePreset('add-sub-due-date', 'today')" 
+                                        class="date-preset-btn text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 dark:bg-emerald-400/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 transition-all cursor-pointer shadow-2xs">
+                                    Hari Ini
+                                </button>
+                                <button type="button" 
+                                        data-date-target="add-sub-due-date" 
+                                        data-date-preset="in_30_days"
+                                        onclick="setDatePreset('add-sub-due-date', 'in_30_days')" 
+                                        class="date-preset-btn text-[11px] font-medium px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all cursor-pointer">
+                                    +1 Bulan
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="relative group">
+                            <div id="add-sub-due-date-display" class="flex items-center justify-between w-full min-h-[48px] px-3 py-2 bg-slate-50/90 dark:bg-slate-800/80 hover:bg-slate-100/90 dark:hover:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-2xl transition-all shadow-xs group-focus-within:border-emerald-500 group-focus-within:ring-2 group-focus-within:ring-emerald-500/20">
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <div class="w-8 h-8 rounded-xl bg-emerald-500/10 dark:bg-emerald-400/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-2xs">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                                        </svg>
+                                    </div>
+                                    <div class="flex flex-col min-w-0">
+                                        <span id="add-sub-due-date-label" class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate">
+                                            {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d M Y') }}
+                                        </span>
+                                        <span id="add-sub-due-date-sublabel" class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
+                                            Hari ini
+                                        </span>
+                                    </div>
+                                </div>
+                                <svg class="w-3.5 h-3.5 text-slate-400 shrink-0 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                </svg>
+                            </div>
+
+                            <input id="add-sub-due-date" 
+                                   type="date" 
+                                   name="next_due_date" 
+                                   value="{{ date('Y-m-d') }}" 
+                                   required 
+                                   aria-label="Pilih Jatuh Tempo"
+                                   onchange="syncDateDisplay('add-sub-due-date')"
+                                   onclick="try { this.showPicker(); } catch(e) {}"
+                                   class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 [color-scheme:light] dark:[color-scheme:dark]">
+                        </div>
                     </div>
                 </div>
 
@@ -289,7 +347,7 @@
                 <div class="grid grid-cols-2 gap-2.5">
                     <div>
                         <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Nominal (Rp)</label>
-                        <input type="number" id="edit-sub-amount" name="amount" min="1" step="any" required class="w-full h-12 px-4 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
+                        <input type="text" id="edit-sub-amount" name="amount" inputmode="numeric" data-numeric-only="true" autocomplete="off" required class="w-full h-12 px-4 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Siklus</label>
@@ -301,14 +359,63 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-2.5">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Tanggal Tagihan (1-31)</label>
-                        <input type="number" id="edit-sub-billing-date" name="billing_date" min="1" max="31" required class="w-full h-12 px-4 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Tanggal Tagihan (1-31)</label>
+                        <input type="text" id="edit-sub-billing-date" name="billing_date" inputmode="numeric" data-numeric-only="true" autocomplete="off" required class="w-full h-12 px-4 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Jatuh Tempo</label>
-                        <input type="date" id="edit-sub-next-due-date" name="next_due_date" required class="w-full h-12 px-4 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label class="text-xs font-bold text-slate-700 dark:text-slate-300">Jatuh Tempo</label>
+                            <div class="flex items-center gap-1.5 relative z-20">
+                                <button type="button" 
+                                        data-date-target="edit-sub-next-due-date" 
+                                        data-date-preset="today"
+                                        onclick="setDatePreset('edit-sub-next-due-date', 'today')" 
+                                        class="date-preset-btn text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 dark:bg-emerald-400/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 transition-all cursor-pointer shadow-2xs">
+                                    Hari Ini
+                                </button>
+                                <button type="button" 
+                                        data-date-target="edit-sub-next-due-date" 
+                                        data-date-preset="in_30_days"
+                                        onclick="setDatePreset('edit-sub-next-due-date', 'in_30_days')" 
+                                        class="date-preset-btn text-[11px] font-medium px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all cursor-pointer">
+                                    +1 Bulan
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="relative group">
+                            <div id="edit-sub-next-due-date-display" class="flex items-center justify-between w-full min-h-[48px] px-3 py-2 bg-slate-50/90 dark:bg-slate-800/80 hover:bg-slate-100/90 dark:hover:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-2xl transition-all shadow-xs group-focus-within:border-emerald-500 group-focus-within:ring-2 group-focus-within:ring-emerald-500/20">
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <div class="w-8 h-8 rounded-xl bg-emerald-500/10 dark:bg-emerald-400/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-2xs">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                                        </svg>
+                                    </div>
+                                    <div class="flex flex-col min-w-0">
+                                        <span id="edit-sub-next-due-date-label" class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate">
+                                            {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d M Y') }}
+                                        </span>
+                                        <span id="edit-sub-next-due-date-sublabel" class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
+                                            Hari ini
+                                        </span>
+                                    </div>
+                                </div>
+                                <svg class="w-3.5 h-3.5 text-slate-400 shrink-0 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                </svg>
+                            </div>
+
+                            <input id="edit-sub-next-due-date" 
+                                   type="date" 
+                                   name="next_due_date" 
+                                   required 
+                                   aria-label="Pilih Jatuh Tempo"
+                                   onchange="syncDateDisplay('edit-sub-next-due-date')"
+                                   onclick="try { this.showPicker(); } catch(e) {}"
+                                   class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 [color-scheme:light] dark:[color-scheme:dark]">
+                        </div>
                     </div>
                 </div>
 
@@ -378,8 +485,64 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Tanggal Transaksi</label>
-                    <input type="date" name="date" value="{{ date('Y-m-d') }}" required class="w-full h-12 px-4 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label class="text-xs font-bold text-slate-700 dark:text-slate-300">Tanggal Transaksi</label>
+                        <div class="flex items-center gap-1.5 relative z-20">
+                            <button type="button" 
+                                    data-date-target="pay-sub-date" 
+                                    data-date-preset="yesterday"
+                                    onclick="setDatePreset('pay-sub-date', 'yesterday')" 
+                                    class="date-preset-btn text-[11px] font-medium px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all cursor-pointer">
+                                Kemarin
+                            </button>
+                            <button type="button" 
+                                    data-date-target="pay-sub-date" 
+                                    data-date-preset="today"
+                                    onclick="setDatePreset('pay-sub-date', 'today')" 
+                                    class="date-preset-btn text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/15 dark:bg-emerald-400/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 transition-all cursor-pointer shadow-2xs">
+                                Hari Ini
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="relative group">
+                        <div id="pay-sub-date-display" class="flex items-center justify-between w-full min-h-[52px] px-3.5 py-2.5 bg-slate-50/90 dark:bg-slate-800/80 hover:bg-slate-100/90 dark:hover:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-2xl transition-all shadow-xs group-focus-within:border-emerald-500 group-focus-within:ring-2 group-focus-within:ring-emerald-500/20">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div class="w-9 h-9 rounded-xl bg-emerald-500/10 dark:bg-emerald-400/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-2xs">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                                    </svg>
+                                </div>
+                                <div class="flex flex-col min-w-0">
+                                    <span id="pay-sub-date-label" class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate">
+                                        {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d M Y') }}
+                                    </span>
+                                    <span id="pay-sub-date-sublabel" class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
+                                        Hari ini
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-1.5 pl-2 shrink-0">
+                                <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1 bg-slate-200/70 dark:bg-slate-700/70 px-2.5 py-1 rounded-xl">
+                                    Pilih
+                                    <svg class="w-3.5 h-3.5 text-slate-400 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+
+                        <input id="pay-sub-date" 
+                               type="date" 
+                               name="date" 
+                               value="{{ date('Y-m-d') }}" 
+                               required 
+                               aria-label="Pilih Tanggal Pembayaran"
+                               onchange="syncDateDisplay('pay-sub-date')"
+                               onclick="try { this.showPicker(); } catch(e) {}"
+                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 [color-scheme:light] dark:[color-scheme:dark]">
+                    </div>
                 </div>
 
                 <div class="pt-4">
@@ -395,20 +558,56 @@
 
 <script>
     function openAddSubscriptionModal() {
+        const d = new Date();
+        const todayStr = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+        const dueInput = document.getElementById('add-sub-due-date');
+        if (dueInput) dueInput.value = todayStr;
         window.openSheetModal('modal-add-subscription');
+        if (typeof syncDateDisplay === 'function') {
+            syncDateDisplay('add-sub-due-date');
+        }
     }
     function closeAddSubscriptionModal() {
         window.closeSheetModal('modal-add-subscription');
     }
+    function openEditSubscriptionModalFromBtn(btn) {
+        if (!btn) return;
+        const ds = btn.dataset;
+        document.getElementById('form-edit-subscription').action = "{{ url('/subscriptions') }}/" + ds.id;
+        document.getElementById('edit-sub-name').value = ds.name || '';
+        const subAmountInput1 = document.getElementById('edit-sub-amount');
+        subAmountInput1.value = Math.round(Number(ds.amount) || 0);
+        subAmountInput1.dispatchEvent(new Event('input', { bubbles: true }));
+        document.getElementById('edit-sub-cycle').value = ds.cycle || 'monthly';
+        const subBillingInput1 = document.getElementById('edit-sub-billing-date');
+        subBillingInput1.value = ds.billingDate || '';
+        subBillingInput1.dispatchEvent(new Event('input', { bubbles: true }));
+        document.getElementById('edit-sub-next-due-date').value = ds.nextDueDate || '';
+        document.getElementById('edit-sub-wallet-id').value = ds.walletId || '';
+        document.getElementById('edit-sub-status').value = ds.status || 'active';
+        if (typeof syncDateDisplay === 'function') {
+            syncDateDisplay('edit-sub-next-due-date');
+        }
+        window.openSheetModal('modal-edit-subscription');
+    }
+
     function openEditSubscriptionModal(sub) {
-        document.getElementById('form-edit-subscription').action = '/subscriptions/' + sub.id;
-        document.getElementById('edit-sub-name').value = sub.name;
-        document.getElementById('edit-sub-amount').value = sub.amount;
-        document.getElementById('edit-sub-cycle').value = sub.cycle;
-        document.getElementById('edit-sub-billing-date').value = sub.billing_date;
+        if (!sub) return;
+        document.getElementById('form-edit-subscription').action = "{{ url('/subscriptions') }}/" + sub.id;
+        document.getElementById('edit-sub-name').value = sub.name || '';
+        const subAmountInput2 = document.getElementById('edit-sub-amount');
+        subAmountInput2.value = Math.round(Number(sub.amount) || 0);
+        subAmountInput2.dispatchEvent(new Event('input', { bubbles: true }));
+        document.getElementById('edit-sub-cycle').value = sub.cycle || 'monthly';
+        const subBillingInput2 = document.getElementById('edit-sub-billing-date');
+        subBillingInput2.value = sub.billing_date || '';
+        subBillingInput2.dispatchEvent(new Event('input', { bubbles: true }));
         document.getElementById('edit-sub-next-due-date').value = sub.next_due_date ? sub.next_due_date.substring(0, 10) : '';
         document.getElementById('edit-sub-wallet-id').value = sub.wallet_id || '';
         document.getElementById('edit-sub-status').value = sub.status || 'active';
+        if (typeof syncDateDisplay === 'function') {
+            syncDateDisplay('edit-sub-next-due-date');
+        }
         window.openSheetModal('modal-edit-subscription');
     }
     function closeEditSubscriptionModal() {
@@ -421,10 +620,24 @@
         if (sub.wallet_id) {
             document.getElementById('pay-sub-wallet-select').value = sub.wallet_id;
         }
+        const d = new Date();
+        const todayStr = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+        const payInput = document.getElementById('pay-sub-date');
+        if (payInput) payInput.value = todayStr;
+        if (typeof syncDateDisplay === 'function') {
+            syncDateDisplay('pay-sub-date');
+        }
         window.openSheetModal('modal-pay-subscription');
     }
     function closePaySubscriptionModal() {
         window.closeSheetModal('modal-pay-subscription');
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof syncDateDisplay === 'function') {
+            syncDateDisplay('add-sub-due-date');
+            syncDateDisplay('pay-sub-date');
+        }
+    });
 </script>
 @endsection

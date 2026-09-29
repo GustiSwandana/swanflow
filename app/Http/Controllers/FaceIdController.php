@@ -82,7 +82,7 @@ class FaceIdController extends Controller
         ]);
 
         $request->session()->forget('face_id_login_challenge');
-        Auth::login($credential->user, true);
+        Auth::login($credential->user, false);
         $request->session()->regenerate();
         $request->session()->put('last_activity_time', now()->timestamp);
 

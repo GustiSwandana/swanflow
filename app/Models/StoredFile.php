@@ -17,6 +17,7 @@ class StoredFile extends Model
         'title',
         'original_name',
         'file_path',
+        'thumbnail_path',
         'mime_type',
         'extension',
         'size_bytes',

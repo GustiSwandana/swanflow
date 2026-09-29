@@ -76,29 +76,35 @@ class DashboardController extends Controller
 
         $currentMonth = now()->format('Y-m');
 
-        // Anggaran Pengeluaran per Kategori (Dynamic Monthly Budgets)
+        // Anggaran Pengeluaran per Kategori (Dynamic Monthly / 30-Day Budgets)
         $configuredBudgets = Budget::where('user_id', $user->id)
-            ->where(function ($q) use ($currentMonth) {
+            ->where(function ($q) use ($currentMonth, $startOfMonth, $endOfMonth) {
                 $q->where('month', $currentMonth)
-                    ->orWhereNull('month');
+                    ->orWhere(function ($sub) use ($startOfMonth, $endOfMonth) {
+                        $sub->whereNotNull('start_date')
+                            ->whereNotNull('end_date')
+                            ->where('start_date', '<=', $endOfMonth)
+                            ->where('end_date', '>=', $startOfMonth);
+                    })
+                    ->orWhere(function ($sub) {
+                        $sub->whereNull('month')
+                            ->whereNull('start_date');
+                    });
             })
             ->with('category')
-            ->get()
-            ->groupBy('category_id')
-            ->map(fn ($group) => $group->firstWhere('month', $currentMonth) ?: $group->first())
-            ->values();
-
-        $expensesByCategory = Transaction::where('user_id', $user->id)
-            ->where('type', TransactionType::Expense)
-            ->whereBetween('date', [$startOfMonth, $endOfMonth])
-            ->whereNotNull('category_id')
-            ->select('category_id', DB::raw('SUM(amount) as total_spent'))
-            ->groupBy('category_id')
-            ->pluck('total_spent', 'category_id');
+            ->get();
 
         if ($configuredBudgets->isNotEmpty()) {
-            $categoryBudgets = $configuredBudgets->map(function ($b) use ($expensesByCategory) {
-                $spent = (float) ($expensesByCategory[$b->category_id] ?? 0);
+            $categoryBudgets = $configuredBudgets->map(function ($b) use ($user, $startOfMonth, $endOfMonth) {
+                $rangeStart = $b->start_date ? $b->start_date->toDateString() : $startOfMonth;
+                $rangeEnd = $b->end_date ? $b->end_date->toDateString() : $endOfMonth;
+
+                $spent = (float) Transaction::where('user_id', $user->id)
+                    ->where('type', TransactionType::Expense)
+                    ->where('category_id', $b->category_id)
+                    ->whereBetween('date', [$rangeStart, $rangeEnd])
+                    ->sum('amount');
+
                 $amount = (float) $b->amount;
                 $percent = $amount > 0 ? (int) round(($spent / $amount) * 100) : 0;
 

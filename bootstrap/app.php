@@ -17,6 +17,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'session.timeout' => CheckSessionTimeout::class,
         ]);
+        $middleware->validateCsrfTokens(except: [
+            'api/*',
+            'api/p/*/upload',
+            'p/*/upload',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

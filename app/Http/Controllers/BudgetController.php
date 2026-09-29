@@ -9,7 +9,6 @@ use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class BudgetController extends Controller
@@ -32,31 +31,37 @@ class BudgetController extends Controller
         $startOfMonth = $parsedDate->copy()->startOfMonth()->toDateString();
         $endOfMonth = $parsedDate->copy()->endOfMonth()->toDateString();
 
-        // Retrieve budgets for the specified month or recurring defaults (month is null)
+        // Retrieve budgets for the user:
+        // Either custom date range active for the selected month, or matching month, or recurring defaults (month is null and start_date is null)
         $budgets = Budget::where('user_id', $user->id)
-            ->where(function ($q) use ($selectedMonth) {
+            ->where(function ($q) use ($selectedMonth, $startOfMonth, $endOfMonth) {
                 $q->where('month', $selectedMonth)
-                    ->orWhereNull('month');
+                    ->orWhere(function ($sub) use ($startOfMonth, $endOfMonth) {
+                        $sub->whereNotNull('start_date')
+                            ->whereNotNull('end_date')
+                            ->where('start_date', '<=', $endOfMonth)
+                            ->where('end_date', '>=', $startOfMonth);
+                    })
+                    ->orWhere(function ($sub) {
+                        $sub->whereNull('month')
+                            ->whereNull('start_date');
+                    });
             })
             ->with('category')
-            ->get()
-            ->groupBy('category_id')
-            ->map(function ($group) use ($selectedMonth) {
-                return $group->firstWhere('month', $selectedMonth) ?: $group->first();
-            })
-            ->values();
+            ->get();
 
-        // Calculate actual expense spending per category for this month
-        $expensesByCategory = Transaction::where('user_id', $user->id)
-            ->where('type', TransactionType::Expense)
-            ->whereBetween('date', [$startOfMonth, $endOfMonth])
-            ->whereNotNull('category_id')
-            ->select('category_id', DB::raw('SUM(amount) as total_spent'))
-            ->groupBy('category_id')
-            ->pluck('total_spent', 'category_id');
+        // Calculate actual expense spending per category based on each budget's specific timeframe
+        $budgets = $budgets->map(function ($b) use ($user, $startOfMonth, $endOfMonth) {
+            $rangeStart = $b->start_date ? $b->start_date->toDateString() : $startOfMonth;
+            $rangeEnd = $b->end_date ? $b->end_date->toDateString() : $endOfMonth;
 
-        $budgets = $budgets->map(function ($b) use ($expensesByCategory) {
-            $b->spent = (float) ($expensesByCategory[$b->category_id] ?? 0);
+            $spent = (float) Transaction::where('user_id', $user->id)
+                ->where('type', TransactionType::Expense)
+                ->where('category_id', $b->category_id)
+                ->whereBetween('date', [$rangeStart, $rangeEnd])
+                ->sum('amount');
+
+            $b->spent = $spent;
             $b->remaining = max(0, (float) $b->amount - $b->spent);
             $b->is_over = $b->spent > (float) $b->amount;
             $b->over_amount = max(0, $b->spent - (float) $b->amount);
@@ -97,24 +102,44 @@ class BudgetController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        if ($request->has('amount')) {
+            $request->merge(['amount' => $this->cleanNumericInput($request->input('amount'))]);
+        }
+
         $validated = $request->validate([
             'category_id' => 'required|exists:categories,id',
             'amount' => 'required|numeric|min:1',
+            'period_type' => 'nullable|in:monthly,custom_range,recurring',
             'month' => 'nullable|string|regex:/^\d{4}-\d{2}$/',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
             'notes' => 'nullable|string|max:255',
         ]);
 
-        Budget::updateOrCreate(
-            [
-                'user_id' => $request->user()->id,
-                'category_id' => $validated['category_id'],
-                'month' => ! empty($validated['month']) ? $validated['month'] : null,
-            ],
-            [
-                'amount' => $validated['amount'],
-                'notes' => $validated['notes'] ?? null,
-            ]
-        );
+        $periodType = $validated['period_type'] ?? 'monthly';
+        $month = null;
+        $startDate = null;
+        $endDate = null;
+
+        if ($periodType === 'custom_range') {
+            $startDate = $validated['start_date'] ?? null;
+            $endDate = $validated['end_date'] ?? null;
+            if ($startDate && ! $endDate) {
+                $endDate = Carbon::parse($startDate)->addDays(30)->toDateString();
+            }
+        } elseif ($periodType === 'monthly') {
+            $month = ! empty($validated['month']) ? $validated['month'] : now()->format('Y-m');
+        } // recurring keeps all null
+
+        Budget::create([
+            'user_id' => $request->user()->id,
+            'category_id' => $validated['category_id'],
+            'amount' => $validated['amount'],
+            'month' => $month,
+            'start_date' => $startDate,
+            'end_date' => $endDate,
+            'notes' => $validated['notes'] ?? null,
+        ]);
 
         return redirect()->back()->with('success', 'Anggaran bulanan berhasil disimpan!');
     }
@@ -126,13 +151,21 @@ class BudgetController extends Controller
     {
         abort_if($budget->user_id !== $request->user()->id, 403);
 
+        if ($request->has('amount')) {
+            $request->merge(['amount' => $this->cleanNumericInput($request->input('amount'))]);
+        }
+
         $validated = $request->validate([
             'amount' => 'required|numeric|min:1',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
             'notes' => 'nullable|string|max:255',
         ]);
 
         $budget->update([
             'amount' => $validated['amount'],
+            'start_date' => ! empty($validated['start_date']) ? $validated['start_date'] : null,
+            'end_date' => ! empty($validated['end_date']) ? $validated['end_date'] : null,
             'notes' => $validated['notes'] ?? null,
         ]);
 
