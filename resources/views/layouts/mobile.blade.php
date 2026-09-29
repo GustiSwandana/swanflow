@@ -296,8 +296,8 @@
 
         <!-- Offline & Sync Status Floating Capsule (Apple Liquid Glass UI) -->
         <div id="swan-offline-capsule" 
-             style="top: max(0.6rem, calc(var(--sat, 0px) + 0.45rem)); z-index: 99;" 
-             class="fixed left-1/2 -translate-x-1/2 max-w-[92%] sm:max-w-md hidden items-center gap-2 px-3.5 py-1.5 rounded-full shadow-2xl backdrop-blur-2xl border transition-all duration-300 cursor-pointer select-none text-xs font-semibold ios-press"
+             style="top: max(0.6rem, calc(var(--sat, 0px) + 0.45rem)); z-index: 99; display: none;" 
+             class="fixed left-1/2 -translate-x-1/2 max-w-[92%] sm:max-w-md items-center gap-2 px-3.5 py-1.5 rounded-full shadow-2xl backdrop-blur-2xl border transition-all duration-300 cursor-pointer select-none text-xs font-semibold ios-press"
              onclick="SwanFlowDB.syncPending(true)"
              title="Klik untuk sinkronisasi transaksi offline">
             <span id="swan-offline-dot" class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse"></span>
@@ -3807,25 +3807,25 @@
 
                     if (!isOnline) {
                         // Offline state
-                        capsule.className = 'fixed left-1/2 -translate-x-1/2 max-w-[92%] sm:max-w-md flex items-center gap-2 px-3.5 py-1.5 rounded-full shadow-2xl backdrop-blur-2xl border transition-all duration-300 cursor-pointer select-none text-xs font-semibold bg-amber-950/85 text-amber-100 border-amber-500/40';
+                        capsule.className = 'fixed left-1/2 -translate-x-1/2 max-w-[92%] sm:max-w-md items-center gap-2 px-3.5 py-1.5 rounded-full shadow-2xl backdrop-blur-2xl border transition-all duration-300 cursor-pointer select-none text-xs font-semibold bg-amber-950/85 text-amber-100 border-amber-500/40';
+                        capsule.style.display = 'inline-flex';
                         dot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse';
                         text.textContent = 'Mode Offline';
                         badge.className = 'px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-amber-500/20 text-amber-300';
                         badge.textContent = pending.length + ' Tertunda';
-                        badge.classList.toggle('hidden', pending.length === 0);
-                        capsule.classList.remove('hidden');
+                        badge.style.display = pending.length > 0 ? 'inline-block' : 'none';
                     } else if (pending.length > 0) {
                         // Online with pending queue
-                        capsule.className = 'fixed left-1/2 -translate-x-1/2 max-w-[92%] sm:max-w-md flex items-center gap-2 px-3.5 py-1.5 rounded-full shadow-2xl backdrop-blur-2xl border transition-all duration-300 cursor-pointer select-none text-xs font-semibold bg-slate-900/90 text-teal-100 border-teal-500/40';
+                        capsule.className = 'fixed left-1/2 -translate-x-1/2 max-w-[92%] sm:max-w-md items-center gap-2 px-3.5 py-1.5 rounded-full shadow-2xl backdrop-blur-2xl border transition-all duration-300 cursor-pointer select-none text-xs font-semibold bg-slate-900/90 text-teal-100 border-teal-500/40';
+                        capsule.style.display = 'inline-flex';
                         dot.className = this.isSyncing ? 'w-2.5 h-2.5 rounded-full bg-teal-400 animate-ping' : 'w-2.5 h-2.5 rounded-full bg-teal-400 animate-pulse';
                         text.textContent = this.isSyncing ? 'Menyinkronkan...' : pending.length + ' Tertunda';
                         badge.className = 'px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-teal-500/20 text-teal-300';
                         badge.textContent = this.isSyncing ? 'Proses' : 'Sync';
-                        badge.classList.remove('hidden');
-                        capsule.classList.remove('hidden');
+                        badge.style.display = 'inline-block';
                     } else {
                         // Online with 0 pending
-                        capsule.classList.add('hidden');
+                        capsule.style.display = 'none';
                     }
                 },
 
