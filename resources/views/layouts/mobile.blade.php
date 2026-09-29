@@ -112,6 +112,13 @@
             touch-action: manipulation;
         }
 
+        .mobile-container-frame {
+            width: 100%;
+            max-width: 28rem;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
         /* Status Bar Scrim for iOS Notch / Dynamic Island */
         #status-bar-scrim {
             position: fixed;
@@ -229,7 +236,7 @@
     </div>
 
     <!-- Mobile Frame Container (Fluid 100% on iPhones, Max-W-MD for desktop preview) -->
-    <div class="w-full max-w-md flex-1 min-h-[100dvh] bg-slate-50/90 dark:bg-slate-950/90 backdrop-blur-xl text-slate-800 dark:text-slate-100 relative flex flex-col shadow-2xl border-x border-slate-200/80 dark:border-slate-800/80 transition-colors duration-200 z-10 overflow-x-hidden">
+    <div class="mobile-container-frame w-full max-w-md flex-1 min-h-[100dvh] bg-slate-50/90 dark:bg-slate-950/90 backdrop-blur-xl text-slate-800 dark:text-slate-100 relative flex flex-col shadow-2xl border-x border-slate-200/80 dark:border-slate-800/80 transition-colors duration-200 z-10 overflow-x-hidden">
 
         <!-- Dynamic Island & iOS/Android Status Bar Blur Cap (Prevents content collision on scroll) -->
         <div id="status-bar-scrim" class="bg-slate-50/90 dark:bg-slate-950/90 opacity-0 border-b border-black/5 dark:border-white/5"></div>

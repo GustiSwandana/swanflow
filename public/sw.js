@@ -1,5 +1,5 @@
-// SwanFlow PWA Service Worker (v1.0.32 - Offline-First & Background Sync)
-const CACHE_NAME = 'swanflow-cache-v32';
+// SwanFlow PWA Service Worker (v1.0.33 - Fixed Cache Invalidation)
+const CACHE_NAME = 'swanflow-cache-v33';
 const OFFLINE_URL = '/offline.html';
 
 const STATIC_ASSETS = [
@@ -72,7 +72,7 @@ self.addEventListener('fetch', (event) => {
                     const cache = await caches.open(CACHE_NAME);
                     // 1. Try cached page first (e.g. dashboard, transactions)
                     const cachedPage = await cache.match(request);
-                    if (cachedPage) {
+                    if (cachedPage && cachedPage.status === 200) {
                         return cachedPage;
                     }
                     // 2. Fallback to generic offline shell
@@ -103,9 +103,12 @@ self.addEventListener('fetch', (event) => {
                         });
                     }
                     return networkResponse;
-                }).catch(() => cachedResponse);
+                }).catch(() => (cachedResponse && cachedResponse.status === 200 ? cachedResponse : null));
 
-                return cachedResponse || fetchPromise;
+                if (cachedResponse && cachedResponse.status === 200) {
+                    return cachedResponse;
+                }
+                return fetchPromise;
             })
         );
         return;
