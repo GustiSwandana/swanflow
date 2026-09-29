@@ -290,7 +290,7 @@
                         </svg>
                         <span>WhatsApp</span>
                     </a>
-                </div>div>
+                </div>
 
                 <!-- QR Code Toggle Button -->
                 <button type="button" 
