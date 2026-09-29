@@ -89,6 +89,26 @@ Route::get('/swanflow-migrate', function () {
     }
 });
 
+Route::get('/swanflow-status', function () {
+    $buildPath = public_path('build/assets');
+    $buildFiles = is_dir($buildPath) ? array_values(array_diff(scandir($buildPath), ['.', '..'])) : [];
+
+    return response()->json([
+        'git' => trim(shell_exec('git log -1 --oneline 2>&1') ?? 'shell_exec unavailable'),
+        'manifest' => file_exists(public_path('build/manifest.json')) ? json_decode(file_get_contents(public_path('build/manifest.json')), true) : null,
+        'build_assets' => $buildFiles,
+        'public_path' => public_path(),
+    ]);
+});
+
+Route::get('/swanflow-git-pull', function () {
+    $output = shell_exec('git pull origin main 2>&1') ?? 'shell_exec disabled';
+    return response()->json([
+        'status' => 'success',
+        'output' => trim($output),
+    ]);
+});
+
 // Public Share & File Transfer Routes (SwanDrive)
 Route::get('/share/{token}', [DriveController::class, 'sharedView'])->name('drive.shared.view');
 Route::get('/share/{token}/preview', [DriveController::class, 'sharedPreview'])->name('drive.shared.preview');
