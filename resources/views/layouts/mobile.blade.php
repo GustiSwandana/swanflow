@@ -3,12 +3,12 @@
 <head>
     <meta charset="utf-8">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
-    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
+    <meta name="theme-color" content="#020617" id="meta-theme-color-dark" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#ffffff" id="meta-theme-color-light" media="(prefers-color-scheme: light)">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="SwanFlow">
     <meta name="color-scheme" content="light dark">
     <meta name="description" content="Personal Financial Tracker Mobile App eksklusif Gusti Swandana">
@@ -20,18 +20,24 @@
         html.dark .theme-icon-light { display: none !important; }
     </style>
 
-    <!-- Instant Dark Mode Script (Prevents FOUC) -->
+    <!-- Instant Dark Mode & Standalone PWA Detection Script (Prevents FOUC) -->
     <script>
         (function() {
             try {
+                if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true || document.referrer.includes('android-app://')) {
+                    document.documentElement.classList.add('is-standalone-pwa');
+                }
                 const savedTheme = localStorage.getItem('swanflow_theme');
                 if (savedTheme === 'light') {
                     document.documentElement.classList.remove('dark');
                     document.querySelectorAll('meta[name="theme-color"]').forEach(m => {
-                        if (m.media?.includes('dark')) m.content = '#ffffff';
+                        m.content = '#ffffff';
                     });
                 } else {
                     document.documentElement.classList.add('dark');
+                    document.querySelectorAll('meta[name="theme-color"]').forEach(m => {
+                        m.content = '#020617';
+                    });
                 }
             } catch (e) {}
         })();
@@ -75,19 +81,49 @@
             --sar: env(safe-area-inset-right, 0px);
         }
         html {
-            height: 100%;
-            overflow-y: scroll;
-            scrollbar-gutter: stable;
-            scroll-behavior: smooth;
+            min-height: 100%;
+            min-height: 100dvh;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+        @media (min-width: 768px) {
+            html {
+                scrollbar-gutter: stable;
+                scroll-behavior: smooth;
+            }
+        }
+        @media (max-width: 768px) {
+            html {
+                scroll-behavior: auto !important;
+            }
+            body {
+                scroll-behavior: auto !important;
+                overscroll-behavior-y: auto;
+            }
         }
         body {
             font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
             -webkit-tap-highlight-color: transparent;
-            -webkit-touch-callout: none;
             min-height: 100%;
             min-height: 100dvh;
-            overscroll-behavior-y: none;
             -webkit-overflow-scrolling: touch;
+            overflow-x: hidden;
+            width: 100%;
+            touch-action: manipulation;
+        }
+
+        /* Status Bar Scrim for iOS Notch / Dynamic Island */
+        #status-bar-scrim {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: env(safe-area-inset-top, 0px);
+            z-index: 45;
+            pointer-events: none;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: opacity 0.2s ease, background-color 0.2s ease;
         }
 
         /* Permanently Locked & Hardware-Accelerated Floating Dock */
@@ -127,7 +163,7 @@
 
         /* Dynamic iOS Safe Area Insets (iPhone 15, Dynamic Island & Home Indicator) */
         .header-safe {
-            padding-top: max(3.5rem, calc(var(--sat, 0px) + 0.75rem));
+            padding-top: max(1.25rem, calc(var(--sat, 0px) + 0.75rem));
             padding-left: max(1rem, calc(var(--sal, 0px) + 1rem));
             padding-right: max(1rem, calc(var(--sar, 0px) + 1rem));
         }
@@ -165,14 +201,21 @@
         }
 
         .liquid-dock-capsule {
-            bottom: max(0.75rem, calc(var(--sab, 0px) + 0.35rem)) !important;
+            bottom: max(1rem, calc(var(--sab, 0px) + 0.45rem)) !important;
             margin-bottom: 0 !important;
             transition: transform 0.32s cubic-bezier(0.34, 1.2, 0.64, 1), opacity 0.25s ease, background-color 0.3s ease !important;
         }
-        body.modal-open nav.liquid-dock-capsule {
+        body.modal-open nav.liquid-dock-capsule,
+        body.keyboard-open nav.liquid-dock-capsule {
             transform: translate(-50%, 180%) !important;
             opacity: 0 !important;
             pointer-events: none !important;
+        }
+
+        /* Suppress install banners when already installed in standalone PWA mode */
+        .is-standalone-pwa #pwa-install-banner,
+        .is-standalone-pwa #ios-install-banner {
+            display: none !important;
         }
     </style>
 </head>
@@ -187,6 +230,9 @@
 
     <!-- Mobile Frame Container (Fluid 100% on iPhones, Max-W-MD for desktop preview) -->
     <div class="w-full max-w-md flex-1 min-h-[100dvh] bg-slate-50/90 dark:bg-slate-950/90 backdrop-blur-xl text-slate-800 dark:text-slate-100 relative flex flex-col shadow-2xl border-x border-slate-200/80 dark:border-slate-800/80 transition-colors duration-200 z-10 overflow-x-hidden">
+
+        <!-- Dynamic Island & iOS/Android Status Bar Blur Cap (Prevents content collision on scroll) -->
+        <div id="status-bar-scrim" class="bg-slate-50/90 dark:bg-slate-950/90 opacity-0 border-b border-black/5 dark:border-white/5"></div>
 
         <!-- 1. TOP HEADER (Apple iOS Liquid Glass) -->
         @hasSection('custom_header')
@@ -327,6 +373,13 @@
                 @yield('content')
             </main>
         @endif
+
+        <!-- Global App Attribution Footer -->
+        <div class="pt-6 pb-2 text-center w-full mt-auto">
+            <p class="text-[11px] font-medium text-slate-400 dark:text-slate-500">
+                Aplikasi ini dibuat oleh <strong class="font-bold text-slate-600 dark:text-slate-400">Gusti Swandana</strong>
+            </p>
+        </div>
     </div>
     <!-- End Mobile Frame Container -->
 
@@ -478,7 +531,7 @@
                     </button>
 
                     <!-- Form -->
-                    <form action="{{ route('transactions.store') }}" method="POST" class="space-y-4">
+                    <form id="add-transaction-form" action="{{ route('transactions.store') }}" method="POST" class="space-y-4">
                         @csrf
 
                         <!-- Transaction Type Switcher (iOS Segmented Control) -->
@@ -522,11 +575,12 @@
                             <div class="relative rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 focus-within:border-emerald-500 dark:focus-within:border-emerald-400 focus-within:ring-2 focus-within:ring-emerald-500/20 p-3 transition-all">
                                 <span class="text-sm font-bold text-slate-400 mr-1">Rp</span>
                                 <input id="amount-input" 
-                                       type="number" 
+                                       type="text" 
                                        name="amount" 
-                                       step="any" 
                                        required 
-                                       inputmode="decimal" 
+                                       inputmode="numeric" 
+                                       data-numeric-only="true"
+                                       autocomplete="off" 
                                        placeholder="0" 
                                        oninput="updateInputAmountPreview('amount-input', 'amount-input-formatted')"
                                        class="w-4/5 text-2xl font-extrabold text-slate-900 dark:text-white bg-transparent border-none outline-hidden focus:ring-0 placeholder-slate-400 dark:placeholder-slate-600">
@@ -546,53 +600,221 @@
                         <div class="grid grid-cols-2 gap-2.5">
                             <!-- Dompet (Asal) -->
                             <div>
-                                <label id="wallet-label" for="wallet-select" class="block text-xs font-medium text-slate-400 dark:text-slate-400 mb-1 truncate">Dompet / Rekening</label>
-                                <select id="wallet-select" name="wallet_id" required onchange="syncTransferWallets('')" class="w-full min-h-[44px] px-2.5 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
-                                    @foreach($modalWallets as $w)
-                                        <option value="{{ $w->id }}" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
-                                            {{ $w->name }} (Rp {{ number_format($w->balance, 0, ',', '.') }})
-                                        </option>
-                                    @endforeach
-                                </select>
+                                <label id="wallet-label" for="wallet-select" class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1 truncate">Dompet / Rekening</label>
+                                <div class="relative">
+                                    <select id="wallet-select" name="wallet_id" required onchange="syncTransferWallets('')" class="w-full min-h-[46px] pl-3 pr-8 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 rounded-2xl text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 appearance-none cursor-pointer">
+                                        @foreach($modalWallets as $w)
+                                            <option value="{{ $w->id }}" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
+                                                {{ $w->name }} (Rp {{ number_format($w->balance, 0, ',', '.') }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2.5 text-slate-400">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                        </svg>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Pilihan Dompet Tujuan (Khusus Transfer) -->
                             <div id="target-wallet-container" class="hidden">
-                                <label for="target-wallet-select" class="block text-xs font-medium text-slate-400 dark:text-slate-400 mb-1 truncate">Dompet Tujuan (Ke)</label>
-                                <select id="target-wallet-select" name="target_wallet_id" onchange="syncTransferWalletsReverse('')" class="w-full min-h-[44px] px-2.5 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
-                                    @foreach($modalWallets as $index => $w)
-                                        <option value="{{ $w->id }}" {{ $index === 1 ? 'selected' : '' }} class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
-                                            {{ $w->name }} (Rp {{ number_format($w->balance, 0, ',', '.') }})
-                                        </option>
-                                    @endforeach
-                                </select>
+                                <label for="target-wallet-select" class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1 truncate">Dompet Tujuan (Ke)</label>
+                                <div class="relative">
+                                    <select id="target-wallet-select" name="target_wallet_id" onchange="syncTransferWalletsReverse('')" class="w-full min-h-[46px] pl-3 pr-8 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 rounded-2xl text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 appearance-none cursor-pointer">
+                                        @foreach($modalWallets as $index => $w)
+                                            <option value="{{ $w->id }}" {{ $index === 1 ? 'selected' : '' }} class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
+                                                {{ $w->name }} (Rp {{ number_format($w->balance, 0, ',', '.') }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2.5 text-slate-400">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                        </svg>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Pilihan Kategori (Untuk Pengeluaran & Pemasukan) -->
                             <div id="category-container">
-                                <label for="category-select" class="block text-xs font-medium text-slate-400 dark:text-slate-400 mb-1 truncate">Kategori</label>
-                                <select id="category-select" name="category_id" required class="w-full min-h-[44px] px-2.5 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
-                                    @foreach($modalCategories as $cat)
-                                        <option value="{{ $cat->id }}" data-type="{{ is_string($cat->type) ? $cat->type : $cat->type->value }}" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
-                                            {{ $cat->name }} ({{ is_string($cat->type) ? ucfirst($cat->type) : $cat->type->label() }})
-                                        </option>
-                                    @endforeach
-                                </select>
+                                <label for="category-select" class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1 truncate">Kategori</label>
+                                <div class="relative">
+                                    <select id="category-select" name="category_id" required class="w-full min-h-[46px] pl-3 pr-8 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 rounded-2xl text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 appearance-none cursor-pointer">
+                                        @foreach($modalCategories as $cat)
+                                            <option value="{{ $cat->id }}" data-type="{{ is_string($cat->type) ? $cat->type : $cat->type->value }}" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
+                                                {{ $cat->name }} ({{ is_string($cat->type) ? ucfirst($cat->type) : $cat->type->label() }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2.5 text-slate-400">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                        </svg>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Tanggal (Full Width) -->
-                        <div>
-                            <div class="flex items-center justify-between mb-1">
-                                <label for="date-input" class="text-xs font-semibold text-slate-500 dark:text-slate-400">Tanggal</label>
-                                <button type="button" onclick="setDatePreset('date-input', 'today')" class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline cursor-pointer">Hari Ini</button>
+                        <!-- Biaya Admin Transfer (Apple iOS Liquid Card) -->
+                        <div id="admin-fee-container" class="hidden p-4 rounded-2xl bg-slate-50/90 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 shadow-xs space-y-3.5 transition-all">
+                            <!-- Header & Preview -->
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-xl bg-emerald-500/15 dark:bg-emerald-400/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25 flex items-center justify-center shrink-0 shadow-2xs">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v.375c0 .621.504 1.125 1.125 1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <span class="text-xs font-bold text-slate-800 dark:text-slate-100 block leading-tight">Biaya Admin Transfer</span>
+                                        <span class="text-[10px] text-slate-400 dark:text-slate-400 font-medium">Opsional (gratis jika diisi 0)</span>
+                                    </div>
+                                </div>
+                                <span id="admin-fee-preview" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700/80 transition-all">Rp 0</span>
                             </div>
-                            <input id="date-input" 
-                                   type="date" 
-                                   name="date" 
-                                   value="{{ date('Y-m-d') }}" 
-                                   required 
-                                   class="block w-full max-w-full min-w-0 box-border min-h-[44px] px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-medium text-slate-800 dark:text-slate-100 focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
+
+                            <!-- Input Box -->
+                            <div>
+                                <div class="relative rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 focus-within:border-emerald-500 dark:focus-within:border-emerald-400 focus-within:ring-2 focus-within:ring-emerald-500/20 p-3 flex items-center transition-all">
+                                    <span class="text-sm font-bold text-slate-400 mr-2 select-none">Rp</span>
+                                    <input type="text" 
+                                           id="admin-fee-input" 
+                                           name="admin_fee" 
+                                           inputmode="numeric" 
+                                           data-numeric-only="true"
+                                           autocomplete="off" 
+                                           placeholder="0" 
+                                           oninput="calculateTransferBreakdown('')"
+                                           class="w-full text-base font-extrabold text-slate-900 dark:text-white bg-transparent border-none outline-hidden focus:ring-0 placeholder:text-slate-400 dark:placeholder:text-slate-600">
+                                </div>
+
+                                <!-- Preset Pills for Admin Fee -->
+                                <div class="flex items-center gap-1.5 pt-2 overflow-x-auto no-scrollbar">
+                                    <button type="button" onclick="setAdminFeeValue('', 1000)" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 hover:bg-emerald-50 dark:bg-slate-800 dark:hover:bg-emerald-950/50 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer shrink-0">+1.000</button>
+                                    <button type="button" onclick="setAdminFeeValue('', 1200)" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 hover:bg-emerald-50 dark:bg-slate-800 dark:hover:bg-emerald-950/50 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer shrink-0">+1.200</button>
+                                    <button type="button" onclick="setAdminFeeValue('', 2500)" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 hover:bg-emerald-50 dark:bg-slate-800 dark:hover:bg-emerald-950/50 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer shrink-0">+2.500</button>
+                                    <button type="button" onclick="setAdminFeeValue('', 6500)" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 hover:bg-emerald-50 dark:bg-slate-800 dark:hover:bg-emerald-950/50 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer shrink-0">+6.500</button>
+                                    <button type="button" onclick="setAdminFeeValue('', 0)" class="px-2 py-1 rounded-lg text-[11px] font-bold bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900/50 active:scale-95 transition-all cursor-pointer shrink-0">Gratis (0)</button>
+                                </div>
+                            </div>
+
+                            <!-- Pilihan Ditanggung Oleh (iOS Segmented Control Style) -->
+                            <div>
+                                <label class="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1.5">Beban Biaya Admin Ditanggung:</label>
+                                <div class="p-1 rounded-2xl bg-slate-200/70 dark:bg-slate-900/90 border border-slate-300/60 dark:border-white/10 flex items-center gap-1">
+                                    <button type="button" 
+                                            id="payer-card-source" 
+                                            onclick="setFeePayerDirect('', 'source')"
+                                            class="flex-1 py-2 px-3 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs border border-slate-200/80 dark:border-white/10 cursor-pointer text-left transition-all">
+                                        <input type="radio" name="fee_payer" value="source" checked class="hidden">
+                                        <div class="flex items-center gap-2">
+                                            <div id="payer-ring-source" class="w-3.5 h-3.5 rounded-full border-2 border-emerald-500 dark:border-emerald-400 flex items-center justify-center shrink-0">
+                                                <div id="payer-dot-source" class="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400"></div>
+                                            </div>
+                                            <div class="min-w-0">
+                                                <span class="block text-xs font-bold leading-tight truncate">Dompet Asal</span>
+                                                <span class="block text-[10px] text-slate-500 dark:text-slate-400 truncate">+ Ditambah ke asal</span>
+                                            </div>
+                                        </div>
+                                    </button>
+
+                                    <button type="button" 
+                                            id="payer-card-dest" 
+                                            onclick="setFeePayerDirect('', 'destination')"
+                                            class="flex-1 py-2 px-3 rounded-xl bg-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer text-left transition-all">
+                                        <input type="radio" name="fee_payer" value="destination" class="hidden">
+                                        <div class="flex items-center gap-2">
+                                            <div id="payer-ring-dest" class="w-3.5 h-3.5 rounded-full border-2 border-slate-400 dark:border-slate-600 flex items-center justify-center shrink-0">
+                                                <div id="payer-dot-dest" class="w-1.5 h-1.5 rounded-full bg-transparent"></div>
+                                            </div>
+                                            <div class="min-w-0">
+                                                <span class="block text-xs font-semibold leading-tight truncate">Dompet Tujuan</span>
+                                                <span class="block text-[10px] text-slate-500 dark:text-slate-400 truncate">Dipotong penerima</span>
+                                            </div>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Live Balance Impact Summary Box -->
+                            <div class="p-3 rounded-xl bg-white/80 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-700/60 space-y-1.5 text-xs">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-slate-500 dark:text-slate-400 text-[11px] font-semibold">Total keluar (Dompet Asal):</span>
+                                    <span id="transfer-out-val" class="font-extrabold text-rose-600 dark:text-rose-400">Rp 0</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-slate-500 dark:text-slate-400 text-[11px] font-semibold">Total diterima (Dompet Tujuan):</span>
+                                    <span id="transfer-in-val" class="font-extrabold text-emerald-600 dark:text-emerald-400">Rp 0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tanggal (Full Width Apple Liquid Glass Date Picker) -->
+                        <div>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <label class="text-xs font-semibold text-slate-500 dark:text-slate-400">Tanggal Transaksi</label>
+                                <div class="flex items-center gap-1.5 relative z-20">
+                                    <button type="button" 
+                                            data-date-target="date-input" 
+                                            data-date-preset="yesterday"
+                                            onclick="setDatePreset('date-input', 'yesterday')" 
+                                            class="date-preset-btn text-[11px] font-medium px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all cursor-pointer">
+                                        Kemarin
+                                    </button>
+                                    <button type="button" 
+                                            data-date-target="date-input" 
+                                            data-date-preset="today"
+                                            onclick="setDatePreset('date-input', 'today')" 
+                                            class="date-preset-btn text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/15 dark:bg-emerald-400/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 transition-all cursor-pointer shadow-2xs">
+                                        Hari Ini
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Interactive Apple Date Card -->
+                            <div class="relative group">
+                                <div id="date-input-display" class="flex items-center justify-between w-full min-h-[52px] px-3.5 py-2.5 bg-slate-50/90 dark:bg-slate-800/80 hover:bg-slate-100/90 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-2xl transition-all shadow-xs group-focus-within:border-emerald-500 group-focus-within:ring-2 group-focus-within:ring-emerald-500/20">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <!-- Icon Calendar Badge -->
+                                        <div class="w-9 h-9 rounded-xl bg-emerald-500/10 dark:bg-emerald-400/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-2xs">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                                            </svg>
+                                        </div>
+                                        <!-- Text Date -->
+                                        <div class="flex flex-col min-w-0">
+                                            <span id="date-input-label" class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate">
+                                                {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d M Y') }}
+                                            </span>
+                                            <span id="date-input-sublabel" class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
+                                                Hari ini
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Right Indicator Badge / Chevron -->
+                                    <div class="flex items-center gap-1.5 pl-2 shrink-0">
+                                        <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1 bg-slate-200/70 dark:bg-slate-700/70 px-2.5 py-1 rounded-xl">
+                                            Pilih
+                                            <svg class="w-3.5 h-3.5 text-slate-400 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                            </svg>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- The actual HTML date input overlaying the card -->
+                                <input id="date-input" 
+                                       type="date" 
+                                       name="date" 
+                                       value="{{ date('Y-m-d') }}" 
+                                       required 
+                                       aria-label="Pilih Tanggal Transaksi"
+                                       onchange="syncDateDisplay('date-input')"
+                                       onclick="try { this.showPicker(); } catch(e) {}"
+                                       class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 [color-scheme:light] dark:[color-scheme:dark]">
+                            </div>
                         </div>
 
                         <!-- Catatan (Full Width) -->
@@ -602,7 +824,7 @@
                                    type="text" 
                                    name="description" 
                                    placeholder="Contoh: Makan siang" 
-                                   class="block w-full max-w-full min-w-0 box-border min-h-[44px] px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
+                                   class="block w-full max-w-full min-w-0 box-border min-h-[46px] px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 rounded-2xl text-xs sm:text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
                         </div>
 
                         <!-- Submit Button (Touch friendly min 48px) -->
@@ -710,11 +932,12 @@
                             <div class="relative rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 focus-within:border-emerald-500 dark:focus-within:border-emerald-400 focus-within:ring-2 focus-within:ring-emerald-500/20 p-3 transition-all">
                                 <span class="text-sm font-bold text-slate-400 mr-1">Rp</span>
                                 <input id="edit-amount-input" 
-                                       type="number" 
+                                       type="text" 
                                        name="amount" 
-                                       step="any" 
                                        required 
-                                       inputmode="decimal" 
+                                       inputmode="numeric" 
+                                       data-numeric-only="true"
+                                       autocomplete="off" 
                                        placeholder="0" 
                                        oninput="updateInputAmountPreview('edit-amount-input', 'edit-amount-formatted')"
                                        class="w-4/5 text-2xl font-extrabold text-slate-900 dark:text-white bg-transparent border-none outline-hidden focus:ring-0 placeholder-slate-400 dark:placeholder-slate-600">
@@ -734,52 +957,220 @@
                         <div class="grid grid-cols-2 gap-2.5">
                             <!-- Dompet Asal -->
                             <div>
-                                <label id="edit-wallet-label" for="edit-wallet-select" class="block text-xs font-medium text-slate-400 dark:text-slate-400 mb-1 truncate">Dompet / Rekening</label>
-                                <select id="edit-wallet-select" name="wallet_id" required onchange="syncTransferWallets('edit')" class="w-full min-h-[44px] px-2.5 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
-                                    @foreach($modalWallets as $w)
-                                        <option value="{{ $w->id }}" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
-                                            {{ $w->name }} (Rp {{ number_format($w->balance, 0, ',', '.') }})
-                                        </option>
-                                    @endforeach
-                                </select>
+                                <label id="edit-wallet-label" for="edit-wallet-select" class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1 truncate">Dompet / Rekening</label>
+                                <div class="relative">
+                                    <select id="edit-wallet-select" name="wallet_id" required onchange="syncTransferWallets('edit')" class="w-full min-h-[46px] pl-3 pr-8 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 rounded-2xl text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 appearance-none cursor-pointer">
+                                        @foreach($modalWallets as $w)
+                                            <option value="{{ $w->id }}" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
+                                                {{ $w->name }} (Rp {{ number_format($w->balance, 0, ',', '.') }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2.5 text-slate-400">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                        </svg>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Dompet Tujuan (Khusus Transfer) -->
                             <div id="edit-target-wallet-container" class="hidden">
-                                <label for="edit-target-wallet-select" class="block text-xs font-medium text-slate-400 dark:text-slate-400 mb-1 truncate">Dompet Tujuan (Ke)</label>
-                                <select id="edit-target-wallet-select" name="target_wallet_id" onchange="syncTransferWalletsReverse('edit')" class="w-full min-h-[44px] px-2.5 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
-                                    @foreach($modalWallets as $index => $w)
-                                        <option value="{{ $w->id }}" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
-                                            {{ $w->name }} (Rp {{ number_format($w->balance, 0, ',', '.') }})
-                                        </option>
-                                    @endforeach
-                                </select>
+                                <label for="edit-target-wallet-select" class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1 truncate">Dompet Tujuan (Ke)</label>
+                                <div class="relative">
+                                    <select id="edit-target-wallet-select" name="target_wallet_id" onchange="syncTransferWalletsReverse('edit')" class="w-full min-h-[46px] pl-3 pr-8 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 rounded-2xl text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 appearance-none cursor-pointer">
+                                        @foreach($modalWallets as $index => $w)
+                                            <option value="{{ $w->id }}" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
+                                                {{ $w->name }} (Rp {{ number_format($w->balance, 0, ',', '.') }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2.5 text-slate-400">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                        </svg>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Kategori -->
                             <div id="edit-category-container">
-                                <label for="edit-category-select" class="block text-xs font-medium text-slate-400 dark:text-slate-400 mb-1 truncate">Kategori</label>
-                                <select id="edit-category-select" name="category_id" required class="w-full min-h-[44px] px-2.5 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
-                                    @foreach($modalCategories as $cat)
-                                        <option value="{{ $cat->id }}" data-type="{{ is_string($cat->type) ? $cat->type : $cat->type->value }}" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
-                                            {{ $cat->name }} ({{ is_string($cat->type) ? ucfirst($cat->type) : $cat->type->label() }})
-                                        </option>
-                                    @endforeach
-                                </select>
+                                <label for="edit-category-select" class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1 truncate">Kategori</label>
+                                <div class="relative">
+                                    <select id="edit-category-select" name="category_id" required class="w-full min-h-[46px] pl-3 pr-8 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 rounded-2xl text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 appearance-none cursor-pointer">
+                                        @foreach($modalCategories as $cat)
+                                            <option value="{{ $cat->id }}" data-type="{{ is_string($cat->type) ? $cat->type : $cat->type->value }}" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
+                                                {{ $cat->name }} ({{ is_string($cat->type) ? ucfirst($cat->type) : $cat->type->label() }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2.5 text-slate-400">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                        </svg>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Tanggal (Full Width) -->
-                        <div>
-                            <div class="flex items-center justify-between mb-1">
-                                <label for="edit-date-input" class="text-xs font-semibold text-slate-500 dark:text-slate-400">Tanggal</label>
-                                <button type="button" onclick="setDatePreset('edit-date-input', 'today')" class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline cursor-pointer">Hari Ini</button>
+                        <!-- Biaya Admin Transfer (Apple iOS Liquid Card - Edit Modal) -->
+                        <div id="edit-admin-fee-container" class="hidden p-4 rounded-2xl bg-slate-50/90 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/80 shadow-xs space-y-3.5 transition-all">
+                            <!-- Header & Preview -->
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-xl bg-emerald-500/15 dark:bg-emerald-400/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25 flex items-center justify-center shrink-0 shadow-2xs">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v.375c0 .621.504 1.125 1.125 1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <span class="text-xs font-bold text-slate-800 dark:text-slate-100 block leading-tight">Biaya Admin Transfer</span>
+                                        <span class="text-[10px] text-slate-400 dark:text-slate-400 font-medium">Opsional (gratis jika diisi 0)</span>
+                                    </div>
+                                </div>
+                                <span id="edit-admin-fee-preview" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700/80 transition-all">Rp 0</span>
                             </div>
-                            <input id="edit-date-input" 
-                                   type="date" 
-                                   name="date" 
-                                   required 
-                                   class="block w-full max-w-full min-w-0 box-border min-h-[44px] px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-medium text-slate-800 dark:text-slate-100 focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
+
+                            <!-- Input Box -->
+                            <div>
+                                <div class="relative rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 focus-within:border-emerald-500 dark:focus-within:border-emerald-400 focus-within:ring-2 focus-within:ring-emerald-500/20 p-3 flex items-center transition-all">
+                                    <span class="text-sm font-bold text-slate-400 mr-2 select-none">Rp</span>
+                                    <input type="text" 
+                                           id="edit-admin-fee-input" 
+                                           name="admin_fee" 
+                                           inputmode="numeric" 
+                                           data-numeric-only="true"
+                                           autocomplete="off" 
+                                           placeholder="0" 
+                                           oninput="calculateTransferBreakdown('edit')"
+                                           class="w-full text-base font-extrabold text-slate-900 dark:text-white bg-transparent border-none outline-hidden focus:ring-0 placeholder:text-slate-400 dark:placeholder:text-slate-600">
+                                </div>
+
+                                <!-- Preset Pills for Admin Fee -->
+                                <div class="flex items-center gap-1.5 pt-2 overflow-x-auto no-scrollbar">
+                                    <button type="button" onclick="setAdminFeeValue('edit', 1000)" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 hover:bg-emerald-50 dark:bg-slate-800 dark:hover:bg-emerald-950/50 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer shrink-0">+1.000</button>
+                                    <button type="button" onclick="setAdminFeeValue('edit', 1200)" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 hover:bg-emerald-50 dark:bg-slate-800 dark:hover:bg-emerald-950/50 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer shrink-0">+1.200</button>
+                                    <button type="button" onclick="setAdminFeeValue('edit', 2500)" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 hover:bg-emerald-50 dark:bg-slate-800 dark:hover:bg-emerald-950/50 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer shrink-0">+2.500</button>
+                                    <button type="button" onclick="setAdminFeeValue('edit', 6500)" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 hover:bg-emerald-50 dark:bg-slate-800 dark:hover:bg-emerald-950/50 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer shrink-0">+6.500</button>
+                                    <button type="button" onclick="setAdminFeeValue('edit', 0)" class="px-2 py-1 rounded-lg text-[11px] font-bold bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900/50 active:scale-95 transition-all cursor-pointer shrink-0">Gratis (0)</button>
+                                </div>
+                            </div>
+
+                            <!-- Pilihan Ditanggung Oleh (iOS Segmented Control Style) -->
+                            <div>
+                                <label class="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1.5">Beban Biaya Admin Ditanggung:</label>
+                                <div class="p-1 rounded-2xl bg-slate-200/70 dark:bg-slate-900/90 border border-slate-300/60 dark:border-white/10 flex items-center gap-1">
+                                    <button type="button" 
+                                            id="edit-payer-card-source" 
+                                            onclick="setFeePayerDirect('edit', 'source')"
+                                            class="flex-1 py-2 px-3 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs border border-slate-200/80 dark:border-white/10 cursor-pointer text-left transition-all">
+                                        <input type="radio" id="edit-fee-payer-source" name="fee_payer" value="source" checked class="hidden">
+                                        <div class="flex items-center gap-2">
+                                            <div id="edit-payer-ring-source" class="w-3.5 h-3.5 rounded-full border-2 border-emerald-500 dark:border-emerald-400 flex items-center justify-center shrink-0">
+                                                <div id="edit-payer-dot-source" class="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400"></div>
+                                            </div>
+                                            <div class="min-w-0">
+                                                <span class="block text-xs font-bold leading-tight truncate">Dompet Asal</span>
+                                                <span class="block text-[10px] text-slate-500 dark:text-slate-400 truncate">+ Ditambah ke asal</span>
+                                            </div>
+                                        </div>
+                                    </button>
+
+                                    <button type="button" 
+                                            id="edit-payer-card-dest" 
+                                            onclick="setFeePayerDirect('edit', 'destination')"
+                                            class="flex-1 py-2 px-3 rounded-xl bg-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer text-left transition-all">
+                                        <input type="radio" id="edit-fee-payer-dest" name="fee_payer" value="destination" class="hidden">
+                                        <div class="flex items-center gap-2">
+                                            <div id="edit-payer-ring-dest" class="w-3.5 h-3.5 rounded-full border-2 border-slate-400 dark:border-slate-600 flex items-center justify-center shrink-0">
+                                                <div id="edit-payer-dot-dest" class="w-1.5 h-1.5 rounded-full bg-transparent"></div>
+                                            </div>
+                                            <div class="min-w-0">
+                                                <span class="block text-xs font-semibold leading-tight truncate">Dompet Tujuan</span>
+                                                <span class="block text-[10px] text-slate-500 dark:text-slate-400 truncate">Dipotong penerima</span>
+                                            </div>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Live Balance Impact Summary Box -->
+                            <div class="p-3 rounded-xl bg-white/80 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-700/60 space-y-1.5 text-xs">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-slate-500 dark:text-slate-400 text-[11px] font-semibold">Total keluar (Dompet Asal):</span>
+                                    <span id="edit-transfer-out-val" class="font-extrabold text-rose-600 dark:text-rose-400">Rp 0</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-slate-500 dark:text-slate-400 text-[11px] font-semibold">Total diterima (Dompet Tujuan):</span>
+                                    <span id="edit-transfer-in-val" class="font-extrabold text-emerald-600 dark:text-emerald-400">Rp 0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tanggal (Full Width Apple Liquid Glass Date Picker) -->
+                        <div>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <label class="text-xs font-semibold text-slate-500 dark:text-slate-400">Tanggal Transaksi</label>
+                                <div class="flex items-center gap-1.5 relative z-20">
+                                    <button type="button" 
+                                            data-date-target="edit-date-input" 
+                                            data-date-preset="yesterday"
+                                            onclick="setDatePreset('edit-date-input', 'yesterday')" 
+                                            class="date-preset-btn text-[11px] font-medium px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all cursor-pointer">
+                                        Kemarin
+                                    </button>
+                                    <button type="button" 
+                                            data-date-target="edit-date-input" 
+                                            data-date-preset="today"
+                                            onclick="setDatePreset('edit-date-input', 'today')" 
+                                            class="date-preset-btn text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/15 dark:bg-emerald-400/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 transition-all cursor-pointer shadow-2xs">
+                                        Hari Ini
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Interactive Apple Date Card -->
+                            <div class="relative group">
+                                <div id="edit-date-input-display" class="flex items-center justify-between w-full min-h-[52px] px-3.5 py-2.5 bg-slate-50/90 dark:bg-slate-800/80 hover:bg-slate-100/90 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-2xl transition-all shadow-xs group-focus-within:border-emerald-500 group-focus-within:ring-2 group-focus-within:ring-emerald-500/20">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <!-- Icon Calendar Badge -->
+                                        <div class="w-9 h-9 rounded-xl bg-emerald-500/10 dark:bg-emerald-400/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-2xs">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                                            </svg>
+                                        </div>
+                                        <!-- Text Date -->
+                                        <div class="flex flex-col min-w-0">
+                                            <span id="edit-date-input-label" class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate">
+                                                {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d M Y') }}
+                                            </span>
+                                            <span id="edit-date-input-sublabel" class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
+                                                Hari ini
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Right Indicator Badge / Chevron -->
+                                    <div class="flex items-center gap-1.5 pl-2 shrink-0">
+                                        <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1 bg-slate-200/70 dark:bg-slate-700/70 px-2.5 py-1 rounded-xl">
+                                            Pilih
+                                            <svg class="w-3.5 h-3.5 text-slate-400 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                            </svg>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- The actual HTML date input overlaying the card -->
+                                <input id="edit-date-input" 
+                                       type="date" 
+                                       name="date" 
+                                       required 
+                                       aria-label="Pilih Tanggal Transaksi"
+                                       onchange="syncDateDisplay('edit-date-input')"
+                                       onclick="try { this.showPicker(); } catch(e) {}"
+                                       class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 [color-scheme:light] dark:[color-scheme:dark]">
+                            </div>
                         </div>
 
                         <!-- Catatan (Full Width) -->
@@ -789,7 +1180,7 @@
                                    type="text" 
                                    name="description" 
                                    placeholder="Catatan transaksi..." 
-                                   class="block w-full max-w-full min-w-0 box-border min-h-[44px] px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
+                                   class="block w-full max-w-full min-w-0 box-border min-h-[46px] px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 rounded-2xl text-xs sm:text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20">
                         </div>
 
                         <!-- Action Buttons -->
@@ -853,13 +1244,13 @@
         </form>
 
         <!-- 5.b DELETE TRANSACTION CONFIRMATION BOTTOM SHEET MODAL -->
-        <div id="delete-transaction-confirm-modal" class="fixed inset-0 hidden transition-all duration-300" style="z-index: 9999;" aria-modal="true" role="dialog">
+        <div id="delete-transaction-confirm-modal" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true" role="dialog">
             <!-- Backdrop -->
-            <div id="delete-modal-backdrop" onclick="closeDeleteTransactionModal()" class="fixed inset-0 bg-slate-950/75 backdrop-blur-xs transition-opacity duration-300 opacity-0" style="z-index: 9998;"></div>
+            <div id="delete-modal-backdrop" onclick="closeDeleteTransactionModal()" class="modal-backdrop fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity duration-300 opacity-0 z-10"></div>
 
             <!-- Bottom Sheet Panel (Apple iOS Liquid Sheet) -->
-            <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none" style="z-index: 9999;">
-                <div id="delete-modal-panel" class="w-full max-w-md bg-white/95 dark:bg-slate-900/95 backdrop-blur-3xl rounded-t-[36px] shadow-2xl p-5 modal-sheet-safe border-t border-white/60 dark:border-white/10 pointer-events-auto transform translate-y-full transition-transform duration-300">
+            <div class="fixed bottom-0 left-0 right-0 z-30 flex justify-center pointer-events-none">
+                <div id="delete-modal-panel" class="modal-panel modal-sheet-safe w-full max-w-md bg-white/95 dark:bg-slate-900/95 backdrop-blur-3xl rounded-t-[36px] shadow-2xl p-5 border-t border-white/60 dark:border-white/10 pointer-events-auto transform translate-y-full transition-transform duration-300 relative z-35">
                     <!-- Drag Handle -->
                     <div class="w-10 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-4 cursor-pointer" onclick="closeDeleteTransactionModal()"></div>
 
@@ -878,18 +1269,18 @@
                         </div>
 
                         <!-- Transaction Preview Card inside Modal -->
-                        <div class="p-3 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 text-left space-y-1.5">
+                        <div class="p-3.5 bg-slate-100/90 dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-white/10 text-left space-y-2">
                             <div class="flex items-center justify-between text-xs">
-                                <span class="text-slate-400 dark:text-slate-400">Nominal:</span>
-                                <span id="delete-preview-amount" class="font-bold text-slate-900 dark:text-white">Rp 0</span>
+                                <span class="font-medium text-slate-500 dark:text-slate-400">Nominal:</span>
+                                <span id="delete-preview-amount" class="font-black text-rose-600 dark:text-rose-400 text-sm">Rp 0</span>
                             </div>
                             <div class="flex items-center justify-between text-xs">
-                                <span class="text-slate-400 dark:text-slate-400">Tanggal:</span>
-                                <span id="delete-preview-date" class="font-medium text-slate-700 dark:text-slate-300">-</span>
+                                <span class="font-medium text-slate-500 dark:text-slate-400">Tanggal:</span>
+                                <span id="delete-preview-date" class="font-semibold text-slate-800 dark:text-slate-200">-</span>
                             </div>
                             <div class="flex items-center justify-between text-xs">
-                                <span class="text-slate-400 dark:text-slate-400">Keterangan:</span>
-                                <span id="delete-preview-desc" class="font-medium text-slate-700 dark:text-slate-300 truncate max-w-[200px]">-</span>
+                                <span class="font-medium text-slate-500 dark:text-slate-400">Keterangan:</span>
+                                <span id="delete-preview-desc" class="font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[220px]">-</span>
                             </div>
                         </div>
 
@@ -1080,9 +1471,11 @@
                             <div class="relative flex items-center bg-white dark:bg-slate-900/90 rounded-xl px-3 py-1 border border-slate-200/80 dark:border-slate-700 focus-within:border-emerald-500 dark:focus-within:border-emerald-400 focus-within:ring-2 focus-within:ring-emerald-500/20">
                                 <span class="text-sm font-extrabold text-slate-400 dark:text-slate-500 mr-1.5 shrink-0">Rp</span>
                                 <input id="scan-edit-amount" 
-                                       type="number" 
-                                       step="any" 
-                                       inputmode="decimal" 
+                                       type="text" 
+                                       name="amount" 
+                                       inputmode="numeric" 
+                                       data-numeric-only="true"
+                                       autocomplete="off" 
                                        placeholder="0" 
                                        required 
                                        oninput="updateInputAmountPreview('scan-edit-amount', 'scan-amount-formatted')"
@@ -1121,9 +1514,17 @@
                         <!-- Tanggal (Full Width) -->
                         <div>
                             <label for="scan-edit-date" class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-0.5">Tanggal</label>
-                            <input id="scan-edit-date" 
-                                   type="date" 
-                                   class="block w-full max-w-full min-w-0 box-border h-9 px-3 py-1 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-1 focus:ring-emerald-500/20">
+                            <div class="relative">
+                                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2.5 text-emerald-500 dark:text-emerald-400">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                                    </svg>
+                                </div>
+                                <input id="scan-edit-date" 
+                                       type="date" 
+                                       value="{{ now()->format('Y-m-d') }}"
+                                       class="block w-full max-w-full min-w-0 box-border h-9 pl-8 pr-3 py-1 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-1 focus:ring-emerald-500/20 [color-scheme:light] dark:[color-scheme:dark]">
+                            </div>
                         </div>
 
                         <!-- Kategori & Dompet Grid (2 Columns) -->
@@ -1241,6 +1642,17 @@
                 const d = new Date();
                 if (preset === 'yesterday') {
                     d.setDate(d.getDate() - 1);
+                } else if (preset === 'tomorrow') {
+                    d.setDate(d.getDate() + 1);
+                } else if (preset === 'in_7_days') {
+                    d.setDate(d.getDate() + 7);
+                } else if (preset === 'in_30_days') {
+                    d.setDate(d.getDate() + 30);
+                } else if (preset === 'clear') {
+                    el.value = '';
+                    if (navigator.vibrate) try { navigator.vibrate(10); } catch(e) {}
+                    syncDateDisplay(inputId);
+                    return;
                 }
                 const yyyy = d.getFullYear();
                 const mm = String(d.getMonth() + 1).padStart(2, '0');
@@ -1248,6 +1660,95 @@
                 el.value = `${yyyy}-${mm}-${dd}`;
                 if (navigator.vibrate) {
                     try { navigator.vibrate(10); } catch(e) {}
+                }
+                syncDateDisplay(inputId);
+            }
+
+            function syncDateDisplay(inputId) {
+                const input = document.getElementById(inputId);
+                if (!input) return;
+                const label = document.getElementById(inputId + '-label');
+                const sublabel = document.getElementById(inputId + '-sublabel');
+                
+                let val = input.value;
+                if (!val) {
+                    if (input.hasAttribute('required')) {
+                        const now = new Date();
+                        val = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+                        input.value = val;
+                    } else {
+                        if (label) label.textContent = 'Pilih Tanggal';
+                        if (sublabel) {
+                            sublabel.textContent = 'Opsional';
+                            sublabel.className = 'text-[10px] font-semibold text-slate-400 dark:text-slate-500';
+                        }
+                        const presetBtns = document.querySelectorAll(`[data-date-target="${inputId}"]`);
+                        presetBtns.forEach(btn => {
+                            const p = btn.getAttribute('data-date-preset');
+                            if (p === 'clear') {
+                                btn.className = 'date-preset-btn text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all cursor-pointer shadow-2xs';
+                            } else {
+                                btn.className = 'date-preset-btn text-[11px] font-medium px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all cursor-pointer';
+                            }
+                        });
+                        return;
+                    }
+                }
+                
+                const parts = val.split('-');
+                if (parts.length === 3) {
+                    const year = parseInt(parts[0], 10);
+                    const month = parseInt(parts[1], 10) - 1;
+                    const day = parseInt(parts[2], 10);
+                    const dateObj = new Date(year, month, day);
+                    
+                    const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+                    
+                    const dayName = days[dateObj.getDay()] || '';
+                    const monthName = months[dateObj.getMonth()] || '';
+                    
+                    if (label) {
+                        label.textContent = `${dayName}, ${day} ${monthName} ${year}`;
+                    }
+                    
+                    // Relative label & active styling
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    const target = new Date(year, month, day);
+                    target.setHours(0, 0, 0, 0);
+                    const diffTime = target.getTime() - today.getTime();
+                    const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+                    
+                    if (sublabel) {
+                        if (diffDays === 0) {
+                            sublabel.textContent = 'Hari ini';
+                            sublabel.className = 'text-[10px] font-semibold text-emerald-600 dark:text-emerald-400';
+                        } else if (diffDays === -1) {
+                            sublabel.textContent = 'Kemarin';
+                            sublabel.className = 'text-[10px] font-semibold text-amber-600 dark:text-amber-400';
+                        } else if (diffDays === 1) {
+                            sublabel.textContent = 'Besok';
+                            sublabel.className = 'text-[10px] font-semibold text-sky-600 dark:text-sky-400';
+                        } else if (diffDays < 0) {
+                            sublabel.textContent = Math.abs(diffDays) + ' hari lalu';
+                            sublabel.className = 'text-[10px] font-semibold text-slate-500 dark:text-slate-400';
+                        } else {
+                            sublabel.textContent = diffDays + ' hari lagi';
+                            sublabel.className = 'text-[10px] font-semibold text-slate-500 dark:text-slate-400';
+                        }
+                    }
+                    
+                    // Update preset chips
+                    const presetBtns = document.querySelectorAll(`[data-date-target="${inputId}"]`);
+                    presetBtns.forEach(btn => {
+                        const p = btn.getAttribute('data-date-preset');
+                        if ((p === 'today' && diffDays === 0) || (p === 'yesterday' && diffDays === -1) || (p === 'tomorrow' && diffDays === 1) || (p === 'in_7_days' && diffDays === 7) || (p === 'in_30_days' && (diffDays >= 28 && diffDays <= 31))) {
+                            btn.className = 'date-preset-btn text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/15 dark:bg-emerald-400/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 transition-all cursor-pointer shadow-2xs';
+                        } else {
+                            btn.className = 'date-preset-btn text-[11px] font-medium px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all cursor-pointer';
+                        }
+                    });
                 }
             }
 
@@ -1389,7 +1890,93 @@
                 updateEditModalType(type);
             };
 
+            // =========================================================================
+            // Universal Android Hardware Back Button & Edge Swipe Gesture Controller
+            // =========================================================================
+            window.__swanflowModalStack = window.__swanflowModalStack || [];
+
+            window.swanflowPushModal = function(modalId, closeFn) {
+                if (!window.__swanflowModalStack.some(m => m.modalId === modalId)) {
+                    window.__swanflowModalStack.push({ modalId, closeFn });
+                    try {
+                        history.pushState({ swanflow_modal: modalId }, '');
+                    } catch (e) {}
+                }
+            };
+
+            window.swanflowPopModal = function(modalId) {
+                const idx = window.__swanflowModalStack.findIndex(m => m.modalId === modalId);
+                if (idx !== -1) {
+                    window.__swanflowModalStack.splice(idx, 1);
+                    if (history.state && history.state.swanflow_modal === modalId) {
+                        try {
+                            history.back();
+                        } catch (e) {}
+                    }
+                }
+            };
+
+            window.addEventListener('popstate', (e) => {
+                if (window.__swanflowModalStack && window.__swanflowModalStack.length > 0) {
+                    const topModal = window.__swanflowModalStack.pop();
+                    if (topModal && typeof topModal.closeFn === 'function') {
+                        try {
+                            topModal.closeFn();
+                        } catch (err) {}
+                        return;
+                    }
+                }
+
+                // Fallback for any open modals on the page (Dashboard, Drive, Wallets, Categories, etc.)
+                const openModalPanels = document.querySelectorAll('#transaction-modal:not(.hidden), #edit-transaction-modal:not(.hidden), #delete-transaction-confirm-modal:not(.hidden), #receipt-scanner-modal:not(.hidden), #calculator-modal:not(.hidden), .modal-sheet:not(.hidden), [role="dialog"]:not(.hidden)');
+                if (openModalPanels.length > 0) {
+                    openModalPanels.forEach(p => {
+                        const closeBtn = p.querySelector('[onclick*="close"], [aria-label*="close" i], [aria-label*="tutup" i]');
+                        if (closeBtn) {
+                            closeBtn.click();
+                        } else {
+                            p.classList.add('hidden');
+                        }
+                    });
+                    document.body.classList.remove('modal-open');
+                }
+            });
+
+            // Universal MutationObserver for dynamically toggled modals (e.g. Drive, Orders, etc.)
+            if (typeof MutationObserver !== 'undefined') {
+                const modalObserver = new MutationObserver((mutations) => {
+                    mutations.forEach((mutation) => {
+                        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                            const el = mutation.target;
+                            const isModal = el.id && (el.getAttribute('role') === 'dialog' || el.id.includes('modal') || el.classList.contains('modal-sheet'));
+                            if (!isModal) return;
+
+                            const isHidden = el.classList.contains('hidden') || el.style.display === 'none';
+                            const inStack = window.__swanflowModalStack.some(m => m.modalId === el.id);
+
+                            if (!isHidden && !inStack) {
+                                window.swanflowPushModal(el.id, () => {
+                                    const closeBtn = el.querySelector('[onclick*="close"], [aria-label*="close" i], [aria-label*="tutup" i]');
+                                    if (closeBtn) {
+                                        closeBtn.click();
+                                    } else {
+                                        el.classList.add('hidden');
+                                        document.body.classList.remove('modal-open');
+                                    }
+                                });
+                            } else if (isHidden && inStack) {
+                                window.swanflowPopModal(el.id);
+                            }
+                        }
+                    });
+                });
+                modalObserver.observe(document.body, { attributes: true, subtree: true, attributeFilter: ['class'] });
+            }
+
             function openTransactionModal(defaultType = 'expense', defaultAmount = null, defaultDescription = null, defaultCategory = null, defaultDate = null, defaultWallet = null) {
+                if (typeof window.swanflowPushModal === 'function') {
+                    window.swanflowPushModal('transaction-modal', () => closeTransactionModal(false));
+                }
                 const modal = document.getElementById('transaction-modal');
                 const backdrop = document.getElementById('modal-backdrop');
                 const panel = document.getElementById('modal-panel');
@@ -1436,12 +2023,16 @@
                     }
                 }
 
-                // Pre-fill date if provided
-                if (defaultDate) {
-                    const dateInput = document.querySelector('input[name="date"]');
-                    if (dateInput) {
+                // Pre-fill date if provided, otherwise ALWAYS default to today in device local time
+                const dateInput = document.getElementById('date-input') || document.querySelector('input[name="date"]');
+                if (dateInput) {
+                    if (defaultDate) {
                         dateInput.value = defaultDate;
+                    } else {
+                        const now = new Date();
+                        dateInput.value = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
                     }
+                    syncDateDisplay('date-input');
                 }
 
                 // Pre-fill wallet if provided
@@ -1486,11 +2077,15 @@
             function openReceiptScannerModal(target = 'new') {
                 receiptScannerTarget = target;
 
+                if (typeof window.swanflowPushModal === 'function') {
+                    window.swanflowPushModal('receipt-scanner-modal', () => closeReceiptScannerModal(false));
+                }
+
                 if (target === 'edit') {
                     const editModal = document.getElementById('edit-transaction-modal');
                     if (editModal) editModal.classList.add('hidden');
                 } else {
-                    closeTransactionModal();
+                    closeTransactionModal(false);
                 }
 
                 const modal = document.getElementById('receipt-scanner-modal');
@@ -1508,7 +2103,10 @@
                 });
             }
 
-            function closeReceiptScannerModal() {
+            function closeReceiptScannerModal(syncHistory = true) {
+                if (syncHistory && typeof window.swanflowPopModal === 'function') {
+                    window.swanflowPopModal('receipt-scanner-modal');
+                }
                 const modal = document.getElementById('receipt-scanner-modal');
                 const backdrop = document.getElementById('scanner-backdrop');
                 const panel = document.getElementById('scanner-panel');
@@ -1658,10 +2256,10 @@
                 resState.classList.add('hidden');
 
                 statusText.innerText = 'Mengoptimalkan Resolusi Gambar...';
-                substatusText.innerText = 'Menyesuaikan ketajaman struk...';
-                progressFill.style.width = '25%';
+                substatusText.innerText = 'Menyesuaikan ketajaman foto...';
+                progressFill.style.width = '30%';
 
-                const { file, dataUrl } = await compressReceiptImage(rawFile, 1600, 0.82);
+                const { file, dataUrl } = await compressReceiptImage(rawFile, 1200, 0.80);
                 if (dataUrl) {
                     previewImg.src = dataUrl;
                     resultPhotoImg.src = dataUrl;
@@ -1672,15 +2270,15 @@
                 }
 
                 statusText.innerText = 'Menganalisis Bukti Pembayaran...';
-                substatusText.innerText = 'Mendeteksi total belanja, tanggal & pedagang...';
-                progressFill.style.width = '45%';
+                substatusText.innerText = 'Mendeteksi nominal, tanggal & merchant...';
+                progressFill.style.width = '60%';
 
                 const formData = new FormData();
                 formData.append('image', file);
                 formData.append('_token', '{{ csrf_token() }}');
 
                 try {
-                    const response = await fetch('{{ route('transactions.scan-receipt') }}', {
+                    const response = await fetch('{{ route('transactions.scan-receipt.async') }}', {
                         method: 'POST',
                         body: formData,
                         headers: {
@@ -1689,76 +2287,90 @@
                         }
                     });
 
-                    const data = await response.json();
-
-                    if (data.success && data.source === 'gemini_ai') {
-                        progressFill.style.width = '100%';
-                        showScanResults(data);
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({}));
+                        const errorMsg = errorData.message || 'Gagal memproses struk.';
+                        showSwanToast(errorMsg, 'error');
+                        resetReceiptScannerState();
                         return;
                     }
 
-                    // Fallback to client-side OCR
-                    statusText.innerText = 'Membaca Teks Struk (OCR Pintar)...';
-                    substatusText.innerText = 'Mengekstrak karakter teks dari gambar...';
-                    progressFill.style.width = '60%';
+                    const queueData = await response.json();
 
-                    if (typeof Tesseract !== 'undefined') {
-                        let ocrResult = null;
-                        try {
-                            ocrResult = await Tesseract.recognize(file, 'ind+eng', {
-                                logger: m => {
-                                    if (m.status === 'recognizing text') {
-                                        const pct = Math.round(m.progress * 30) + 60;
-                                        progressFill.style.width = pct + '%';
-                                    }
-                                }
-                            });
-                        } catch (e1) {
-                            console.warn('ind+eng failed, trying eng:', e1);
-                            ocrResult = await Tesseract.recognize(file, 'eng', {
-                                logger: m => {
-                                    if (m.status === 'recognizing text') {
-                                        const pct = Math.round(m.progress * 30) + 60;
-                                        progressFill.style.width = pct + '%';
-                                    }
-                                }
-                            });
-                        }
-
-                        const recognizedText = ocrResult?.data?.text || '';
-                        progressFill.style.width = '95%';
-
-                        const parseRes = await fetch('{{ route('transactions.scan-receipt.parse-text') }}', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                'X-Requested-With': 'XMLHttpRequest',
-                                'Accept': 'application/json'
-                            },
-                            body: JSON.stringify({ text: recognizedText })
-                        });
-
-                        const parsedData = await parseRes.json();
-                        parsedData.source = 'ocr_local';
-                        showScanResults(parsedData);
-                    } else {
-                        showScanResults({
-                            amount: 0,
-                            merchant: file.name.substring(0, file.name.lastIndexOf('.')) || 'Struk Belanja',
-                            description: 'Pembayaran Struk',
-                            date: new Date().toISOString().split('T')[0],
-                            type: 'expense',
-                            source: 'manual_assist'
-                        });
-                    }
-                } catch (err) {
-                    console.error('Scan error:', err);
-                    statusText.innerText = 'Gagal memindai otomatis.';
-                    substatusText.innerText = 'Silakan coba lagi atau isi rincian secara manual.';
-                    setTimeout(() => {
+                    if (queueData.success === false) {
+                        showSwanToast(queueData.message || 'Gagal memproses struk.', 'error');
                         resetReceiptScannerState();
-                    }, 2200);
+                        return;
+                    }
+
+                    const payload = queueData.data || queueData;
+
+                    // If processed instantly (< 1s)
+                    if (queueData.status === 'completed' || payload.status === 'completed') {
+                        progressFill.style.width = '100%';
+                        showScanResults(payload);
+                        return;
+                    }
+
+                    // If asynchronous queue is handling it, poll with 8s maximum timeout
+                    if (queueData.success && queueData.scan_id) {
+                        statusText.innerText = 'Memproses Struk...';
+                        substatusText.innerText = 'Menganalisis struk...';
+                        progressFill.style.width = '75%';
+
+                        let attempts = 0;
+                        const maxAttempts = 8; // 8 seconds maximum
+
+                        while (attempts < maxAttempts) {
+                            await new Promise(r => setTimeout(r, 800));
+                            attempts++;
+                            progressFill.style.width = Math.min(95, 75 + attempts * 3) + '%';
+
+                            try {
+                                const pollRes = await fetch(`/transactions/scan-receipt/status/${queueData.scan_id}`, {
+                                    headers: {
+                                        'X-Requested-With': 'XMLHttpRequest',
+                                        'Accept': 'application/json'
+                                    }
+                                });
+                                const pollData = await pollRes.json();
+
+                                if (pollData.status === 'completed') {
+                                    progressFill.style.width = '100%';
+                                    showScanResults(pollData.data || pollData);
+                                    return;
+                                } else if (pollData.status === 'failed') {
+                                    break;
+                                }
+                            } catch (pErr) {
+                                console.warn('Polling check warning:', pErr);
+                            }
+                        }
+                    }
+
+                    // Fast smart assist fallback (never show stuck state)
+                    progressFill.style.width = '100%';
+                    showScanResults({
+                        amount: 0,
+                        merchant: rawFile.name.substring(0, rawFile.name.lastIndexOf('.')) || 'Struk Pembelian',
+                        description: 'Pembayaran Struk',
+                        date: new Date().toISOString().split('T')[0],
+                        type: 'expense',
+                        source: 'smart_assist',
+                        has_gemini_key: false
+                    });
+                } catch (err) {
+                    console.warn('Scan assist fallback:', err);
+                    progressFill.style.width = '100%';
+                    showScanResults({
+                        amount: 0,
+                        merchant: rawFile.name.substring(0, rawFile.name.lastIndexOf('.')) || 'Struk Pembelian',
+                        description: 'Pembayaran Struk',
+                        date: new Date().toISOString().split('T')[0],
+                        type: 'expense',
+                        source: 'smart_assist',
+                        has_gemini_key: false
+                    });
                 }
             }
 
@@ -1780,7 +2392,20 @@
                 merchantInput.value = data.merchant || '';
 
                 const dateInput = document.getElementById('scan-edit-date');
-                dateInput.value = data.date || new Date().toISOString().split('T')[0];
+                const nowScan = new Date();
+                const localScanToday = `${nowScan.getFullYear()}-${String(nowScan.getMonth() + 1).padStart(2, '0')}-${String(nowScan.getDate()).padStart(2, '0')}`;
+                let formattedDate = data.date || localScanToday;
+                if (formattedDate.includes('/')) {
+                    const parts = formattedDate.split('/');
+                    if (parts.length === 3) {
+                        if (parts[0].length === 4) {
+                            formattedDate = `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`;
+                        } else {
+                            formattedDate = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+                        }
+                    }
+                }
+                dateInput.value = formattedDate;
 
                 const notesInput = document.getElementById('scan-edit-notes');
                 notesInput.value = data.notes || (data.items && data.items.length ? data.items.join(', ') : '');
@@ -1801,16 +2426,31 @@
                     }
                 }
 
+                // Ensure Wallet Selected
+                const walletSelect = document.getElementById('scan-edit-wallet');
+                if (walletSelect && (!walletSelect.value || walletSelect.value === '')) {
+                    if (walletSelect.options.length > 0) {
+                        walletSelect.selectedIndex = 0;
+                    }
+                }
+
                 // Source Badge
                 const badge = document.getElementById('scan-source-badge');
                 if (badge) {
-                    if (data.source === 'gemini_ai') {
-                        badge.innerText = '✨ AI Vision';
+                    if (data.source === 'gemini_ai' || data.source === 'gemini_ai_queue') {
+                        badge.innerText = '✨ Gemini AI Vision';
                         badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 uppercase border border-emerald-200/60 dark:border-emerald-800/60';
                     } else {
-                        badge.innerText = '⚡ Smart OCR';
-                        badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 uppercase border border-slate-200 dark:border-slate-700';
+                        badge.innerText = '⚡ Smart Assist';
+                        badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 uppercase border border-amber-200/60 dark:border-amber-800/60';
                     }
+                }
+
+                if (!data.amount || data.amount <= 0) {
+                    setTimeout(() => {
+                        amountInput?.focus();
+                        amountInput?.select();
+                    }, 300);
                 }
             }
 
@@ -1835,7 +2475,10 @@
                         const editDesc = document.getElementById('edit-desc-input');
                         if (editDesc) editDesc.value = finalDesc;
                         const editDate = document.getElementById('edit-date-input');
-                        if (editDate) editDate.value = date;
+                        if (editDate) {
+                            editDate.value = date;
+                            syncDateDisplay('edit-date-input');
+                        }
                         const editCat = document.getElementById('edit-category-select');
                         if (editCat && categoryId) editCat.value = categoryId;
                         const editWallet = document.getElementById('edit-wallet-select');
@@ -1957,7 +2600,10 @@
                 }
             }
 
-            function closeTransactionModal() {
+            function closeTransactionModal(syncHistory = true) {
+                if (syncHistory && typeof window.swanflowPopModal === 'function') {
+                    window.swanflowPopModal('transaction-modal');
+                }
                 const modal = document.getElementById('transaction-modal');
                 const backdrop = document.getElementById('modal-backdrop');
                 const panel = document.getElementById('modal-panel');
@@ -1979,16 +2625,116 @@
                 }, 300);
             }
 
+            function setAdminFeeValue(prefix, val) {
+                const inputId = prefix ? `${prefix}-admin-fee-input` : 'admin-fee-input';
+                const el = document.getElementById(inputId);
+                if (el) {
+                    el.value = val > 0 ? val : '';
+                    calculateTransferBreakdown(prefix);
+                }
+            }
+
+            function setFeePayerDirect(prefix, payer) {
+                const sourceCard = document.getElementById(prefix ? `${prefix}-payer-card-source` : 'payer-card-source');
+                const destCard = document.getElementById(prefix ? `${prefix}-payer-card-dest` : 'payer-card-dest');
+                const sourceRing = document.getElementById(prefix ? `${prefix}-payer-ring-source` : 'payer-ring-source');
+                const destRing = document.getElementById(prefix ? `${prefix}-payer-ring-dest` : 'payer-ring-dest');
+                const sourceDot = document.getElementById(prefix ? `${prefix}-payer-dot-source` : 'payer-dot-source');
+                const destDot = document.getElementById(prefix ? `${prefix}-payer-dot-dest` : 'payer-dot-dest');
+
+                const containerId = prefix ? `${prefix}-admin-fee-container` : 'admin-fee-container';
+                const container = document.getElementById(containerId);
+                if (!container) return;
+
+                const radios = container.querySelectorAll('input[name="fee_payer"]');
+                radios.forEach(r => {
+                    r.checked = (r.value === payer);
+                });
+
+                const activeBtnClass = "flex-1 py-2 px-3 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs border border-slate-200/80 dark:border-white/10 cursor-pointer text-left transition-all";
+                const inactiveBtnClass = "flex-1 py-2 px-3 rounded-xl bg-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer text-left transition-all";
+
+                const activeRingClass = "w-3.5 h-3.5 rounded-full border-2 border-emerald-500 dark:border-emerald-400 flex items-center justify-center shrink-0";
+                const inactiveRingClass = "w-3.5 h-3.5 rounded-full border-2 border-slate-400 dark:border-slate-600 flex items-center justify-center shrink-0";
+
+                const activeDotClass = "w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400";
+                const inactiveDotClass = "w-1.5 h-1.5 rounded-full bg-transparent";
+
+                if (payer === 'source') {
+                    if (sourceCard) sourceCard.className = activeBtnClass;
+                    if (destCard) destCard.className = inactiveBtnClass;
+                    if (sourceRing) sourceRing.className = activeRingClass;
+                    if (destRing) destRing.className = inactiveRingClass;
+                    if (sourceDot) sourceDot.className = activeDotClass;
+                    if (destDot) destDot.className = inactiveDotClass;
+                } else {
+                    if (destCard) destCard.className = activeBtnClass;
+                    if (sourceCard) sourceCard.className = inactiveBtnClass;
+                    if (destRing) destRing.className = activeRingClass;
+                    if (sourceRing) sourceRing.className = inactiveRingClass;
+                    if (destDot) destDot.className = activeDotClass;
+                    if (sourceDot) sourceDot.className = inactiveDotClass;
+                }
+                calculateTransferBreakdown(prefix);
+            }
+
+            function calculateTransferBreakdown(prefix = '') {
+                const amountInputId = prefix ? `${prefix}-amount-input` : 'amount-input';
+                const feeInputId = prefix ? `${prefix}-admin-fee-input` : 'admin-fee-input';
+                const feePreviewId = prefix ? `${prefix}-admin-fee-preview` : 'admin-fee-preview';
+                const outValId = prefix ? `${prefix}-transfer-out-val` : 'transfer-out-val';
+                const inValId = prefix ? `${prefix}-transfer-in-val` : 'transfer-in-val';
+
+                const amount = Number(document.getElementById(amountInputId)?.value || 0);
+                const fee = Number(document.getElementById(feeInputId)?.value || 0);
+                const feePreview = document.getElementById(feePreviewId);
+                if (feePreview) {
+                    feePreview.innerText = formatRupiahDisplay(fee);
+                    if (fee > 0) {
+                        feePreview.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/15 dark:bg-emerald-400/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 transition-all shadow-2xs";
+                    } else {
+                        feePreview.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700/80 transition-all";
+                    }
+                }
+
+                // Check which radio is selected
+                let payer = 'source';
+                const containerId = prefix ? `${prefix}-admin-fee-container` : 'admin-fee-container';
+                const container = document.getElementById(containerId);
+                if (container) {
+                    const checkedRadio = container.querySelector('input[type="radio"]:checked');
+                    if (checkedRadio) payer = checkedRadio.value;
+                }
+
+                let totalOut = amount;
+                let totalIn = amount;
+
+                if (payer === 'destination') {
+                    totalOut = amount;
+                    totalIn = Math.max(0, amount - fee);
+                } else {
+                    totalOut = amount + fee;
+                    totalIn = amount;
+                }
+
+                const outEl = document.getElementById(outValId);
+                const inEl = document.getElementById(inValId);
+                if (outEl) outEl.innerText = formatRupiahDisplay(totalOut);
+                if (inEl) inEl.innerText = formatRupiahDisplay(totalIn);
+            }
+
             function updateModalType(type) {
                 const walletLabel = document.getElementById('wallet-label');
                 const targetWalletContainer = document.getElementById('target-wallet-container');
                 const targetWalletSelect = document.getElementById('target-wallet-select');
                 const categoryContainer = document.getElementById('category-container');
                 const categorySelect = document.getElementById('category-select');
+                const adminFeeContainer = document.getElementById('admin-fee-container');
 
                 if (type === 'transfer') {
                     if (walletLabel) walletLabel.textContent = 'Dompet Asal (Dari)';
                     if (targetWalletContainer) targetWalletContainer.classList.remove('hidden');
+                    if (adminFeeContainer) adminFeeContainer.classList.remove('hidden');
                     if (targetWalletSelect) {
                         targetWalletSelect.required = true;
                         targetWalletSelect.disabled = false;
@@ -1999,9 +2745,11 @@
                         categorySelect.disabled = true;
                     }
                     syncTransferWallets('');
+                    calculateTransferBreakdown('');
                 } else {
                     if (walletLabel) walletLabel.textContent = 'Dompet / Rekening';
                     if (targetWalletContainer) targetWalletContainer.classList.add('hidden');
+                    if (adminFeeContainer) adminFeeContainer.classList.add('hidden');
                     if (targetWalletSelect) {
                         targetWalletSelect.required = false;
                         targetWalletSelect.disabled = true;
@@ -2062,10 +2810,12 @@
                 const targetWalletSelect = document.getElementById('edit-target-wallet-select');
                 const categoryContainer = document.getElementById('edit-category-container');
                 const categorySelect = document.getElementById('edit-category-select');
+                const adminFeeContainer = document.getElementById('edit-admin-fee-container');
 
                 if (type === 'transfer') {
                     if (walletLabel) walletLabel.textContent = 'Dompet Asal (Dari)';
                     if (targetWalletContainer) targetWalletContainer.classList.remove('hidden');
+                    if (adminFeeContainer) adminFeeContainer.classList.remove('hidden');
                     if (targetWalletSelect) {
                         targetWalletSelect.required = true;
                         targetWalletSelect.disabled = false;
@@ -2077,9 +2827,11 @@
                         categorySelect.value = '';
                     }
                     syncTransferWallets('edit');
+                    calculateTransferBreakdown('edit');
                 } else {
                     if (walletLabel) walletLabel.textContent = 'Dompet / Rekening';
                     if (targetWalletContainer) targetWalletContainer.classList.add('hidden');
+                    if (adminFeeContainer) adminFeeContainer.classList.add('hidden');
                     if (targetWalletSelect) {
                         targetWalletSelect.required = false;
                         targetWalletSelect.disabled = true;
@@ -2145,6 +2897,10 @@
 
                 if (!modal || !form) return;
 
+                if (typeof window.swanflowPushModal === 'function') {
+                    window.swanflowPushModal('edit-transaction-modal', () => closeEditTransactionModal(false));
+                }
+
                 if (panel && panel.parentElement) {
                     panel.parentElement.style.zIndex = '30';
                 }
@@ -2158,9 +2914,19 @@
 
                 const amountInput = document.getElementById('edit-amount-input');
                 if (amountInput) {
-                    amountInput.value = data.amount;
+                    amountInput.value = Math.round(Number(data.amount) || 0);
                     updateInputAmountPreview('edit-amount-input', 'edit-amount-formatted');
+                    amountInput.dispatchEvent(new Event('input', { bubbles: true }));
                 }
+
+                // Populate Admin Fee & Fee Payer
+                const editAdminFeeInput = document.getElementById('edit-admin-fee-input');
+                if (editAdminFeeInput) {
+                    editAdminFeeInput.value = Number(data.admin_fee || 0) > 0 ? Math.round(Number(data.admin_fee)) : '';
+                    editAdminFeeInput.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+                const feePayer = data.fee_payer || 'source';
+                setFeePayerDirect('edit', feePayer);
 
                 const walletSelect = document.getElementById('edit-wallet-select');
                 if (walletSelect && data.wallet_id) walletSelect.value = data.wallet_id;
@@ -2176,7 +2942,10 @@
                 }
 
                 const dateInput = document.getElementById('edit-date-input');
-                if (dateInput && data.date) dateInput.value = data.date;
+                if (dateInput) {
+                    if (data.date) dateInput.value = data.date;
+                    syncDateDisplay('edit-date-input');
+                }
 
                 const descInput = document.getElementById('edit-desc-input');
                 if (descInput) descInput.value = data.description || '';
@@ -2211,7 +2980,10 @@
                 if (confirmBox) confirmBox.classList.add('hidden');
             }
 
-            function closeEditTransactionModal() {
+            function closeEditTransactionModal(syncHistory = true) {
+                if (syncHistory && typeof window.swanflowPopModal === 'function') {
+                    window.swanflowPopModal('edit-transaction-modal');
+                }
                 const modal = document.getElementById('edit-transaction-modal');
                 const backdrop = document.getElementById('edit-modal-backdrop');
                 const panel = document.getElementById('edit-modal-panel');
@@ -2278,6 +3050,10 @@
 
                 if (!modal) return;
 
+                if (typeof window.swanflowPushModal === 'function') {
+                    window.swanflowPushModal('delete-transaction-confirm-modal', () => closeDeleteTransactionModal(false));
+                }
+
                 if (deleteForm) {
                     deleteForm.action = '/transactions/' + data.id;
                 }
@@ -2307,7 +3083,10 @@
                 }, 10);
             }
 
-            function closeDeleteTransactionModal() {
+            function closeDeleteTransactionModal(syncHistory = true) {
+                if (syncHistory && typeof window.swanflowPopModal === 'function') {
+                    window.swanflowPopModal('delete-transaction-confirm-modal');
+                }
                 const modal = document.getElementById('delete-transaction-confirm-modal');
                 const backdrop = document.getElementById('delete-modal-backdrop');
                 const panel = document.getElementById('delete-modal-panel');
@@ -2406,10 +3185,22 @@
                 }
             }
 
+            window.openEditTransactionModal = openEditTransactionModal;
+            window.closeEditTransactionModal = closeEditTransactionModal;
+            window.openEditFromDataset = openEditFromDataset;
+            window.openDeleteFromDataset = openDeleteFromDataset;
+            window.openDeleteTransactionModal = openDeleteTransactionModal;
+            window.closeDeleteTransactionModal = closeDeleteTransactionModal;
+
             // Universal Bottom-Sheet Modal Animation Helpers
             window.openSheetModal = function(modalId) {
                 const modal = typeof modalId === 'string' ? document.getElementById(modalId) : modalId;
                 if (!modal) return;
+
+                const mId = typeof modalId === 'string' ? modalId : (modal.id || 'sheet-modal');
+                if (typeof window.swanflowPushModal === 'function') {
+                    window.swanflowPushModal(mId, () => window.closeSheetModal(modalId, false));
+                }
 
                 if (modal.parentElement !== document.body) {
                     document.body.appendChild(modal);
@@ -2439,9 +3230,13 @@
                 });
             };
 
-            window.closeSheetModal = function(modalId) {
+            window.closeSheetModal = function(modalId, syncHistory = true) {
                 const modal = typeof modalId === 'string' ? document.getElementById(modalId) : modalId;
                 if (!modal) return;
+                const mId = typeof modalId === 'string' ? modalId : (modal.id || 'sheet-modal');
+                if (syncHistory && typeof window.swanflowPopModal === 'function') {
+                    window.swanflowPopModal(mId);
+                }
                 const backdrop = modal.querySelector('.modal-backdrop') || modal.querySelector('[data-backdrop]') || modal.children[0];
                 const panel = modal.querySelector('.modal-sheet-safe') || modal.querySelector('.modal-panel') || (modal.children[1] ? (modal.children[1].firstElementChild || modal.children[1]) : null);
                 
@@ -2509,6 +3304,26 @@
                     }, false);
                 }
 
+                // Initial sync for Apple Date Pickers (ALWAYS force today's date in device local time)
+                const now = new Date();
+                const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+                const initialDateInput = document.getElementById('date-input');
+                if (initialDateInput) {
+                    initialDateInput.value = todayStr;
+                }
+                syncDateDisplay('date-input');
+                syncDateDisplay('edit-date-input');
+
+                window.addEventListener('pageshow', () => {
+                    const d = new Date();
+                    const tStr = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+                    const dInput = document.getElementById('date-input');
+                    if (dInput) {
+                        dInput.value = tStr;
+                        syncDateDisplay('date-input');
+                    }
+                });
+
                 // Global Escape (Esc) key listener to dismiss open modals smoothly
                 window.addEventListener('keydown', (e) => {
                     if (e.key === 'Escape' || e.key === 'Esc') {
@@ -2575,27 +3390,84 @@
                 }
             });
 
-            // Register PWA Service Worker with instant auto-update for iOS Home Screen
-            if ('serviceWorker' in navigator) {
-                let refreshing = false;
-                navigator.serviceWorker.addEventListener('controllerchange', () => {
-                    if (!refreshing) {
-                        refreshing = true;
-                        window.location.reload();
+            // Dynamic Island / Status Bar Scrim Scroll Controller
+            window.addEventListener('scroll', () => {
+                const scrim = document.getElementById('status-bar-scrim');
+                if (scrim) {
+                    if (window.scrollY > 15) {
+                        scrim.classList.remove('opacity-0');
+                        scrim.classList.add('opacity-100');
+                    } else {
+                        scrim.classList.remove('opacity-100');
+                        scrim.classList.add('opacity-0');
                     }
-                });
+                }
+            }, { passive: true });
 
+            // =========================================================================
+            // Android & Mobile Virtual Keyboard & Viewport Controller
+            // =========================================================================
+            if (window.visualViewport) {
+                const getScreenBaseHeight = () => window.innerHeight || window.screen.availHeight || 800;
+                let baseHeight = getScreenBaseHeight();
+                window.addEventListener('resize', () => {
+                    if (!document.body.classList.contains('keyboard-open') && !document.body.classList.contains('modal-open')) {
+                        baseHeight = getScreenBaseHeight();
+                    }
+                }, { passive: true });
+
+                window.visualViewport.addEventListener('resize', () => {
+                    const isKeyboardOpen = window.visualViewport.height < baseHeight * 0.78;
+                    document.body.classList.toggle('keyboard-open', isKeyboardOpen);
+                    if (!isKeyboardOpen) {
+                        document.body.classList.remove('input-focused');
+                    }
+                }, { passive: true });
+            }
+
+            // Android input auto-scroll into view when keyboard opens
+            document.addEventListener('focusin', (e) => {
+                if (['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName)) {
+                    document.body.classList.add('input-focused');
+                    setTimeout(() => {
+                        try {
+                            e.target.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+                        } catch (err) {}
+                    }, 320);
+                }
+            }, true);
+
+            document.addEventListener('focusout', (e) => {
+                if (['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName)) {
+                    setTimeout(() => {
+                        if (!['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement?.tagName)) {
+                            document.body.classList.remove('input-focused');
+                        }
+                    }, 120);
+                }
+            }, true);
+
+            // Tapping on the floating dock immediately releases input focus & keyboard
+            document.addEventListener('touchstart', (e) => {
+                if (e.target.closest('nav.liquid-dock-capsule')) {
+                    if (document.activeElement && ['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
+                        document.activeElement.blur();
+                    }
+                    document.body.classList.remove('input-focused', 'keyboard-open');
+                }
+            }, { passive: true });
+
+            // Register PWA Service Worker (v31)
+            if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
-                    navigator.serviceWorker.register('/sw.js?v=18')
+                    navigator.serviceWorker.register('/sw.js?v=31')
                         .then((reg) => {
                             reg.update();
-                            // When resuming app from background on iOS Home Screen
                             document.addEventListener('visibilitychange', () => {
                                 if (document.visibilityState === 'visible') {
                                     reg.update();
                                 }
                             });
-                            console.log('SwanFlow Service Worker v18 active');
                         })
                         .catch((err) => {
                             console.log('Service Worker registration skipped/failed:', err);
@@ -2603,13 +3475,14 @@
                 });
             }
 
-            // PWA Install Prompt listener
+            // PWA Install Prompt listener (Android / Chrome)
             let deferredPrompt;
             window.addEventListener('beforeinstallprompt', (e) => {
                 e.preventDefault();
                 deferredPrompt = e;
                 const banner = document.getElementById('pwa-install-banner');
-                if (banner && !localStorage.getItem('swanflow_pwa_dismissed')) {
+                const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+                if (banner && !isStandalone && !localStorage.getItem('swanflow_pwa_dismissed')) {
                     banner.classList.remove('hidden');
                     setTimeout(() => {
                         banner.classList.remove('translate-y-8', 'opacity-0');
@@ -2621,7 +3494,7 @@
             function installSwanFlowPWA() {
                 if (deferredPrompt) {
                     deferredPrompt.prompt();
-                    deferredPrompt.userChoice.then((choiceResult) => {
+                    deferredPrompt.userChoice.then(() => {
                         dismissPwaBanner();
                         deferredPrompt = null;
                     });
@@ -2638,57 +3511,374 @@
                 localStorage.setItem('swanflow_pwa_dismissed', 'true');
             }
 
+            // iOS Safari PWA Installation Guidance
+            (function checkIosPwaPrompt() {
+                const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+                const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+                if (isIos && !isStandalone && !localStorage.getItem('swanflow_ios_banner_dismissed')) {
+                    setTimeout(() => {
+                        const iosBanner = document.getElementById('ios-install-banner');
+                        if (iosBanner) {
+                            iosBanner.classList.remove('hidden');
+                            requestAnimationFrame(() => {
+                                iosBanner.classList.remove('translate-y-8', 'opacity-0');
+                                iosBanner.classList.add('translate-y-0', 'opacity-100');
+                            });
+                        }
+                    }, 2500);
+                }
+            })();
+
+            function dismissIosBanner() {
+                const banner = document.getElementById('ios-install-banner');
+                if (banner) {
+                    banner.classList.remove('translate-y-0', 'opacity-100');
+                    banner.classList.add('translate-y-8', 'opacity-0');
+                    setTimeout(() => banner.classList.add('hidden'), 300);
+                }
+                localStorage.setItem('swanflow_ios_banner_dismissed', 'true');
+            }
+
             // SwanFlow Theme Toggle (Dark / Light Mode)
             function toggleSwanFlowTheme() {
                 const isDark = document.documentElement.classList.toggle('dark');
-                const themeMeta = document.querySelector('meta[name="theme-color"]');
-                if (isDark) {
-                    localStorage.setItem('swanflow_theme', 'dark');
-                    if (themeMeta) themeMeta.setAttribute('content', '#020617');
-                } else {
-                    localStorage.setItem('swanflow_theme', 'light');
-                    if (themeMeta) themeMeta.setAttribute('content', '#ffffff');
-                }
+                const themeHex = isDark ? '#020617' : '#ffffff';
+                localStorage.setItem('swanflow_theme', isDark ? 'dark' : 'light');
+                document.querySelectorAll('meta[name="theme-color"]').forEach(m => {
+                    m.setAttribute('content', themeHex);
+                });
             }
 
-            // 5-Minute Inactivity Session Watcher with Biometrics / PIN Security
-            (function initSessionInactivityWatcher() {
-                const INACTIVITY_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
-                let lastActivity = Date.now();
-                let timeoutTimer = null;
+            // =========================================================================
+            // Universal Session Inactivity & Auto-Logout Watcher (5 Menit Mobile Banking)
+            // =========================================================================
+            (function initSwanFlowSessionWatcher() {
+                const TIMEOUT_MINUTES = {{ (int) config('session.inactivity_timeout', config('session.lifetime', 5)) }};
+                const TIMEOUT_MS = TIMEOUT_MINUTES * 60 * 1000;
+                const STORAGE_KEY = 'swanflow_last_active_ts';
+                let timer = null;
 
-                function resetTimer() {
-                    lastActivity = Date.now();
-                    if (timeoutTimer) clearTimeout(timeoutTimer);
-                    timeoutTimer = setTimeout(triggerSessionTimeout, INACTIVITY_TIMEOUT_MS);
-                }
-
-                function triggerSessionTimeout() {
-                    if (Date.now() - lastActivity >= INACTIVITY_TIMEOUT_MS) {
-                        window.location.href = "{{ route('login') }}?expired=1";
-                    } else {
-                        resetTimer();
+                function getStoredLastActive() {
+                    try {
+                        const val = localStorage.getItem(STORAGE_KEY);
+                        return val ? parseInt(val, 10) : null;
+                    } catch (e) {
+                        return null;
                     }
                 }
 
-                const activityEvents = ['touchstart', 'touchmove', 'mousemove', 'keydown', 'scroll', 'click'];
+                function recordActive() {
+                    const now = Date.now();
+                    try {
+                        localStorage.setItem(STORAGE_KEY, now.toString());
+                    } catch (e) {}
+                    scheduleNextCheck();
+                }
+
+                function performAutoLogout() {
+                    try {
+                        localStorage.removeItem(STORAGE_KEY);
+                    } catch (e) {}
+                    window.location.href = "{{ route('logout') }}?expired=1";
+                }
+
+                function checkSession() {
+                    const lastActive = getStoredLastActive() || Date.now();
+                    const elapsed = Date.now() - lastActive;
+
+                    if (elapsed >= TIMEOUT_MS) {
+                        performAutoLogout();
+                    } else {
+                        scheduleNextCheck(TIMEOUT_MS - elapsed);
+                    }
+                }
+
+                function scheduleNextCheck(delayMs) {
+                    if (timer) clearTimeout(timer);
+                    const delay = (typeof delayMs === 'number' && delayMs > 0) ? delayMs : TIMEOUT_MS;
+                    timer = setTimeout(checkSession, delay + 50);
+                }
+
+                if (!getStoredLastActive()) {
+                    recordActive();
+                } else {
+                    checkSession();
+                }
+
+                setInterval(checkSession, 10000);
+
+                let throttle = false;
+                const activityEvents = ['touchstart', 'click', 'keydown', 'scroll'];
                 activityEvents.forEach(evt => {
-                    window.addEventListener(evt, resetTimer, { passive: true });
+                    window.addEventListener(evt, () => {
+                        if (!throttle) {
+                            recordActive();
+                            throttle = true;
+                            setTimeout(() => { throttle = false; }, 3000);
+                        }
+                    }, { passive: true });
                 });
 
-                document.addEventListener('visibilitychange', function() {
+                document.addEventListener('visibilitychange', () => {
                     if (document.visibilityState === 'visible') {
-                        if (Date.now() - lastActivity >= INACTIVITY_TIMEOUT_MS) {
-                            triggerSessionTimeout();
-                        } else {
-                            resetTimer();
+                        checkSession();
+                    }
+                });
+                window.addEventListener('focus', checkSession);
+                window.addEventListener('pageshow', checkSession);
+            })();
+
+            // ==========================================
+            // Offline Sync Engine (IndexedDB + Service Worker)
+            // ==========================================
+            const SwanFlowDB = {
+                dbName: 'SwanFlowOfflineDB',
+                version: 1,
+                storeName: 'offline_transactions',
+
+                async getDB() {
+                    return new Promise((resolve, reject) => {
+                        const req = indexedDB.open(this.dbName, this.version);
+                        req.onupgradeneeded = (e) => {
+                            const db = e.target.result;
+                            if (!db.objectStoreNames.contains(this.storeName)) {
+                                db.createObjectStore(this.storeName, { keyPath: 'local_id', autoIncrement: true });
+                            }
+                        };
+                        req.onsuccess = () => resolve(req.result);
+                        req.onerror = () => reject(req.error);
+                    });
+                },
+
+                async saveTransaction(data) {
+                    const db = await this.getDB();
+                    return new Promise((resolve, reject) => {
+                        const tx = db.transaction(this.storeName, 'readwrite');
+                        const store = tx.objectStore(this.storeName);
+                        const record = {
+                            ...data,
+                            saved_at: new Date().toISOString()
+                        };
+                        const req = store.add(record);
+                        req.onsuccess = () => resolve(req.result);
+                        req.onerror = () => reject(req.error);
+                    });
+                },
+
+                async getAllTransactions() {
+                    const db = await this.getDB();
+                    return new Promise((resolve, reject) => {
+                        const tx = db.transaction(this.storeName, 'readonly');
+                        const store = tx.objectStore(this.storeName);
+                        const req = store.getAll();
+                        req.onsuccess = () => resolve(req.result || []);
+                        req.onerror = () => reject(req.error);
+                    });
+                },
+
+                async deleteTransaction(localId) {
+                    const db = await this.getDB();
+                    return new Promise((resolve, reject) => {
+                        const tx = db.transaction(this.storeName, 'readwrite');
+                        const store = tx.objectStore(this.storeName);
+                        const req = store.delete(localId);
+                        req.onsuccess = () => resolve();
+                        req.onerror = () => reject(req.error);
+                    });
+                },
+
+                isSyncing: false,
+                async syncPending() {
+                    if (this.isSyncing || !navigator.onLine) return;
+                    this.isSyncing = true;
+
+                    try {
+                        const pending = await this.getAllTransactions();
+                        if (pending.length === 0) {
+                            this.isSyncing = false;
+                            return;
+                        }
+
+                        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+                            || '{{ csrf_token() }}';
+
+                        let syncedCount = 0;
+                        for (const item of pending) {
+                            const localId = item.local_id;
+                            const payload = { ...item };
+                            delete payload.local_id;
+                            delete payload.saved_at;
+
+                            try {
+                                const response = await fetch('{{ route('transactions.store') }}', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': csrfToken,
+                                        'X-Requested-With': 'XMLHttpRequest',
+                                        'Accept': 'application/json'
+                                    },
+                                    body: JSON.stringify(payload)
+                                });
+
+                                if (response.ok) {
+                                    await this.deleteTransaction(localId);
+                                    syncedCount++;
+                                }
+                            } catch (err) {
+                                console.warn('Gagal sinkronisasi transaksi ID:', localId, err);
+                            }
+                        }
+
+                        if (syncedCount > 0) {
+                            alert(`Sinkronisasi Offline Selesai: ${syncedCount} transaksi tersimpan ke server!`);
+                            window.location.reload();
+                        }
+                    } catch (e) {
+                        console.error('Error saat sinkronisasi offline:', e);
+                    } finally {
+                        this.isSyncing = false;
+                    }
+                }
+            };
+
+            // Intercept form transaksi saat offline
+            const addTxForm = document.getElementById('add-transaction-form');
+            if (addTxForm) {
+                addTxForm.addEventListener('submit', async function(e) {
+                    if (!navigator.onLine) {
+                        e.preventDefault();
+                        const formData = new FormData(addTxForm);
+                        const data = {};
+                        formData.forEach((value, key) => {
+                            if (key !== '_token') data[key] = value;
+                        });
+
+                        try {
+                            await SwanFlowDB.saveTransaction(data);
+                            alert('📱 Mode Offline: Transaksi tersimpan lokal di HP Anda (IndexedDB) dan akan otomatis disinkronkan saat terhubung internet.');
+                            if (typeof closeTransactionModal === 'function') {
+                                closeTransactionModal();
+                            }
+                            addTxForm.reset();
+                        } catch (err) {
+                            alert('Gagal menyimpan transaksi offline: ' + err.message);
                         }
                     }
                 });
+            }
 
-                resetTimer();
-            })();
+            // Listener otomatis ketika koneksi internet kembali aktif
+            window.addEventListener('online', () => {
+                console.log('Koneksi online terdeteksi, memicu sinkronisasi offline...');
+                SwanFlowDB.syncPending();
+            });
+
+            // Listener background sync dari Service Worker
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.addEventListener('message', (event) => {
+                    if (event.data?.type === 'TRIGGER_OFFLINE_SYNC') {
+                        SwanFlowDB.syncPending();
+                    }
+                });
+            }
+
+            // Cek transaksi tertunda saat pertama kali halaman dimuat jika online
+            if (navigator.onLine) {
+                SwanFlowDB.syncPending();
+            }
+
+
+                // Strict Numeric Restriction: Keyboard pops up 0-9 digits only & non-digits are strictly blocked
+                (function setupStrictNumericInputs() {
+                    function isNumericField(el) {
+                        if (!el || el.tagName !== 'INPUT') return false;
+                        if (el.dataset.numericOnly === 'true' || el.classList.contains('is-numeric-only')) return true;
+                        if (el.getAttribute('inputmode') === 'numeric') return true;
+                        if (el.type === 'number') return true;
+                        const name = (el.name || '').toLowerCase();
+                        const id = (el.id || '').toLowerCase();
+                        const numericKeywords = ['amount', 'balance', 'nominal', 'admin_fee', 'fee', 'target', 'billing_date', 'quota', 'subtotal', 'persons', 'pin', 'tax', 'service', 'discount', 'price', 'people'];
+                        return numericKeywords.some(k => name.includes(k) || id.includes(k));
+                    }
+
+                    // Enforce virtual keyboard as numbers-only on mobile devices
+                    document.addEventListener('focusin', function(e) {
+                        const el = e.target;
+                        if (isNumericField(el)) {
+                            if (el.getAttribute('inputmode') !== 'numeric') {
+                                el.setAttribute('inputmode', 'numeric');
+                            }
+                            el.setAttribute('autocomplete', 'off');
+                        }
+                    }, true);
+
+                    // Block non-digits on keydown (prevents 'e', 'E', '+', '-', '.', and any letters/symbols)
+                    document.addEventListener('keydown', function(e) {
+                        const el = e.target;
+                        if (!isNumericField(el)) return;
+
+                        // Critical Android IME Fix: Android virtual keyboards emit 'Unidentified' or keyCode 229 during composition
+                        if (e.key === 'Unidentified' || e.keyCode === 229 || e.which === 229) {
+                            return; // Processed and sanitized safely in 'input' event below
+                        }
+
+                        // Allow control & navigation keys
+                        if (['Backspace', 'Delete', 'Tab', 'Escape', 'Enter'].includes(e.key)) return;
+                        if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'].includes(e.key)) return;
+                        if ((e.ctrlKey || e.metaKey) && ['a', 'c', 'v', 'x', 'z'].includes(e.key.toLowerCase())) return;
+
+                        // Check if decimal is allowed
+                        if (el.dataset.allowDecimal === 'true' && (e.key === '.' || e.key === ',') && !el.value.includes('.') && !el.value.includes(',')) {
+                            return;
+                        }
+
+                        // Block non-digits for physical keyboards / iOS
+                        if (!/^[0-9]$/.test(e.key)) {
+                            e.preventDefault();
+                        }
+                    }, true);
+
+                    // Sanitize on input (catches paste, autofill, voice typing)
+                    document.addEventListener('input', function(e) {
+                        const el = e.target;
+                        if (!isNumericField(el)) return;
+
+                        const original = el.value;
+                        const sanitized = el.dataset.allowDecimal === 'true' 
+                            ? original.replace(/[^0-9.,]/g, '') 
+                            : original.replace(/[^0-9]/g, '');
+
+                        if (original !== sanitized) {
+                            el.value = sanitized;
+                            el.dispatchEvent(new Event('change', { bubbles: true }));
+                        }
+                    }, true);
+
+                    // Clean pasted text
+                    document.addEventListener('paste', function(e) {
+                        const el = e.target;
+                        if (!isNumericField(el)) return;
+
+                        e.preventDefault();
+                        const pasteData = (e.clipboardData || window.clipboardData).getData('text') || '';
+                        const sanitized = el.dataset.allowDecimal === 'true' 
+                            ? pasteData.replace(/[^0-9.,]/g, '') 
+                            : pasteData.replace(/[^0-9]/g, '');
+
+                        if (sanitized) {
+                            const start = el.selectionStart || 0;
+                            const end = el.selectionEnd || 0;
+                            const val = el.value;
+                            el.value = val.substring(0, start) + sanitized + val.substring(end);
+                            el.selectionStart = el.selectionEnd = start + sanitized.length;
+                            el.dispatchEvent(new Event('input', { bubbles: true }));
+                            el.dispatchEvent(new Event('change', { bubbles: true }));
+                        }
+                    }, true);
+                })();
         </script>
+
 
         <!-- PWA Install Prompt Card (Appears if browser supports installation) -->
         <div id="pwa-install-banner" class="hidden fixed banner-safe left-1/2 -translate-x-1/2 z-40 w-11/12 max-w-sm bg-slate-900/95 backdrop-blur-md text-white p-3.5 rounded-2xl shadow-2xl border border-slate-700/80 transition-all duration-300 transform translate-y-8 opacity-0">
@@ -2710,6 +3900,30 @@
                         </svg>
                     </button>
                 </div>
+            </div>
+        </div>
+
+        <!-- iOS Safari PWA Install Guidance Card -->
+        <div id="ios-install-banner" class="hidden fixed banner-safe left-1/2 -translate-x-1/2 z-40 w-11/12 max-w-sm bg-slate-900/95 backdrop-blur-md text-white p-3.5 rounded-2xl shadow-2xl border border-slate-700/80 transition-all duration-300 transform translate-y-8 opacity-0">
+            <div class="flex items-start justify-between gap-3">
+                <div class="flex items-start gap-2.5 min-w-0">
+                    <img src="/icons/icon-192.png" alt="SwanFlow Icon" class="w-10 h-10 rounded-xl shrink-0 shadow-xs border border-emerald-500/30">
+                    <div class="min-w-0">
+                        <h4 class="text-xs font-bold text-white truncate leading-tight">Pasang di iPhone</h4>
+                        <p class="text-[10px] text-slate-300 mt-0.5 leading-snug">
+                            Ketuk tombol Bagikan 
+                            <svg class="inline-block w-3.5 h-3.5 text-emerald-400 mx-0.5 -mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                            </svg>
+                            lalu pilih <strong>"Tambah ke Layar Utama"</strong>.
+                        </p>
+                    </div>
+                </div>
+                <button type="button" onclick="dismissIosBanner()" aria-label="Tutup" class="p-1.5 text-slate-400 hover:text-white rounded-lg active:scale-95 shrink-0">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
             </div>
         </div>
 

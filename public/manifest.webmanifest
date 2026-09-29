@@ -1,16 +1,20 @@
 {
-  "id": "/",
+  "id": "/?source=pwa",
   "name": "SwanFlow - Personal Finance",
   "short_name": "SwanFlow",
-  "description": "Aplikasi pencatatan keuangan pribadi eksklusif Gusti Swandana",
+  "description": "All-in-One Personal Productivity, Finance & Cloud Drive",
   "lang": "id",
-  "start_url": "/",
+  "start_url": "/?source=pwa",
   "scope": "/",
   "display": "standalone",
   "display_override": ["standalone", "minimal-ui"],
   "orientation": "portrait-primary",
   "background_color": "#020617",
-  "theme_color": "#0f172a",
+  "theme_color": "#020617",
+  "prefer_related_applications": false,
+  "launch_handler": {
+    "client_mode": "auto"
+  },
   "categories": ["finance", "productivity"],
   "icons": [
     {
@@ -24,6 +28,12 @@
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "/icons/icon-512.png",
@@ -58,6 +68,13 @@
       "short_name": "Transfer",
       "description": "Pindah dana antar dompet",
       "url": "/?action=transfer",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "SwanDrive",
+      "short_name": "Drive",
+      "description": "Penyimpanan dan transfer berkas",
+      "url": "/drive",
       "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
     },
     {
