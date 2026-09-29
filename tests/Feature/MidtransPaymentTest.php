@@ -229,7 +229,10 @@ class MidtransPaymentTest extends TestCase
 
         $response = $this->postJson(route('midtrans.webhook'), $payload);
 
-        $response->assertStatus(400);
+        $response->assertStatus(200);
+        $response->assertJson([
+            'status' => 'handled',
+        ]);
         $order->refresh();
         $this->assertEquals('unpaid', $order->status);
     }

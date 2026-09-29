@@ -132,6 +132,10 @@ class MidtransService
                     'name' => Str::limit($order->project_title ?: 'Proyek Kreatif', 45, '...'),
                 ],
             ],
+            'language' => 'id',
+            'callbacks' => [
+                'finish' => url('/p/'.$order->token),
+            ],
         ];
 
         $apiUrl = $this->getSnapApiUrl($isProd);
@@ -186,13 +190,28 @@ class MidtransService
         $grossAmount = $payload['gross_amount'] ?? '';
         $signatureKey = $payload['signature_key'] ?? '';
 
-        if (empty($signatureKey) || empty($serverKey)) {
+        if (empty($signatureKey)) {
             return false;
         }
 
-        $expected = hash('sha512', $orderId.$statusCode.$grossAmount.$serverKey);
+        // 1. Try provided server key
+        if (! empty($serverKey)) {
+            $expected = hash('sha512', $orderId.$statusCode.$grossAmount.trim($serverKey));
+            if (hash_equals($expected, $signatureKey)) {
+                return true;
+            }
+        }
 
-        return hash_equals($expected, $signatureKey);
+        // 2. Try global config server key as fallback
+        $configKey = config('services.midtrans.server_key');
+        if (! empty($configKey) && $configKey !== $serverKey) {
+            $expectedConfig = hash('sha512', $orderId.$statusCode.$grossAmount.trim($configKey));
+            if (hash_equals($expectedConfig, $signatureKey)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

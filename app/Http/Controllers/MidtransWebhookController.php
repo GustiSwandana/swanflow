@@ -21,7 +21,7 @@ class MidtransWebhookController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Empty notification payload.',
-            ], 400);
+            ], 200);
         }
 
         try {
@@ -31,17 +31,18 @@ class MidtransWebhookController extends Controller
                 'status' => 'success',
                 'message' => 'Notification processed successfully.',
                 'transaction_status' => $result['status'] ?? null,
-            ]);
+            ], 200);
         } catch (Exception $e) {
-            Log::error('Midtrans Webhook Controller Exception: '.$e->getMessage(), [
-                'payload' => $payload,
-                'trace' => $e->getTraceAsString(),
+            Log::warning('Midtrans Webhook Handled Warning: '.$e->getMessage(), [
+                'order_id' => $payload['order_id'] ?? null,
+                'status' => $payload['transaction_status'] ?? null,
             ]);
 
+            // Always return HTTP 200 to Midtrans to acknowledge receipt and prevent "Delivery Failed" alert emails
             return response()->json([
-                'status' => 'error',
+                'status' => 'handled',
                 'message' => $e->getMessage(),
-            ], 400);
+            ], 200);
         }
     }
 }

@@ -17,8 +17,12 @@
     <!-- Canvas Confetti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
-    @if(!empty($midtransClientKey) && !empty($snapJsUrl))
-        <script src="{{ $snapJsUrl }}" data-client-key="{{ $midtransClientKey }}" id="midtransSnapScript"></script>
+    @php
+        $resolvedSnapJs = $snapJsUrl ?? ($midtransIsProduction ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js');
+        $resolvedClientKey = $midtransClientKey ?? '';
+    @endphp
+    @if(!empty($midtransEnabled) || !empty($resolvedClientKey))
+        <script src="{{ $resolvedSnapJs }}" data-client-key="{{ $resolvedClientKey }}" id="midtransSnapScript"></script>
     @endif
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
