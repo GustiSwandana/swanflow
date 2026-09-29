@@ -71,6 +71,24 @@ Route::get('/swanflow-clear-view-cache', function () {
     ]);
 });
 
+// Maintenance endpoint to execute pending migrations on Hostinger
+Route::get('/swanflow-migrate', function () {
+    try {
+        Artisan::call('migrate', ['--force' => true]);
+        $output = Artisan::output();
+
+        return response()->json([
+            'status' => 'success',
+            'output' => trim($output),
+        ]);
+    } catch (Throwable $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage(),
+        ], 500);
+    }
+});
+
 // Public Share & File Transfer Routes (SwanDrive)
 Route::get('/share/{token}', [DriveController::class, 'sharedView'])->name('drive.shared.view');
 Route::get('/share/{token}/preview', [DriveController::class, 'sharedPreview'])->name('drive.shared.preview');
