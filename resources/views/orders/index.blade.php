@@ -170,6 +170,16 @@
 
                     <!-- Client Direct Link / WA -->
                     <div class="flex items-center gap-1.5 shrink-0">
+                        <a href="{{ $order->client_url }}" 
+                           target="_blank" 
+                           class="p-1.5 rounded-xl bg-teal-500/10 dark:bg-teal-400/10 text-teal-600 dark:text-teal-400 hover:bg-teal-500/20 active:scale-90 transition-all text-xs flex items-center gap-1 font-bold"
+                           title="Buka Portal Klien (Uji Coba Snap Pop-up)">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                            </svg>
+                            <span class="text-[10px]">Buka</span>
+                        </a>
+
                         <button type="button" 
                                 onclick="copyClientUrl('{{ $order->client_url }}')" 
                                 class="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 active:scale-90 transition-all text-xs flex items-center gap-1 cursor-pointer"

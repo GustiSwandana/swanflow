@@ -356,7 +356,7 @@
                     <svg class="w-5 h-5 text-amber-300" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" />
                     </svg>
-                    <span id="btnInstantPayText">Bayar Otomatis Sekarang (Rp {{ number_format($order->final_amount, 0, ',', '.') }})</span>
+                    <span id="btnInstantPayText">⚡ Bayar Instan (Pop-up Snap) — Rp {{ number_format($order->final_amount, 0, ',', '.') }}</span>
                     <svg class="w-4 h-4 hidden animate-spin" id="instantPaySpinner" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
@@ -495,8 +495,8 @@
         let currentSnapJsUrl = "{{ $snapJsUrl ?? 'https://app.sandbox.midtrans.com/snap/snap.js' }}";
         let currentClientKey = "{{ $midtransClientKey ?? '' }}";
 
-        function ensureSnapJsLoaded(callback) {
-            if (window.snap) {
+        function ensureSnapJsLoaded(callback, errorCallback) {
+            if (window.snap && typeof window.snap.pay === 'function') {
                 callback();
                 return;
             }
@@ -505,9 +505,19 @@
             if (currentClientKey) {
                 script.setAttribute('data-client-key', currentClientKey);
             }
-            script.onload = () => callback();
+            script.onload = () => {
+                if (window.snap && typeof window.snap.pay === 'function') {
+                    callback();
+                } else if (errorCallback) {
+                    errorCallback();
+                }
+            };
             script.onerror = () => {
-                showToast('Gagal memuat gateway Midtrans. Silakan gunakan opsi transfer manual.');
+                if (errorCallback) {
+                    errorCallback();
+                } else {
+                    showToast('Gagal memuat gateway Midtrans Snap.');
+                }
             };
             document.head.appendChild(script);
         }
@@ -521,7 +531,7 @@
 
             btn.disabled = true;
             if (spinner) spinner.classList.remove('hidden');
-            if (text) text.innerText = 'Menyiapkan Pembayaran...';
+            if (text) text.innerText = 'Membuka Pop-up Snap...';
 
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
@@ -543,29 +553,48 @@
                 if (data.snap_js_url) currentSnapJsUrl = data.snap_js_url;
                 if (data.client_key) currentClientKey = data.client_key;
 
-                ensureSnapJsLoaded(() => {
-                    window.snap.pay(data.token, {
-                        onSuccess: function(result) {
-                            showToast('Pembayaran berhasil! Memverifikasi sistem...');
-                            pollProjectStatus();
-                        },
-                        onPending: function(result) {
-                            showToast('Menunggu pembayaran Anda...');
-                            pollProjectStatus();
-                        },
-                        onError: function(result) {
-                            showToast('Pembayaran dibatalkan atau bermasalah.');
-                        },
-                        onClose: function() {
-                            // User closed popup
+                const openSnapModal = () => {
+                    if (window.snap && typeof window.snap.pay === 'function') {
+                        window.snap.pay(data.token, {
+                            onSuccess: function(result) {
+                                showToast('Pembayaran berhasil! Memverifikasi pelunasan...');
+                                pollProjectStatus();
+                            },
+                            onPending: function(result) {
+                                showToast('Menunggu pembayaran Anda diselesaikan...');
+                                pollProjectStatus();
+                            },
+                            onError: function(result) {
+                                showToast('Pembayaran bermasalah atau dibatalkan.');
+                            },
+                            onClose: function() {
+                                // User closed the Snap popup
+                            }
+                        });
+                    } else if (data.redirect_url) {
+                        // Fallback: Open Midtrans in a popup window
+                        const popup = window.open(data.redirect_url, 'midtrans_popup', 'width=540,height=740,scrollbars=yes,status=yes');
+                        if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+                            window.location.href = data.redirect_url;
                         }
-                    });
+                    }
+                };
+
+                ensureSnapJsLoaded(openSnapModal, () => {
+                    if (data.redirect_url) {
+                        const popup = window.open(data.redirect_url, 'midtrans_popup', 'width=540,height=740,scrollbars=yes,status=yes');
+                        if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+                            window.location.href = data.redirect_url;
+                        }
+                    } else {
+                        showToast('Gagal memuat Snap popup Midtrans.');
+                    }
                 });
             } catch (err) {
                 alert(err.message || 'Terjadi kesalahan saat memulai pembayaran.');
             } finally {
                 if (spinner) spinner.classList.add('hidden');
-                if (text) text.innerText = 'Bayar Otomatis Sekarang (Rp {{ number_format($order->final_amount, 0, ',', '.') }})';
+                if (text) text.innerText = '⚡ Bayar Instan (Pop-up Snap) — Rp {{ number_format($order->final_amount, 0, ',', '.') }}';
                 btn.disabled = false;
             }
         }
