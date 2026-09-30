@@ -1185,13 +1185,13 @@ class DriveController extends Controller
             'total_chunks' => ['required', 'integer', 'min:1'],
             'file_uuid' => ['required', 'string', 'regex:/^[a-zA-Z0-9_-]+$/'],
             'file_name' => ['required', 'string', 'max:255'],
-            'folder_id' => ['nullable', 'integer', 'exists:folders,id'],
+            'folder_id' => ['nullable'],
             'title' => ['nullable', 'string', 'max:150'],
             'notes' => ['nullable', 'string', 'max:500'],
         ]);
 
         $user = $request->user();
-        $folderId = $request->input('folder_id');
+        $folderId = $request->filled('folder_id') ? (int) $request->input('folder_id') : null;
         if ($folderId && ! $user->folders()->where('id', $folderId)->exists()) {
             return response()->json(['error' => 'Folder tidak valid'], 403);
         }

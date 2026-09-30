@@ -214,11 +214,11 @@
 
         <!-- 1. FORM UPLOAD FILE (Interactive Dropzone) -->
         <div class="liquid-card rounded-[26px] bg-white/80 dark:bg-slate-900/75 border border-white/60 dark:border-white/10 shadow-sm backdrop-blur-2xl p-4">
-            <form id="upload-form" action="{{ route('drive.store') }}" method="POST" enctype="multipart/form-data" class="space-y-3">
+            <form id="upload-form" action="{{ route('drive.store') }}" method="POST" enctype="multipart/form-data" class="space-y-3" novalidate onsubmit="event.preventDefault(); startQueueUpload();">
                 @csrf
                 
                 <!-- Hidden File Input (Supports multiple files) -->
-                <input type="file" id="upload-input" name="files[]" multiple class="hidden" onchange="handleFileSelect(this)" required>
+                <input type="file" id="upload-input" name="files[]" multiple class="hidden" onchange="handleFileSelect(this)">
 
                 <!-- Dropzone Box -->
                 <div id="dropzone" onclick="document.getElementById('upload-input').click()"
@@ -286,7 +286,7 @@
 
                     <!-- Action Buttons -->
                     <div class="flex items-center gap-2 pt-1" id="upload-action-buttons">
-                        <button type="submit" id="btn-submit-upload" class="flex-1 py-2.5 px-4 rounded-[18px] bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 active:scale-[0.98] text-white text-xs font-black shadow-md shadow-teal-500/25 flex items-center justify-center gap-2 transition-all cursor-pointer ios-press">
+                        <button type="button" id="btn-submit-upload" onclick="startQueueUpload()" class="flex-1 py-2.5 px-4 rounded-[18px] bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 active:scale-[0.98] text-white text-xs font-black shadow-md shadow-teal-500/25 flex items-center justify-center gap-2 transition-all cursor-pointer ios-press">
                             <svg id="btn-upload-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                             </svg>
@@ -2393,7 +2393,11 @@
     });
 
     async function startQueueUpload() {
-        if (isUploading || uploadQueue.length === 0) return;
+        if (isUploading) return;
+        if (!uploadQueue || uploadQueue.length === 0) {
+            alert('Silakan pilih berkas yang ingin diunggah terlebih dahulu.');
+            return;
+        }
 
         isUploading = true;
         isUploadCancelled = false;
@@ -2416,7 +2420,8 @@
         const customTitle = document.getElementById('file-title')?.value || '';
         const notes = document.getElementById('file-notes')?.value || '';
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
-            || document.querySelector('input[name="_token"]')?.value;
+            || document.querySelector('input[name="_token"]')?.value
+            || '{{ csrf_token() }}';
 
         btnSubmit.disabled = true;
         btnSubmit.classList.add('opacity-80', 'cursor-not-allowed');
@@ -2461,9 +2466,10 @@
 
                 const start = chunkIndex * CHUNK_SIZE;
                 const end = Math.min(start + CHUNK_SIZE, item.size);
-                const chunkBlob = item.file.slice(start, end);
+                const chunkBlob = item.file.slice(start, end, item.file.type || 'application/octet-stream');
 
                 const chunkFormData = new FormData();
+                chunkFormData.append('_token', csrfToken);
                 chunkFormData.append('chunk', chunkBlob, item.name);
                 chunkFormData.append('chunk_index', chunkIndex);
                 chunkFormData.append('total_chunks', totalChunks);
@@ -2495,9 +2501,21 @@
                             signal: currentUploadAbortController.signal
                         });
 
-                        const result = await response.json();
+                        const text = await response.text();
+                        let result = {};
+                        try {
+                            result = JSON.parse(text);
+                        } catch (e) {
+                            result = { error: 'Server mengembalikan respons tidak valid (' + response.status + ')' };
+                        }
+
                         if (!response.ok) {
-                            throw new Error(result.error || result.message || 'Gagal mengunggah potongan berkas');
+                            let errorMsg = result.error || result.message;
+                            if (!errorMsg && result.errors) {
+                                const k = Object.keys(result.errors)[0];
+                                errorMsg = result.errors[k][0];
+                            }
+                            throw new Error(errorMsg || `Gagal mengunggah potongan berkas (${response.status})`);
                         }
 
                         chunkSuccess = true;
@@ -2568,7 +2586,9 @@
                 window.location.href = redirectUrl;
             }, 600);
         } else {
-            alert('Beberapa berkas gagal diunggah karena kendala jaringan atau kapasitas. Silakan periksa kembali daftar berkas.');
+            const failedItem = uploadQueue.find(it => it.status === 'error');
+            const errorReason = failedItem?.errorMsg ? `: ${failedItem.errorMsg}` : '.';
+            alert(`Gagal menyimpan berkas ke SwanDrive${errorReason}\nSilakan periksa kembali berkas atau koneksi Anda.`);
             resetUploadState();
         }
     }

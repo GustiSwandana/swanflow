@@ -423,9 +423,10 @@
                     for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
                         const start = chunkIndex * CHUNK_SIZE;
                         const end = Math.min(start + CHUNK_SIZE, currentFile.size);
-                        const chunkBlob = currentFile.slice(start, end);
+                        const chunkBlob = currentFile.slice(start, end, currentFile.type || 'application/octet-stream');
 
                         const chunkFormData = new FormData();
+                        chunkFormData.append('_token', csrfToken);
                         chunkFormData.append('chunk', chunkBlob, currentFile.name);
                         chunkFormData.append('chunk_index', chunkIndex);
                         chunkFormData.append('total_chunks', totalChunks);
