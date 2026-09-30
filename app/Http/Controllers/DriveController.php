@@ -575,14 +575,8 @@ class DriveController extends Controller
                 }
             }
 
-            // Upload directly to resolved storage disk (with automatic fallback to local if cloud fails)
-            try {
-                $path = $uploadedFile->store('drive/'.$request->user()->id, $disk);
-            } catch (\Throwable $e) {
-                Log::warning("Drive upload to disk [{$disk}] failed: ".$e->getMessage().'. Falling back to local storage.');
-                $disk = 'local';
-                $path = $uploadedFile->store('drive/'.$request->user()->id, 'local');
-            }
+            // Always store to local disk first so file is immediately safe
+            $path = $uploadedFile->store('drive/'.$request->user()->id, 'local');
 
             $request->user()->storedFiles()->create([
                 'folder_id' => $folderId,
@@ -599,6 +593,25 @@ class DriveController extends Controller
                 'download_count' => 0,
                 'notes' => $notes,
             ]);
+
+            // Sync to Google Drive if connected
+            if ($disk !== 'local') {
+                try {
+                    $localPath = Storage::disk('local')->path($path);
+                    if (file_exists($localPath)) {
+                        $stream = fopen($localPath, 'r');
+                        Storage::disk($disk)->put($path, $stream);
+                        if (is_resource($stream)) {
+                            fclose($stream);
+                        }
+                        if (Storage::disk($disk)->exists($path)) {
+                            Storage::disk('local')->delete($path);
+                        }
+                    }
+                } catch (\Throwable $e) {
+                    Log::warning("DriveController::store cloud sync to [{$disk}] failed: ".$e->getMessage().'. Kept on local disk.');
+                }
+            }
 
             $storedCount++;
         }
@@ -795,16 +808,32 @@ class DriveController extends Controller
 
         $disk = $this->getDiskForFile($file);
 
-        if ($request->boolean('thumb') && $file->thumbnail_path && Storage::disk($disk)->exists($file->thumbnail_path)) {
-            return Storage::disk($disk)->response($file->thumbnail_path, pathinfo($file->original_name, PATHINFO_FILENAME).'_thumb.webp', [
-                'Content-Type' => 'image/webp',
-                'Content-Disposition' => 'inline',
-                'Cache-Control' => 'public, max-age=86400',
-            ]);
+        if ($request->boolean('thumb') && $file->thumbnail_path) {
+            if (Storage::disk('local')->exists($file->thumbnail_path)) {
+                return Storage::disk('local')->response($file->thumbnail_path, pathinfo($file->original_name, PATHINFO_FILENAME).'_thumb.webp', [
+                    'Content-Type' => 'image/webp',
+                    'Content-Disposition' => 'inline',
+                    'Cache-Control' => 'public, max-age=86400',
+                ]);
+            }
+            if ($this->isGoogleDriveConnected() && Storage::disk('google')->exists($file->thumbnail_path)) {
+                return Storage::disk('google')->response($file->thumbnail_path, pathinfo($file->original_name, PATHINFO_FILENAME).'_thumb.webp', [
+                    'Content-Type' => 'image/webp',
+                    'Content-Disposition' => 'inline',
+                    'Cache-Control' => 'public, max-age=86400',
+                ]);
+            }
         }
 
         if (! Storage::disk($disk)->exists($file->file_path)) {
-            abort(404, 'File fisik tidak ditemukan pada server.');
+            $altDisk = ($disk === 'local') ? 'google' : 'local';
+            if ($altDisk === 'google' && $this->isGoogleDriveConnected() && Storage::disk('google')->exists($file->file_path)) {
+                $disk = 'google';
+            } elseif ($altDisk === 'local' && Storage::disk('local')->exists($file->file_path)) {
+                $disk = 'local';
+            } else {
+                abort(404, 'File fisik tidak ditemukan pada server.');
+            }
         }
 
         $mimeType = $file->mime_type ?: Storage::disk($disk)->mimeType($file->file_path) ?: 'application/octet-stream';
@@ -828,7 +857,14 @@ class DriveController extends Controller
         $disk = $this->getDiskForFile($file);
 
         if (! Storage::disk($disk)->exists($file->file_path)) {
-            abort(404, 'File fisik tidak ditemukan pada server.');
+            $altDisk = ($disk === 'local') ? 'google' : 'local';
+            if ($altDisk === 'google' && $this->isGoogleDriveConnected() && Storage::disk('google')->exists($file->file_path)) {
+                $disk = 'google';
+            } elseif ($altDisk === 'local' && Storage::disk('local')->exists($file->file_path)) {
+                $disk = 'local';
+            } else {
+                abort(404, 'File fisik tidak ditemukan pada server.');
+            }
         }
 
         $file->increment('download_count');
@@ -1294,24 +1330,11 @@ class DriveController extends Controller
             }
         }
 
-        if ($disk !== 'local') {
-            try {
-                $fileStream = fopen($finalFullPath, 'r');
-                Storage::disk($disk)->put($finalRelativePath, $fileStream);
-                if (is_resource($fileStream)) {
-                    fclose($fileStream);
-                }
-                Storage::disk('local')->delete($finalRelativePath);
-            } catch (\Throwable $e) {
-                Log::warning("uploadChunk transfer to [{$disk}] failed: ".$e->getMessage().'. Kept file on local disk.');
-                $disk = 'local';
-            }
-        }
-
         $title = $request->filled('title')
             ? trim($request->input('title'))
             : pathinfo($originalName, PATHINFO_FILENAME);
 
+        // Always create DB record first so file is NEVER lost
         $storedFile = $user->storedFiles()->create([
             'folder_id' => $folderId,
             'title' => $title,
@@ -1328,7 +1351,7 @@ class DriveController extends Controller
             'notes' => $request->input('notes'),
         ]);
 
-        return response()->json([
+        $responseData = [
             'status' => 'completed',
             'progress' => 100,
             'message' => 'Berkas berhasil disimpan ke SwanDrive!',
@@ -1337,7 +1360,40 @@ class DriveController extends Controller
                 'title' => $storedFile->title,
                 'size_formatted' => $storedFile->formatted_size,
             ],
-        ]);
+        ];
+
+        // If running under LiteSpeed or FastCGI, respond immediately to the client in milliseconds!
+        $canFinishEarly = false;
+        if (function_exists('litespeed_finish_request')) {
+            response()->json($responseData)->send();
+            litespeed_finish_request();
+            $canFinishEarly = true;
+        } elseif (function_exists('fastcgi_finish_request')) {
+            response()->json($responseData)->send();
+            fastcgi_finish_request();
+            $canFinishEarly = true;
+        }
+
+        if ($disk !== 'local') {
+            try {
+                $fileStream = fopen($finalFullPath, 'r');
+                Storage::disk($disk)->put($finalRelativePath, $fileStream);
+                if (is_resource($fileStream)) {
+                    fclose($fileStream);
+                }
+                if (Storage::disk($disk)->exists($finalRelativePath)) {
+                    Storage::disk('local')->delete($finalRelativePath);
+                }
+            } catch (\Throwable $e) {
+                Log::warning("uploadChunk transfer to [{$disk}] failed: ".$e->getMessage().'. Kept file on local disk.');
+            }
+        }
+
+        if ($canFinishEarly) {
+            exit;
+        }
+
+        return response()->json($responseData);
     }
 
     /**
@@ -1440,21 +1496,23 @@ class DriveController extends Controller
         imagedestroy($thumbImage);
 
         if ($thumbData) {
-            $targetDisk = $disk ?: $this->resolveStorageDisk();
+            // Always save thumbnail to local storage first for instant dashboard previews
             try {
-                Storage::disk($targetDisk)->put($thumbRelativePath, $thumbData);
-
-                return $thumbRelativePath;
+                Storage::disk('local')->put($thumbRelativePath, $thumbData);
             } catch (\Throwable $e) {
-                Log::warning("Thumbnail save to [{$targetDisk}] failed: ".$e->getMessage().'. Falling back to local disk.');
-                try {
-                    Storage::disk('local')->put($thumbRelativePath, $thumbData);
+                Log::warning('Failed saving thumbnail to local: '.$e->getMessage());
+            }
 
-                    return $thumbRelativePath;
-                } catch (\Throwable $e2) {
-                    return null;
+            $targetDisk = $disk ?: $this->resolveStorageDisk();
+            if ($targetDisk !== 'local') {
+                try {
+                    Storage::disk($targetDisk)->put($thumbRelativePath, $thumbData);
+                } catch (\Throwable $e) {
+                    Log::warning("Thumbnail sync to [{$targetDisk}] failed: ".$e->getMessage());
                 }
             }
+
+            return $thumbRelativePath;
         }
 
         return null;

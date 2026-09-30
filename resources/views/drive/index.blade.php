@@ -2438,7 +2438,7 @@
 
         const totalQueueBytes = uploadQueue.reduce((acc, f) => acc + f.size, 0);
         let completedQueueBytes = 0;
-        const CHUNK_SIZE = 2 * 1024 * 1024; // 2MB chunk (safe under all mobile & server conditions)
+        const CHUNK_SIZE = 1 * 1024 * 1024; // 1MB chunk for fast, reliable upload on all mobile & desktop networks
         let hasErrors = false;
 
         for (let i = 0; i < uploadQueue.length; i++) {
@@ -2500,6 +2500,20 @@
                             body: chunkFormData,
                             signal: currentUploadAbortController.signal
                         });
+
+                        if (response.status === 419) {
+                            try {
+                                const refreshRes = await fetch("{{ route('drive.index') }}", { credentials: 'same-origin' });
+                                const refreshHtml = await refreshRes.text();
+                                const doc = new DOMParser().parseFromString(refreshHtml, 'text/html');
+                                const newToken = doc.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                                if (newToken) {
+                                    csrfToken = newToken;
+                                    chunkFormData.set('_token', newToken);
+                                }
+                            } catch (e) {}
+                            throw new Error('Sesi diperbarui, mencoba kembali...');
+                        }
 
                         const text = await response.text();
                         let result = {};

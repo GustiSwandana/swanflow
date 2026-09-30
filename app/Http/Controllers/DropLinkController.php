@@ -186,12 +186,8 @@ class DropLinkController extends Controller
                 $disk = 'local';
             }
 
-            try {
-                $path = $uploadedFile->store('drive/'.$link->user_id, $disk);
-            } catch (\Throwable $e) {
-                Log::warning("DropLink upload to [{$disk}] failed: ".$e->getMessage().'. Storing locally.');
-                $path = $uploadedFile->store('drive/'.$link->user_id, 'local');
-            }
+            // Always store to local disk first so file is immediately safe
+            $path = $uploadedFile->store('drive/'.$link->user_id, 'local');
             $title = pathinfo($originalName, PATHINFO_FILENAME);
 
             $link->user->storedFiles()->create([
@@ -210,6 +206,24 @@ class DropLinkController extends Controller
                 'notes' => $notes,
                 'uploader_name' => $uploaderName,
             ]);
+
+            if ($disk !== 'local') {
+                try {
+                    $localPath = Storage::disk('local')->path($path);
+                    if (file_exists($localPath)) {
+                        $stream = fopen($localPath, 'r');
+                        Storage::disk($disk)->put($path, $stream);
+                        if (is_resource($stream)) {
+                            fclose($stream);
+                        }
+                        if (Storage::disk($disk)->exists($path)) {
+                            Storage::disk('local')->delete($path);
+                        }
+                    }
+                } catch (\Throwable $e) {
+                    Log::warning("DropLink upload to [{$disk}] failed: ".$e->getMessage().'. Storing locally.');
+                }
+            }
 
             $storedCount++;
         }
@@ -326,20 +340,6 @@ class DropLinkController extends Controller
             $disk = 'local';
         }
 
-        if ($disk !== 'local') {
-            try {
-                $fileStream = fopen($finalFullPath, 'r');
-                Storage::disk($disk)->put($finalRelativePath, $fileStream);
-                if (is_resource($fileStream)) {
-                    fclose($fileStream);
-                }
-                Storage::disk('local')->delete($finalRelativePath);
-            } catch (\Throwable $e) {
-                Log::warning("DropLink upload to [{$disk}] failed: ".$e->getMessage().'. Storing locally.');
-                $disk = 'local';
-            }
-        }
-
         $uploaderName = $request->filled('uploader_name')
             ? trim($request->input('uploader_name'))
             : 'Pihak Luar (Drop Link)';
@@ -348,6 +348,7 @@ class DropLinkController extends Controller
             ? trim($request->input('uploader_notes'))
             : "Diterima melalui tautan: {$link->title}";
 
+        // Create DB record immediately so file is safely recorded
         $storedFile = $link->user->storedFiles()->create([
             'folder_id' => $folder->id,
             'upload_link_id' => $link->id,
@@ -367,7 +368,7 @@ class DropLinkController extends Controller
 
         $link->increment('uploaded_files_count', 1);
 
-        return response()->json([
+        $responseData = [
             'status' => 'completed',
             'progress' => 100,
             'message' => 'Berkas berhasil dikirim!',
@@ -375,6 +376,38 @@ class DropLinkController extends Controller
                 'id' => $storedFile->id,
                 'title' => $storedFile->title,
             ],
-        ]);
+        ];
+
+        $canFinishEarly = false;
+        if (function_exists('litespeed_finish_request')) {
+            response()->json($responseData)->send();
+            litespeed_finish_request();
+            $canFinishEarly = true;
+        } elseif (function_exists('fastcgi_finish_request')) {
+            response()->json($responseData)->send();
+            fastcgi_finish_request();
+            $canFinishEarly = true;
+        }
+
+        if ($disk !== 'local') {
+            try {
+                $fileStream = fopen($finalFullPath, 'r');
+                Storage::disk($disk)->put($finalRelativePath, $fileStream);
+                if (is_resource($fileStream)) {
+                    fclose($fileStream);
+                }
+                if (Storage::disk($disk)->exists($finalRelativePath)) {
+                    Storage::disk('local')->delete($finalRelativePath);
+                }
+            } catch (\Throwable $e) {
+                Log::warning("DropLink upload to [{$disk}] failed: ".$e->getMessage().'. Storing locally.');
+            }
+        }
+
+        if ($canFinishEarly) {
+            exit;
+        }
+
+        return response()->json($responseData);
     }
 }
