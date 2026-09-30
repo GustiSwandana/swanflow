@@ -71,6 +71,17 @@ Route::get('/swanflow-clear-view-cache', function () {
     ]);
 });
 
+Route::get('/swanflow-latest-log', function () {
+    $logPath = storage_path('logs/laravel.log');
+    if (! file_exists($logPath)) {
+        return response('No log file found', 200, ['Content-Type' => 'text/plain']);
+    }
+    $lines = file($logPath);
+    $lastLines = array_slice($lines, -60);
+
+    return response(implode('', $lastLines), 200, ['Content-Type' => 'text/plain']);
+});
+
 // Maintenance endpoint to execute pending migrations on Hostinger
 Route::get('/swanflow-migrate', function () {
     try {
