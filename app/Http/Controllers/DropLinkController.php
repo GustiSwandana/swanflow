@@ -381,10 +381,18 @@ class DropLinkController extends Controller
         $canFinishEarly = false;
         if (function_exists('litespeed_finish_request')) {
             response()->json($responseData)->send();
+            while (ob_get_level() > 0) {
+                ob_end_flush();
+            }
+            flush();
             litespeed_finish_request();
             $canFinishEarly = true;
         } elseif (function_exists('fastcgi_finish_request')) {
             response()->json($responseData)->send();
+            while (ob_get_level() > 0) {
+                ob_end_flush();
+            }
+            flush();
             fastcgi_finish_request();
             $canFinishEarly = true;
         }
