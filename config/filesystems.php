@@ -65,7 +65,7 @@ return [
             'clientId' => env('GOOGLE_DRIVE_CLIENT_ID'),
             'clientSecret' => env('GOOGLE_DRIVE_CLIENT_SECRET'),
             'refreshToken' => env('GOOGLE_DRIVE_REFRESH_TOKEN'),
-            'folder' => env('GOOGLE_DRIVE_FOLDER', 'SwanFlow Uploads'),
+            'folder' => env('GOOGLE_DRIVE_FOLDER', 'SwanFlow Drive'),
             'folderId' => env('GOOGLE_DRIVE_FOLDER_ID'),
             'serviceAccountKey' => storage_path('app/google-drive-key.json'),
             'throw' => true,

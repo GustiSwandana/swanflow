@@ -1775,45 +1775,10 @@
                 }
             }
 
-            function showSwanToast(message, type = 'success') {
-                const existing = document.getElementById('swan-toast-container');
-                if (existing) existing.remove();
-
-                const toast = document.createElement('div');
-                toast.id = 'swan-toast-container';
-                toast.style.cssText = 'top: max(4.5rem, calc(var(--sat, 0px) + 3.75rem)); z-index: 100;';
-                toast.className = 'fixed left-1/2 -translate-x-1/2 z-[100] w-11/12 max-w-sm px-4 py-3 rounded-2xl shadow-2xl border flex items-center justify-between transition-all duration-300 transform -translate-y-4 opacity-0 pointer-events-auto ' +
-                    (type === 'error' 
-                        ? 'bg-rose-900/95 text-white border-rose-700 shadow-rose-950/40 backdrop-blur-md' 
-                        : 'bg-slate-900/95 dark:bg-slate-800/95 text-white border-slate-700/80 shadow-slate-950/40 backdrop-blur-md');
-
-                const iconHtml = type === 'error'
-                    ? '<span class="w-7 h-7 rounded-xl bg-rose-500/20 text-rose-300 flex items-center justify-center shrink-0 font-bold">!</span>'
-                    : '<span class="w-7 h-7 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg></span>';
-
-                toast.innerHTML = `
-                    <div class="flex items-center gap-2.5 min-w-0 pr-2">
-                        ${iconHtml}
-                        <span class="text-xs font-bold text-slate-100 truncate">${message}</span>
-                    </div>
-                    <button type="button" onclick="this.parentElement.remove()" class="text-slate-400 hover:text-white p-1 shrink-0">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-                    </button>
-                `;
-
-                document.body.appendChild(toast);
-                requestAnimationFrame(() => {
-                    toast.classList.remove('-translate-y-4', 'opacity-0');
-                    toast.classList.add('translate-y-0', 'opacity-100');
-                });
-
-                setTimeout(() => {
-                    if (toast && toast.parentElement) {
-                        toast.classList.remove('translate-y-0', 'opacity-100');
-                        toast.classList.add('-translate-y-4', 'opacity-0');
-                        setTimeout(() => toast.remove(), 300);
-                    }
-                }, 3200);
+            function showSwanToast(message, type = 'success', duration = 4000) {
+                if (typeof window.showSwanToast === 'function') {
+                    return window.showSwanToast(message, type, duration);
+                }
             }
 
             window.setTransactionType = function(type) {
@@ -3654,9 +3619,17 @@
             // ==========================================
             // Modern Liquid Glass Toast Notification
             // ==========================================
-            window.showSwanToast = function(message, type = 'info', duration = 3500) {
-                const container = document.getElementById('swan-toast-container');
-                if (!container) return;
+            window.showSwanToast = function(message, type = 'info', duration = 4000) {
+                let container = document.getElementById('swan-toast-container');
+                if (!container) {
+                    container = document.createElement('div');
+                    container.id = 'swan-toast-container';
+                    container.style.cssText = 'top: max(4.2rem, calc(var(--sat, 0px) + 3.5rem)); z-index: 9999;';
+                    container.className = 'fixed left-1/2 -translate-x-1/2 w-[92%] sm:w-[380px] pointer-events-none flex flex-col gap-2 transition-all';
+                    document.body.appendChild(container);
+                } else {
+                    container.style.zIndex = '9999';
+                }
 
                 const toast = document.createElement('div');
                 toast.className = 'w-full px-4 py-3 rounded-2xl shadow-2xl backdrop-blur-2xl border flex items-center justify-between pointer-events-auto transform translate-y-2 opacity-0 transition-all duration-300 text-xs font-semibold';
@@ -3665,25 +3638,25 @@
                 let themeClasses = '';
 
                 if (type === 'success') {
-                    themeClasses = 'bg-emerald-950/90 text-emerald-100 border-emerald-500/30';
-                    iconSvg = `<span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg></span>`;
+                    themeClasses = 'bg-slate-900/95 dark:bg-slate-950/95 text-emerald-300 border-emerald-500/50 shadow-emerald-950/50 shadow-xl';
+                    iconSvg = `<span class="w-7 h-7 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 shadow-xs"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg></span>`;
                 } else if (type === 'error') {
-                    themeClasses = 'bg-rose-950/90 text-rose-100 border-rose-500/30';
-                    iconSvg = `<span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-300 flex items-center justify-center shrink-0 font-bold text-xs">✕</span>`;
+                    themeClasses = 'bg-rose-950/95 text-rose-100 border-rose-500/40 shadow-rose-950/50 shadow-xl';
+                    iconSvg = `<span class="w-7 h-7 rounded-xl bg-rose-500/20 text-rose-300 flex items-center justify-center shrink-0 font-bold text-xs">✕</span>`;
                 } else if (type === 'warning' || type === 'offline') {
-                    themeClasses = 'bg-amber-950/90 text-amber-100 border-amber-500/30';
-                    iconSvg = `<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-300 flex items-center justify-center shrink-0 font-bold text-xs">⚡</span>`;
+                    themeClasses = 'bg-amber-950/95 text-amber-100 border-amber-500/40 shadow-amber-950/50 shadow-xl';
+                    iconSvg = `<span class="w-7 h-7 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center shrink-0 font-bold text-xs">⚡</span>`;
                 } else {
                     // info / sync
-                    themeClasses = 'bg-slate-900/90 text-slate-100 border-slate-700/80';
-                    iconSvg = `<span class="w-6 h-6 rounded-full bg-teal-500/20 text-teal-300 flex items-center justify-center shrink-0"><svg class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg></span>`;
+                    themeClasses = 'bg-slate-900/95 text-slate-100 border-slate-700/80 shadow-slate-950/50 shadow-xl';
+                    iconSvg = `<span class="w-7 h-7 rounded-xl bg-teal-500/20 text-teal-300 flex items-center justify-center shrink-0"><svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg></span>`;
                 }
 
                 toast.classList.add(...themeClasses.split(' '));
                 toast.innerHTML = `
                     <div class="flex items-center gap-2.5 min-w-0 pr-2">
                         ${iconSvg}
-                        <span class="truncate">${message}</span>
+                        <span class="truncate font-bold">${message}</span>
                     </div>
                     <button type="button" class="text-white/60 hover:text-white p-1 shrink-0 cursor-pointer" onclick="this.parentElement.remove()">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>

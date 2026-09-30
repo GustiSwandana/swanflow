@@ -44,6 +44,8 @@ class AppServiceProvider extends ServiceProvider
             }
             if (! empty($config['sharedFolderId'])) {
                 $options['sharedFolderId'] = $config['sharedFolderId'];
+            } elseif (! empty($config['folderId'])) {
+                $options['sharedFolderId'] = $config['folderId'];
             }
 
             $client = new Client;
@@ -62,7 +64,7 @@ class AppServiceProvider extends ServiceProvider
                 $client->setClientId($config['clientId'] ?? '');
                 $client->setClientSecret($config['clientSecret'] ?? '');
                 $client->refreshToken($refreshToken);
-            } elseif (! empty($config['serviceAccountKey']) && file_exists($config['serviceAccountKey']) && ! empty($config['teamDriveId'])) {
+            } elseif (! empty($config['serviceAccountKey']) && file_exists($config['serviceAccountKey'])) {
                 $client->setAuthConfig($config['serviceAccountKey']);
                 $client->addScope(Drive::DRIVE);
             } else {
@@ -71,8 +73,7 @@ class AppServiceProvider extends ServiceProvider
             }
 
             $service = new Drive($client);
-            $folderId = $config['folderId'] ?? null;
-            $folder = ! empty($folderId) ? $folderId : ($config['folder'] ?? 'root');
+            $folder = ! empty($options['sharedFolderId']) ? null : ($config['folder'] ?? 'SwanFlow Drive');
             $adapter = new GoogleDriveAdapter($service, $folder, $options);
             $driver = new Filesystem($adapter);
 

@@ -28,8 +28,8 @@ class BudgetController extends Controller
             $parsedDate = now();
         }
 
-        $startOfMonth = $parsedDate->copy()->startOfMonth()->toDateString();
-        $endOfMonth = $parsedDate->copy()->endOfMonth()->toDateString();
+        $startOfMonth = $parsedDate->copy()->startOfMonth()->format('Y-m-d 00:00:00');
+        $endOfMonth = $parsedDate->copy()->endOfMonth()->format('Y-m-d 23:59:59');
 
         // Retrieve budgets for the user:
         // Either custom date range active for the selected month, or matching month, or recurring defaults (month is null and start_date is null)
@@ -128,18 +128,25 @@ class BudgetController extends Controller
                 $endDate = Carbon::parse($startDate)->addDays(30)->toDateString();
             }
         } elseif ($periodType === 'monthly') {
-            $month = ! empty($validated['month']) ? $validated['month'] : now()->format('Y-m');
+            $month = array_key_exists('month', $validated) ? $validated['month'] : now()->format('Y-m');
+            if ($month === '') {
+                $month = null;
+            }
         } // recurring keeps all null
 
-        Budget::create([
-            'user_id' => $request->user()->id,
-            'category_id' => $validated['category_id'],
-            'amount' => $validated['amount'],
-            'month' => $month,
-            'start_date' => $startDate,
-            'end_date' => $endDate,
-            'notes' => $validated['notes'] ?? null,
-        ]);
+        Budget::updateOrCreate(
+            [
+                'user_id' => $request->user()->id,
+                'category_id' => $validated['category_id'],
+                'month' => $month,
+            ],
+            [
+                'amount' => $validated['amount'],
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'notes' => $validated['notes'] ?? null,
+            ]
+        );
 
         return redirect()->back()->with('success', 'Anggaran bulanan berhasil disimpan!');
     }

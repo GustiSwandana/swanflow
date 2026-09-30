@@ -186,7 +186,7 @@ class MobileDashboardTest extends TestCase
             'name' => 'SwanFlow - Personal Finance',
             'short_name' => 'SwanFlow',
             'display' => 'standalone',
-            'theme_color' => '#0f172a',
+            'theme_color' => '#020617',
         ]);
 
         $this->assertFileExists(public_path('manifest.webmanifest'));

@@ -2573,18 +2573,33 @@
         if (!hasErrors) {
             if (progressBar) progressBar.style.width = '100%';
             if (progressPercent) progressPercent.innerText = '100%';
-            if (statusText) statusText.innerText = 'Semua berkas berhasil disimpan!';
+            if (statusText) statusText.innerText = '🎉 Semua berkas berhasil disimpan!';
+
+            if (btnText) btnText.innerText = '✅ Berkas Berhasil Disimpan!';
+            if (btnSpinner) btnSpinner.classList.add('hidden');
+            if (btnIcon) btnIcon.classList.remove('hidden');
+
+            const uploadMsg = uploadQueue.length > 1
+                ? `🎉 ${uploadQueue.length} berkas berhasil disimpan ke SwanDrive!`
+                : `🎉 Berkas "${uploadQueue[0]?.name || 'File'}" berhasil disimpan ke SwanDrive!`;
 
             if (typeof showSwanToast === 'function') {
-                showSwanToast(`🎉 ${uploadQueue.length} berkas berhasil disimpan ke SwanDrive!`);
+                showSwanToast(uploadMsg, 'success', 5000);
             }
 
+            try {
+                if (navigator.vibrate) navigator.vibrate([40, 60, 40]);
+            } catch (e) {}
+
             setTimeout(() => {
-                const redirectUrl = folderId 
-                    ? `{{ route('drive.index') }}?folder_id=${folderId}`
-                    : `{{ route('drive.index') }}`;
-                window.location.href = redirectUrl;
-            }, 600);
+                const urlParams = new URLSearchParams(window.location.search);
+                urlParams.set('uploaded', uploadQueue.length);
+                if (uploadQueue.length === 1 && uploadQueue[0]?.name) {
+                    urlParams.set('uploaded_name', encodeURIComponent(uploadQueue[0].name));
+                }
+                if (folderId) urlParams.set('folder_id', folderId);
+                window.location.href = `{{ route('drive.index') }}?${urlParams.toString()}`;
+            }, 1000);
         } else {
             const failedItem = uploadQueue.find(it => it.status === 'error');
             const errorReason = failedItem?.errorMsg ? `: ${failedItem.errorMsg}` : '.';
@@ -4072,6 +4087,29 @@
     // Auto-focus and open preview if file_id or hash is in the URL (e.g. from Dashboard recent files widget)
     document.addEventListener('DOMContentLoaded', () => {
         const urlParams = new URLSearchParams(window.location.search);
+        
+        // Show toast if just uploaded
+        if (urlParams.has('uploaded')) {
+            const count = parseInt(urlParams.get('uploaded') || '1', 10);
+            const uploadedName = urlParams.get('uploaded_name') ? decodeURIComponent(urlParams.get('uploaded_name')) : null;
+            const notifMsg = (count > 1 || !uploadedName)
+                ? `🎉 ${count} berkas berhasil diunggah ke SwanDrive!`
+                : `🎉 Berkas "${uploadedName}" berhasil diunggah ke SwanDrive!`;
+
+            setTimeout(() => {
+                if (typeof showSwanToast === 'function') {
+                    showSwanToast(notifMsg, 'success', 5000);
+                }
+            }, 300);
+
+            // Clean up URL
+            const newUrl = window.location.pathname + window.location.search
+                .replace(new RegExp('[?&]uploaded=[^&]+'), '')
+                .replace(new RegExp('[?&]uploaded_name=[^&]+'), '')
+                .replace(/^&/, '?').replace(/\?$/, '');
+            window.history.replaceState({}, document.title, newUrl || window.location.pathname);
+        }
+
         const targetFileId = urlParams.get('file_id') || (window.location.hash ? window.location.hash.replace('#file-', '') : null);
         if (targetFileId) {
             const targetCard = document.getElementById(`file-${targetFileId}`);

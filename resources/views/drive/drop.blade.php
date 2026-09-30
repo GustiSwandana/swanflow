@@ -40,8 +40,34 @@
             document.documentElement.classList.add('is-android');
         }
     </script>
+    <style>
+        .drop-toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            opacity: 0;
+            background: rgba(16, 185, 129, 0.95);
+            backdrop-filter: blur(8px);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 99px;
+            font-size: 14px;
+            font-weight: 700;
+            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4);
+            z-index: 1000;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+        }
+        .drop-toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+    </style>
 </head>
 <body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-full flex flex-col justify-between selection:bg-teal-500 selection:text-white antialiased transition-colors duration-200">
+    <div id="drop-toast" class="drop-toast">🎉 Berkas berhasil dikirim!</div>
+
 
     <!-- Ambient Gradient Background (Teal/Emerald liquid orbs) -->
     <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
@@ -487,9 +513,16 @@
                     if (progressPercent) progressPercent.innerText = '100%';
                     if (statusText) statusText.innerText = 'Berkas berhasil dikirim!';
 
+                    // Tampilkan toast notifikasi
+                    const dropToast = document.getElementById('drop-toast');
+                    if (dropToast) {
+                        dropToast.classList.add('show');
+                        setTimeout(() => dropToast.classList.remove('show'), 3500);
+                    }
+
                     setTimeout(() => {
                         window.location.reload();
-                    }, 500);
+                    }, 2000);
                 } else {
                     btn.disabled = false;
                     btn.classList.remove('opacity-80', 'cursor-not-allowed');
