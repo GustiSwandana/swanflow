@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\StoredFile;
 use App\Models\UploadLink;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -217,5 +220,159 @@ class DropLinkController extends Controller
             : "{$storedCount} berkas berhasil terkirim ke folder \"{$folder->name}\" di SwanDrive!";
 
         return back()->with('drop_success', $msg);
+    }
+
+    /**
+     * Handle chunked public file upload through the drop link.
+     */
+    public function uploadChunk(Request $request, string $token): JsonResponse
+    {
+        $link = UploadLink::where('token', $token)->firstOrFail();
+
+        if (! $link->canAcceptUpload()) {
+            return response()->json(['error' => 'Tautan pengunggahan ini sudah tidak aktif atau kuota telah penuh.'], 403);
+        }
+
+        $maxBytes = $link->max_file_size_mb * 1024 * 1024;
+
+        $request->validate([
+            'chunk' => ['required', 'file', 'max:15360'],
+            'chunk_index' => ['required', 'integer', 'min:0'],
+            'total_chunks' => ['required', 'integer', 'min:1'],
+            'file_uuid' => ['required', 'string', 'regex:/^[a-zA-Z0-9_-]+$/'],
+            'file_name' => ['required', 'string', 'max:255'],
+            'uploader_name' => ['nullable', 'string', 'max:100'],
+            'uploader_notes' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $chunkIndex = (int) $request->input('chunk_index');
+        $totalChunks = (int) $request->input('total_chunks');
+        $fileUuid = $request->input('file_uuid');
+        $originalName = $request->input('file_name');
+
+        $tempDir = 'temp_chunks/drop_'.$link->id.'/'.$fileUuid;
+        $chunkFile = $request->file('chunk');
+        $chunkFileName = "chunk_{$chunkIndex}.part";
+
+        Storage::disk('local')->putFileAs($tempDir, $chunkFile, $chunkFileName);
+
+        if ($chunkIndex + 1 < $totalChunks) {
+            return response()->json([
+                'status' => 'chunk_saved',
+                'chunk_index' => $chunkIndex,
+                'total_chunks' => $totalChunks,
+                'progress' => round((($chunkIndex + 1) / $totalChunks) * 100),
+            ]);
+        }
+
+        @set_time_limit(600);
+        @ini_set('memory_limit', '512M');
+        ignore_user_abort(true);
+
+        $extension = pathinfo($originalName, PATHINFO_EXTENSION);
+        $safeExtension = $extension ? strtolower($extension) : 'bin';
+        $finalFilename = Str::uuid().'.'.$safeExtension;
+        $finalRelativePath = 'drive/'.$link->user_id.'/'.$finalFilename;
+        $finalFullPath = Storage::disk('local')->path($finalRelativePath);
+
+        $destDir = dirname($finalFullPath);
+        if (! is_dir($destDir)) {
+            mkdir($destDir, 0755, true);
+        }
+
+        $outHandle = fopen($finalFullPath, 'wb');
+        if (! $outHandle) {
+            return response()->json(['error' => 'Gagal membuat berkas final.'], 500);
+        }
+
+        for ($i = 0; $i < $totalChunks; $i++) {
+            $partPath = Storage::disk('local')->path("{$tempDir}/chunk_{$i}.part");
+            if (! file_exists($partPath)) {
+                fclose($outHandle);
+                @unlink($finalFullPath);
+
+                return response()->json(['error' => "Potongan berkas ke-{$i} hilang."], 400);
+            }
+
+            $inHandle = fopen($partPath, 'rb');
+            if ($inHandle) {
+                while (! feof($inHandle)) {
+                    $buffer = fread($inHandle, 1048576);
+                    fwrite($outHandle, $buffer);
+                }
+                fclose($inHandle);
+            }
+        }
+        fclose($outHandle);
+
+        Storage::disk('local')->deleteDirectory($tempDir);
+
+        $sizeBytes = filesize($finalFullPath);
+        if ($sizeBytes > $maxBytes) {
+            @unlink($finalFullPath);
+
+            return response()->json(['error' => "Ukuran berkas ({$originalName}) melebihi batas maksimal {$link->max_file_size_mb} MB."], 422);
+        }
+
+        $mimeType = mime_content_type($finalFullPath) ?: 'application/octet-stream';
+        $category = StoredFile::detectCategory($safeExtension, $mimeType);
+
+        $folder = $link->getOrCreateFolder();
+
+        $disk = config('filesystems.default');
+        if ($disk === 'google' && empty(config('filesystems.disks.google.refreshToken')) && ! file_exists(storage_path('app/google_drive_token.json'))) {
+            $disk = 'local';
+        }
+
+        if ($disk !== 'local') {
+            try {
+                $fileStream = fopen($finalFullPath, 'r');
+                Storage::disk($disk)->put($finalRelativePath, $fileStream);
+                if (is_resource($fileStream)) {
+                    fclose($fileStream);
+                }
+                Storage::disk('local')->delete($finalRelativePath);
+            } catch (\Throwable $e) {
+                Log::warning("DropLink upload to [{$disk}] failed: ".$e->getMessage().'. Storing locally.');
+                $disk = 'local';
+            }
+        }
+
+        $uploaderName = $request->filled('uploader_name')
+            ? trim($request->input('uploader_name'))
+            : 'Pihak Luar (Drop Link)';
+
+        $notes = $request->filled('uploader_notes')
+            ? trim($request->input('uploader_notes'))
+            : "Diterima melalui tautan: {$link->title}";
+
+        $storedFile = $link->user->storedFiles()->create([
+            'folder_id' => $folder->id,
+            'upload_link_id' => $link->id,
+            'title' => pathinfo($originalName, PATHINFO_FILENAME),
+            'original_name' => $originalName,
+            'file_path' => $finalRelativePath,
+            'mime_type' => $mimeType,
+            'extension' => $safeExtension,
+            'size_bytes' => $sizeBytes,
+            'category' => $category,
+            'share_token' => Str::random(40),
+            'is_public' => false,
+            'download_count' => 0,
+            'notes' => $notes,
+            'uploader_name' => $uploaderName,
+        ]);
+
+        $link->increment('uploaded_files_count', 1);
+
+        return response()->json([
+            'status' => 'completed',
+            'progress' => 100,
+            'message' => 'Berkas berhasil dikirim!',
+            'file' => [
+                'id' => $storedFile->id,
+                'title' => $storedFile->title,
+            ],
+        ]);
     }
 }

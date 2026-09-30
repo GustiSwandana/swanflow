@@ -151,6 +151,7 @@ Route::get('/share/folder/{token}/zip', [DriveController::class, 'sharedFolderZi
 // Public Drop Portal (Upload file request link)
 Route::get('/drop/{token}', [DropLinkController::class, 'show'])->name('drive.drop.view');
 Route::post('/drop/{token}', [DropLinkController::class, 'upload'])->name('drive.drop.upload');
+Route::post('/drop/{token}/chunk', [DropLinkController::class, 'uploadChunk'])->name('drive.drop.upload-chunk');
 
 // Public Client Portal & File Deliverables (/p/{token})
 Route::get('/p/{token}', [ClientPortalController::class, 'show'])->name('orders.portal');
@@ -263,6 +264,7 @@ Route::middleware(['auth', 'session.timeout'])->group(function () {
     Route::get('/drive', [DriveController::class, 'index'])->name('drive.index');
     Route::post('/drive/upload', [DriveController::class, 'store'])->name('drive.store');
     Route::post('/drive/upload-chunk', [DriveController::class, 'uploadChunk'])->name('drive.upload-chunk');
+    Route::post('/drive/upload-chunk/abort', [DriveController::class, 'abortChunkUpload'])->name('drive.upload-chunk.abort');
     Route::get('/drive/connect-google', [DriveController::class, 'connectGoogle'])->name('drive.connect');
     Route::get('/drive/callback', [DriveController::class, 'googleCallback'])->name('drive.callback');
     Route::patch('/drive/quota', [DriveController::class, 'updateQuota'])->name('drive.quota.update');

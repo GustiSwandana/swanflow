@@ -237,19 +237,35 @@
                 </div>
 
                 <!-- Upload Details Panel (Appears once file is chosen) -->
-                <div id="upload-details" class="hidden space-y-2.5 pt-1">
-                    <div class="flex items-center justify-between bg-slate-100/80 dark:bg-slate-800/80 px-3.5 py-2.5 rounded-[18px] text-xs border border-white/50 dark:border-white/10">
-                        <div class="flex items-center gap-2 truncate pr-2">
-                            <span class="font-black text-teal-600 dark:text-teal-400" id="selected-ext">FILE</span>
-                            <span class="font-bold text-slate-700 dark:text-slate-200 truncate" id="selected-filename">Nama berkas</span>
+                <div id="upload-details" class="hidden space-y-3 pt-1">
+                    <!-- Selected Files Queue Card -->
+                    <div class="rounded-[20px] bg-slate-100/90 dark:bg-slate-800/90 p-3 border border-white/60 dark:border-white/10 space-y-2.5 backdrop-blur-xl shadow-xs">
+                        <div class="flex items-center justify-between text-xs">
+                            <div class="flex items-center gap-1.5 font-black text-slate-800 dark:text-slate-100">
+                                <svg class="w-4 h-4 text-teal-600 dark:text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                                </svg>
+                                <span id="queue-summary-text">0 Berkas Dipilih</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span id="queue-total-size" class="text-[11px] font-extrabold text-teal-600 dark:text-teal-400 px-2 py-0.5 rounded-full bg-teal-500/10 border border-teal-500/20">0 B</span>
+                                <button type="button" onclick="document.getElementById('upload-input').click()" class="text-[10px] font-bold text-teal-600 hover:text-teal-700 dark:text-teal-400 hover:underline cursor-pointer flex items-center gap-0.5">
+                                    <span>+ Tambah</span>
+                                </button>
+                            </div>
                         </div>
-                        <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 shrink-0" id="selected-size">0 KB</span>
+
+                        <!-- Scrollable Queue Items List -->
+                        <div id="queue-items-list" class="space-y-1 max-h-48 overflow-y-auto pr-1 divide-y divide-slate-200/60 dark:divide-slate-700/60">
+                            <!-- Populated dynamically via JS -->
+                        </div>
                     </div>
 
+                    <!-- Options Grid (Title if 1 file, Target Folder, Notes) -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        <div>
-                            <label for="file-title" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">Judul / Label (Opsional)</label>
-                            <input type="text" id="file-title" name="title" placeholder="Misal: Nota Pembelian MacBook" class="w-full px-3.5 py-2.5 text-xs rounded-[16px] bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium">
+                        <div id="single-title-container">
+                            <label for="file-title" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">Judul / Label</label>
+                            <input type="text" id="file-title" name="title" placeholder="Nama berkas..." class="w-full px-3.5 py-2.5 text-xs rounded-[16px] bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium">
                         </div>
                         <div>
                             <label for="upload-target-folder" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">Simpan di Folder</label>
@@ -265,11 +281,12 @@
                     </div>
                     <div>
                         <label for="file-notes" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">Catatan Tambahan (Opsional)</label>
-                        <input type="text" id="file-notes" name="notes" placeholder="Catatan ringkas..." class="w-full px-3.5 py-2.5 text-xs rounded-[16px] bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium">
+                        <input type="text" id="file-notes" name="notes" placeholder="Catatan untuk berkas yang diunggah..." class="w-full px-3.5 py-2.5 text-xs rounded-[16px] bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium">
                     </div>
 
-                    <div class="flex items-center gap-2 pt-1">
-                        <button type="submit" id="btn-submit-upload" class="flex-1 py-2.5 px-4 rounded-[18px] bg-teal-500 hover:bg-teal-400 active:scale-[0.98] text-white text-xs font-black shadow-md shadow-teal-500/25 flex items-center justify-center gap-2 transition-all cursor-pointer ios-press">
+                    <!-- Action Buttons -->
+                    <div class="flex items-center gap-2 pt-1" id="upload-action-buttons">
+                        <button type="submit" id="btn-submit-upload" class="flex-1 py-2.5 px-4 rounded-[18px] bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 active:scale-[0.98] text-white text-xs font-black shadow-md shadow-teal-500/25 flex items-center justify-center gap-2 transition-all cursor-pointer ios-press">
                             <svg id="btn-upload-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                             </svg>
@@ -279,30 +296,48 @@
                             </svg>
                             <span id="btn-upload-text">Simpan ke SwanDrive</span>
                         </button>
-                        <button type="button" id="btn-cancel-upload" onclick="cancelUpload()" class="py-2.5 px-3.5 rounded-[18px] bg-slate-200/80 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold active:scale-95 transition-all ios-press">
+                        <button type="button" id="btn-cancel-upload" onclick="cancelUpload()" class="py-2.5 px-3.5 rounded-[18px] bg-slate-200/80 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold active:scale-95 transition-all ios-press cursor-pointer">
                             Batal
                         </button>
                     </div>
 
-                    <!-- Progress Bar & Loading Status Container -->
-                    <div id="upload-progress-container" class="hidden pt-2 space-y-2">
+                    <!-- Progress Bar & Loading Status Container (Apple Liquid Glass) -->
+                    <div id="upload-progress-container" class="hidden pt-2 space-y-2.5 rounded-[22px] bg-teal-50/70 dark:bg-teal-950/40 p-3.5 border border-teal-200/80 dark:border-teal-800/60 backdrop-blur-xl">
+                        <!-- Top status line -->
                         <div class="flex items-center justify-between text-xs">
-                            <span id="upload-progress-status" class="font-black text-teal-600 dark:text-teal-400 flex items-center gap-1.5">
-                                <svg class="w-3.5 h-3.5 animate-spin shrink-0" fill="none" viewBox="0 0 24 24">
+                            <span id="upload-progress-status" class="font-black text-teal-700 dark:text-teal-300 flex items-center gap-1.5 min-w-0 pr-2">
+                                <svg class="w-3.5 h-3.5 animate-spin shrink-0 text-teal-600 dark:text-teal-400" fill="none" viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                 </svg>
-                                <span id="upload-status-text">Mengunggah berkas...</span>
+                                <span id="upload-status-text" class="truncate">Menyiapkan pengunggahan...</span>
                             </span>
-                            <span id="upload-progress-percent" class="font-black text-slate-800 dark:text-white">0%</span>
+                            <span id="upload-progress-percent" class="font-black text-teal-700 dark:text-teal-300 shrink-0">0%</span>
                         </div>
-                        <!-- Progress Track -->
-                        <div class="w-full bg-slate-200/70 dark:bg-slate-800/70 rounded-full h-2.5 overflow-hidden p-0.5 border border-slate-300/60 dark:border-slate-700/60">
-                            <div id="upload-progress-bar" class="bg-gradient-to-r from-teal-500 via-emerald-400 to-teal-500 h-full rounded-full transition-all duration-150 ease-out" style="width: 0%"></div>
+
+                        <!-- Overall Progress Track -->
+                        <div class="w-full bg-slate-200/80 dark:bg-slate-900/90 rounded-full h-3 overflow-hidden p-0.5 border border-teal-300/40 dark:border-teal-700/40 shadow-inner">
+                            <div id="upload-progress-bar" class="bg-gradient-to-r from-teal-500 via-emerald-400 to-teal-500 h-full rounded-full transition-all duration-200 ease-out shadow-xs" style="width: 0%"></div>
                         </div>
-                        <div class="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 font-semibold">
+
+                        <!-- Sub-info: Current File Status & Chunk Indicator -->
+                        <div class="space-y-1 pt-0.5">
+                            <div class="flex items-center justify-between text-[11px] font-semibold text-slate-700 dark:text-slate-300">
+                                <span id="current-file-name-label" class="truncate pr-2">Berkas saat ini...</span>
+                                <span id="current-file-chunk-label" class="shrink-0 text-teal-600 dark:text-teal-400 font-extrabold text-[10px]">0%</span>
+                            </div>
+                            <!-- Sub Progress Track for individual file -->
+                            <div class="w-full bg-slate-200/60 dark:bg-slate-800/60 rounded-full h-1.5 overflow-hidden">
+                                <div id="current-file-progress-bar" class="bg-teal-400 dark:bg-teal-300 h-full rounded-full transition-all duration-150" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 font-semibold pt-1 border-t border-teal-200/50 dark:border-teal-800/40">
                             <span id="upload-progress-bytes">0 KB / 0 KB</span>
-                            <span>Mohon tidak menutup halaman</span>
+                            <span class="flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                <span>Chunked Streaming Anti-Putus</span>
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -2151,132 +2186,304 @@
 
 @push('scripts')
 <script>
-    // Handle File Selection
-    function handleFileSelect(input) {
-        if (!input.files || input.files.length === 0) return;
-        const count = input.files.length;
-        let totalSize = 0;
-        for (let i = 0; i < count; i++) {
-            totalSize += input.files[i].size;
-        }
-        
-        if (count === 1) {
-            const file = input.files[0];
-            const ext = file.name.split('.').pop().toUpperCase();
-            document.getElementById('selected-ext').innerText = ext.substring(0, 5);
-            document.getElementById('selected-filename').innerText = file.name;
-            document.getElementById('selected-size').innerText = formatBytes(file.size);
-
-            const titleInput = document.getElementById('file-title');
-            if (!titleInput.value) {
-                titleInput.value = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
-            }
-        } else {
-            document.getElementById('selected-ext').innerText = count + ' FILES';
-            document.getElementById('selected-filename').innerText = count + ' Berkas Dipilih';
-            document.getElementById('selected-size').innerText = formatBytes(totalSize);
-
-            const titleInput = document.getElementById('file-title');
-            if (!titleInput.value) {
-                titleInput.value = count + ' Berkas Sekaligus';
-            }
-        }
-
-        document.getElementById('upload-details').classList.remove('hidden');
-        document.getElementById('dropzone').classList.add('border-teal-500', 'bg-teal-50/90');
-    }
-
-    function cancelUpload() {
-        document.getElementById('upload-input').value = '';
-        document.getElementById('upload-details').classList.add('hidden');
-        const progressContainer = document.getElementById('upload-progress-container');
-        if (progressContainer) progressContainer.classList.add('hidden');
-        document.getElementById('file-title').value = '';
-        document.getElementById('file-notes').value = '';
-        document.getElementById('dropzone').classList.remove('border-teal-500', 'bg-teal-50/90');
-    }
+    // ==========================================
+    // SwanDrive Multi-File Queue & Chunk Engine
+    // ==========================================
+    let uploadQueue = [];
+    let isUploading = false;
+    let isUploadCancelled = false;
+    let currentUploadAbortController = null;
+    let currentActiveFileUuid = null;
 
     function formatBytes(bytes) {
+        if (!bytes || bytes === 0) return '0 B';
+        if (bytes >= 1073741824) return (bytes / 1073741824).toFixed(2) + ' GB';
         if (bytes >= 1048576) return (bytes / 1048576).toFixed(1) + ' MB';
         if (bytes >= 1024) return (bytes / 1024).toFixed(0) + ' KB';
         return bytes + ' B';
     }
 
-    // Interactive Upload with Progress Bar & Loading Indicator
-    const uploadForm = document.getElementById('upload-form');
-    if (uploadForm) {
-        uploadForm.addEventListener('submit', function(e) {
-            e.preventDefault();
+    // Handle File Selection (Append to Queue)
+    function handleFileSelect(input) {
+        if (!input.files || input.files.length === 0) return;
+        addFilesToQueue(input.files);
+        // Clear input value so selecting the same files again triggers onchange
+        input.value = '';
+    }
 
-            const fileInput = document.getElementById('upload-input');
-            if (!fileInput.files || fileInput.files.length === 0) {
+    function addFilesToQueue(fileList) {
+        for (let i = 0; i < fileList.length; i++) {
+            const f = fileList[i];
+            const exists = uploadQueue.some(item => item.name === f.name && item.size === f.size);
+            if (!exists) {
+                const ext = f.name.split('.').pop() || 'FILE';
+                uploadQueue.push({
+                    id: 'q_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
+                    file: f,
+                    name: f.name,
+                    size: f.size,
+                    ext: ext.toUpperCase().substring(0, 5),
+                    status: 'pending',
+                    progress: 0,
+                    errorMsg: ''
+                });
+            }
+        }
+        renderQueueUI();
+    }
+
+    function removeFileFromQueue(id) {
+        if (isUploading) return;
+        uploadQueue = uploadQueue.filter(item => item.id !== id);
+        renderQueueUI();
+    }
+
+    function renderQueueUI() {
+        const queueDetails = document.getElementById('upload-details');
+        const queueList = document.getElementById('queue-items-list');
+        const summaryText = document.getElementById('queue-summary-text');
+        const totalSizeBadge = document.getElementById('queue-total-size');
+        const dropzone = document.getElementById('dropzone');
+        const singleTitleContainer = document.getElementById('single-title-container');
+        const fileTitleInput = document.getElementById('file-title');
+        const btnUploadText = document.getElementById('btn-upload-text');
+
+        if (!queueDetails || !queueList) return;
+
+        if (uploadQueue.length === 0) {
+            queueDetails.classList.add('hidden');
+            if (dropzone) dropzone.classList.remove('border-teal-500', 'bg-teal-50/90');
+            return;
+        }
+
+        queueDetails.classList.remove('hidden');
+        if (dropzone) dropzone.classList.add('border-teal-500', 'bg-teal-50/90');
+
+        let totalBytes = 0;
+        uploadQueue.forEach(item => totalBytes += item.size);
+
+        if (summaryText) {
+            summaryText.innerText = `${uploadQueue.length} Berkas Dipilih`;
+        }
+        if (totalSizeBadge) {
+            totalSizeBadge.innerText = formatBytes(totalBytes);
+        }
+        if (btnUploadText) {
+            btnUploadText.innerText = uploadQueue.length > 1
+                ? `Simpan ${uploadQueue.length} Berkas ke SwanDrive`
+                : 'Simpan ke SwanDrive';
+        }
+
+        if (uploadQueue.length === 1) {
+            if (singleTitleContainer) singleTitleContainer.classList.remove('hidden');
+            if (fileTitleInput && !fileTitleInput.value) {
+                const nameWithoutExt = uploadQueue[0].name.substring(0, uploadQueue[0].name.lastIndexOf('.')) || uploadQueue[0].name;
+                fileTitleInput.value = nameWithoutExt;
+            }
+        } else {
+            if (singleTitleContainer) singleTitleContainer.classList.add('hidden');
+        }
+
+        queueList.innerHTML = '';
+        uploadQueue.forEach(item => {
+            const row = document.createElement('div');
+            row.id = `item-row-${item.id}`;
+            row.className = 'flex items-center justify-between py-1.5 px-2 rounded-xl hover:bg-white/50 dark:hover:bg-slate-700/50 transition-colors text-xs';
+
+            let statusIconHtml = '';
+            if (item.status === 'completed') {
+                statusIconHtml = '<span class="text-emerald-500 font-black text-xs shrink-0 flex items-center gap-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg> Selesai</span>';
+            } else if (item.status === 'uploading') {
+                statusIconHtml = `<span class="text-teal-600 dark:text-teal-400 font-bold text-[11px] shrink-0 flex items-center gap-1"><svg class="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> ${item.progress}%</span>`;
+            } else if (item.status === 'error') {
+                statusIconHtml = `<span class="text-rose-500 font-bold text-[10px] shrink-0" title="${item.errorMsg}">⚠️ Gagal</span>`;
+            } else {
+                statusIconHtml = isUploading 
+                    ? '<span class="text-slate-400 text-[10px] shrink-0">⏳ Antrean</span>'
+                    : `<button type="button" onclick="removeFileFromQueue('${item.id}')" class="text-slate-400 hover:text-rose-500 p-1 transition-colors cursor-pointer shrink-0" title="Hapus dari antrean"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>`;
+            }
+
+            row.innerHTML = `
+                <div class="flex items-center gap-2 truncate pr-2 min-w-0">
+                    <span class="text-[9px] font-black px-1.5 py-0.5 rounded-md bg-teal-500/15 text-teal-700 dark:text-teal-300 border border-teal-500/25 shrink-0 uppercase">${item.ext}</span>
+                    <span class="font-semibold text-slate-800 dark:text-slate-200 truncate">${item.name}</span>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400">${formatBytes(item.size)}</span>
+                    <div id="item-status-${item.id}">
+                        ${statusIconHtml}
+                    </div>
+                </div>
+            `;
+            queueList.appendChild(row);
+        });
+    }
+
+    function cancelUpload() {
+        if (isUploading) {
+            if (!confirm('Apakah Anda yakin ingin membatalkan proses pengunggahan berkas ini?')) {
                 return;
             }
-
-            const btnSubmit = document.getElementById('btn-submit-upload');
-            const btnCancel = document.getElementById('btn-cancel-upload');
-            const btnIcon = document.getElementById('btn-upload-icon');
-            const btnSpinner = document.getElementById('btn-upload-spinner');
-            const btnText = document.getElementById('btn-upload-text');
-            const progressContainer = document.getElementById('upload-progress-container');
-            const progressBar = document.getElementById('upload-progress-bar');
-            const progressPercent = document.getElementById('upload-progress-percent');
-            const progressBytes = document.getElementById('upload-progress-bytes');
-            const statusText = document.getElementById('upload-status-text');
-
-            // Disable buttons and show spinner
-            btnSubmit.disabled = true;
-            btnSubmit.classList.add('opacity-80', 'cursor-not-allowed');
-            if (btnCancel) {
-                btnCancel.disabled = true;
-                btnCancel.classList.add('opacity-50', 'cursor-not-allowed');
+            isUploadCancelled = true;
+            if (currentUploadAbortController) {
+                currentUploadAbortController.abort();
             }
-            if (btnIcon) btnIcon.classList.add('hidden');
-            if (btnSpinner) btnSpinner.classList.remove('hidden');
-            if (btnText) btnText.innerText = 'Mengunggah...';
+            if (currentActiveFileUuid) {
+                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+                    || document.querySelector('input[name="_token"]')?.value;
+                const fd = new FormData();
+                fd.append('file_uuid', currentActiveFileUuid);
+                fetch("{{ route('drive.upload-chunk.abort') }}", {
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': csrfToken, 'X-Requested-With': 'XMLHttpRequest' },
+                    body: fd
+                }).catch(() => {});
+            }
+            resetUploadState();
+            return;
+        }
 
-            let totalUploadSize = 0;
-            for (let i = 0; i < fileInput.files.length; i++) {
-                totalUploadSize += fileInput.files[i].size;
+        uploadQueue = [];
+        renderQueueUI();
+        document.getElementById('file-title').value = '';
+        document.getElementById('file-notes').value = '';
+        const progressContainer = document.getElementById('upload-progress-container');
+        if (progressContainer) progressContainer.classList.add('hidden');
+    }
+
+    function resetUploadState() {
+        isUploading = false;
+        isUploadCancelled = false;
+        currentUploadAbortController = null;
+        currentActiveFileUuid = null;
+
+        const btnSubmit = document.getElementById('btn-submit-upload');
+        const btnCancel = document.getElementById('btn-cancel-upload');
+        const btnIcon = document.getElementById('btn-upload-icon');
+        const btnSpinner = document.getElementById('btn-upload-spinner');
+        const btnText = document.getElementById('btn-upload-text');
+        const progressContainer = document.getElementById('upload-progress-container');
+
+        if (btnSubmit) {
+            btnSubmit.disabled = false;
+            btnSubmit.classList.remove('opacity-80', 'cursor-not-allowed');
+        }
+        if (btnCancel) {
+            btnCancel.disabled = false;
+            btnCancel.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+        if (btnIcon) btnIcon.classList.remove('hidden');
+        if (btnSpinner) btnSpinner.classList.add('hidden');
+        if (btnText) {
+            btnText.innerText = uploadQueue.length > 1
+                ? `Simpan ${uploadQueue.length} Berkas ke SwanDrive`
+                : 'Simpan ke SwanDrive';
+        }
+        if (progressContainer) progressContainer.classList.add('hidden');
+
+        renderQueueUI();
+    }
+
+    window.addEventListener('beforeunload', function(e) {
+        if (isUploading) {
+            e.preventDefault();
+            e.returnValue = 'Pengunggahan berkas sedang berlangsung. Yakin ingin keluar?';
+            return e.returnValue;
+        }
+    });
+
+    async function startQueueUpload() {
+        if (isUploading || uploadQueue.length === 0) return;
+
+        isUploading = true;
+        isUploadCancelled = false;
+
+        const btnSubmit = document.getElementById('btn-submit-upload');
+        const btnCancel = document.getElementById('btn-cancel-upload');
+        const btnIcon = document.getElementById('btn-upload-icon');
+        const btnSpinner = document.getElementById('btn-upload-spinner');
+        const btnText = document.getElementById('btn-upload-text');
+        const progressContainer = document.getElementById('upload-progress-container');
+        const progressBar = document.getElementById('upload-progress-bar');
+        const progressPercent = document.getElementById('upload-progress-percent');
+        const progressBytes = document.getElementById('upload-progress-bytes');
+        const statusText = document.getElementById('upload-status-text');
+        const currentFileLabel = document.getElementById('current-file-name-label');
+        const currentChunkLabel = document.getElementById('current-file-chunk-label');
+        const currentFileProgressBar = document.getElementById('current-file-progress-bar');
+
+        const folderId = document.getElementById('upload-target-folder')?.value || '';
+        const customTitle = document.getElementById('file-title')?.value || '';
+        const notes = document.getElementById('file-notes')?.value || '';
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+            || document.querySelector('input[name="_token"]')?.value;
+
+        btnSubmit.disabled = true;
+        btnSubmit.classList.add('opacity-80', 'cursor-not-allowed');
+        if (btnIcon) btnIcon.classList.add('hidden');
+        if (btnSpinner) btnSpinner.classList.remove('hidden');
+        if (btnText) btnText.innerText = 'Mengunggah Berkas...';
+
+        if (progressContainer) {
+            progressContainer.classList.remove('hidden');
+            progressBar.style.width = '0%';
+            progressPercent.innerText = '0%';
+            statusText.innerText = 'Menyiapkan proses pengunggahan...';
+        }
+
+        const totalQueueBytes = uploadQueue.reduce((acc, f) => acc + f.size, 0);
+        let completedQueueBytes = 0;
+        const CHUNK_SIZE = 2 * 1024 * 1024; // 2MB chunk (safe under all mobile & server conditions)
+        let hasErrors = false;
+
+        for (let i = 0; i < uploadQueue.length; i++) {
+            if (isUploadCancelled) break;
+
+            const item = uploadQueue[i];
+            item.status = 'uploading';
+            renderQueueUI();
+
+            const totalChunks = Math.max(1, Math.ceil(item.size / CHUNK_SIZE));
+            const fileUuid = 'sf_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+            currentActiveFileUuid = fileUuid;
+
+            if (currentFileLabel) {
+                currentFileLabel.innerText = `📄 ${item.name} (${formatBytes(item.size)})`;
+            }
+            if (statusText) {
+                statusText.innerText = `Mengunggah berkas ${i + 1} dari ${uploadQueue.length}...`;
             }
 
-            // Show progress bar
-            if (progressContainer) {
-                progressContainer.classList.remove('hidden');
-                progressBar.style.width = '0%';
-                progressPercent.innerText = '0%';
-                statusText.innerText = 'Mengunggah berkas...';
-                if (progressBytes) progressBytes.innerText = `0 KB / ${formatBytes(totalUploadSize)}`;
-            }
+            let fileUploadFailed = false;
 
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
-                || document.querySelector('input[name="_token"]')?.value;
+            for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+                if (isUploadCancelled) break;
 
-            // Chunked upload for files > 2MB for cellular / mobile performance
-            if (fileInput.files.length === 1 && fileInput.files[0].size > 2 * 1024 * 1024) {
-                const singleFile = fileInput.files[0];
-                const folderId = document.getElementById('upload-target-folder')?.value || '';
-                const CHUNK_SIZE = 1024 * 1024; // 1MB per chunk
-                const totalChunks = Math.ceil(singleFile.size / CHUNK_SIZE);
-                const fileUuid = 'sf_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
-                let currentChunk = 0;
+                const start = chunkIndex * CHUNK_SIZE;
+                const end = Math.min(start + CHUNK_SIZE, item.size);
+                const chunkBlob = item.file.slice(start, end);
 
-                async function sendNextChunk() {
-                    if (currentChunk >= totalChunks) return;
+                const chunkFormData = new FormData();
+                chunkFormData.append('chunk', chunkBlob, item.name);
+                chunkFormData.append('chunk_index', chunkIndex);
+                chunkFormData.append('total_chunks', totalChunks);
+                chunkFormData.append('file_uuid', fileUuid);
+                chunkFormData.append('file_name', item.name);
+                if (folderId) chunkFormData.append('folder_id', folderId);
+                if (uploadQueue.length === 1 && customTitle) {
+                    chunkFormData.append('title', customTitle);
+                }
+                if (notes) chunkFormData.append('notes', notes);
 
-                    const start = currentChunk * CHUNK_SIZE;
-                    const end = Math.min(start + CHUNK_SIZE, singleFile.size);
-                    const chunkBlob = singleFile.slice(start, end);
+                // Retry logic: try up to 3 times per chunk for network resilience
+                let attempt = 0;
+                let chunkSuccess = false;
+                let lastError = null;
 
-                    const chunkFormData = new FormData();
-                    chunkFormData.append('chunk', chunkBlob, singleFile.name);
-                    chunkFormData.append('chunk_index', currentChunk);
-                    chunkFormData.append('total_chunks', totalChunks);
-                    chunkFormData.append('file_uuid', fileUuid);
-                    chunkFormData.append('file_name', singleFile.name);
-                    if (folderId) chunkFormData.append('folder_id', folderId);
-
+                while (attempt < 3 && !chunkSuccess && !isUploadCancelled) {
+                    attempt++;
                     try {
+                        currentUploadAbortController = new AbortController();
                         const response = await fetch("{{ route('drive.upload-chunk') }}", {
                             method: 'POST',
                             headers: {
@@ -2284,7 +2491,8 @@
                                 'X-Requested-With': 'XMLHttpRequest',
                                 'Accept': 'application/json'
                             },
-                            body: chunkFormData
+                            body: chunkFormData,
+                            signal: currentUploadAbortController.signal
                         });
 
                         const result = await response.json();
@@ -2292,102 +2500,77 @@
                             throw new Error(result.error || result.message || 'Gagal mengunggah potongan berkas');
                         }
 
-                        currentChunk++;
-                        const percent = Math.min(100, Math.round((currentChunk / totalChunks) * 100));
-                        if (progressBar) progressBar.style.width = percent + '%';
-                        if (progressPercent) progressPercent.innerText = percent + '%';
-                        if (progressBytes) progressBytes.innerText = `${formatBytes(end)} / ${formatBytes(singleFile.size)}`;
-                        if (statusText) {
-                            statusText.innerText = currentChunk < totalChunks 
-                                ? `Mengunggah potongan ${currentChunk}/${totalChunks} (Chunked)...`
-                                : 'Menggabungkan & memproses WebP...';
-                        }
-
-                        if (currentChunk < totalChunks) {
-                            sendNextChunk();
-                        } else {
-                            if (statusText) statusText.innerText = 'Unggahan chunk berhasil!';
-                            setTimeout(() => {
-                                window.location.href = "{{ route('drive.index', ['tab' => 'files']) }}";
-                            }, 500);
-                        }
+                        chunkSuccess = true;
                     } catch (err) {
-                        alert(err.message || 'Terjadi kendala jaringan saat pengunggahan berkas.');
-                        resetUploadState();
-                    }
-                }
-
-                sendNextChunk();
-                return;
-            }
-
-            const formData = new FormData(uploadForm);
-            const xhr = new XMLHttpRequest();
-
-            xhr.open('POST', uploadForm.action, true);
-            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-            if (csrfToken) {
-                xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
-            }
-
-            xhr.upload.addEventListener('progress', function(event) {
-                if (event.lengthComputable) {
-                    const percent = Math.min(99, Math.round((event.loaded / event.total) * 100));
-                    if (progressBar) progressBar.style.width = percent + '%';
-                    if (progressPercent) progressPercent.innerText = percent + '%';
-                    if (progressBytes) progressBytes.innerText = `${formatBytes(event.loaded)} / ${formatBytes(event.total)}`;
-
-                    if (percent >= 98 && statusText) {
-                        statusText.innerText = 'Menyimpan & memproses berkas...';
-                    }
-                }
-            });
-
-            xhr.addEventListener('load', function() {
-                if (xhr.status >= 200 && xhr.status < 400) {
-                    if (progressBar) progressBar.style.width = '100%';
-                    if (progressPercent) progressPercent.innerText = '100%';
-                    if (statusText) statusText.innerText = 'Unggahan berhasil! Memuat...';
-
-                    setTimeout(() => {
-                        window.location.href = "{{ route('drive.index', ['tab' => 'files']) }}";
-                    }, 400);
-                } else {
-                    let errorMsg = 'Gagal mengunggah berkas. Silakan periksa ukuran file atau coba lagi.';
-                    try {
-                        const json = JSON.parse(xhr.responseText);
-                        if (json.message) errorMsg = json.message;
-                        if (json.errors) {
-                            const firstKey = Object.keys(json.errors)[0];
-                            if (json.errors[firstKey][0]) errorMsg = json.errors[firstKey][0];
+                        lastError = err;
+                        if (isUploadCancelled) break;
+                        if (attempt < 3) {
+                            if (statusText) {
+                                statusText.innerText = `Koneksi tersendat, mencoba ulang potongan ${chunkIndex + 1}/${totalChunks}... (${attempt}/3)`;
+                            }
+                            await new Promise(r => setTimeout(r, 1000 * attempt));
                         }
-                    } catch(e) {}
-
-                    alert(errorMsg);
-                    resetUploadState();
+                    }
                 }
-            });
 
-            xhr.addEventListener('error', function() {
-                alert('Terjadi kendala jaringan saat mengunggah berkas.');
-                resetUploadState();
-            });
-
-            xhr.send(formData);
-
-            function resetUploadState() {
-                btnSubmit.disabled = false;
-                btnSubmit.classList.remove('opacity-80', 'cursor-not-allowed');
-                if (btnCancel) {
-                    btnCancel.disabled = false;
-                    btnCancel.classList.remove('opacity-50', 'cursor-not-allowed');
+                if (!chunkSuccess) {
+                    fileUploadFailed = true;
+                    item.status = 'error';
+                    item.errorMsg = lastError ? lastError.message : 'Gagal mengirim potongan';
+                    hasErrors = true;
+                    renderQueueUI();
+                    break;
                 }
-                if (btnIcon) btnIcon.classList.remove('hidden');
-                if (btnSpinner) btnSpinner.classList.add('hidden');
-                if (btnText) btnText.innerText = 'Simpan ke SwanDrive';
-                if (progressContainer) progressContainer.classList.add('hidden');
+
+                const chunkPercent = Math.min(100, Math.round(((chunkIndex + 1) / totalChunks) * 100));
+                item.progress = chunkPercent;
+
+                if (currentFileProgressBar) currentFileProgressBar.style.width = chunkPercent + '%';
+                if (currentChunkLabel) currentChunkLabel.innerText = `${chunkPercent}% (${chunkIndex + 1}/${totalChunks})`;
+
+                const currentUploadedTotal = completedQueueBytes + end;
+                const overallPercent = Math.min(99, Math.round((currentUploadedTotal / Math.max(1, totalQueueBytes)) * 100));
+                if (progressBar) progressBar.style.width = overallPercent + '%';
+                if (progressPercent) progressPercent.innerText = overallPercent + '%';
+                if (progressBytes) progressBytes.innerText = `${formatBytes(currentUploadedTotal)} / ${formatBytes(totalQueueBytes)}`;
+
+                if (chunkIndex + 1 === totalChunks) {
+                    if (statusText) statusText.innerText = `Menyimpan & memproses ${item.name}...`;
+                }
             }
-        });
+
+            if (!fileUploadFailed && !isUploadCancelled) {
+                item.status = 'completed';
+                item.progress = 100;
+                completedQueueBytes += item.size;
+                renderQueueUI();
+            }
+        }
+
+        if (isUploadCancelled) {
+            resetUploadState();
+            return;
+        }
+
+        if (!hasErrors) {
+            if (progressBar) progressBar.style.width = '100%';
+            if (progressPercent) progressPercent.innerText = '100%';
+            if (statusText) statusText.innerText = 'Semua berkas berhasil disimpan!';
+
+            if (typeof showSwanToast === 'function') {
+                showSwanToast(`🎉 ${uploadQueue.length} berkas berhasil disimpan ke SwanDrive!`);
+            }
+
+            setTimeout(() => {
+                const redirectUrl = folderId 
+                    ? `{{ route('drive.index') }}?folder_id=${folderId}`
+                    : `{{ route('drive.index') }}`;
+                window.location.href = redirectUrl;
+            }, 600);
+        } else {
+            alert('Beberapa berkas gagal diunggah karena kendala jaringan atau kapasitas. Silakan periksa kembali daftar berkas.');
+            resetUploadState();
+        }
     }
 
     // Drag and Drop support
@@ -2412,10 +2595,17 @@
         dropzone.addEventListener('drop', (e) => {
             const dt = e.dataTransfer;
             const files = dt.files;
-            if (files.length > 0) {
-                document.getElementById('upload-input').files = files;
-                handleFileSelect(document.getElementById('upload-input'));
+            if (files && files.length > 0) {
+                addFilesToQueue(files);
             }
+        });
+    }
+
+    const uploadForm = document.getElementById('upload-form');
+    if (uploadForm) {
+        uploadForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            startQueueUpload();
         });
     }
 

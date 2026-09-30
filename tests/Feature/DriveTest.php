@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\StoredFile;
+use App\Models\UploadLink;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -454,5 +455,117 @@ class DriveTest extends TestCase
         $this->assertDatabaseMissing('folders', ['id' => $folder->id]);
         Storage::disk('local')->assertMissing($path1);
         Storage::disk('local')->assertMissing($path2);
+    }
+
+    public function test_user_can_upload_large_file_via_chunks(): void
+    {
+        $user = User::factory()->create();
+        $fileUuid = 'test_chunk_uuid_'.uniqid();
+
+        // Send chunk 0 of 2
+        $chunk0 = UploadedFile::fake()->createWithContent('chunk0.bin', 'PART_ONE_DATA_');
+        $res0 = $this->actingAs($user)->postJson(route('drive.upload-chunk'), [
+            'chunk' => $chunk0,
+            'chunk_index' => 0,
+            'total_chunks' => 2,
+            'file_uuid' => $fileUuid,
+            'file_name' => 'dokumen_besar.txt',
+            'title' => 'Dokumen Besar Saya',
+            'notes' => 'Catatan berkas besar',
+        ]);
+
+        $res0->assertStatus(200);
+        $res0->assertJson(['status' => 'chunk_saved', 'chunk_index' => 0]);
+
+        // Send chunk 1 of 2 (final chunk)
+        $chunk1 = UploadedFile::fake()->createWithContent('chunk1.bin', 'PART_TWO_DATA');
+        $res1 = $this->actingAs($user)->postJson(route('drive.upload-chunk'), [
+            'chunk' => $chunk1,
+            'chunk_index' => 1,
+            'total_chunks' => 2,
+            'file_uuid' => $fileUuid,
+            'file_name' => 'dokumen_besar.txt',
+            'title' => 'Dokumen Besar Saya',
+            'notes' => 'Catatan berkas besar',
+        ]);
+
+        $res1->assertStatus(200);
+        $res1->assertJson(['status' => 'completed']);
+
+        $this->assertDatabaseHas('stored_files', [
+            'user_id' => $user->id,
+            'title' => 'Dokumen Besar Saya',
+            'notes' => 'Catatan berkas besar',
+            'original_name' => 'dokumen_besar.txt',
+        ]);
+    }
+
+    public function test_user_can_abort_chunk_upload(): void
+    {
+        $user = User::factory()->create();
+        $fileUuid = 'abort_chunk_uuid_'.uniqid();
+
+        // Send chunk 0
+        $chunk0 = UploadedFile::fake()->createWithContent('chunk0.bin', 'SOME_DATA');
+        $this->actingAs($user)->postJson(route('drive.upload-chunk'), [
+            'chunk' => $chunk0,
+            'chunk_index' => 0,
+            'total_chunks' => 2,
+            'file_uuid' => $fileUuid,
+            'file_name' => 'batal_upload.txt',
+        ]);
+
+        // Call abort
+        $abortRes = $this->actingAs($user)->postJson(route('drive.upload-chunk.abort'), [
+            'file_uuid' => $fileUuid,
+        ]);
+
+        $abortRes->assertStatus(200);
+        $abortRes->assertJson(['status' => 'aborted']);
+    }
+
+    public function test_drop_link_can_receive_file_via_chunks(): void
+    {
+        $user = User::factory()->create();
+        $link = UploadLink::factory()->create([
+            'user_id' => $user->id,
+            'max_files' => 5,
+            'max_file_size_mb' => 100,
+            'expires_at' => now()->addDays(2),
+        ]);
+
+        $fileUuid = 'drop_chunk_uuid_'.uniqid();
+
+        // Send chunk 0
+        $chunk0 = UploadedFile::fake()->createWithContent('chunk0.bin', 'DROP_PART_1_');
+        $res0 = $this->postJson(route('drive.drop.upload-chunk', ['token' => $link->token]), [
+            'chunk' => $chunk0,
+            'chunk_index' => 0,
+            'total_chunks' => 2,
+            'file_uuid' => $fileUuid,
+            'file_name' => 'pengajuan_klien.pdf',
+            'uploader_name' => 'Klien Swan',
+        ]);
+        $res0->assertStatus(200);
+
+        // Send chunk 1
+        $chunk1 = UploadedFile::fake()->createWithContent('chunk1.bin', 'DROP_PART_2');
+        $res1 = $this->postJson(route('drive.drop.upload-chunk', ['token' => $link->token]), [
+            'chunk' => $chunk1,
+            'chunk_index' => 1,
+            'total_chunks' => 2,
+            'file_uuid' => $fileUuid,
+            'file_name' => 'pengajuan_klien.pdf',
+            'uploader_name' => 'Klien Swan',
+        ]);
+        $res1->assertStatus(200);
+        $res1->assertJson(['status' => 'completed']);
+
+        $this->assertDatabaseHas('stored_files', [
+            'user_id' => $user->id,
+            'upload_link_id' => $link->id,
+            'uploader_name' => 'Klien Swan',
+            'original_name' => 'pengajuan_klien.pdf',
+        ]);
     }
 }

@@ -512,14 +512,14 @@ class DriveController extends Controller
     {
         $request->validate([
             'files' => ['nullable', 'array'],
-            'files.*' => ['file', 'max:51200'], // max 50 MB per file
-            'file' => ['nullable', 'file', 'max:51200'],
+            'files.*' => ['file', 'max:262144'], // up to 256 MB per file
+            'file' => ['nullable', 'file', 'max:262144'],
             'title' => ['nullable', 'string', 'max:150'],
             'notes' => ['nullable', 'string', 'max:500'],
             'folder_id' => ['nullable', 'integer', 'exists:folders,id'],
         ], [
-            'files.*.max' => 'Ukuran salah satu berkas melebihi batas maksimal 50 MB.',
-            'file.max' => 'Ukuran berkas melebihi batas maksimal 50 MB.',
+            'files.*.max' => 'Ukuran salah satu berkas melebihi batas maksimal 256 MB.',
+            'file.max' => 'Ukuran berkas melebihi batas maksimal 256 MB.',
         ]);
 
         $folderId = $request->input('folder_id');
@@ -1180,12 +1180,14 @@ class DriveController extends Controller
     public function uploadChunk(Request $request): JsonResponse
     {
         $request->validate([
-            'chunk' => ['required', 'file'],
+            'chunk' => ['required', 'file', 'max:15360'],
             'chunk_index' => ['required', 'integer', 'min:0'],
             'total_chunks' => ['required', 'integer', 'min:1'],
             'file_uuid' => ['required', 'string', 'regex:/^[a-zA-Z0-9_-]+$/'],
             'file_name' => ['required', 'string', 'max:255'],
             'folder_id' => ['nullable', 'integer', 'exists:folders,id'],
+            'title' => ['nullable', 'string', 'max:150'],
+            'notes' => ['nullable', 'string', 'max:500'],
         ]);
 
         $user = $request->user();
@@ -1217,6 +1219,10 @@ class DriveController extends Controller
         }
 
         // All chunks arrived, assemble the complete file
+        @set_time_limit(600);
+        @ini_set('memory_limit', '512M');
+        ignore_user_abort(true);
+
         $extension = pathinfo($originalName, PATHINFO_EXTENSION);
         $safeExtension = $extension ? strtolower($extension) : 'bin';
         $finalFilename = Str::uuid().'.'.$safeExtension;
@@ -1238,6 +1244,7 @@ class DriveController extends Controller
             $partPath = Storage::disk('local')->path("{$tempDir}/chunk_{$i}.part");
             if (! file_exists($partPath)) {
                 fclose($outHandle);
+                @unlink($finalFullPath);
 
                 return response()->json(['error' => "Potongan berkas ke-{$i} hilang."], 400);
             }
@@ -1257,16 +1264,31 @@ class DriveController extends Controller
         Storage::disk('local')->deleteDirectory($tempDir);
 
         $sizeBytes = filesize($finalFullPath);
+
+        // Storage Quota Enforcement
+        $userQuotaBytes = ($user->storage_quota_mb ?: 15360) * 1024 * 1024;
+        $currentUsedBytes = (int) $user->storedFiles()->sum('size_bytes');
+        if (($currentUsedBytes + $sizeBytes) > $userQuotaBytes) {
+            @unlink($finalFullPath);
+
+            return response()->json(['error' => 'Kapasitas penyimpanan SwanDrive Anda tidak mencukupi untuk menyimpan berkas ini.'], 422);
+        }
+
         $mimeType = mime_content_type($finalFullPath) ?: 'application/octet-stream';
         $category = StoredFile::detectCategory($safeExtension, $mimeType);
 
-        // Generate webp thumbnail if file is an image
+        $disk = $this->resolveStorageDisk();
+
+        // Generate webp thumbnail if file is an image using full local file path
         $thumbnailPath = null;
         if ($category === 'image') {
-            $thumbnailPath = $this->generateWebpThumbnail($finalRelativePath, $user->id);
+            try {
+                $thumbnailPath = $this->generateWebpThumbnail($finalFullPath, $user->id, $disk);
+            } catch (\Throwable $e) {
+                Log::warning('Thumbnail generation error in uploadChunk: '.$e->getMessage());
+            }
         }
 
-        $disk = $this->resolveStorageDisk();
         if ($disk !== 'local') {
             try {
                 $fileStream = fopen($finalFullPath, 'r');
@@ -1275,24 +1297,19 @@ class DriveController extends Controller
                     fclose($fileStream);
                 }
                 Storage::disk('local')->delete($finalRelativePath);
-
-                if ($thumbnailPath && Storage::disk('local')->exists($thumbnailPath)) {
-                    $thumbStream = fopen(Storage::disk('local')->path($thumbnailPath), 'r');
-                    Storage::disk($disk)->put($thumbnailPath, $thumbStream);
-                    if (is_resource($thumbStream)) {
-                        fclose($thumbStream);
-                    }
-                    Storage::disk('local')->delete($thumbnailPath);
-                }
             } catch (\Throwable $e) {
                 Log::warning("uploadChunk transfer to [{$disk}] failed: ".$e->getMessage().'. Kept file on local disk.');
                 $disk = 'local';
             }
         }
 
+        $title = $request->filled('title')
+            ? trim($request->input('title'))
+            : pathinfo($originalName, PATHINFO_FILENAME);
+
         $storedFile = $user->storedFiles()->create([
             'folder_id' => $folderId,
-            'title' => pathinfo($originalName, PATHINFO_FILENAME),
+            'title' => $title,
             'original_name' => $originalName,
             'file_path' => $finalRelativePath,
             'thumbnail_path' => $thumbnailPath,
@@ -1303,18 +1320,35 @@ class DriveController extends Controller
             'share_token' => Str::random(40),
             'is_public' => false,
             'download_count' => 0,
+            'notes' => $request->input('notes'),
         ]);
 
         return response()->json([
             'status' => 'completed',
             'progress' => 100,
-            'message' => 'Berkas berhasil diunggah dengan teknik chunking!',
+            'message' => 'Berkas berhasil disimpan ke SwanDrive!',
             'file' => [
                 'id' => $storedFile->id,
                 'title' => $storedFile->title,
                 'size_formatted' => $storedFile->formatted_size,
             ],
         ]);
+    }
+
+    /**
+     * Abort and clean up temporary chunks when an upload is cancelled.
+     */
+    public function abortChunkUpload(Request $request): JsonResponse
+    {
+        $request->validate([
+            'file_uuid' => ['required', 'string', 'regex:/^[a-zA-Z0-9_-]+$/'],
+        ]);
+
+        $user = $request->user();
+        $tempDir = 'temp_chunks/'.$user->id.'/'.$request->input('file_uuid');
+        Storage::disk('local')->deleteDirectory($tempDir);
+
+        return response()->json(['status' => 'aborted']);
     }
 
     /**

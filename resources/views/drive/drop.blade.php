@@ -367,16 +367,15 @@
 
         const uploadForm = document.getElementById('drop-upload-form');
         if (uploadForm) {
-            uploadForm.addEventListener('submit', function(e) {
+            uploadForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
 
                 const fileInput = document.getElementById('drop-file-input');
                 if (!fileInput.files || fileInput.files.length === 0) return;
 
-                let totalSize = 0;
-                for (let i = 0; i < fileInput.files.length; i++) {
-                    totalSize += fileInput.files[i].size;
-                }
+                const files = Array.from(fileInput.files);
+                const totalFiles = files.length;
+                let totalBytes = files.reduce((acc, f) => acc + f.size, 0);
 
                 const btn = document.getElementById('btn-submit');
                 const btnIcon = document.getElementById('btn-icon');
@@ -398,70 +397,106 @@
                     progressContainer.classList.remove('hidden');
                     progressBar.style.width = '0%';
                     progressPercent.innerText = '0%';
-                    statusText.innerText = 'Mengunggah berkas...';
-                    progressBytes.innerText = `0 KB / ${formatBytes(totalSize)}`;
+                    statusText.innerText = 'Menyiapkan pengunggahan...';
+                    progressBytes.innerText = `0 KB / ${formatBytes(totalBytes)}`;
                 }
 
-                const formData = new FormData(uploadForm);
-                const xhr = new XMLHttpRequest();
-
-                xhr.open('POST', uploadForm.action, true);
-                xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                const uploaderName = document.getElementById('uploader_name')?.value || '';
+                const uploaderNotes = document.getElementById('uploader_notes')?.value || '';
                 const csrfToken = document.querySelector('input[name="_token"]')?.value;
-                if (csrfToken) {
-                    xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
-                }
 
-                xhr.upload.addEventListener('progress', function(event) {
-                    if (event.lengthComputable) {
-                        const percent = Math.min(99, Math.round((event.loaded / event.total) * 100));
+                const CHUNK_SIZE = 2 * 1024 * 1024; // 2MB
+                let completedBytes = 0;
+                let hasFailed = false;
+
+                for (let fileIndex = 0; fileIndex < totalFiles; fileIndex++) {
+                    const currentFile = files[fileIndex];
+                    const totalChunks = Math.max(1, Math.ceil(currentFile.size / CHUNK_SIZE));
+                    const fileUuid = 'drop_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
+
+                    if (statusText) {
+                        statusText.innerText = totalFiles > 1 
+                            ? `Mengunggah berkas ${fileIndex + 1} dari ${totalFiles}: ${currentFile.name}...`
+                            : `Mengunggah ${currentFile.name}...`;
+                    }
+
+                    for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+                        const start = chunkIndex * CHUNK_SIZE;
+                        const end = Math.min(start + CHUNK_SIZE, currentFile.size);
+                        const chunkBlob = currentFile.slice(start, end);
+
+                        const chunkFormData = new FormData();
+                        chunkFormData.append('chunk', chunkBlob, currentFile.name);
+                        chunkFormData.append('chunk_index', chunkIndex);
+                        chunkFormData.append('total_chunks', totalChunks);
+                        chunkFormData.append('file_uuid', fileUuid);
+                        chunkFormData.append('file_name', currentFile.name);
+                        if (uploaderName) chunkFormData.append('uploader_name', uploaderName);
+                        if (uploaderNotes) chunkFormData.append('uploader_notes', uploaderNotes);
+
+                        let attempt = 0;
+                        let chunkSuccess = false;
+                        let lastError = null;
+
+                        while (attempt < 3 && !chunkSuccess) {
+                            attempt++;
+                            try {
+                                const response = await fetch("{{ route('drive.drop.upload-chunk', ['token' => $link->token]) }}", {
+                                    method: 'POST',
+                                    headers: {
+                                        'X-CSRF-TOKEN': csrfToken,
+                                        'X-Requested-With': 'XMLHttpRequest',
+                                        'Accept': 'application/json'
+                                    },
+                                    body: chunkFormData
+                                });
+
+                                const result = await response.json();
+                                if (!response.ok) {
+                                    throw new Error(result.error || result.message || 'Gagal mengunggah potongan');
+                                }
+                                chunkSuccess = true;
+                            } catch (err) {
+                                lastError = err;
+                                if (attempt < 3) {
+                                    await new Promise(r => setTimeout(r, 1000 * attempt));
+                                }
+                            }
+                        }
+
+                        if (!chunkSuccess) {
+                            hasFailed = true;
+                            alert(`Gagal mengunggah "${currentFile.name}": ` + (lastError?.message || 'Kendala jaringan'));
+                            break;
+                        }
+
+                        const currentUploadedTotal = completedBytes + end;
+                        const percent = Math.min(99, Math.round((currentUploadedTotal / Math.max(1, totalBytes)) * 100));
                         if (progressBar) progressBar.style.width = percent + '%';
                         if (progressPercent) progressPercent.innerText = percent + '%';
-                        if (progressBytes) progressBytes.innerText = `${formatBytes(event.loaded)} / ${formatBytes(event.total)}`;
-
-                        if (percent >= 98 && statusText) {
-                            statusText.innerText = 'Menyimpan & memproses berkas...';
-                        }
+                        if (progressBytes) progressBytes.innerText = `${formatBytes(currentUploadedTotal)} / ${formatBytes(totalBytes)}`;
                     }
-                });
 
-                xhr.addEventListener('load', function() {
-                    if (xhr.status >= 200 && xhr.status < 400) {
-                        if (progressBar) progressBar.style.width = '100%';
-                        if (progressPercent) progressPercent.innerText = '100%';
-                        if (statusText) statusText.innerText = 'Unggahan berhasil!';
+                    if (hasFailed) break;
+                    completedBytes += currentFile.size;
+                }
 
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 400);
-                    } else {
-                        let errorMsg = 'Gagal mengirim berkas. Silakan coba lagi.';
-                        try {
-                            const json = JSON.parse(xhr.responseText);
-                            if (json.message) errorMsg = json.message;
-                        } catch(e) {}
+                if (!hasFailed) {
+                    if (progressBar) progressBar.style.width = '100%';
+                    if (progressPercent) progressPercent.innerText = '100%';
+                    if (statusText) statusText.innerText = 'Berkas berhasil dikirim!';
 
-                        alert(errorMsg);
-                        btn.disabled = false;
-                        btn.classList.remove('opacity-80', 'cursor-not-allowed');
-                        if (btnIcon) btnIcon.classList.remove('hidden');
-                        if (btnSpinner) btnSpinner.classList.add('hidden');
-                        btnText.innerText = 'Kirim Berkas Sekarang';
-                        if (progressContainer) progressContainer.classList.add('hidden');
-                    }
-                });
-
-                xhr.addEventListener('error', function() {
-                    alert('Terjadi kendala koneksi saat mengunggah berkas.');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 500);
+                } else {
                     btn.disabled = false;
                     btn.classList.remove('opacity-80', 'cursor-not-allowed');
                     if (btnIcon) btnIcon.classList.remove('hidden');
                     if (btnSpinner) btnSpinner.classList.add('hidden');
                     btnText.innerText = 'Kirim Berkas Sekarang';
                     if (progressContainer) progressContainer.classList.add('hidden');
-                });
-
-                xhr.send(formData);
+                }
             });
         }
     </script>
