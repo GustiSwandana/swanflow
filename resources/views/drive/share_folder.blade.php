@@ -279,6 +279,7 @@
                             </button>
 
                             <a href="{{ $downloadUrl }}"
+                               download="{{ $file->original_name }}"
                                class="py-2 px-3 rounded-[14px] bg-slate-100 hover:bg-slate-200/80 dark:bg-white/10 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white text-xs font-bold border border-slate-200 dark:border-white/15 flex items-center gap-1 active:scale-95 transition-all">
                                 <svg class="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
@@ -334,7 +335,7 @@
 
                 <!-- Action Download & Close -->
                 <div class="flex items-center gap-2 pt-2">
-                    <a id="pv-download-link" href="#" class="flex-1 py-3 px-4 rounded-[18px] bg-teal-500 hover:bg-teal-400 text-white text-xs font-black shadow-lg shadow-teal-500/25 flex items-center justify-center gap-2 transition-all cursor-pointer">
+                    <a id="pv-download-link" href="#" download class="flex-1 py-3 px-4 rounded-[18px] bg-teal-500 hover:bg-teal-400 text-white text-xs font-black shadow-lg shadow-teal-500/25 flex items-center justify-center gap-2 transition-all cursor-pointer">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
                         </svg>
@@ -439,8 +440,11 @@
 
         function openFilePreviewModal(title, size, ext, previewUrl, downloadUrl, notes) {
             document.getElementById('pv-title').innerText = title;
-            document.getElementById('pv-size').innerText = size;
-            document.getElementById('pv-download-link').href = downloadUrl;
+            const pvDlLink = document.getElementById('pv-download-link');
+            if (pvDlLink) {
+                pvDlLink.href = downloadUrl;
+                pvDlLink.setAttribute('download', title || 'file');
+            }
             document.getElementById('pv-external-link').href = previewUrl;
 
             const container = document.getElementById('pv-container');

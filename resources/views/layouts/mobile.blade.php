@@ -3445,10 +3445,10 @@
                 }
             }, { passive: true });
 
-            // Register PWA Service Worker (v31)
+            // Register PWA Service Worker (v34)
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
-                    navigator.serviceWorker.register('/sw.js?v=31')
+                    navigator.serviceWorker.register('/sw.js?v=34')
                         .then((reg) => {
                             reg.update();
                             document.addEventListener('visibilitychange', () => {

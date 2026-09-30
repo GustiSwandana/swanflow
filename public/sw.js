@@ -1,5 +1,5 @@
-// SwanFlow PWA Service Worker (v1.0.33 - Fixed Cache Invalidation)
-const CACHE_NAME = 'swanflow-cache-v33';
+// SwanFlow PWA Service Worker (v1.0.34 - Exclude File Downloads & Stream Previews)
+const CACHE_NAME = 'swanflow-cache-v34';
 const OFFLINE_URL = '/offline.html';
 
 const STATIC_ASSETS = [
@@ -55,12 +55,34 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
+    // 0. EXCLUDE ALL FILE DOWNLOADS, PREVIEWS, STREAMING, AND EXPORTS
+    // Allow browser native download manager to handle them directly without SW interference
+    if (
+        url.pathname.includes('/download') ||
+        url.pathname.includes('/preview') ||
+        url.pathname.includes('/export') ||
+        url.pathname.includes('/stream') ||
+        url.pathname.startsWith('/share/') ||
+        url.searchParams.has('download')
+    ) {
+        return;
+    }
+
     // A. Navigation / Page Requests (HTML): Network-First with Cache Fallback and Offline Shell Fallback
     if (request.mode === 'navigate') {
         event.respondWith(
             fetch(request)
                 .then((networkResponse) => {
-                    if (networkResponse && networkResponse.status === 200) {
+                    const contentType = networkResponse.headers.get('content-type') || '';
+                    const contentDisposition = networkResponse.headers.get('content-disposition') || '';
+
+                    // Only cache regular HTML pages (never cache attachment responses)
+                    if (
+                        networkResponse &&
+                        networkResponse.status === 200 &&
+                        contentType.includes('text/html') &&
+                        !contentDisposition.includes('attachment')
+                    ) {
                         const responseClone = networkResponse.clone();
                         caches.open(CACHE_NAME).then((cache) => {
                             cache.put(request, responseClone);
@@ -68,7 +90,12 @@ self.addEventListener('fetch', (event) => {
                     }
                     return networkResponse;
                 })
-                .catch(async () => {
+                .catch(async (error) => {
+                    // If navigation was aborted by browser (e.g. download handoff), never return offline shell!
+                    if (error && (error.name === 'AbortError' || (error.message && error.message.includes('aborted')))) {
+                        return new Response(null, { status: 204, statusText: 'No Content' });
+                    }
+
                     const cache = await caches.open(CACHE_NAME);
                     // 1. Try cached page first (e.g. dashboard, transactions)
                     const cachedPage = await cache.match(request);

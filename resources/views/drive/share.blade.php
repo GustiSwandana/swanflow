@@ -251,6 +251,7 @@
             <div class="space-y-2.5 pt-1">
                 <!-- Primary Download Button -->
                 <a href="{{ route('drive.shared.download', ['token' => $file->share_token]) }}"
+                   download="{{ $file->original_name }}"
                    class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-teal-500 via-emerald-500 to-teal-600 hover:from-teal-400 hover:to-emerald-400 active:scale-[0.98] text-white font-black text-sm sm:text-base shadow-xl shadow-teal-500/25 hover:shadow-teal-500/35 flex items-center justify-center gap-2.5 border border-white/20 transition-all cursor-pointer">
                     <svg class="w-5 h-5 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
@@ -329,6 +330,7 @@
                     </div>
                     <div class="flex items-center gap-2">
                         <a href="{{ route('drive.shared.download', ['token' => $file->share_token]) }}"
+                           download="{{ $file->original_name }}"
                            class="px-3.5 py-1.5 rounded-xl bg-teal-500 hover:bg-teal-400 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg transition-transform active:scale-95 cursor-pointer">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.3">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />

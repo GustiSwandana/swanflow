@@ -869,7 +869,19 @@ class DriveController extends Controller
 
         $file->increment('download_count');
 
-        return Storage::disk($disk)->download($file->file_path, $file->original_name);
+        try {
+            return Storage::disk($disk)->download($file->file_path, $file->original_name);
+        } catch (\Throwable $e) {
+            Log::warning("DriveController download from [{$disk}] failed: ".$e->getMessage());
+            $fallbackDisk = ($disk === 'google') ? 'local' : 'google';
+            if ($fallbackDisk === 'local' && Storage::disk('local')->exists($file->file_path)) {
+                return Storage::disk('local')->download($file->file_path, $file->original_name);
+            }
+            if ($fallbackDisk === 'google' && $this->isGoogleDriveConnected() && Storage::disk('google')->exists($file->file_path)) {
+                return Storage::disk('google')->download($file->file_path, $file->original_name);
+            }
+            throw $e;
+        }
     }
 
     /**
@@ -1091,12 +1103,31 @@ class DriveController extends Controller
         $disk = $this->getDiskForFile($file);
 
         if (! Storage::disk($disk)->exists($file->file_path)) {
-            abort(404, 'File fisik tidak ditemukan pada server.');
+            $altDisk = ($disk === 'local') ? 'google' : 'local';
+            if ($altDisk === 'google' && $this->isGoogleDriveConnected() && Storage::disk('google')->exists($file->file_path)) {
+                $disk = 'google';
+            } elseif ($altDisk === 'local' && Storage::disk('local')->exists($file->file_path)) {
+                $disk = 'local';
+            } else {
+                abort(404, 'File fisik tidak ditemukan pada server.');
+            }
         }
 
         $file->increment('download_count');
 
-        return Storage::disk($disk)->download($file->file_path, $file->original_name);
+        try {
+            return Storage::disk($disk)->download($file->file_path, $file->original_name);
+        } catch (\Throwable $e) {
+            Log::warning("Shared download from [{$disk}] failed: ".$e->getMessage());
+            $fallbackDisk = ($disk === 'google') ? 'local' : 'google';
+            if ($fallbackDisk === 'local' && Storage::disk('local')->exists($file->file_path)) {
+                return Storage::disk('local')->download($file->file_path, $file->original_name);
+            }
+            if ($fallbackDisk === 'google' && $this->isGoogleDriveConnected() && Storage::disk('google')->exists($file->file_path)) {
+                return Storage::disk('google')->download($file->file_path, $file->original_name);
+            }
+            throw $e;
+        }
     }
 
     /**
@@ -1129,7 +1160,14 @@ class DriveController extends Controller
         $disk = $this->getDiskForFile($file);
 
         if (! Storage::disk($disk)->exists($file->file_path)) {
-            abort(404, 'File fisik tidak ditemukan pada server.');
+            $altDisk = ($disk === 'local') ? 'google' : 'local';
+            if ($altDisk === 'google' && $this->isGoogleDriveConnected() && Storage::disk('google')->exists($file->file_path)) {
+                $disk = 'google';
+            } elseif ($altDisk === 'local' && Storage::disk('local')->exists($file->file_path)) {
+                $disk = 'local';
+            } else {
+                abort(404, 'File fisik tidak ditemukan pada server.');
+            }
         }
 
         $mimeType = $file->mime_type ?: Storage::disk($disk)->mimeType($file->file_path) ?: 'application/octet-stream';
@@ -1155,12 +1193,31 @@ class DriveController extends Controller
         $disk = $this->getDiskForFile($file);
 
         if (! Storage::disk($disk)->exists($file->file_path)) {
-            abort(404, 'File fisik tidak ditemukan pada server.');
+            $altDisk = ($disk === 'local') ? 'google' : 'local';
+            if ($altDisk === 'google' && $this->isGoogleDriveConnected() && Storage::disk('google')->exists($file->file_path)) {
+                $disk = 'google';
+            } elseif ($altDisk === 'local' && Storage::disk('local')->exists($file->file_path)) {
+                $disk = 'local';
+            } else {
+                abort(404, 'File fisik tidak ditemukan pada server.');
+            }
         }
 
         $file->increment('download_count');
 
-        return Storage::disk($disk)->download($file->file_path, $file->original_name);
+        try {
+            return Storage::disk($disk)->download($file->file_path, $file->original_name);
+        } catch (\Throwable $e) {
+            Log::warning("Shared folder download from [{$disk}] failed: ".$e->getMessage());
+            $fallbackDisk = ($disk === 'google') ? 'local' : 'google';
+            if ($fallbackDisk === 'local' && Storage::disk('local')->exists($file->file_path)) {
+                return Storage::disk('local')->download($file->file_path, $file->original_name);
+            }
+            if ($fallbackDisk === 'google' && $this->isGoogleDriveConnected() && Storage::disk('google')->exists($file->file_path)) {
+                return Storage::disk('google')->download($file->file_path, $file->original_name);
+            }
+            throw $e;
+        }
     }
 
     /**

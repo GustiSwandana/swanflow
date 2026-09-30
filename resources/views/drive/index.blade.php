@@ -803,6 +803,7 @@
 
                             <!-- Download -->
                             <a href="{{ route('drive.download', $file) }}"
+                               download="{{ $file->original_name }}"
                                class="w-full py-2.5 px-3 rounded-[16px] bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200/70 dark:border-white/10 flex items-center justify-center gap-1.5 active:scale-[0.98] transition-all ios-press"
                                title="Unduh ke Perangkat">
                                 <svg class="w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2">
@@ -1632,7 +1633,7 @@
                         </svg>
                         <span>Transfer</span>
                     </button>
-                    <a id="pv-download-btn" href="#" class="py-2.5 px-3.5 sm:px-4 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-95 text-white text-xs font-extrabold shadow-md shadow-teal-500/25 flex items-center gap-1.5 transition-all cursor-pointer">
+                    <a id="pv-download-btn" href="#" download class="py-2.5 px-3.5 sm:px-4 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-95 text-white text-xs font-extrabold shadow-md shadow-teal-500/25 flex items-center gap-1.5 transition-all cursor-pointer">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
                         </svg>
@@ -3163,7 +3164,11 @@
         document.getElementById('pv-ext-label').innerText = label || (ext ? ext.toUpperCase() : 'BERKAS');
         document.getElementById('pv-date').innerText = date || '';
         document.getElementById('pv-open-tab').href = previewUrl;
-        document.getElementById('pv-download-btn').href = downloadUrl;
+        const pvDlBtn = document.getElementById('pv-download-btn');
+        if (pvDlBtn) {
+            pvDlBtn.href = downloadUrl;
+            pvDlBtn.setAttribute('download', originalName || title || 'file');
+        }
 
         // Notes
         const notesBox = document.getElementById('pv-notes-box');
@@ -3297,7 +3302,7 @@
                         ${customMsg || 'Format berkas ini tidak dapat dipratinjau langsung di browser, silakan unduh untuk membukanya.'}
                     </p>
                 </div>
-                <a href="${downloadUrl}" class="px-4 py-2 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-95 text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs">
+                <a href="${downloadUrl}" download="${originalName || 'file'}" class="px-4 py-2 rounded-xl bg-teal-500 hover:bg-teal-600 active:scale-95 text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
                     </svg>
