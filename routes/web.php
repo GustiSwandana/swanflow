@@ -93,8 +93,17 @@ Route::get('/swanflow-status', function () {
     $buildPath = public_path('build/assets');
     $buildFiles = is_dir($buildPath) ? array_values(array_diff(scandir($buildPath), ['.', '..'])) : [];
 
+    $gitLog = 'unavailable';
+    try {
+        if (function_exists('shell_exec')) {
+            $gitLog = trim(@shell_exec('git log -1 --oneline 2>&1') ?? 'unavailable');
+        }
+    } catch (Throwable $e) {
+        $gitLog = $e->getMessage();
+    }
+
     return response()->json([
-        'git' => trim(shell_exec('git log -1 --oneline 2>&1') ?? 'shell_exec unavailable'),
+        'git' => $gitLog,
         'manifest' => file_exists(public_path('build/manifest.json')) ? json_decode(file_get_contents(public_path('build/manifest.json')), true) : null,
         'build_assets' => $buildFiles,
         'public_path' => public_path(),
@@ -102,11 +111,18 @@ Route::get('/swanflow-status', function () {
 });
 
 Route::get('/swanflow-git-pull', function () {
-    $output = shell_exec('git pull origin main 2>&1') ?? 'shell_exec disabled';
+    $output = 'unavailable';
+    try {
+        if (function_exists('shell_exec')) {
+            $output = trim(@shell_exec('git pull origin main 2>&1') ?? 'disabled');
+        }
+    } catch (Throwable $e) {
+        $output = $e->getMessage();
+    }
 
     return response()->json([
         'status' => 'success',
-        'output' => trim($output),
+        'output' => $output,
     ]);
 });
 
