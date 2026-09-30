@@ -57,24 +57,22 @@ class AppServiceProvider extends ServiceProvider
                 }
             }
 
-            if (! empty($config['serviceAccountKey']) && file_exists($config['serviceAccountKey'])) {
+            // Always prioritize User OAuth Refresh Token (personal Google Drive account)
+            if (! empty($refreshToken)) {
+                $client->setClientId($config['clientId'] ?? '');
+                $client->setClientSecret($config['clientSecret'] ?? '');
+                $client->refreshToken($refreshToken);
+            } elseif (! empty($config['serviceAccountKey']) && file_exists($config['serviceAccountKey']) && ! empty($config['teamDriveId'])) {
                 $client->setAuthConfig($config['serviceAccountKey']);
                 $client->addScope(Drive::DRIVE);
             } else {
                 $client->setClientId($config['clientId'] ?? '');
                 $client->setClientSecret($config['clientSecret'] ?? '');
-                if (! empty($refreshToken)) {
-                    $client->refreshToken($refreshToken);
-                }
             }
 
             $service = new Drive($client);
-            $folder = $config['folder'] ?? $config['folderName'] ?? null;
-            if (empty($folder)) {
-                $folder = (! empty($config['folderId']) && ! preg_match('/^[a-zA-Z0-9_-]{25,}$/', (string) $config['folderId']))
-                    ? $config['folderId']
-                    : 'SwanFlow Uploads';
-            }
+            $folderId = $config['folderId'] ?? null;
+            $folder = ! empty($folderId) ? $folderId : ($config['folder'] ?? 'root');
             $adapter = new GoogleDriveAdapter($service, $folder, $options);
             $driver = new Filesystem($adapter);
 

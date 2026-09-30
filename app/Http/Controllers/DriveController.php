@@ -341,8 +341,9 @@ class DriveController extends Controller
         }
 
         $serviceAccount = config('filesystems.disks.google.serviceAccountKey');
+        $teamDriveId = config('filesystems.disks.google.teamDriveId');
 
-        return ! empty($serviceAccount) && file_exists($serviceAccount);
+        return ! empty($serviceAccount) && file_exists($serviceAccount) && ! empty($teamDriveId);
     }
 
     /**
@@ -350,8 +351,12 @@ class DriveController extends Controller
      */
     public function resolveStorageDisk(): string
     {
+        if ($this->isGoogleDriveConnected()) {
+            return 'google';
+        }
+
         $defaultDisk = config('filesystems.default', 'local');
-        if ($defaultDisk === 'google' && ! $this->isGoogleDriveConnected()) {
+        if ($defaultDisk === 'google') {
             return 'local';
         }
 

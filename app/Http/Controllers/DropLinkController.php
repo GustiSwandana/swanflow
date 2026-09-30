@@ -180,8 +180,9 @@ class DropLinkController extends Controller
             $sizeBytes = $uploadedFile->getSize();
             $category = StoredFile::detectCategory($extension, $mimeType);
 
-            $disk = config('filesystems.default');
-            if ($disk === 'google' && empty(config('filesystems.disks.google.refreshToken')) && ! file_exists(storage_path('app/google_drive_token.json'))) {
+            $hasGoogle = ! empty(config('filesystems.disks.google.refreshToken')) || file_exists(storage_path('app/google_drive_token.json'));
+            $disk = $hasGoogle ? 'google' : config('filesystems.default', 'local');
+            if ($disk === 'google' && ! $hasGoogle) {
                 $disk = 'local';
             }
 
@@ -319,8 +320,9 @@ class DropLinkController extends Controller
 
         $folder = $link->getOrCreateFolder();
 
-        $disk = config('filesystems.default');
-        if ($disk === 'google' && empty(config('filesystems.disks.google.refreshToken')) && ! file_exists(storage_path('app/google_drive_token.json'))) {
+        $hasGoogle = ! empty(config('filesystems.disks.google.refreshToken')) || file_exists(storage_path('app/google_drive_token.json'));
+        $disk = $hasGoogle ? 'google' : config('filesystems.default', 'local');
+        if ($disk === 'google' && ! $hasGoogle) {
             $disk = 'local';
         }
 
