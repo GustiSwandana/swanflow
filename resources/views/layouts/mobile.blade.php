@@ -4110,6 +4110,122 @@
                 })();
         </script>
 
+        @auth
+        <!-- SwanFlow 5-Minute Inactivity Auto-Logout Watcher -->
+        <script>
+            (function() {
+                const INACTIVITY_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
+                const KEEPALIVE_INTERVAL_MS = 45 * 1000;    // Ping keepalive every 45s while user is active
+                const STORAGE_KEY = 'swanflow_last_activity';
+                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+                const keepAliveUrl = "{{ route('session.keepalive') }}";
+                const logoutExpiredUrl = "{{ route('logout', ['expired' => 1]) }}";
+
+                let lastKeepAlivePing = Date.now();
+                let isLoggingOut = false;
+
+                // Record user activity in localStorage
+                const recordActivity = () => {
+                    if (isLoggingOut) return;
+                    const now = Date.now();
+                    try {
+                        localStorage.setItem(STORAGE_KEY, now.toString());
+                    } catch (e) {}
+
+                    // If user is actively interacting and at least 45s passed since last server heartbeat, refresh server session
+                    if (now - lastKeepAlivePing >= KEEPALIVE_INTERVAL_MS) {
+                        lastKeepAlivePing = now;
+                        if (csrfToken && navigator.onLine) {
+                            fetch(keepAliveUrl, {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': csrfToken,
+                                    'Accept': 'application/json',
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ active: true })
+                            }).catch(() => {});
+                        }
+                    }
+                };
+
+                // Trigger logout when 5 minutes of inactivity have elapsed
+                const checkInactivityTimeout = () => {
+                    if (isLoggingOut) return;
+                    let lastActivity = Date.now();
+                    try {
+                        const rawLastActivity = localStorage.getItem(STORAGE_KEY);
+                        if (rawLastActivity) {
+                            lastActivity = parseInt(rawLastActivity, 10);
+                        }
+                    } catch (e) {}
+
+                    const now = Date.now();
+                    if (now - lastActivity >= INACTIVITY_TIMEOUT_MS) {
+                        isLoggingOut = true;
+                        try {
+                            localStorage.removeItem(STORAGE_KEY);
+                        } catch (e) {}
+                        window.location.replace(logoutExpiredUrl);
+                    }
+                };
+
+                // Track genuine user interactions (clicks, touches, keyboard, scroll)
+                const userEvents = ['mousedown', 'mousemove', 'keydown', 'touchstart', 'touchmove', 'scroll', 'click'];
+                let activityThrottle = null;
+                userEvents.forEach(evt => {
+                    window.addEventListener(evt, () => {
+                        if (!activityThrottle) {
+                            activityThrottle = setTimeout(() => {
+                                recordActivity();
+                                activityThrottle = null;
+                            }, 1000);
+                        }
+                    }, { passive: true });
+                });
+
+                // Check inactivity every 5 seconds
+                setInterval(checkInactivityTimeout, 5000);
+
+                // Check immediately when device/tab resumes from sleep, screen lock, or background app switch
+                document.addEventListener('visibilitychange', () => {
+                    if (document.visibilityState === 'visible') {
+                        checkInactivityTimeout();
+                    }
+                });
+                window.addEventListener('pageshow', checkInactivityTimeout);
+                window.addEventListener('focus', checkInactivityTimeout);
+
+                // Initial activity stamp
+                recordActivity();
+
+                // Intercept fetch responses to catch any 401 Session Expired from server
+                const originalFetch = window.fetch;
+                window.fetch = async function(...args) {
+                    try {
+                        const response = await originalFetch.apply(this, args);
+                        if (response && response.status === 401) {
+                            try {
+                                const clone = response.clone();
+                                const data = await clone.json();
+                                if (data && (data.session_expired || data.redirect)) {
+                                    isLoggingOut = true;
+                                    try {
+                                        localStorage.removeItem(STORAGE_KEY);
+                                    } catch (e) {}
+                                    window.location.replace(data.redirect || "{{ route('login', ['expired' => 1]) }}");
+                                }
+                            } catch (e) {}
+                        }
+                        return response;
+                    } catch (err) {
+                        throw err;
+                    }
+                };
+            })();
+        </script>
+        @endauth
+
 
         <!-- PWA Install Prompt Card (Appears if browser supports installation) -->
         <div id="pwa-install-banner" class="hidden fixed banner-safe left-1/2 -translate-x-1/2 z-40 w-11/12 max-w-sm bg-slate-900/95 backdrop-blur-md text-white p-3.5 rounded-2xl shadow-2xl border border-slate-700/80 transition-all duration-300 transform translate-y-8 opacity-0">

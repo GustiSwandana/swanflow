@@ -103,6 +103,7 @@ Route::get('/swanflow-status', function () {
 
 Route::get('/swanflow-git-pull', function () {
     $output = shell_exec('git pull origin main 2>&1') ?? 'shell_exec disabled';
+
     return response()->json([
         'status' => 'success',
         'output' => trim($output),
@@ -164,9 +165,12 @@ Route::get('/uploads/{filename}', function ($filename) {
     abort(404);
 })->where('filename', '[a-zA-Z0-9_\-\.]+');
 
+// Logout Route (Accessible whether authenticated or expired, ensuring proper cleanup and redirect)
+Route::match(['get', 'post'], '/logout', [AuthController::class, 'logout'])->name('logout');
+
 // Protected Application Routes (Requires Authentication & Session Timeout Protection)
 Route::middleware(['auth', 'session.timeout'])->group(function () {
-    Route::match(['get', 'post'], '/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::post('/session/keepalive', [AuthController::class, 'keepAlive'])->name('session.keepalive');
 
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -235,6 +239,7 @@ Route::middleware(['auth', 'session.timeout'])->group(function () {
     Route::get('/drive/connect-google', [DriveController::class, 'connectGoogle'])->name('drive.connect');
     Route::get('/drive/callback', [DriveController::class, 'googleCallback'])->name('drive.callback');
     Route::patch('/drive/quota', [DriveController::class, 'updateQuota'])->name('drive.quota.update');
+    Route::post('/drive/sync-google-quota', [DriveController::class, 'syncGoogleQuota'])->name('drive.sync-google-quota');
     Route::get('/drive/{file}/preview', [DriveController::class, 'preview'])->name('drive.preview');
     Route::get('/drive/{file}/download', [DriveController::class, 'download'])->name('drive.download');
     Route::patch('/drive/{file}/share', [DriveController::class, 'toggleShare'])->name('drive.share.toggle');

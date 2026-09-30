@@ -82,4 +82,35 @@ class SessionTimeoutTest extends TestCase
         $response->assertSessionHas('warning');
         $this->assertGuest();
     }
+
+    public function test_keepalive_endpoint_refreshes_last_activity_time(): void
+    {
+        $user = User::factory()->create();
+        $oldTimestamp = now()->timestamp - 120; // 2 minutes ago
+
+        $response = $this->actingAs($user)
+            ->withSession(['last_activity_time' => $oldTimestamp])
+            ->postJson(route('session.keepalive'), ['active' => true]);
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            'status' => 'active',
+        ]);
+
+        $this->assertGreaterThan($oldTimestamp, session('last_activity_time'));
+    }
+
+    public function test_session_expires_after_5_minutes_of_inactivity(): void
+    {
+        $user = User::factory()->create();
+        config(['session.inactivity_timeout' => 5]);
+
+        // 301 seconds ago (> 5 minutes)
+        $response = $this->actingAs($user)
+            ->withSession(['last_activity_time' => now()->timestamp - 301])
+            ->get('/');
+
+        $response->assertRedirect('/login?expired=1');
+        $this->assertGuest();
+    }
 }

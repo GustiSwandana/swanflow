@@ -10,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -135,12 +136,28 @@ class DriveController extends Controller
             'received' => $receivedFilesCount,
         ];
 
-        // Storage quota calculation
-        $quotaMb = (int) ($user->storage_quota_mb ?: 500);
-        $quotaBytes = $quotaMb * 1024 * 1024;
+        // Storage quota calculation - Adapt to Google Drive
+        $isGoogleConnected = $this->isGoogleDriveConnected();
+        $gDriveQuota = $this->getGoogleDriveQuotaInfo();
+
+        if ($gDriveQuota && $gDriveQuota['limit_bytes'] > 0) {
+            $quotaBytes = (int) $gDriveQuota['limit_bytes'];
+            $quotaMb = (int) round($quotaBytes / (1024 * 1024));
+
+            if ($user->storage_quota_mb !== $quotaMb) {
+                $user->update(['storage_quota_mb' => $quotaMb]);
+            }
+        } else {
+            // Default 15 GB if Google Drive standard, or user configured quota
+            $quotaMb = (int) ($user->storage_quota_mb ?: 15360);
+            $quotaBytes = $quotaMb * 1024 * 1024;
+        }
+
         $storagePercent = min(100, max(0, round(($totalBytes / max(1, $quotaBytes)) * 100)));
 
-        if ($quotaBytes >= 1073741824) {
+        if ($quotaBytes >= 1099511627776) {
+            $formattedQuotaSize = number_format($quotaBytes / 1099511627776, ($quotaBytes % 1099511627776 === 0 ? 0 : 1), ',', '.').' TB';
+        } elseif ($quotaBytes >= 1073741824) {
             $formattedQuotaSize = number_format($quotaBytes / 1073741824, ($quotaBytes % 1073741824 === 0 ? 0 : 1), ',', '.').' GB';
         } elseif ($quotaBytes >= 1048576) {
             $formattedQuotaSize = number_format($quotaBytes / 1048576, 0, ',', '.').' MB';
@@ -148,8 +165,22 @@ class DriveController extends Controller
             $formattedQuotaSize = number_format($quotaBytes / 1024, 0, ',', '.').' KB';
         }
 
+        // Formatted Remaining Size
+        $remainingBytes = max(0, $quotaBytes - $totalBytes);
+        if ($remainingBytes >= 1099511627776) {
+            $formattedRemainingSize = number_format($remainingBytes / 1099511627776, 1, ',', '.').' TB';
+        } elseif ($remainingBytes >= 1073741824) {
+            $formattedRemainingSize = number_format($remainingBytes / 1073741824, 1, ',', '.').' GB';
+        } elseif ($remainingBytes >= 1048576) {
+            $formattedRemainingSize = number_format($remainingBytes / 1048576, 1, ',', '.').' MB';
+        } else {
+            $formattedRemainingSize = number_format($remainingBytes / 1024, 0, ',', '.').' KB';
+        }
+
         // Format total storage
-        if ($totalBytes >= 1073741824) {
+        if ($totalBytes >= 1099511627776) {
+            $formattedTotalSize = number_format($totalBytes / 1099511627776, 2, ',', '.').' TB';
+        } elseif ($totalBytes >= 1073741824) {
             $formattedTotalSize = number_format($totalBytes / 1073741824, 2, ',', '.').' GB';
         } elseif ($totalBytes >= 1048576) {
             $formattedTotalSize = number_format($totalBytes / 1048576, 1, ',', '.').' MB';
@@ -175,6 +206,7 @@ class DriveController extends Controller
             'quotaMb',
             'quotaBytes',
             'formattedQuotaSize',
+            'formattedRemainingSize',
             'storagePercent',
             'categoryCounts',
             'activeCategory',
@@ -183,15 +215,23 @@ class DriveController extends Controller
             'search',
             'uploadLinks',
             'activeTab',
-            'targetFileId'
+            'targetFileId',
+            'isGoogleConnected',
+            'gDriveQuota'
         ));
     }
 
     public function connectGoogle(Request $request)
     {
+        $clientId = config('filesystems.disks.google.clientId');
+        $clientSecret = config('filesystems.disks.google.clientSecret');
+        if (empty($clientId) || empty($clientSecret)) {
+            return redirect()->route('drive.index')->with('error', 'Google Client ID / Secret belum dikonfigurasi di server.');
+        }
+
         $client = new Client;
-        $client->setClientId(config('filesystems.disks.google.clientId'));
-        $client->setClientSecret(config('filesystems.disks.google.clientSecret'));
+        $client->setClientId($clientId);
+        $client->setClientSecret($clientSecret);
         $client->setRedirectUri(route('drive.callback'));
         $client->addScope(Drive::DRIVE);
         $client->setAccessType('offline');
@@ -203,12 +243,21 @@ class DriveController extends Controller
     public function googleCallback(Request $request)
     {
         if ($request->has('code')) {
+            $clientId = config('filesystems.disks.google.clientId');
+            $clientSecret = config('filesystems.disks.google.clientSecret');
+
             $client = new Client;
-            $client->setClientId(config('filesystems.disks.google.clientId'));
-            $client->setClientSecret(config('filesystems.disks.google.clientSecret'));
+            $client->setClientId($clientId);
+            $client->setClientSecret($clientSecret);
             $client->setRedirectUri(route('drive.callback'));
 
-            $token = $client->fetchAccessTokenWithAuthCode($request->get('code'));
+            try {
+                $token = $client->fetchAccessTokenWithAuthCode($request->get('code'));
+            } catch (\Throwable $e) {
+                Log::error('Google OAuth Token Fetch Exception: '.$e->getMessage());
+
+                return redirect()->route('drive.index')->with('error', 'Gagal memperoleh token Google: '.$e->getMessage());
+            }
 
             Log::info('Google OAuth Callback Token:', is_array($token) ? $token : ['raw' => $token]);
 
@@ -219,26 +268,224 @@ class DriveController extends Controller
             }
 
             if (isset($token['refresh_token'])) {
-                // Save to .env
-                $envPath = base_path('.env');
-                $envContent = file_get_contents($envPath);
+                // 1. Save to JSON token file in storage (always writable on production)
+                $tokenDir = storage_path('app');
+                if (! is_dir($tokenDir)) {
+                    @mkdir($tokenDir, 0755, true);
+                }
+                @file_put_contents(storage_path('app/google_drive_token.json'), json_encode($token, JSON_PRETTY_PRINT));
 
-                if (preg_match('/GOOGLE_DRIVE_REFRESH_TOKEN=(.*)/', $envContent)) {
-                    $envContent = preg_replace('/GOOGLE_DRIVE_REFRESH_TOKEN=(.*)/', 'GOOGLE_DRIVE_REFRESH_TOKEN='.$token['refresh_token'], $envContent);
-                } else {
-                    $envContent .= "\nGOOGLE_DRIVE_REFRESH_TOKEN=".$token['refresh_token']."\n";
+                // 2. Try saving to .env as well if writable
+                try {
+                    $envPath = base_path('.env');
+                    if (file_exists($envPath) && is_writable($envPath)) {
+                        $envContent = file_get_contents($envPath);
+                        if (preg_match('/GOOGLE_DRIVE_REFRESH_TOKEN=(.*)/', $envContent)) {
+                            $envContent = preg_replace('/GOOGLE_DRIVE_REFRESH_TOKEN=(.*)/', 'GOOGLE_DRIVE_REFRESH_TOKEN='.$token['refresh_token'], $envContent);
+                        } else {
+                            $envContent .= "\nGOOGLE_DRIVE_REFRESH_TOKEN=".$token['refresh_token']."\n";
+                        }
+                        @file_put_contents($envPath, $envContent);
+                    }
+                } catch (\Throwable $e) {
+                    Log::warning('Could not write to .env: '.$e->getMessage());
                 }
 
-                file_put_contents($envPath, $envContent);
-                Artisan::call('config:clear');
+                // 3. Clear cache and fetch quota immediately
+                try {
+                    Artisan::call('config:clear');
+                } catch (\Throwable $e) {
+                }
 
-                return redirect()->route('drive.index')->with('success', 'Google Drive berhasil disambungkan dengan mode OAuth 5TB!');
+                Cache::forget('google_drive_quota_info');
+                $quota = $this->getGoogleDriveQuotaInfo();
+                $quotaText = '';
+                if ($quota && $quota['limit_bytes'] > 0) {
+                    $gb = round($quota['limit_bytes'] / (1024 * 1024 * 1024));
+                    $quotaText = " Kapasitas otomatis disesuaikan dengan Google Drive ({$gb} GB)!";
+                }
+
+                return redirect()->route('drive.index')->with('success', 'Google Drive berhasil disambungkan!'.$quotaText);
             }
 
-            return redirect()->route('drive.index')->with('error', 'Google tidak mengirimkan Refresh Token. Buka https://myaccount.google.com/connections, hapus izin swanflow, lalu klik Sambung Google lagi.');
+            $tokenFile = storage_path('app/google_drive_token.json');
+            if (file_exists($tokenFile)) {
+                $existing = json_decode(file_get_contents($tokenFile), true);
+                if (! empty($existing['refresh_token'])) {
+                    return redirect()->route('drive.index')->with('success', 'Google Drive telah aktif menggunakan token yang tersimpan.');
+                }
+            }
+
+            return redirect()->route('drive.index')->with('error', 'Google tidak mengirimkan Refresh Token. Buka https://myaccount.google.com/connections, hapus izin swanflow, lalu klik Sambung Google lagi agar izin baru diterbitkan.');
         }
 
-        return redirect()->route('drive.index')->with('error', 'Otorisasi dibatalkan.');
+        return redirect()->route('drive.index')->with('error', 'Otorisasi Google Drive dibatalkan.');
+    }
+
+    /**
+     * Check if Google Drive is configured and authenticated.
+     */
+    public function isGoogleDriveConnected(): bool
+    {
+        $refreshToken = config('filesystems.disks.google.refreshToken');
+        if (empty($refreshToken)) {
+            $tokenFile = storage_path('app/google_drive_token.json');
+            if (file_exists($tokenFile)) {
+                $tokenData = json_decode(@file_get_contents($tokenFile), true);
+                $refreshToken = $tokenData['refresh_token'] ?? null;
+            }
+        }
+
+        if (! empty($refreshToken)) {
+            return true;
+        }
+
+        $serviceAccount = config('filesystems.disks.google.serviceAccountKey');
+
+        return ! empty($serviceAccount) && file_exists($serviceAccount);
+    }
+
+    /**
+     * Resolve active storage disk (with local fallback if Google Drive is not connected).
+     */
+    public function resolveStorageDisk(): string
+    {
+        $defaultDisk = config('filesystems.default', 'local');
+        if ($defaultDisk === 'google' && ! $this->isGoogleDriveConnected()) {
+            return 'local';
+        }
+
+        return $defaultDisk;
+    }
+
+    /**
+     * Determine which disk actually stores the given file.
+     */
+    public function getDiskForFile(StoredFile $file): string
+    {
+        try {
+            if (Storage::disk('local')->exists($file->file_path)) {
+                return 'local';
+            }
+        } catch (\Throwable $e) {
+        }
+
+        if ($this->isGoogleDriveConnected()) {
+            try {
+                if (Storage::disk('google')->exists($file->file_path)) {
+                    return 'google';
+                }
+            } catch (\Throwable $e) {
+                Log::warning("Could not check google disk for file {$file->id}: ".$e->getMessage());
+            }
+        }
+
+        return config('filesystems.default', 'local');
+    }
+
+    /**
+     * Get Google Drive Client instance.
+     */
+    protected function getGoogleClient(): ?Client
+    {
+        $clientId = config('filesystems.disks.google.clientId');
+        $clientSecret = config('filesystems.disks.google.clientSecret');
+        $refreshToken = config('filesystems.disks.google.refreshToken');
+
+        if (empty($refreshToken)) {
+            $tokenFile = storage_path('app/google_drive_token.json');
+            if (file_exists($tokenFile)) {
+                $tokenData = json_decode(@file_get_contents($tokenFile), true);
+                $refreshToken = $tokenData['refresh_token'] ?? null;
+            }
+        }
+
+        if (empty($refreshToken) && (empty(config('filesystems.disks.google.serviceAccountKey')) || ! file_exists(config('filesystems.disks.google.serviceAccountKey')))) {
+            return null;
+        }
+
+        $client = new Client;
+        if (! empty(config('filesystems.disks.google.serviceAccountKey')) && file_exists(config('filesystems.disks.google.serviceAccountKey'))) {
+            $client->setAuthConfig(config('filesystems.disks.google.serviceAccountKey'));
+            $client->addScope(Drive::DRIVE);
+        } else {
+            $client->setClientId($clientId);
+            $client->setClientSecret($clientSecret);
+            if (! empty($refreshToken)) {
+                $client->refreshToken($refreshToken);
+            }
+        }
+
+        return $client;
+    }
+
+    /**
+     * Fetch Google Drive real storage quota details.
+     */
+    public function getGoogleDriveQuotaInfo(): ?array
+    {
+        if (! $this->isGoogleDriveConnected()) {
+            return null;
+        }
+
+        return Cache::remember('google_drive_quota_info', 300, function () {
+            try {
+                $client = $this->getGoogleClient();
+                if (! $client) {
+                    return null;
+                }
+
+                $service = new Drive($client);
+                $about = $service->about->get(['fields' => 'storageQuota,user']);
+                $storageQuota = $about->getStorageQuota();
+                $gUser = $about->getUser();
+
+                $limitBytes = (int) $storageQuota->getLimit();
+                $usageBytes = (int) $storageQuota->getUsage();
+                $usageInDrive = (int) $storageQuota->getUsageInDrive();
+
+                // If limit is 0 (Google Workspace unlimited / pooled storage), standard default to 5 TB
+                if ($limitBytes <= 0) {
+                    $limitBytes = 5 * 1024 * 1024 * 1024 * 1024; // 5 TB
+                }
+
+                return [
+                    'connected' => true,
+                    'limit_bytes' => $limitBytes,
+                    'usage_bytes' => $usageBytes,
+                    'usage_in_drive_bytes' => $usageInDrive,
+                    'email' => $gUser ? $gUser->getEmailAddress() : null,
+                    'display_name' => $gUser ? $gUser->getDisplayName() : null,
+                ];
+            } catch (\Throwable $e) {
+                Log::warning('Google Drive Quota fetch error: '.$e->getMessage());
+
+                return null;
+            }
+        });
+    }
+
+    /**
+     * Refresh and sync storage quota directly from Google Drive API.
+     */
+    public function syncGoogleQuota(Request $request): RedirectResponse
+    {
+        Cache::forget('google_drive_quota_info');
+        $quota = $this->getGoogleDriveQuotaInfo();
+
+        if ($quota && $quota['limit_bytes'] > 0) {
+            $limitGb = round($quota['limit_bytes'] / (1024 * 1024 * 1024));
+            $user = $request->user();
+            $user->update(['storage_quota_mb' => (int) round($quota['limit_bytes'] / (1024 * 1024))]);
+
+            return back()->with('success', "Kapasitas SwanDrive berhasil disinkronkan dengan Google Drive ({$limitGb} GB)!");
+        }
+
+        if (! $this->isGoogleDriveConnected()) {
+            return back()->with('error', 'Google Drive belum terhubung. Silakan sambungkan Google Drive terlebih dahulu.');
+        }
+
+        return back()->with('success', 'Sinkronisasi kapasitas berhasil diperbarui.');
     }
 
     /**
@@ -247,7 +494,7 @@ class DriveController extends Controller
     public function updateQuota(Request $request): RedirectResponse
     {
         $request->validate([
-            'storage_quota_mb' => ['required', 'integer', 'min:10', 'max:1048576'],
+            'storage_quota_mb' => ['required', 'integer', 'min:10', 'max:5242880'],
         ]);
 
         $request->user()->update([
@@ -312,15 +559,25 @@ class DriveController extends Controller
                 ? $customTitle
                 : pathinfo($originalName, PATHINFO_FILENAME);
 
-            $disk = config('filesystems.default');
+            $disk = $this->resolveStorageDisk();
 
             $thumbnailPath = null;
             if ($category === 'image') {
-                $thumbnailPath = $this->generateWebpThumbnail($uploadedFile->getRealPath(), $request->user()->id, $disk);
+                try {
+                    $thumbnailPath = $this->generateWebpThumbnail($uploadedFile->getRealPath(), $request->user()->id, $disk);
+                } catch (\Throwable $e) {
+                    Log::warning('Thumbnail generation error in DriveController::store: '.$e->getMessage());
+                }
             }
 
-            // Upload directly to cloud storage (Google Drive) without touching local server storage
-            $path = $uploadedFile->store('drive/'.$request->user()->id, $disk);
+            // Upload directly to resolved storage disk (with automatic fallback to local if cloud fails)
+            try {
+                $path = $uploadedFile->store('drive/'.$request->user()->id, $disk);
+            } catch (\Throwable $e) {
+                Log::warning("Drive upload to disk [{$disk}] failed: ".$e->getMessage().'. Falling back to local storage.');
+                $disk = 'local';
+                $path = $uploadedFile->store('drive/'.$request->user()->id, 'local');
+            }
 
             $request->user()->storedFiles()->create([
                 'folder_id' => $folderId,
@@ -444,8 +701,12 @@ class DriveController extends Controller
     {
         foreach ($folder->files as $file) {
             try {
-                if (Storage::disk(config('filesystems.default'))->exists($file->file_path)) {
-                    Storage::disk(config('filesystems.default'))->delete($file->file_path);
+                $fileDisk = $this->getDiskForFile($file);
+                if (Storage::disk($fileDisk)->exists($file->file_path)) {
+                    Storage::disk($fileDisk)->delete($file->file_path);
+                }
+                if ($file->thumbnail_path && Storage::disk($fileDisk)->exists($file->thumbnail_path)) {
+                    Storage::disk($fileDisk)->delete($file->thumbnail_path);
                 }
             } catch (\Throwable $e) {
                 Log::warning('Gagal menghapus file saat hapus folder di SwanDrive: '.$e->getMessage(), [
@@ -527,21 +788,23 @@ class DriveController extends Controller
             abort(403, 'Akses ditolak.');
         }
 
-        if ($request->boolean('thumb') && $file->thumbnail_path && Storage::disk(config('filesystems.default'))->exists($file->thumbnail_path)) {
-            return Storage::disk(config('filesystems.default'))->response($file->thumbnail_path, pathinfo($file->original_name, PATHINFO_FILENAME).'_thumb.webp', [
+        $disk = $this->getDiskForFile($file);
+
+        if ($request->boolean('thumb') && $file->thumbnail_path && Storage::disk($disk)->exists($file->thumbnail_path)) {
+            return Storage::disk($disk)->response($file->thumbnail_path, pathinfo($file->original_name, PATHINFO_FILENAME).'_thumb.webp', [
                 'Content-Type' => 'image/webp',
                 'Content-Disposition' => 'inline',
                 'Cache-Control' => 'public, max-age=86400',
             ]);
         }
 
-        if (! Storage::disk(config('filesystems.default'))->exists($file->file_path)) {
+        if (! Storage::disk($disk)->exists($file->file_path)) {
             abort(404, 'File fisik tidak ditemukan pada server.');
         }
 
-        $mimeType = $file->mime_type ?: Storage::disk(config('filesystems.default'))->mimeType($file->file_path) ?: 'application/octet-stream';
+        $mimeType = $file->mime_type ?: Storage::disk($disk)->mimeType($file->file_path) ?: 'application/octet-stream';
 
-        return Storage::disk(config('filesystems.default'))->response($file->file_path, $file->original_name, [
+        return Storage::disk($disk)->response($file->file_path, $file->original_name, [
             'Content-Type' => $mimeType,
             'Content-Disposition' => 'inline; filename="'.addslashes($file->original_name).'"',
             'Cache-Control' => 'private, max-age=3600',
@@ -557,13 +820,15 @@ class DriveController extends Controller
             abort(403, 'Akses ditolak.');
         }
 
-        if (! Storage::disk(config('filesystems.default'))->exists($file->file_path)) {
+        $disk = $this->getDiskForFile($file);
+
+        if (! Storage::disk($disk)->exists($file->file_path)) {
             abort(404, 'File fisik tidak ditemukan pada server.');
         }
 
         $file->increment('download_count');
 
-        return Storage::disk(config('filesystems.default'))->download($file->file_path, $file->original_name);
+        return Storage::disk($disk)->download($file->file_path, $file->original_name);
     }
 
     /**
@@ -615,9 +880,14 @@ class DriveController extends Controller
             abort(403, 'Akses ditolak.');
         }
 
+        $disk = $this->getDiskForFile($file);
+
         try {
-            if (Storage::disk(config('filesystems.default'))->exists($file->file_path)) {
-                Storage::disk(config('filesystems.default'))->delete($file->file_path);
+            if (Storage::disk($disk)->exists($file->file_path)) {
+                Storage::disk($disk)->delete($file->file_path);
+            }
+            if ($file->thumbnail_path && Storage::disk($disk)->exists($file->thumbnail_path)) {
+                Storage::disk($disk)->delete($file->thumbnail_path);
             }
         } catch (\Throwable $e) {
             Log::warning('Gagal menghapus file fisik di SwanDrive: '.$e->getMessage(), [
@@ -676,12 +946,13 @@ class DriveController extends Controller
         if (! empty($fileIds)) {
             $files = $user->storedFiles()->whereIn('id', $fileIds)->get();
             foreach ($files as $file) {
+                $disk = $this->getDiskForFile($file);
                 try {
-                    if (Storage::disk(config('filesystems.default'))->exists($file->file_path)) {
-                        Storage::disk(config('filesystems.default'))->delete($file->file_path);
+                    if (Storage::disk($disk)->exists($file->file_path)) {
+                        Storage::disk($disk)->delete($file->file_path);
                     }
-                    if ($file->thumbnail_path && Storage::disk(config('filesystems.default'))->exists($file->thumbnail_path)) {
-                        Storage::disk(config('filesystems.default'))->delete($file->thumbnail_path);
+                    if ($file->thumbnail_path && Storage::disk($disk)->exists($file->thumbnail_path)) {
+                        Storage::disk($disk)->delete($file->thumbnail_path);
                     }
                 } catch (\Throwable $e) {
                     Log::warning('Gagal menghapus file saat batch delete SwanDrive: '.$e->getMessage(), [
@@ -750,13 +1021,15 @@ class DriveController extends Controller
             abort(404, 'Tautan transfer ini tidak aktif.');
         }
 
-        if (! Storage::disk(config('filesystems.default'))->exists($file->file_path)) {
+        $disk = $this->getDiskForFile($file);
+
+        if (! Storage::disk($disk)->exists($file->file_path)) {
             abort(404, 'File fisik tidak ditemukan pada server.');
         }
 
-        $mimeType = $file->mime_type ?: Storage::disk(config('filesystems.default'))->mimeType($file->file_path) ?: 'application/octet-stream';
+        $mimeType = $file->mime_type ?: Storage::disk($disk)->mimeType($file->file_path) ?: 'application/octet-stream';
 
-        return Storage::disk(config('filesystems.default'))->response($file->file_path, $file->original_name, [
+        return Storage::disk($disk)->response($file->file_path, $file->original_name, [
             'Content-Type' => $mimeType,
             'Content-Disposition' => 'inline; filename="'.addslashes($file->original_name).'"',
             'Cache-Control' => 'public, max-age=3600',
@@ -774,13 +1047,15 @@ class DriveController extends Controller
             abort(404, 'Tautan transfer ini tidak aktif.');
         }
 
-        if (! Storage::disk(config('filesystems.default'))->exists($file->file_path)) {
+        $disk = $this->getDiskForFile($file);
+
+        if (! Storage::disk($disk)->exists($file->file_path)) {
             abort(404, 'File fisik tidak ditemukan pada server.');
         }
 
         $file->increment('download_count');
 
-        return Storage::disk(config('filesystems.default'))->download($file->file_path, $file->original_name);
+        return Storage::disk($disk)->download($file->file_path, $file->original_name);
     }
 
     /**
@@ -810,13 +1085,15 @@ class DriveController extends Controller
             abort(404, 'Berkas tidak ditemukan dalam folder ini.');
         }
 
-        if (! Storage::disk(config('filesystems.default'))->exists($file->file_path)) {
+        $disk = $this->getDiskForFile($file);
+
+        if (! Storage::disk($disk)->exists($file->file_path)) {
             abort(404, 'File fisik tidak ditemukan pada server.');
         }
 
-        $mimeType = $file->mime_type ?: Storage::disk(config('filesystems.default'))->mimeType($file->file_path) ?: 'application/octet-stream';
+        $mimeType = $file->mime_type ?: Storage::disk($disk)->mimeType($file->file_path) ?: 'application/octet-stream';
 
-        return Storage::disk(config('filesystems.default'))->response($file->file_path, $file->original_name, [
+        return Storage::disk($disk)->response($file->file_path, $file->original_name, [
             'Content-Type' => $mimeType,
             'Content-Disposition' => 'inline; filename="'.addslashes($file->original_name).'"',
             'Cache-Control' => 'public, max-age=3600',
@@ -834,13 +1111,15 @@ class DriveController extends Controller
             abort(404, 'Berkas tidak ditemukan dalam folder ini.');
         }
 
-        if (! Storage::disk(config('filesystems.default'))->exists($file->file_path)) {
+        $disk = $this->getDiskForFile($file);
+
+        if (! Storage::disk($disk)->exists($file->file_path)) {
             abort(404, 'File fisik tidak ditemukan pada server.');
         }
 
         $file->increment('download_count');
 
-        return Storage::disk(config('filesystems.default'))->download($file->file_path, $file->original_name);
+        return Storage::disk($disk)->download($file->file_path, $file->original_name);
     }
 
     /**
@@ -861,8 +1140,8 @@ class DriveController extends Controller
 
         $zip = new ZipArchive;
         if ($zip->open($tempZipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
-            $disk = config('filesystems.default');
             foreach ($files as $file) {
+                $disk = $this->getDiskForFile($file);
                 if (Storage::disk($disk)->exists($file->file_path)) {
                     if ($disk === 'local') {
                         $zip->addFile(Storage::disk('local')->path($file->file_path), $file->original_name);
@@ -987,22 +1266,27 @@ class DriveController extends Controller
             $thumbnailPath = $this->generateWebpThumbnail($finalRelativePath, $user->id);
         }
 
-        $disk = config('filesystems.default');
+        $disk = $this->resolveStorageDisk();
         if ($disk !== 'local') {
-            $fileStream = fopen($finalFullPath, 'r');
-            Storage::disk($disk)->put($finalRelativePath, $fileStream);
-            if (is_resource($fileStream)) {
-                fclose($fileStream);
-            }
-            Storage::disk('local')->delete($finalRelativePath);
-
-            if ($thumbnailPath && Storage::disk('local')->exists($thumbnailPath)) {
-                $thumbStream = fopen(Storage::disk('local')->path($thumbnailPath), 'r');
-                Storage::disk($disk)->put($thumbnailPath, $thumbStream);
-                if (is_resource($thumbStream)) {
-                    fclose($thumbStream);
+            try {
+                $fileStream = fopen($finalFullPath, 'r');
+                Storage::disk($disk)->put($finalRelativePath, $fileStream);
+                if (is_resource($fileStream)) {
+                    fclose($fileStream);
                 }
-                Storage::disk('local')->delete($thumbnailPath);
+                Storage::disk('local')->delete($finalRelativePath);
+
+                if ($thumbnailPath && Storage::disk('local')->exists($thumbnailPath)) {
+                    $thumbStream = fopen(Storage::disk('local')->path($thumbnailPath), 'r');
+                    Storage::disk($disk)->put($thumbnailPath, $thumbStream);
+                    if (is_resource($thumbStream)) {
+                        fclose($thumbStream);
+                    }
+                    Storage::disk('local')->delete($thumbnailPath);
+                }
+            } catch (\Throwable $e) {
+                Log::warning("uploadChunk transfer to [{$disk}] failed: ".$e->getMessage().'. Kept file on local disk.');
+                $disk = 'local';
             }
         }
 
@@ -1036,7 +1320,7 @@ class DriveController extends Controller
     /**
      * Generate an optimized WebP thumbnail for images using PHP's native GD extension and upload directly to target disk.
      */
-    protected function generateWebpThumbnail(string $sourcePath, int $userId, string $disk = 'google'): ?string
+    protected function generateWebpThumbnail(string $sourcePath, int $userId, ?string $disk = null): ?string
     {
         if (! extension_loaded('gd') || ! function_exists('imagewebp')) {
             return null;
@@ -1117,9 +1401,21 @@ class DriveController extends Controller
         imagedestroy($thumbImage);
 
         if ($thumbData) {
-            Storage::disk($disk)->put($thumbRelativePath, $thumbData);
+            $targetDisk = $disk ?: $this->resolveStorageDisk();
+            try {
+                Storage::disk($targetDisk)->put($thumbRelativePath, $thumbData);
 
-            return $thumbRelativePath;
+                return $thumbRelativePath;
+            } catch (\Throwable $e) {
+                Log::warning("Thumbnail save to [{$targetDisk}] failed: ".$e->getMessage().'. Falling back to local disk.');
+                try {
+                    Storage::disk('local')->put($thumbRelativePath, $thumbData);
+
+                    return $thumbRelativePath;
+                } catch (\Throwable $e2) {
+                    return null;
+                }
+            }
         }
 
         return null;

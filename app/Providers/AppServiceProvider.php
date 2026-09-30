@@ -48,13 +48,24 @@ class AppServiceProvider extends ServiceProvider
 
             $client = new Client;
 
+            $refreshToken = $config['refreshToken'] ?? null;
+            if (empty($refreshToken)) {
+                $tokenFile = storage_path('app/google_drive_token.json');
+                if (file_exists($tokenFile)) {
+                    $tokenData = json_decode(file_get_contents($tokenFile), true);
+                    $refreshToken = $tokenData['refresh_token'] ?? null;
+                }
+            }
+
             if (! empty($config['serviceAccountKey']) && file_exists($config['serviceAccountKey'])) {
                 $client->setAuthConfig($config['serviceAccountKey']);
                 $client->addScope(Drive::DRIVE);
             } else {
-                $client->setClientId($config['clientId']);
-                $client->setClientSecret($config['clientSecret']);
-                $client->refreshToken($config['refreshToken']);
+                $client->setClientId($config['clientId'] ?? '');
+                $client->setClientSecret($config['clientSecret'] ?? '');
+                if (! empty($refreshToken)) {
+                    $client->refreshToken($refreshToken);
+                }
             }
 
             $service = new Drive($client);

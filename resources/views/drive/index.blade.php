@@ -76,24 +76,28 @@
             <div class="flex items-center justify-between gap-2 min-w-0">
                 <span class="text-[10px] font-extrabold uppercase tracking-wider text-teal-200/90 truncate">Kapasitas Penyimpanan</span>
                 <div class="flex items-center gap-1.5 shrink-0">
-                    @if(empty(config('filesystems.disks.google.refreshToken')))
-                    <a href="{{ route('drive.connect') }}" class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white text-[10px] font-black border border-white/30 active:scale-95 transition-all cursor-pointer shadow-md ios-press backdrop-blur-md animate-pulse" title="Sambungkan Akun Google 5TB">
+                    @if(! $isGoogleConnected)
+                    <a href="{{ route('drive.connect') }}" class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white text-[10px] font-black border border-white/30 active:scale-95 transition-all cursor-pointer shadow-md ios-press backdrop-blur-md animate-pulse" title="Sambungkan Akun Google Drive">
                         <svg class="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"/>
                         </svg>
                         <span>Sambung Google</span>
                     </a>
                     @else
-                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/25 text-emerald-200 text-[10px] font-black border border-emerald-400/40">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                        <span>Google 5TB</span>
-                    </span>
+                    <form action="{{ route('drive.sync-google-quota') }}" method="POST" class="inline">
+                        @csrf
+                        <button type="submit" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/25 hover:bg-emerald-500/35 text-emerald-200 text-[10px] font-black border border-emerald-400/40 active:scale-95 transition-all cursor-pointer shadow-xs" title="Sinkronkan kapasitas dengan Google Drive">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <span>Google {{ $formattedQuotaSize }}</span>
+                            <svg class="w-2.5 h-2.5 ml-0.5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
+                        </button>
+                    </form>
                     @endif
                     <button type="button" onclick="openQuotaModal()" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/15 hover:bg-white/25 text-teal-100 hover:text-white text-[10px] font-black border border-white/20 active:scale-95 transition-all cursor-pointer shadow-xs ios-press backdrop-blur-md" title="Ubah Kapasitas Kuota">
                         <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
                         </svg>
-                        <span>Ubah Ukuran</span>
+                        <span>Ubah</span>
                     </button>
                 </div>
             </div>
@@ -119,7 +123,7 @@
                          style="width: {{ max(3, $storagePercent) }}%"></div>
                 </div>
                 <div class="flex items-center justify-between text-[10px] text-teal-200/80 mt-1 font-semibold">
-                    <span>{{ $totalBytes >= $quotaBytes ? 'Kapasitas Penuh' : 'Tersisa ' . number_format(max(0, ($quotaBytes - $totalBytes)) / 1048576, 1, ',', '.') . ' MB' }}</span>
+                    <span>{{ $totalBytes >= $quotaBytes ? 'Kapasitas Penuh' : 'Tersisa ' . $formattedRemainingSize }}</span>
                     <span>Batas: {{ $formattedQuotaSize }}</span>
                 </div>
             </div>
@@ -132,8 +136,8 @@
     <!-- Pull handle indicator for authentic iOS sheet aesthetic -->
     <div class="w-10 h-1.5 bg-slate-300/80 dark:bg-slate-700/80 rounded-full mx-auto mb-1"></div>
 
-    @if(empty(config('filesystems.disks.google.refreshToken')))
-    <!-- Google Drive 5TB Connection Card -->
+    @if(! $isGoogleConnected)
+    <!-- Google Drive Connection Card -->
     <div class="relative overflow-hidden rounded-[26px] p-4 bg-gradient-to-br from-amber-500/15 via-orange-500/10 to-amber-500/5 dark:from-amber-950/40 dark:via-orange-950/20 dark:to-slate-900/40 border border-amber-500/30 dark:border-amber-400/30 shadow-lg backdrop-blur-xl">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div class="flex items-start gap-3">
@@ -144,11 +148,11 @@
                 </div>
                 <div class="min-w-0">
                     <div class="flex items-center gap-1.5 flex-wrap">
-                        <h4 class="text-sm font-black text-slate-900 dark:text-white leading-tight">Sambungkan Google Drive (5TB)</h4>
-                        <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-500 text-white shadow-xs">Perlu Tindakan</span>
+                        <h4 class="text-sm font-black text-slate-900 dark:text-white leading-tight">Sambungkan Google Drive</h4>
+                        <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-500 text-white shadow-xs">Kapasitas Fleksibel</span>
                     </div>
                     <p class="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
-                        Akun Google Anda belum terhubung. Sambungkan sekarang agar file upload langsung masuk ke kapasitas 5TB Anda.
+                        Sambungkan akun Google Anda agar kapasitas SwanDrive otomatis menyesuaikan ukuran Google Drive Anda (15 GB / 2 TB / 5 TB).
                     </p>
                 </div>
             </div>
@@ -168,11 +172,20 @@
                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
             </span>
-            <span>Google Drive 5TB Terhubung & Siap</span>
+            <span>Google Drive Terhubung (Kapasitas: {{ $formattedQuotaSize }})</span>
         </div>
-        <a href="{{ route('drive.connect') }}" class="text-[11px] font-bold text-slate-500 hover:text-emerald-600 dark:text-slate-400 dark:hover:text-emerald-300 underline" title="Hubungkan ulang akun jika perlu">
-            Hubungkan Ulang
-        </a>
+        <div class="flex items-center gap-2">
+            <form action="{{ route('drive.sync-google-quota') }}" method="POST" class="inline">
+                @csrf
+                <button type="submit" class="text-[11px] font-extrabold text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300 cursor-pointer" title="Perbarui kapasitas sesuai kuota Google Drive">
+                    Sinkronkan Kuota
+                </button>
+            </form>
+            <span class="text-slate-300 dark:text-slate-600">|</span>
+            <a href="{{ route('drive.connect') }}" class="text-[11px] font-bold text-slate-500 hover:text-emerald-600 dark:text-slate-400 dark:hover:text-emerald-300 underline" title="Hubungkan ulang akun jika perlu">
+                Hubungkan Ulang
+            </a>
+        </div>
     </div>
     @endif
 
@@ -1403,6 +1416,27 @@
                 </button>
             </div>
 
+            @if($isGoogleConnected)
+            <!-- Google Drive Direct Sync Banner in Modal -->
+            <div class="p-3 rounded-2xl bg-gradient-to-r from-teal-500/10 via-emerald-500/10 to-teal-500/5 border border-teal-500/25 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <div class="w-8 h-8 rounded-xl bg-teal-500/20 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"/></svg>
+                    </div>
+                    <div class="min-w-0">
+                        <div class="text-xs font-black text-slate-800 dark:text-white truncate">Google Drive Terhubung</div>
+                        <div class="text-[10px] text-slate-500 dark:text-slate-400 truncate">Kapasitas aktual akun Google Anda</div>
+                    </div>
+                </div>
+                <form action="{{ route('drive.sync-google-quota') }}" method="POST" class="shrink-0">
+                    @csrf
+                    <button type="submit" class="px-3 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-[11px] font-black shadow-xs active:scale-95 transition-all cursor-pointer">
+                        Sinkronkan
+                    </button>
+                </form>
+            </div>
+            @endif
+
             <!-- Form Update Quota -->
             <form action="{{ route('drive.quota.update') }}" method="POST" class="space-y-4">
                 @csrf
@@ -1413,23 +1447,29 @@
                 <div>
                     <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Pilih Kapasitas Cepat:</label>
                     <div class="grid grid-cols-3 gap-2">
-                        <button type="button" onclick="setQuotaValue(250, event)" class="quota-preset-btn py-2 px-3 rounded-xl border text-xs font-bold transition-all text-center cursor-pointer {{ $quotaMb == 250 ? 'bg-teal-500 text-white border-teal-500 shadow-xs' : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-teal-500' }}">
-                            250 MB
-                        </button>
-                        <button type="button" onclick="setQuotaValue(500, event)" class="quota-preset-btn py-2 px-3 rounded-xl border text-xs font-bold transition-all text-center cursor-pointer {{ $quotaMb == 500 ? 'bg-teal-500 text-white border-teal-500 shadow-xs' : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-teal-500' }}">
+                        <button type="button" onclick="setQuotaValue(500, event)" class="quota-preset-btn py-2 px-2.5 rounded-xl border text-xs font-bold transition-all text-center cursor-pointer {{ $quotaMb == 500 ? 'bg-teal-500 text-white border-teal-500 shadow-xs' : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-teal-500' }}">
                             500 MB
                         </button>
-                        <button type="button" onclick="setQuotaValue(1024, event)" class="quota-preset-btn py-2 px-3 rounded-xl border text-xs font-bold transition-all text-center cursor-pointer {{ $quotaMb == 1024 ? 'bg-teal-500 text-white border-teal-500 shadow-xs' : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-teal-500' }}">
+                        <button type="button" onclick="setQuotaValue(1024, event)" class="quota-preset-btn py-2 px-2.5 rounded-xl border text-xs font-bold transition-all text-center cursor-pointer {{ $quotaMb == 1024 ? 'bg-teal-500 text-white border-teal-500 shadow-xs' : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-teal-500' }}">
                             1 GB
                         </button>
-                        <button type="button" onclick="setQuotaValue(2048, event)" class="quota-preset-btn py-2 px-3 rounded-xl border text-xs font-bold transition-all text-center cursor-pointer {{ $quotaMb == 2048 ? 'bg-teal-500 text-white border-teal-500 shadow-xs' : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-teal-500' }}">
-                            2 GB
-                        </button>
-                        <button type="button" onclick="setQuotaValue(5120, event)" class="quota-preset-btn py-2 px-3 rounded-xl border text-xs font-bold transition-all text-center cursor-pointer {{ $quotaMb == 5120 ? 'bg-teal-500 text-white border-teal-500 shadow-xs' : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-teal-500' }}">
+                        <button type="button" onclick="setQuotaValue(5120, event)" class="quota-preset-btn py-2 px-2.5 rounded-xl border text-xs font-bold transition-all text-center cursor-pointer {{ $quotaMb == 5120 ? 'bg-teal-500 text-white border-teal-500 shadow-xs' : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-teal-500' }}">
                             5 GB
                         </button>
-                        <button type="button" onclick="setQuotaValue(10240, event)" class="quota-preset-btn py-2 px-3 rounded-xl border text-xs font-bold transition-all text-center cursor-pointer {{ $quotaMb == 10240 ? 'bg-teal-500 text-white border-teal-500 shadow-xs' : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-teal-500' }}">
-                            10 GB
+                        <button type="button" onclick="setQuotaValue(15360, event)" class="quota-preset-btn py-2 px-2.5 rounded-xl border text-xs font-bold transition-all text-center cursor-pointer {{ $quotaMb == 15360 ? 'bg-teal-500 text-white border-teal-500 shadow-xs' : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-teal-500' }}">
+                            15 GB (Google)
+                        </button>
+                        <button type="button" onclick="setQuotaValue(102400, event)" class="quota-preset-btn py-2 px-2.5 rounded-xl border text-xs font-bold transition-all text-center cursor-pointer {{ $quotaMb == 102400 ? 'bg-teal-500 text-white border-teal-500 shadow-xs' : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-teal-500' }}">
+                            100 GB
+                        </button>
+                        <button type="button" onclick="setQuotaValue(1048576, event)" class="quota-preset-btn py-2 px-2.5 rounded-xl border text-xs font-bold transition-all text-center cursor-pointer {{ $quotaMb == 1048576 ? 'bg-teal-500 text-white border-teal-500 shadow-xs' : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-teal-500' }}">
+                            1 TB
+                        </button>
+                        <button type="button" onclick="setQuotaValue(2097152, event)" class="quota-preset-btn py-2 px-2.5 rounded-xl border text-xs font-bold transition-all text-center cursor-pointer {{ $quotaMb == 2097152 ? 'bg-teal-500 text-white border-teal-500 shadow-xs' : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-teal-500' }}">
+                            2 TB
+                        </button>
+                        <button type="button" onclick="setQuotaValue(5242880, event)" class="col-span-2 quota-preset-btn py-2 px-2.5 rounded-xl border text-xs font-bold transition-all text-center cursor-pointer {{ $quotaMb == 5242880 ? 'bg-teal-500 text-white border-teal-500 shadow-xs' : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-teal-500' }}">
+                            5 TB (Google Workspace)
                         </button>
                     </div>
                 </div>
@@ -1440,7 +1480,7 @@
                         Atau Masukkan Kapasitas Khusus (MB):
                     </label>
                     <div class="relative">
-                        <input type="number" id="quota-input-mb" name="storage_quota_mb" value="{{ $quotaMb }}" min="10" max="1048576" required
+                        <input type="number" id="quota-input-mb" name="storage_quota_mb" value="{{ $quotaMb }}" min="10" max="5242880" required
                                oninput="updateQuotaPreview(this.value)"
                                class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white font-extrabold text-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
                         <span class="absolute right-3.5 top-3 text-xs font-bold text-slate-400">MB</span>

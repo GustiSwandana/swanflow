@@ -81,6 +81,14 @@ class AuthController extends Controller
 
         $forgetCookie = Cookie::forget($recallerName);
 
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'session_expired' => $request->has('expired') || $request->has('timeout'),
+                'redirect' => route('login', ($request->has('expired') || $request->has('timeout')) ? ['expired' => 1] : []),
+            ])->withCookie($forgetCookie);
+        }
+
         if ($request->has('expired') || $request->has('timeout')) {
             return redirect()->route('login', ['expired' => 1])
                 ->with('warning', 'Sesi Anda telah berakhir karena tidak aktif selama 5 menit demi keamanan akun keuangan Anda.')
@@ -90,6 +98,27 @@ class AuthController extends Controller
         return redirect()->route('login')
             ->with('success', 'Anda telah berhasil keluar.')
             ->withCookie($forgetCookie);
+    }
+
+    /**
+     * Refresh the active session timestamp (heartbeat).
+     */
+    public function keepAlive(Request $request): JsonResponse
+    {
+        if (Auth::check()) {
+            $request->session()->put('last_activity_time', now()->timestamp);
+
+            return response()->json([
+                'status' => 'active',
+                'timestamp' => now()->timestamp,
+            ]);
+        }
+
+        return response()->json([
+            'status' => 'unauthenticated',
+            'session_expired' => true,
+            'redirect' => route('login', ['expired' => 1]),
+        ], 401);
     }
 
     /**

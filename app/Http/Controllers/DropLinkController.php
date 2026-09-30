@@ -177,7 +177,17 @@ class DropLinkController extends Controller
             $sizeBytes = $uploadedFile->getSize();
             $category = StoredFile::detectCategory($extension, $mimeType);
 
-            $path = $uploadedFile->store('drive/'.$link->user_id, config('filesystems.default'));
+            $disk = config('filesystems.default');
+            if ($disk === 'google' && empty(config('filesystems.disks.google.refreshToken')) && ! file_exists(storage_path('app/google_drive_token.json'))) {
+                $disk = 'local';
+            }
+
+            try {
+                $path = $uploadedFile->store('drive/'.$link->user_id, $disk);
+            } catch (\Throwable $e) {
+                Log::warning("DropLink upload to [{$disk}] failed: ".$e->getMessage().'. Storing locally.');
+                $path = $uploadedFile->store('drive/'.$link->user_id, 'local');
+            }
             $title = pathinfo($originalName, PATHINFO_FILENAME);
 
             $link->user->storedFiles()->create([

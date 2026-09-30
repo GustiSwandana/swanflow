@@ -33,10 +33,11 @@ class CheckSessionTimeout
 
                 $forgetCookie = Cookie::forget($recallerName);
 
-                if ($request->expectsJson()) {
+                if ($request->expectsJson() || $request->is('api/*') || $request->ajax()) {
                     return response()->json([
                         'message' => 'Sesi Anda telah berakhir karena tidak ada aktivitas. Silakan verifikasi biometrik atau PIN.',
                         'session_expired' => true,
+                        'redirect' => route('login', ['expired' => 1]),
                     ], 401)->withCookie($forgetCookie);
                 }
 
