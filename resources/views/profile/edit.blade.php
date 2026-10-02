@@ -240,19 +240,38 @@
 
             @if($user->hasPin())
                 <div>
-                    <label for="current_pin" class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5">PIN Saat Ini</label>
-                    <input id="current_pin" 
-                           type="password" 
-                           inputmode="numeric" 
-                           pattern="[0-9]*" 
-                           maxlength="6" 
-                           name="current_pin" 
-                           required 
-                           placeholder="•••••• (Default: 123456)"
-                           class="w-full min-h-[46px] px-4 py-2.5 bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 rounded-[20px] text-base font-black text-center text-slate-900 dark:text-white tracking-widest focus:outline-hidden focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 backdrop-blur-md transition-all">
-                    @error('current_pin')
-                        <p class="text-rose-500 text-[11px] font-semibold mt-1">{{ $message }}</p>
-                    @enderror
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label id="pin_verify_label" for="current_pin" class="block text-xs font-bold text-slate-600 dark:text-slate-300">PIN Saat Ini</label>
+                        <button type="button" onclick="togglePinVerifyMethod()" class="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer">
+                            <span id="toggle_verify_text">Lupa PIN? Pakai Password</span>
+                        </button>
+                    </div>
+
+                    <div id="verify_by_pin_container">
+                        <input id="current_pin" 
+                               type="password" 
+                               inputmode="numeric" 
+                               pattern="[0-9]*" 
+                               maxlength="6" 
+                               name="current_pin" 
+                               required 
+                               placeholder="•••••• (Default: 123456)"
+                               class="w-full min-h-[46px] px-4 py-2.5 bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 rounded-[20px] text-base font-black text-center text-slate-900 dark:text-white tracking-widest focus:outline-hidden focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 backdrop-blur-md transition-all">
+                        @error('current_pin')
+                            <p class="text-rose-500 text-[11px] font-semibold mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div id="verify_by_password_container" class="hidden">
+                        <input id="account_password" 
+                               type="password" 
+                               name="account_password" 
+                               placeholder="Masukkan password akun login Anda"
+                               class="w-full min-h-[46px] px-4 py-2.5 bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 rounded-[20px] text-sm font-semibold text-slate-900 dark:text-white focus:outline-hidden focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 backdrop-blur-md transition-all">
+                        @error('account_password')
+                            <p class="text-rose-500 text-[11px] font-semibold mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
                 </div>
             @endif
 
@@ -564,5 +583,41 @@
             }
         }
     }
+
+    function togglePinVerifyMethod() {
+        const pinContainer = document.getElementById('verify_by_pin_container');
+        const passContainer = document.getElementById('verify_by_password_container');
+        const pinInput = document.getElementById('current_pin');
+        const passInput = document.getElementById('account_password');
+        const label = document.getElementById('pin_verify_label');
+        const toggleText = document.getElementById('toggle_verify_text');
+
+        if (!pinContainer || !passContainer) return;
+
+        if (pinContainer.classList.contains('hidden')) {
+            // Switch back to PIN
+            pinContainer.classList.remove('hidden');
+            passContainer.classList.add('hidden');
+            if (pinInput) pinInput.setAttribute('required', 'required');
+            if (passInput) {
+                passInput.removeAttribute('required');
+                passInput.value = '';
+            }
+            if (label) label.textContent = 'PIN Saat Ini';
+            if (toggleText) toggleText.textContent = 'Lupa PIN? Pakai Password';
+        } else {
+            // Switch to Password
+            pinContainer.classList.add('hidden');
+            passContainer.classList.remove('hidden');
+            if (pinInput) {
+                pinInput.removeAttribute('required');
+                pinInput.value = '';
+            }
+            if (passInput) passInput.setAttribute('required', 'required');
+            if (label) label.textContent = 'Password Akun Anda';
+            if (toggleText) toggleText.textContent = 'Pakai PIN Saat Ini';
+        }
+    }
 </script>
 @endsection
+

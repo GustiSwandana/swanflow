@@ -139,4 +139,24 @@ class PinAuthTest extends TestCase
         $user->refresh();
         $this->assertTrue($user->verifyPin('123456'));
     }
+
+    public function test_authenticated_user_can_update_pin_with_account_password(): void
+    {
+        $user = User::factory()->create([
+            'password' => Hash::make('secret123'),
+            'pin' => Hash::make('123456'),
+        ]);
+
+        $response = $this->actingAs($user)->put('/profile/pin', [
+            'account_password' => 'secret123',
+            'pin' => '777888',
+            'pin_confirmation' => '777888',
+        ]);
+
+        $response->assertRedirect('/profile');
+        $response->assertSessionHas('success', 'PIN Keamanan 6-Digit Anda berhasil diperbarui!');
+
+        $user->refresh();
+        $this->assertTrue($user->verifyPin('777888'));
+    }
 }

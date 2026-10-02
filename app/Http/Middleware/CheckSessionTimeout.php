@@ -31,20 +31,18 @@ class CheckSessionTimeout
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
 
-                $forgetCookie = Cookie::forget($recallerName);
-
                 if ($request->expectsJson() || $request->is('api/*') || $request->ajax()) {
                     return response()->json([
                         'message' => 'Sesi Anda telah berakhir karena tidak ada aktivitas. Silakan verifikasi biometrik atau PIN.',
                         'session_expired' => true,
                         'redirect' => route('login', ['expired' => 1]),
-                    ], 401)->withCookie($forgetCookie);
+                    ], 401);
                 }
 
                 return redirect()->route('login', ['expired' => 1])->with([
                     'session_expired' => true,
                     'warning' => "Sesi Anda telah terkunci karena tidak aktif selama {$timeoutMinutes} menit demi keamanan akun keuangan Anda. Silakan gunakan Biometrik (Face ID / Sidik Jari) atau masukkan PIN Anda.",
-                ])->withCookie($forgetCookie);
+                ]);
             }
 
             $request->session()->put('last_activity_time', now()->timestamp);

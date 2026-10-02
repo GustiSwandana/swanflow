@@ -1,5 +1,5 @@
-// SwanFlow PWA Service Worker (v1.0.34 - Exclude File Downloads & Stream Previews)
-const CACHE_NAME = 'swanflow-cache-v34';
+// SwanFlow PWA Service Worker (v1.0.35 - Exclude Auth, Login, Downloads & Stream Previews)
+const CACHE_NAME = 'swanflow-cache-v35';
 const OFFLINE_URL = '/offline.html';
 
 const STATIC_ASSETS = [
@@ -55,9 +55,14 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // 0. EXCLUDE ALL FILE DOWNLOADS, PREVIEWS, STREAMING, AND EXPORTS
-    // Allow browser native download manager to handle them directly without SW interference
+    // 0. EXCLUDE ALL AUTH, LOGIN, LOGOUT, FACE-ID, SESSION, FILE DOWNLOADS, PREVIEWS, STREAMING, AND EXPORTS
+    // Allow direct network handling for auth security and native download manager
     if (
+        url.pathname === '/login' ||
+        url.pathname === '/logout' ||
+        url.pathname.startsWith('/auth/') ||
+        url.pathname.startsWith('/face-id/') ||
+        url.pathname.startsWith('/session/') ||
         url.pathname.includes('/download') ||
         url.pathname.includes('/preview') ||
         url.pathname.includes('/export') ||

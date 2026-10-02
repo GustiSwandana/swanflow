@@ -38,20 +38,21 @@ class User extends Authenticatable
      */
     public static function getPrimaryUser(): self
     {
-        $user = self::firstOrCreate(
-            ['email' => 'gustiswandana@swanflow.com'],
-            [
-                'name' => 'Gusti Swandana',
-                'password' => bcrypt('password'),
-                'pin' => Hash::make('123456'),
-            ]
-        );
+        $user = self::first();
+        if ($user) {
+            if (empty($user->pin)) {
+                $user->update(['pin' => Hash::make('123456')]);
+            }
 
-        if (empty($user->pin)) {
-            $user->update(['pin' => Hash::make('123456')]);
+            return $user;
         }
 
-        return $user;
+        return self::create([
+            'name' => 'Gusti Swandana',
+            'email' => 'gustiswandana@swanflow.com',
+            'password' => bcrypt('password'),
+            'pin' => Hash::make('123456'),
+        ]);
     }
 
     /**

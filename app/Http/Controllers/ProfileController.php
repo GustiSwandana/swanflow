@@ -93,20 +93,33 @@ class ProfileController extends Controller
         ];
 
         if ($user->hasPin()) {
-            $rules['current_pin'] = ['required', 'string', 'size:6'];
+            if ($request->filled('account_password')) {
+                $rules['account_password'] = ['required', 'string'];
+            } else {
+                $rules['current_pin'] = ['required', 'string', 'size:6'];
+            }
         }
 
         $validated = $request->validate($rules, [
             'current_pin.required' => 'PIN saat ini wajib diisi.',
             'current_pin.size' => 'PIN saat ini harus 6 digit angka.',
+            'account_password.required' => 'Password akun wajib diisi.',
             'pin.required' => 'PIN baru wajib diisi.',
             'pin.size' => 'PIN baru harus terdiri dari 6 digit angka.',
             'pin.regex' => 'PIN baru hanya boleh berisi angka.',
             'pin.confirmed' => 'Konfirmasi PIN baru tidak cocok.',
         ]);
 
-        if ($user->hasPin() && ! $user->verifyPin($validated['current_pin'])) {
-            return back()->withErrors(['current_pin' => 'PIN saat ini tidak cocok.']);
+        if ($user->hasPin()) {
+            if ($request->filled('account_password')) {
+                if (! Hash::check($validated['account_password'], $user->password)) {
+                    return back()->withErrors(['account_password' => 'Password akun yang Anda masukkan salah.']);
+                }
+            } else {
+                if (! $user->verifyPin($validated['current_pin'])) {
+                    return back()->withErrors(['current_pin' => 'PIN saat ini tidak cocok.']);
+                }
+            }
         }
 
         $user->update([

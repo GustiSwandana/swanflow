@@ -129,8 +129,8 @@
             </div>
         @endif
 
-        <!-- 1. BANKING LOCK SCREEN (Default view for enrolled user) -->
-        <div id="banking-lock-screen" class="flex-1 flex flex-col justify-between my-auto">
+        <!-- 1. BANKING LOCK SCREEN (Default view for enrolled user, hidden if email login has errors) -->
+        <div id="banking-lock-screen" class="{{ $errors->any() ? 'hidden ' : '' }}flex-1 flex flex-col justify-between my-auto">
             <!-- User Profile Avatar & Greeting -->
             <div class="text-center pt-2">
                 <div class="relative inline-block mx-auto mb-3">
@@ -161,17 +161,17 @@
 
             <!-- Mobile Banking Numeric Keypad -->
             <div class="grid grid-cols-3 gap-2.5 max-w-[290px] mx-auto w-full select-none">
-                <button type="button" onclick="appendPinDigit('1')" class="min-h-[56px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xl font-bold text-slate-800 dark:text-white shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-slate-800 transition-all">1</button>
-                <button type="button" onclick="appendPinDigit('2')" class="min-h-[56px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xl font-bold text-slate-800 dark:text-white shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-slate-800 transition-all">2</button>
-                <button type="button" onclick="appendPinDigit('3')" class="min-h-[56px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xl font-bold text-slate-800 dark:text-white shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-slate-800 transition-all">3</button>
+                <button type="button" onclick="appendPinDigit('1')" class="min-h-[56px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xl font-bold text-slate-800 dark:text-white shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-slate-800 transition-all cursor-pointer">1</button>
+                <button type="button" onclick="appendPinDigit('2')" class="min-h-[56px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xl font-bold text-slate-800 dark:text-white shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-slate-800 transition-all cursor-pointer">2</button>
+                <button type="button" onclick="appendPinDigit('3')" class="min-h-[56px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xl font-bold text-slate-800 dark:text-white shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-slate-800 transition-all cursor-pointer">3</button>
 
-                <button type="button" onclick="appendPinDigit('4')" class="min-h-[56px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xl font-bold text-slate-800 dark:text-white shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-slate-800 transition-all">4</button>
-                <button type="button" onclick="appendPinDigit('5')" class="min-h-[56px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xl font-bold text-slate-800 dark:text-white shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-slate-800 transition-all">5</button>
-                <button type="button" onclick="appendPinDigit('6')" class="min-h-[56px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xl font-bold text-slate-800 dark:text-white shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-slate-800 transition-all">6</button>
+                <button type="button" onclick="appendPinDigit('4')" class="min-h-[56px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xl font-bold text-slate-800 dark:text-white shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-slate-800 transition-all cursor-pointer">4</button>
+                <button type="button" onclick="appendPinDigit('5')" class="min-h-[56px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xl font-bold text-slate-800 dark:text-white shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-slate-800 transition-all cursor-pointer">5</button>
+                <button type="button" onclick="appendPinDigit('6')" class="min-h-[56px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xl font-bold text-slate-800 dark:text-white shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-slate-800 transition-all cursor-pointer">6</button>
 
-                <button type="button" onclick="appendPinDigit('7')" class="min-h-[56px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xl font-bold text-slate-800 dark:text-white shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-slate-800 transition-all">7</button>
-                <button type="button" onclick="appendPinDigit('8')" class="min-h-[56px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xl font-bold text-slate-800 dark:text-white shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-slate-800 transition-all">8</button>
-                <button type="button" onclick="appendPinDigit('9')" class="min-h-[56px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xl font-bold text-slate-800 dark:text-white shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-slate-800 transition-all">9</button>
+                <button type="button" onclick="appendPinDigit('7')" class="min-h-[56px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xl font-bold text-slate-800 dark:text-white shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-slate-800 transition-all cursor-pointer">7</button>
+                <button type="button" onclick="appendPinDigit('8')" class="min-h-[56px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xl font-bold text-slate-800 dark:text-white shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-slate-800 transition-all cursor-pointer">8</button>
+                <button type="button" onclick="appendPinDigit('9')" class="min-h-[56px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xl font-bold text-slate-800 dark:text-white shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-slate-800 transition-all cursor-pointer">9</button>
 
                 <!-- Face ID / Biometric Quick Trigger Button -->
                 <button type="button" 
@@ -194,31 +194,34 @@
                     <span id="face-id-keypad-label" class="text-[9px] font-bold">Face ID</span>
                 </button>
 
-                <button type="button" onclick="appendPinDigit('0')" class="min-h-[56px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xl font-bold text-slate-800 dark:text-white shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-slate-800 transition-all">0</button>
+                <button type="button" onclick="appendPinDigit('0')" class="min-h-[56px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xl font-bold text-slate-800 dark:text-white shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-slate-800 transition-all cursor-pointer">0</button>
 
                 <!-- Backspace Key -->
                 <button type="button" 
                         onclick="removePinDigit()" 
                         aria-label="Hapus angka" 
-                        class="min-h-[56px] rounded-2xl bg-transparent border border-transparent text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 shadow-none active:scale-90 transition-all flex items-center justify-center">
+                        class="min-h-[56px] rounded-2xl bg-transparent border border-transparent text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 shadow-none active:scale-90 transition-all flex items-center justify-center cursor-pointer">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9.75L14.25 12m0 0l2.25 2.25M14.25 12l2.25-2.25M14.25 12L12 14.25m-2.58 4.92l-6.375-6.375a1.125 1.125 0 010-1.59L9.42 4.83c.21-.211.497-.33.795-.33H19.5a2.25 2.25 0 012.25 2.25v10.5a2.25 2.25 0 01-2.25 2.25h-9.284c-.298 0-.585-.119-.795-.33z" />
                     </svg>
                 </button>
             </div>
 
-            <!-- Switch to Password Login -->
-            <div class="pt-4 text-center">
-                <button type="button" onclick="toggleLoginView('password')" class="text-xs font-medium text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-colors">
+            <!-- Switch to Password Login & Forgot PIN -->
+            <div class="pt-3 text-center flex flex-col items-center gap-1.5">
+                <button type="button" onclick="toggleLoginView('password')" class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline transition-colors cursor-pointer">
                     Masuk dengan Email & Password
+                </button>
+                <button type="button" onclick="toggleLoginView('password')" class="text-[11px] text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer">
+                    Lupa PIN 6-Digit? Masuk dengan Akun
                 </button>
             </div>
         </div>
 
-        <!-- 2. EMAIL & PASSWORD SCREEN (Alternative view) -->
-        <div id="email-password-screen" class="hidden flex-1 flex flex-col justify-center my-auto">
+        <!-- 2. EMAIL & PASSWORD SCREEN (Alternative view, visible by default if email login had errors) -->
+        <div id="email-password-screen" class="{{ $errors->any() ? '' : 'hidden ' }}flex-1 flex flex-col justify-center my-auto">
             <div class="mb-4">
-                <button type="button" id="back-to-pin-btn" onclick="toggleLoginView('pin')" class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline mb-2">
+                <button type="button" id="back-to-pin-btn" onclick="toggleLoginView('pin')" class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline mb-2 cursor-pointer">
                     ← Kembali ke PIN & Face ID
                 </button>
                 <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight mt-1">Masuk Akun</h2>
@@ -226,7 +229,7 @@
             </div>
 
             <!-- Login Form -->
-            <form method="POST" action="{{ route('login') }}" class="space-y-4">
+            <form id="email-password-form" method="POST" action="{{ route('login') }}" class="space-y-4" onsubmit="handleFormSubmit(event)">
                 @csrf
 
                 <!-- Email -->
@@ -402,20 +405,62 @@
             }
         }
 
+        async function getFreshCsrfToken() {
+            try {
+                const res = await fetch('{{ route("login") }}', {
+                    headers: { 'Accept': 'text/html' },
+                    cache: 'no-store'
+                });
+                const html = await res.text();
+                const match = html.match(/name="_token" value="([^"]+)"/) || html.match(/csrf-token" content="([^"]+)"/);
+                if (match && match[1]) {
+                    document.querySelectorAll('input[name="_token"]').forEach(input => input.value = match[1]);
+                    document.querySelector('meta[name="csrf-token"]')?.setAttribute('content', match[1]);
+                    return match[1];
+                }
+            } catch (e) {}
+            return null;
+        }
+
+        async function handleFormSubmit(e) {
+            const tokenInput = document.querySelector('input[name="_token"]');
+            if (tokenInput && !tokenInput.value) {
+                e.preventDefault();
+                const fresh = await getFreshCsrfToken();
+                if (fresh) tokenInput.value = fresh;
+                e.target.submit();
+            }
+        }
+
         async function submitPin() {
             const dotsContainer = document.getElementById('pin-dots-container');
             const errorEl = document.getElementById('pin-error-message');
 
-            try {
-                const res = await fetch('{{ route("auth.pin.verify") }}', {
+            let csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
+
+            const doVerify = async (token) => {
+                return await fetch('{{ route("auth.pin.verify") }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        'X-CSRF-TOKEN': token
                     },
                     body: JSON.stringify({ pin: currentPin })
                 });
+            };
+
+            try {
+                let res = await doVerify(csrfToken);
+
+                // Auto-refresh CSRF token on 419 Page Expired and retry once
+                if (res.status === 419) {
+                    const freshToken = await getFreshCsrfToken();
+                    if (freshToken) {
+                        csrfToken = freshToken;
+                        res = await doVerify(freshToken);
+                    }
+                }
 
                 const data = await res.json();
 
@@ -595,15 +640,32 @@
             statusText.textContent = isIOS ? 'Menghubungkan ke sensor keamanan iPhone...' : (isAndroid ? 'Menghubungkan ke sensor biometrik Android...' : 'Menghubungkan ke sensor keamanan perangkat...');
 
             try {
+                let csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
+
                 // 1. Request challenge
-                const res = await fetch('{{ route("faceid.login.challenge") }}', {
+                let res = await fetch('{{ route("faceid.login.challenge") }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        'X-CSRF-TOKEN': csrfToken
                     }
                 });
+
+                if (res.status === 419) {
+                    const freshToken = await getFreshCsrfToken();
+                    if (freshToken) {
+                        csrfToken = freshToken;
+                        res = await fetch('{{ route("faceid.login.challenge") }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': freshToken
+                            }
+                        });
+                    }
+                }
 
                 if (!res.ok) {
                     throw new Error('Gagal mendapatkan sesi verifikasi server.');
@@ -667,18 +729,37 @@
                         clientDataJson = bufferToBase64(assertion.response.clientDataJSON);
                     }
 
-                    const verifyRes = await fetch('{{ route("faceid.login.verify") }}', {
+                    let verifyRes = await fetch('{{ route("faceid.login.verify") }}', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'Accept': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            'X-CSRF-TOKEN': csrfToken
                         },
                         body: JSON.stringify({
                             credential_id: assertion.id,
                             client_data_json: clientDataJson
                         })
                     });
+
+                    if (verifyRes.status === 419) {
+                        const freshToken = await getFreshCsrfToken();
+                        if (freshToken) {
+                            csrfToken = freshToken;
+                            verifyRes = await fetch('{{ route("faceid.login.verify") }}', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json',
+                                    'X-CSRF-TOKEN': freshToken
+                                },
+                                body: JSON.stringify({
+                                    credential_id: assertion.id,
+                                    client_data_json: clientDataJson
+                                })
+                            });
+                        }
+                    }
 
                     const result = await verifyRes.json();
 

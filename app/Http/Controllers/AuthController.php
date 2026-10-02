@@ -19,11 +19,9 @@ class AuthController extends Controller
     {
         if ($request->has('expired') || $request->has('timeout') || session('session_expired')) {
             if (Auth::check()) {
-                $recallerName = Auth::guard()->getRecallerName();
                 Auth::logout();
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
-                Cookie::expire($recallerName);
             }
         } elseif (Auth::check()) {
             return redirect()->route('dashboard');
@@ -71,28 +69,31 @@ class AuthController extends Controller
     /**
      * Log the user out of the application.
      */
-    public function logout(Request $request): RedirectResponse
+    public function logout(Request $request): RedirectResponse|JsonResponse
     {
+        $isTimeout = $request->has('expired') || $request->has('timeout');
         $recallerName = Auth::guard()->getRecallerName();
+
         Auth::logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        $forgetCookie = Cookie::forget($recallerName);
+        $forgetCookie = $isTimeout ? null : Cookie::forget($recallerName);
 
         if ($request->wantsJson() || $request->ajax()) {
-            return response()->json([
+            $response = response()->json([
                 'success' => true,
-                'session_expired' => $request->has('expired') || $request->has('timeout'),
-                'redirect' => route('login', ($request->has('expired') || $request->has('timeout')) ? ['expired' => 1] : []),
-            ])->withCookie($forgetCookie);
+                'session_expired' => $isTimeout,
+                'redirect' => route('login', $isTimeout ? ['expired' => 1] : []),
+            ]);
+
+            return $forgetCookie ? $response->withCookie($forgetCookie) : $response;
         }
 
-        if ($request->has('expired') || $request->has('timeout')) {
+        if ($isTimeout) {
             return redirect()->route('login', ['expired' => 1])
-                ->with('warning', 'Sesi Anda telah berakhir karena tidak aktif selama 5 menit demi keamanan akun keuangan Anda.')
-                ->withCookie($forgetCookie);
+                ->with('warning', 'Sesi Anda telah terkunci karena tidak aktif selama 5 menit demi keamanan akun keuangan Anda. Silakan masukkan PIN atau gunakan Biometrik.');
         }
 
         return redirect()->route('login')
@@ -147,7 +148,7 @@ class AuthController extends Controller
             return back()->withErrors(['pin' => 'PIN yang Anda masukkan salah.']);
         }
 
-        Auth::login($user, false);
+        Auth::login($user, true);
         $request->session()->regenerate();
         $request->session()->put('last_activity_time', now()->timestamp);
 
