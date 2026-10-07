@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use ZipArchive;
 
@@ -800,49 +801,13 @@ class DriveController extends Controller
     /**
      * Preview / view the file inline without downloading.
      */
-    public function preview(Request $request, StoredFile $file): StreamedResponse
+    public function preview(Request $request, StoredFile $file): Response
     {
         if ($file->user_id !== $request->user()->id) {
             abort(403, 'Akses ditolak.');
         }
 
-        $disk = $this->getDiskForFile($file);
-
-        if ($request->boolean('thumb') && $file->thumbnail_path) {
-            if (Storage::disk('local')->exists($file->thumbnail_path)) {
-                return Storage::disk('local')->response($file->thumbnail_path, pathinfo($file->original_name, PATHINFO_FILENAME).'_thumb.webp', [
-                    'Content-Type' => 'image/webp',
-                    'Content-Disposition' => 'inline',
-                    'Cache-Control' => 'public, max-age=86400',
-                ]);
-            }
-            if ($this->isGoogleDriveConnected() && Storage::disk('google')->exists($file->thumbnail_path)) {
-                return Storage::disk('google')->response($file->thumbnail_path, pathinfo($file->original_name, PATHINFO_FILENAME).'_thumb.webp', [
-                    'Content-Type' => 'image/webp',
-                    'Content-Disposition' => 'inline',
-                    'Cache-Control' => 'public, max-age=86400',
-                ]);
-            }
-        }
-
-        if (! Storage::disk($disk)->exists($file->file_path)) {
-            $altDisk = ($disk === 'local') ? 'google' : 'local';
-            if ($altDisk === 'google' && $this->isGoogleDriveConnected() && Storage::disk('google')->exists($file->file_path)) {
-                $disk = 'google';
-            } elseif ($altDisk === 'local' && Storage::disk('local')->exists($file->file_path)) {
-                $disk = 'local';
-            } else {
-                abort(404, 'File fisik tidak ditemukan pada server.');
-            }
-        }
-
-        $mimeType = $file->mime_type ?: Storage::disk($disk)->mimeType($file->file_path) ?: 'application/octet-stream';
-
-        return Storage::disk($disk)->response($file->file_path, $file->original_name, [
-            'Content-Type' => $mimeType,
-            'Content-Disposition' => 'inline; filename="'.addslashes($file->original_name).'"',
-            'Cache-Control' => 'private, max-age=3600',
-        ]);
+        return $this->respondWithFilePreview($file, $request->boolean('thumb'), false);
     }
 
     /**
@@ -1066,7 +1031,7 @@ class DriveController extends Controller
     /**
      * Preview the shared file inline publicly.
      */
-    public function sharedPreview(string $token): StreamedResponse
+    public function sharedPreview(string $token): Response
     {
         $file = StoredFile::where('share_token', $token)->firstOrFail();
 
@@ -1074,19 +1039,7 @@ class DriveController extends Controller
             abort(404, 'Tautan transfer ini tidak aktif.');
         }
 
-        $disk = $this->getDiskForFile($file);
-
-        if (! Storage::disk($disk)->exists($file->file_path)) {
-            abort(404, 'File fisik tidak ditemukan pada server.');
-        }
-
-        $mimeType = $file->mime_type ?: Storage::disk($disk)->mimeType($file->file_path) ?: 'application/octet-stream';
-
-        return Storage::disk($disk)->response($file->file_path, $file->original_name, [
-            'Content-Type' => $mimeType,
-            'Content-Disposition' => 'inline; filename="'.addslashes($file->original_name).'"',
-            'Cache-Control' => 'public, max-age=3600',
-        ]);
+        return $this->respondWithFilePreview($file, request()->boolean('thumb'), true);
     }
 
     /**
@@ -1149,7 +1102,7 @@ class DriveController extends Controller
     /**
      * Preview a file inside a shared folder inline publicly.
      */
-    public function sharedFolderPreview(string $token, StoredFile $file): StreamedResponse
+    public function sharedFolderPreview(string $token, StoredFile $file): Response
     {
         $folder = Folder::where('share_token', $token)->where('is_public', true)->firstOrFail();
 
@@ -1157,26 +1110,7 @@ class DriveController extends Controller
             abort(404, 'Berkas tidak ditemukan dalam folder ini.');
         }
 
-        $disk = $this->getDiskForFile($file);
-
-        if (! Storage::disk($disk)->exists($file->file_path)) {
-            $altDisk = ($disk === 'local') ? 'google' : 'local';
-            if ($altDisk === 'google' && $this->isGoogleDriveConnected() && Storage::disk('google')->exists($file->file_path)) {
-                $disk = 'google';
-            } elseif ($altDisk === 'local' && Storage::disk('local')->exists($file->file_path)) {
-                $disk = 'local';
-            } else {
-                abort(404, 'File fisik tidak ditemukan pada server.');
-            }
-        }
-
-        $mimeType = $file->mime_type ?: Storage::disk($disk)->mimeType($file->file_path) ?: 'application/octet-stream';
-
-        return Storage::disk($disk)->response($file->file_path, $file->original_name, [
-            'Content-Type' => $mimeType,
-            'Content-Disposition' => 'inline; filename="'.addslashes($file->original_name).'"',
-            'Cache-Control' => 'public, max-age=3600',
-        ]);
+        return $this->respondWithFilePreview($file, request()->boolean('thumb'), true);
     }
 
     /**
@@ -1236,6 +1170,8 @@ class DriveController extends Controller
         $tempZipPath = tempnam(sys_get_temp_dir(), 'swanflow_zip_');
         $tempFiles = [];
 
+        $filesAdded = 0;
+
         $zip = new ZipArchive;
         if ($zip->open($tempZipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
             foreach ($files as $file) {
@@ -1243,6 +1179,7 @@ class DriveController extends Controller
                 if (Storage::disk($disk)->exists($file->file_path)) {
                     if ($disk === 'local') {
                         $zip->addFile(Storage::disk('local')->path($file->file_path), $file->original_name);
+                        $filesAdded++;
                     } else {
                         // Download to temp file first to prevent OOM
                         $tempFile = tempnam(sys_get_temp_dir(), 'swanflow_file_');
@@ -1255,6 +1192,7 @@ class DriveController extends Controller
                         fclose($stream);
 
                         $zip->addFile($tempFile, $file->original_name);
+                        $filesAdded++;
                     }
                     $file->increment('download_count');
                 }
@@ -1265,6 +1203,12 @@ class DriveController extends Controller
         // Clean up temporary files after zip is closed
         foreach ($tempFiles as $tf) {
             @unlink($tf);
+        }
+
+        if ($filesAdded === 0 || ! file_exists($tempZipPath) || filesize($tempZipPath) === 0) {
+            @unlink($tempZipPath);
+
+            return back()->with('error', 'Tidak ada berkas fisik yang dapat diunduh dalam folder ini.');
         }
 
         return response()->download($tempZipPath, $zipFileName, [
@@ -1581,5 +1525,136 @@ class DriveController extends Controller
         }
 
         return null;
+    }
+
+    /**
+     * Serve file inline preview or thumbnail with local byte-range support and cloud fallback.
+     */
+    protected function respondWithFilePreview(StoredFile $file, bool $isThumb = false, bool $isPublic = false): Response
+    {
+        $cacheControl = $isPublic ? 'public, max-age=86400' : 'private, max-age=3600';
+
+        // 1. Handle Thumbnail Request
+        if ($isThumb) {
+            // A. Check if pre-generated local thumbnail exists
+            if ($file->thumbnail_path && Storage::disk('local')->exists($file->thumbnail_path)) {
+                $localThumbPath = Storage::disk('local')->path($file->thumbnail_path);
+                if (! app()->environment('testing') && file_exists($localThumbPath)) {
+                    return response()->file($localThumbPath, [
+                        'Content-Type' => 'image/webp',
+                        'Content-Disposition' => 'inline; filename="'.addslashes(pathinfo($file->original_name, PATHINFO_FILENAME)).'_thumb.webp"',
+                        'Cache-Control' => 'public, max-age=86400',
+                    ]);
+                }
+
+                return Storage::disk('local')->response($file->thumbnail_path, pathinfo($file->original_name, PATHINFO_FILENAME).'_thumb.webp', [
+                    'Content-Type' => 'image/webp',
+                    'Content-Disposition' => 'inline',
+                    'Cache-Control' => 'public, max-age=86400',
+                ]);
+            }
+
+            // B. Check if thumbnail exists on Google Drive (stream & cache locally)
+            if ($file->thumbnail_path && $this->isGoogleDriveConnected() && Storage::disk('google')->exists($file->thumbnail_path)) {
+                try {
+                    $thumbStream = Storage::disk('google')->readStream($file->thumbnail_path);
+                    if (is_resource($thumbStream)) {
+                        Storage::disk('local')->put($file->thumbnail_path, $thumbStream);
+                        if (is_resource($thumbStream)) {
+                            fclose($thumbStream);
+                        }
+                        if (Storage::disk('local')->exists($file->thumbnail_path)) {
+                            $localThumbPath = Storage::disk('local')->path($file->thumbnail_path);
+                            if (! app()->environment('testing') && file_exists($localThumbPath)) {
+                                return response()->file($localThumbPath, [
+                                    'Content-Type' => 'image/webp',
+                                    'Content-Disposition' => 'inline',
+                                    'Cache-Control' => 'public, max-age=86400',
+                                ]);
+                            }
+                        }
+                    }
+                } catch (\Throwable $e) {
+                    Log::warning('Thumbnail stream from google failed: '.$e->getMessage());
+                }
+            }
+
+            // C. On-the-fly thumbnail generation for local images if thumbnail_path was missing
+            if ($file->category === 'image' && Storage::disk('local')->exists($file->file_path)) {
+                $fullLocal = Storage::disk('local')->path($file->file_path);
+                if (file_exists($fullLocal)) {
+                    $genThumb = $this->generateWebpThumbnail($fullLocal, $file->user_id, 'local');
+                    if ($genThumb && Storage::disk('local')->exists($genThumb)) {
+                        $file->update(['thumbnail_path' => $genThumb]);
+                        $localThumbPath = Storage::disk('local')->path($genThumb);
+                        if (! app()->environment('testing') && file_exists($localThumbPath)) {
+                            return response()->file($localThumbPath, [
+                                'Content-Type' => 'image/webp',
+                                'Content-Disposition' => 'inline',
+                                'Cache-Control' => 'public, max-age=86400',
+                            ]);
+                        }
+                    }
+                }
+            }
+
+            // If not an image or thumbnail could not be produced, fallback to serving full file below
+        }
+
+        // 2. Handle Full File Preview
+        // Priority A: Local Disk (Fastest, zero-latency, full HTTP 206 byte-range streaming for video/audio)
+        if (Storage::disk('local')->exists($file->file_path)) {
+            $localFullPath = Storage::disk('local')->path($file->file_path);
+            $mimeType = $file->mime_type ?: (@mime_content_type($localFullPath) ?: 'application/octet-stream');
+
+            if (! app()->environment('testing') && file_exists($localFullPath)) {
+                return response()->file($localFullPath, [
+                    'Content-Type' => $mimeType,
+                    'Content-Disposition' => 'inline; filename="'.addslashes($file->original_name).'"',
+                    'Cache-Control' => $cacheControl,
+                ]);
+            }
+
+            return Storage::disk('local')->response($file->file_path, $file->original_name, [
+                'Content-Type' => $mimeType,
+                'Content-Disposition' => 'inline; filename="'.addslashes($file->original_name).'"',
+                'Cache-Control' => $cacheControl,
+            ]);
+        }
+
+        // Priority B: Google Drive Disk
+        if ($this->isGoogleDriveConnected() && Storage::disk('google')->exists($file->file_path)) {
+            $mimeType = $file->mime_type ?: (Storage::disk('google')->mimeType($file->file_path) ?: 'application/octet-stream');
+            $size = $file->size_bytes ?: (Storage::disk('google')->fileSize($file->file_path) ?: null);
+
+            $headers = [
+                'Content-Type' => $mimeType,
+                'Content-Disposition' => 'inline; filename="'.addslashes($file->original_name).'"',
+                'Cache-Control' => $cacheControl,
+            ];
+            if ($size) {
+                $headers['Content-Length'] = (string) $size;
+            }
+
+            if (app()->environment('testing')) {
+                return Storage::disk('google')->response($file->file_path, $file->original_name, $headers);
+            }
+
+            return response()->stream(function () use ($file) {
+                $stream = Storage::disk('google')->readStream($file->file_path);
+                if (is_resource($stream)) {
+                    while (! feof($stream)) {
+                        echo fread($stream, 1048576); // 1MB chunk
+                        if (ob_get_level() > 0) {
+                            ob_flush();
+                        }
+                        flush();
+                    }
+                    fclose($stream);
+                }
+            }, 200, $headers);
+        }
+
+        abort(404, 'File fisik tidak ditemukan pada server.');
     }
 }

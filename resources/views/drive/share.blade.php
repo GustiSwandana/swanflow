@@ -104,10 +104,11 @@
     @php
         $meta = $file->categoryMeta();
         $cleanExt = strtolower($file->extension);
-        $isImage = in_array($cleanExt, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp', 'ico', 'heic']);
+        $isImage = in_array($cleanExt, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp', 'ico', 'heic', 'avif']);
         $isAudio = in_array($cleanExt, ['mp3', 'wav', 'ogg', 'm4a', 'aac', 'flac']);
         $isVideo = in_array($cleanExt, ['mp4', 'webm', 'ogg', 'mov', 'm4v']);
         $isPdf = $cleanExt === 'pdf';
+        $isText = in_array($cleanExt, ['txt', 'csv', 'json', 'md', 'html', 'js', 'css', 'xml', 'log', 'php', 'py', 'sql', 'sh', 'env', 'yaml', 'yml']);
 
         $cleanTitle = trim($file->title);
         $cleanOrig = trim($file->original_name);
@@ -160,8 +161,8 @@
             @if($isImage)
                 <!-- Clean Image Hero Preview -->
                 <div class="relative rounded-2xl overflow-hidden bg-slate-950/90 dark:bg-black/90 border border-slate-200 dark:border-white/10 shadow-inner group cursor-pointer" onclick="openLightbox()">
-                    <!-- Subtle ambient blurred backdrop -->
-                    <div class="absolute inset-0 bg-cover bg-center filter blur-xl opacity-25 scale-110 pointer-events-none" style="background-image: url('{{ route('drive.shared.preview', ['token' => $file->share_token]) }}');"></div>
+                    <!-- Subtle ambient blurred backdrop using light thumbnail -->
+                    <div class="absolute inset-0 bg-cover bg-center filter blur-xl opacity-25 scale-110 pointer-events-none" style="background-image: url('{{ route('drive.shared.preview', ['token' => $file->share_token, 'thumb' => 1]) }}');"></div>
                     
                     <div class="relative z-10 w-full flex items-center justify-center p-2 min-h-[180px] max-h-[280px] sm:max-h-[320px]">
                         <img src="{{ route('drive.shared.preview', ['token' => $file->share_token]) }}" 
@@ -195,7 +196,7 @@
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-teal-500 to-emerald-400 flex items-center justify-center text-white shadow-md">
                             <svg class="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a.25.25 0 00.179-.24V7.5M9 13.5v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A.25.25 0 009 15.424V9" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a.25.25 0 00.179-.24V7.5M9 13.5v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66A.25.25 0 009 15.424V9" />
                             </svg>
                         </div>
                         <div>
@@ -203,21 +204,41 @@
                             <span class="text-sm font-black text-slate-900 dark:text-white truncate max-w-xs">{{ $file->title }}</span>
                         </div>
                     </div>
-                    <audio controls class="w-full rounded-xl" src="{{ route('drive.shared.preview', ['token' => $file->share_token]) }}">
+                    <audio controls playsinline class="w-full rounded-xl" src="{{ route('drive.shared.preview', ['token' => $file->share_token]) }}">
                         Browser Anda tidak mendukung audio player.
                     </audio>
                 </div>
 
             @elseif($isPdf)
                 <!-- PDF Viewer -->
-                <div class="rounded-2xl overflow-hidden border border-slate-200/80 dark:border-white/10 bg-slate-900 h-72 shadow-lg relative group">
-                    <iframe src="{{ route('drive.shared.preview', ['token' => $file->share_token]) }}#toolbar=0" class="w-full h-full" title="PDF Preview"></iframe>
+                <div class="rounded-2xl overflow-hidden border border-slate-200/80 dark:border-white/10 bg-slate-900 h-80 shadow-lg relative group">
+                    <object data="{{ route('drive.shared.preview', ['token' => $file->share_token]) }}" type="application/pdf" class="w-full h-full">
+                        <iframe src="{{ route('drive.shared.preview', ['token' => $file->share_token]) }}#toolbar=1" class="w-full h-full" title="PDF Preview">
+                            <div class="p-6 text-center text-white">
+                                <p class="text-xs text-slate-300 mb-3">Browser tidak dapat menampilkan PDF secara inline.</p>
+                                <a href="{{ route('drive.shared.preview', ['token' => $file->share_token]) }}" target="_blank" class="px-4 py-2 rounded-xl bg-teal-500 text-white text-xs font-bold inline-flex items-center gap-1.5 shadow-sm">
+                                    Buka PDF di Tab Baru
+                                </a>
+                            </div>
+                        </iframe>
+                    </object>
                     <a href="{{ route('drive.shared.preview', ['token' => $file->share_token]) }}" target="_blank" class="absolute top-2.5 right-2.5 px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-950 text-white text-xs font-bold border border-white/20 backdrop-blur-md flex items-center gap-1.5 shadow-lg transition-transform active:scale-95">
                         <svg class="w-3.5 h-3.5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
                         </svg>
                         <span>Layar Penuh</span>
                     </a>
+                </div>
+
+            @elseif($isText)
+                <!-- Text / Code Preview Card -->
+                <div class="rounded-2xl overflow-hidden border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-950 shadow-inner flex flex-col text-left">
+                    <div class="flex items-center justify-between px-3 py-1.5 bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-white/10 text-[10px] font-mono text-slate-600 dark:text-slate-400">
+                        <span id="share-text-info">.{{ $cleanExt }}</span>
+                        <button type="button" id="share-text-copy-btn" onclick="copyShareText(this)" class="px-2 py-0.5 rounded bg-teal-500 hover:bg-teal-600 text-white font-sans font-bold active:scale-95 transition-all cursor-pointer">Salin Teks</button>
+                    </div>
+                    <pre id="share-text-content" class="p-3 font-mono text-xs text-slate-800 dark:text-slate-200 overflow-auto whitespace-pre leading-relaxed select-text select-all max-h-72 min-h-[120px] bg-white dark:bg-slate-950">Memuat berkas...</pre>
+                    <div id="share-text-notice" class="hidden p-2 text-center text-[10px] text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border-t border-amber-200 dark:border-amber-800"></div>
                 </div>
 
             @else
@@ -524,6 +545,47 @@
                 }
             }
         }, { passive: true });
+
+        let shareLoadedText = '';
+        function copyShareText(btn) {
+            if (!shareLoadedText) return;
+            navigator.clipboard.writeText(shareLoadedText).then(() => {
+                const orig = btn.innerText;
+                btn.innerText = 'Tersalin!';
+                setTimeout(() => { btn.innerText = orig; }, 2000);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const textPre = document.getElementById('share-text-content');
+            if (textPre) {
+                fetch("{{ route('drive.shared.preview', ['token' => $file->share_token]) }}")
+                    .then(res => {
+                        if (!res.ok) throw new Error('Gagal memuat');
+                        return res.text();
+                    })
+                    .then(text => {
+                        shareLoadedText = text;
+                        const lines = text.split('\n');
+                        const lineCount = lines.length;
+                        const infoEl = document.getElementById('share-text-info');
+                        if (infoEl) infoEl.innerText = `.{{ $cleanExt }} (${lineCount.toLocaleString('id-ID')} baris)`;
+                        if (lineCount > 1500) {
+                            textPre.textContent = lines.slice(0, 1500).join('\n');
+                            const notice = document.getElementById('share-text-notice');
+                            if (notice) {
+                                notice.innerText = `Menampilkan 1.500 baris pertama dari ${lineCount.toLocaleString('id-ID')} baris. Unduh berkas untuk melihat seluruh isi.`;
+                                notice.classList.remove('hidden');
+                            }
+                        } else {
+                            textPre.textContent = text;
+                        }
+                    })
+                    .catch(() => {
+                        textPre.textContent = 'Gagal memuat pratinjau teks secara langsung. Silakan klik tombol unduh di bawah.';
+                    });
+            }
+        });
     </script>
 </body>
 </html>

@@ -242,17 +242,32 @@
                     $meta = $file->categoryMeta();
                     $previewUrl = route('drive.shared.folder.preview', ['token' => $folder->share_token, 'file' => $file]);
                     $downloadUrl = route('drive.shared.folder.download', ['token' => $folder->share_token, 'file' => $file]);
+                    $previewPayload = [
+                        'title' => (string) ($file->title ?? $file->original_name),
+                        'size' => (string) ($file->formatted_size ?? ''),
+                        'ext' => strtolower((string) ($file->extension ?? '')),
+                        'preview_url' => $previewUrl,
+                        'download_url' => $downloadUrl,
+                        'notes' => (string) ($file->notes ?? ''),
+                    ];
+                    $previewJsonAttr = htmlspecialchars(json_encode($previewPayload, JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8');
                 @endphp
                 <div class="file-item rounded-[22px] bg-white/85 dark:bg-slate-900/75 border border-slate-200/80 dark:border-white/15 hover:border-teal-500/40 p-4 space-y-3 shadow-md backdrop-blur-xl transition-all"
                      data-name="{{ strtolower($file->title . ' ' . $file->original_name) }}"
                      data-category="{{ $file->category }}">
                     <div class="flex items-center justify-between gap-3">
-                        <div class="flex items-center gap-3 min-w-0 flex-1">
-                            <div class="w-10 h-10 rounded-[16px] {{ $meta['bg'] }} {{ $meta['text'] }} border {{ $meta['border'] }} flex items-center justify-center shrink-0 font-black text-xs uppercase shadow-xs">
-                                {{ substr($file->extension, 0, 4) }}
+                        <div data-preview-json="{{ $previewJsonAttr }}"
+                             onclick="triggerFolderFilePreview(this)"
+                             class="flex items-center gap-3 min-w-0 flex-1 cursor-pointer group">
+                            <div class="w-10 h-10 rounded-[16px] {{ $meta['bg'] }} {{ $meta['text'] }} border {{ $meta['border'] }} flex items-center justify-center shrink-0 font-black text-xs uppercase shadow-xs overflow-hidden group-hover:scale-105 transition-transform">
+                                @if($file->category === 'image')
+                                    <img src="{{ route('drive.shared.folder.preview', ['token' => $folder->share_token, 'file' => $file, 'thumb' => 1]) }}" alt="{{ $file->title }}" class="w-full h-full object-cover rounded-[16px]" loading="lazy" onerror="this.style.display='none'">
+                                @else
+                                    {{ substr($file->extension, 0, 4) }}
+                                @endif
                             </div>
                             <div class="min-w-0 flex-1">
-                                <h3 class="text-sm font-bold text-slate-900 dark:text-white truncate leading-tight" title="{{ $file->title }}">
+                                <h3 class="text-sm font-bold text-slate-900 dark:text-white truncate leading-tight group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors" title="{{ $file->title }}">
                                     {{ $file->title }}
                                 </h3>
                                 <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5" title="{{ $file->original_name }}">
@@ -269,8 +284,10 @@
                         <!-- Action Buttons -->
                         <div class="flex items-center gap-1.5 shrink-0">
                             <button type="button"
-                                    onclick="openFilePreviewModal('{{ addslashes($file->title) }}', '{{ $file->formatted_size }}', '{{ strtolower($file->extension) }}', '{{ $previewUrl }}', '{{ $downloadUrl }}', '{{ addslashes($file->notes ?? '') }}')"
-                                    class="py-2 px-3 rounded-[14px] bg-teal-500 hover:bg-teal-400 active:scale-95 text-white text-xs font-black flex items-center gap-1 transition-all shadow-xs cursor-pointer">
+                                    data-preview-json="{{ $previewJsonAttr }}"
+                                    onclick="triggerFolderFilePreview(this)"
+                                    class="py-2 px-3 rounded-[14px] bg-teal-500 hover:bg-teal-400 active:scale-95 text-white text-xs font-black flex items-center gap-1 transition-all shadow-xs cursor-pointer"
+                                    title="Lihat Pratinjau">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -438,8 +455,25 @@
             setCategoryFilter('all');
         }
 
+        function triggerFolderFilePreview(el) {
+            if (!el) return;
+            try {
+                const raw = el.getAttribute('data-preview-json');
+                if (!raw) return;
+                const data = JSON.parse(raw);
+                openFilePreviewModal(data.title, data.size, data.ext, data.preview_url, data.download_url, data.notes);
+            } catch (err) {
+                console.error('Failed to parse folder preview data', err);
+            }
+        }
+
+        let folderPreviewAbortController = null;
+
         function openFilePreviewModal(title, size, ext, previewUrl, downloadUrl, notes) {
             document.getElementById('pv-title').innerText = title;
+            const sizeEl = document.getElementById('pv-size');
+            if (sizeEl) sizeEl.innerText = size || '';
+
             const pvDlLink = document.getElementById('pv-download-link');
             if (pvDlLink) {
                 pvDlLink.href = downloadUrl;
@@ -457,29 +491,154 @@
                 notesEl.classList.add('hidden');
             }
 
-            container.innerHTML = '';
-            const imageExts = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'];
-            const audioExts = ['mp3', 'wav', 'ogg', 'm4a', 'aac'];
-            const videoExts = ['mp4', 'webm', 'mov'];
+            if (folderPreviewAbortController) {
+                folderPreviewAbortController.abort();
+            }
+            folderPreviewAbortController = new AbortController();
 
-            if (imageExts.includes(ext)) {
-                container.innerHTML = `<img src="${previewUrl}" alt="${title}" class="max-h-72 max-w-full rounded-xl object-contain">`;
-            } else if (audioExts.includes(ext)) {
-                container.innerHTML = `<div class="w-full p-3"><audio controls class="w-full rounded-xl" src="${previewUrl}"></audio></div>`;
-            } else if (videoExts.includes(ext)) {
-                container.innerHTML = `<video controls playsinline class="max-h-72 w-full object-contain" src="${previewUrl}"></video>`;
-            } else if (ext === 'pdf') {
-                container.innerHTML = `<iframe src="${previewUrl}#toolbar=0" class="w-full h-72 rounded-xl" title="PDF"></iframe>`;
+            container.innerHTML = `
+                <div class="flex flex-col items-center justify-center gap-2 p-6 text-slate-400">
+                    <svg class="w-8 h-8 animate-spin text-teal-500" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                    </svg>
+                    <span class="text-xs font-semibold">Memuat Pratinjau Berkas...</span>
+                </div>
+            `;
+
+            const cleanExt = (ext || '').toLowerCase().replace(/^\./, '').trim();
+            const imageExts = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp', 'ico', 'avif', 'heic'];
+            const audioExts = ['mp3', 'wav', 'ogg', 'm4a', 'aac', 'flac'];
+            const videoExts = ['mp4', 'webm', 'ogg', 'mov', 'm4v'];
+            const textExts = ['txt', 'csv', 'json', 'md', 'html', 'js', 'css', 'xml', 'log', 'php', 'py', 'sql', 'sh', 'env', 'yaml', 'yml'];
+
+            if (imageExts.includes(cleanExt)) {
+                const img = new Image();
+                img.src = previewUrl;
+                img.alt = title;
+                img.className = 'max-h-80 max-w-full rounded-xl object-contain shadow-xs cursor-zoom-in';
+                img.title = 'Klik untuk membuka di tab baru';
+                img.onclick = () => window.open(previewUrl, '_blank');
+                img.onload = () => {
+                    container.innerHTML = '';
+                    container.appendChild(img);
+                };
+                img.onerror = () => {
+                    renderFolderFallback(container, cleanExt, previewUrl, downloadUrl);
+                };
+            } else if (audioExts.includes(cleanExt)) {
+                container.innerHTML = `
+                    <div class="w-full p-4 flex flex-col items-center justify-center gap-3 text-center">
+                        <div class="w-16 h-16 rounded-2xl bg-teal-500/10 text-teal-600 dark:text-teal-400 flex items-center justify-center border border-teal-500/20">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a.75.75 0 00.532-.72v-4.52m-9.5 4.5v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66A.75.75 0 008.25 15V9" />
+                            </svg>
+                        </div>
+                        <audio controls playsinline class="w-full max-w-sm rounded-xl focus:outline-none" src="${previewUrl}">
+                            Browser Anda tidak mendukung audio player.
+                        </audio>
+                    </div>
+                `;
+            } else if (videoExts.includes(cleanExt)) {
+                container.innerHTML = `
+                    <div class="w-full flex items-center justify-center bg-black/90 rounded-xl overflow-hidden">
+                        <video controls playsinline class="max-h-80 w-full object-contain focus:outline-none" src="${previewUrl}">
+                            Browser Anda tidak mendukung pemutar video.
+                        </video>
+                    </div>
+                `;
+            } else if (cleanExt === 'pdf') {
+                container.innerHTML = `
+                    <div class="w-full h-80 flex flex-col">
+                        <object data="${previewUrl}" type="application/pdf" class="w-full h-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white">
+                            <iframe src="${previewUrl}#toolbar=1" class="w-full h-full rounded-xl" title="PDF Preview">
+                                <div class="p-6 text-center">
+                                    <p class="text-xs text-slate-500 mb-3">Browser tidak dapat menampilkan PDF secara inline.</p>
+                                    <a href="${previewUrl}" target="_blank" class="px-4 py-2 rounded-xl bg-teal-500 text-white text-xs font-bold inline-flex items-center gap-1.5 shadow-sm">
+                                        Buka PDF di Tab Baru
+                                    </a>
+                                </div>
+                            </iframe>
+                        </object>
+                        <div class="mt-2 flex items-center justify-between px-1">
+                            <span class="text-[11px] text-slate-400">Dokumen PDF</span>
+                            <a href="${previewUrl}" target="_blank" class="text-xs font-semibold text-teal-600 dark:text-teal-400 hover:underline">
+                                Layar Penuh ↗
+                            </a>
+                        </div>
+                    </div>
+                `;
+            } else if (textExts.includes(cleanExt)) {
+                fetch(previewUrl, { signal: folderPreviewAbortController.signal })
+                    .then(res => {
+                        if (!res.ok) throw new Error('Gagal memuat teks');
+                        return res.text();
+                    })
+                    .then(text => {
+                        const lines = text.split('\n');
+                        const lineCount = lines.length;
+                        let displayText = text;
+                        let truncatedNotice = '';
+                        if (lineCount > 1500) {
+                            displayText = lines.slice(0, 1500).join('\n');
+                            truncatedNotice = `<div class="p-2 text-center text-[10px] text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border-t border-amber-200 dark:border-amber-800">Menampilkan 1.500 baris pertama dari ${lineCount.toLocaleString('id-ID')} baris. Unduh berkas untuk melihat seluruh isi.</div>`;
+                        }
+                        const escaped = displayText
+                            .replace(/&/g, '&amp;')
+                            .replace(/</g, '&lt;')
+                            .replace(/>/g, '&gt;')
+                            .replace(/"/g, '&quot;')
+                            .replace(/'/g, '&#039;');
+
+                        container.innerHTML = `
+                            <div class="w-full h-full flex flex-col text-left">
+                                <div class="flex items-center justify-between px-3 py-1.5 bg-slate-200/70 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 rounded-t-xl text-[10px] font-mono text-slate-600 dark:text-slate-400">
+                                    <span>.${cleanExt} (${lineCount} baris)</span>
+                                </div>
+                                <pre class="flex-1 max-h-72 p-3 font-mono text-xs text-slate-800 dark:text-slate-200 overflow-auto whitespace-pre leading-relaxed select-text select-all bg-white dark:bg-slate-950 rounded-b-xl border border-slate-200 dark:border-slate-800">${escaped}</pre>
+                                ${truncatedNotice}
+                            </div>
+                        `;
+                    })
+                    .catch(err => {
+                        if (err.name === 'AbortError') return;
+                        renderFolderFallback(container, cleanExt, previewUrl, downloadUrl);
+                    });
             } else {
-                container.innerHTML = `<div class="p-6 text-center space-y-2"><div class="text-3xl uppercase font-black text-teal-400">${ext}</div><p class="text-xs text-slate-400">Pratinjau langsung tidak tersedia untuk format berkas ini. Klik unduh untuk membuka.</p></div>`;
+                renderFolderFallback(container, cleanExt, previewUrl, downloadUrl);
             }
 
             document.getElementById('folder-preview-modal').classList.remove('hidden');
         }
 
+        function renderFolderFallback(container, ext, previewUrl, downloadUrl) {
+            container.innerHTML = `
+                <div class="p-6 text-center space-y-3">
+                    <div class="w-14 h-14 rounded-2xl bg-teal-500/10 text-teal-600 dark:text-teal-400 mx-auto flex items-center justify-center font-black text-lg uppercase border border-teal-500/20 shadow-xs">
+                        ${(ext || 'FILE').toUpperCase().substring(0, 4)}
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Pratinjau Langsung Tidak Tersedia</h4>
+                        <p class="text-[11px] text-slate-400 mt-0.5">Format berkas ini tidak dapat dipratinjau langsung di browser.</p>
+                    </div>
+                </div>
+            `;
+        }
+
         function closeFilePreviewModal() {
-            document.getElementById('folder-preview-modal').classList.add('hidden');
-            document.getElementById('pv-container').innerHTML = '';
+            if (folderPreviewAbortController) {
+                folderPreviewAbortController.abort();
+            }
+            const modal = document.getElementById('folder-preview-modal');
+            const container = document.getElementById('pv-container');
+            if (container) {
+                const audio = container.querySelector('audio');
+                if (audio) { audio.pause(); audio.src = ''; audio.load(); }
+                const video = container.querySelector('video');
+                if (video) { video.pause(); video.src = ''; video.load(); }
+                container.innerHTML = '';
+            }
+            if (modal) modal.classList.add('hidden');
         }
 
         async function shareFolderPageNative() {

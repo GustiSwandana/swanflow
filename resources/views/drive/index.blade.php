@@ -662,6 +662,24 @@
                 @php
                     $meta = $file->categoryMeta();
                     $isReceivedFromOther = !empty($file->upload_link_id) || !empty($file->uploader_name);
+                    $previewPayload = [
+                        'id' => (string) $file->id,
+                        'title' => (string) ($file->title ?? ''),
+                        'original_name' => (string) ($file->original_name ?? ''),
+                        'size' => (string) ($file->formatted_size ?? ''),
+                        'ext' => strtolower((string) ($file->extension ?? '')),
+                        'preview_url' => route('drive.preview', $file),
+                        'download_url' => route('drive.download', $file),
+                        'label' => (string) ($meta['label'] ?? ''),
+                        'notes' => (string) ($file->notes ?? ''),
+                        'date' => $file->created_at ? $file->created_at->format('d M Y, H:i') : '',
+                        'delete_url' => route('drive.destroy', $file),
+                        'share_url' => (string) ($file->share_url ?? ''),
+                        'is_public' => (bool) $file->is_public,
+                        'share_toggle_url' => route('drive.share.toggle', $file),
+                        'folder_id' => (string) ($file->folder_id ?? ''),
+                    ];
+                    $previewJsonAttr = htmlspecialchars(json_encode($previewPayload, JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8');
                 @endphp
                 <div id="file-{{ $file->id }}" data-file-id="{{ $file->id }}" data-is-public="{{ $file->is_public ? 'true' : 'false' }}" @if($isReceivedFromOther) data-received-from-other="1" @endif class="liquid-card rounded-[24px] {{ $isReceivedFromOther ? 'bg-gradient-to-br from-amber-500/10 via-white/85 to-white/80 dark:from-amber-950/30 dark:via-slate-900/80 dark:to-slate-900/75 border-amber-400/50 dark:border-amber-500/40 shadow-xs ring-1 ring-amber-400/20' : ($file->is_public ? 'bg-white/85 dark:bg-slate-900/80 border border-emerald-300/50 dark:border-emerald-500/30 shadow-sm ring-1 ring-emerald-500/15' : 'bg-white/80 dark:bg-slate-900/75 border border-white/60 dark:border-white/10 shadow-sm') }} hover:shadow-md hover:border-teal-400/40 backdrop-blur-2xl p-4 space-y-3 transition-all duration-300">
                     
@@ -680,7 +698,8 @@
 
                     <div class="flex items-start justify-between gap-3">
                         <!-- Icon + Name (Click to preview) -->
-                        <div onclick="openPreviewModal('{{ $file->id }}', '{{ addslashes($file->title) }}', '{{ addslashes($file->original_name) }}', '{{ $file->formatted_size }}', '{{ strtolower($file->extension) }}', '{{ route('drive.preview', $file) }}', '{{ route('drive.download', $file) }}', '{{ $meta['label'] }}', '{{ addslashes($file->notes ?? '') }}', '{{ $file->created_at->format('d M Y, H:i') }}', '{{ route('drive.destroy', $file) }}', '{{ $file->share_url }}', {{ $file->is_public ? 'true' : 'false' }}, '{{ route('drive.share.toggle', $file) }}', '{{ $file->folder_id }}')"
+                        <div data-preview-json="{{ $previewJsonAttr }}"
+                             onclick="triggerFilePreview(this)"
                              class="flex items-start gap-3 min-w-0 flex-1 cursor-pointer group">
                             <div class="relative shrink-0">
                                 <div class="w-10 h-10 rounded-[18px] {{ $meta['bg'] }} {{ $meta['text'] }} border {{ $meta['border'] }} flex items-center justify-center font-black text-xs uppercase shadow-2xs group-hover:scale-105 transition-transform overflow-hidden">
@@ -791,7 +810,8 @@
                         <div class="grid grid-cols-2 gap-2">
                             <!-- View (Preview) -->
                             <button type="button"
-                                    onclick="openPreviewModal('{{ $file->id }}', '{{ addslashes($file->title) }}', '{{ addslashes($file->original_name) }}', '{{ $file->formatted_size }}', '{{ strtolower($file->extension) }}', '{{ route('drive.preview', $file) }}', '{{ route('drive.download', $file) }}', '{{ $meta['label'] }}', '{{ addslashes($file->notes ?? '') }}', '{{ $file->created_at->format('d M Y, H:i') }}', '{{ route('drive.destroy', $file) }}', '{{ $file->share_url }}', {{ $file->is_public ? 'true' : 'false' }}, '{{ route('drive.share.toggle', $file) }}', '{{ $file->folder_id }}')"
+                                    data-preview-json="{{ $previewJsonAttr }}"
+                                    onclick="triggerFilePreview(this)"
                                     class="w-full py-2.5 px-3 rounded-[16px] bg-teal-500 hover:bg-teal-400 active:scale-[0.98] text-white text-xs font-black flex items-center justify-center gap-1.5 shadow-sm transition-all cursor-pointer ios-press"
                                     title="Lihat Pratinjau Berkas">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
@@ -3118,6 +3138,34 @@
         }, 250);
     }
 
+    function triggerFilePreview(el) {
+        if (!el) return;
+        try {
+            const raw = el.getAttribute('data-preview-json');
+            if (!raw) return;
+            const data = JSON.parse(raw);
+            openPreviewModal(
+                data.id,
+                data.title,
+                data.original_name,
+                data.size,
+                data.ext,
+                data.preview_url,
+                data.download_url,
+                data.label,
+                data.notes,
+                data.date,
+                data.delete_url,
+                data.share_url,
+                data.is_public,
+                data.share_toggle_url,
+                data.folder_id
+            );
+        } catch (err) {
+            console.error('Failed to parse preview data', err);
+        }
+    }
+
     function openPreviewModal(id, title, originalName, size, ext, previewUrl, downloadUrl, label, notes, date, deleteUrl, shareUrl, isPublic, shareToggleUrl, folderId) {
         const modal = document.getElementById('preview-modal');
         const backdrop = document.getElementById('preview-backdrop');
@@ -3207,10 +3255,10 @@
         }
         currentPreviewAbortController = new AbortController();
 
-        const cleanExt = (ext || '').toLowerCase().trim();
-        const imageExts = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp', 'ico', 'avif'];
+        const cleanExt = (ext || '').toLowerCase().replace(/^\./, '').trim();
+        const imageExts = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp', 'ico', 'avif', 'heic'];
         const audioExts = ['mp3', 'wav', 'ogg', 'm4a', 'aac', 'flac'];
-        const videoExts = ['mp4', 'webm', 'ogg', 'mov'];
+        const videoExts = ['mp4', 'webm', 'ogg', 'mov', 'm4v'];
         const textExts = ['txt', 'csv', 'json', 'md', 'html', 'js', 'css', 'xml', 'log', 'php', 'py', 'sql', 'sh', 'env', 'yaml', 'yml'];
 
         if (imageExts.includes(cleanExt)) {
@@ -3218,7 +3266,9 @@
             const img = new Image();
             img.src = previewUrl;
             img.alt = title || originalName;
-            img.className = 'max-h-[55vh] max-w-full object-contain rounded-xl shadow-xs transition-opacity duration-300 opacity-0';
+            img.className = 'max-h-[55vh] max-w-full object-contain rounded-xl shadow-xs transition-opacity duration-300 opacity-0 cursor-zoom-in';
+            img.title = 'Klik untuk memperbesar / membuka di tab baru';
+            img.onclick = () => window.open(previewUrl, '_blank');
             img.onload = () => {
                 container.innerHTML = '';
                 container.appendChild(img);
@@ -3231,7 +3281,22 @@
             // PDF PREVIEW
             container.innerHTML = `
                 <div class="w-full h-[55vh] flex flex-col">
-                    <iframe src="${previewUrl}#toolbar=0" class="w-full h-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white" title="PDF Preview"></iframe>
+                    <object data="${previewUrl}" type="application/pdf" class="w-full h-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white">
+                        <iframe src="${previewUrl}#toolbar=1" class="w-full h-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white" title="PDF Preview">
+                            <div class="p-6 text-center">
+                                <p class="text-xs text-slate-500 mb-3">Browser tidak dapat menampilkan PDF secara inline.</p>
+                                <a href="${previewUrl}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-xl bg-teal-500 text-white text-xs font-bold inline-flex items-center gap-1.5 shadow-sm">
+                                    Buka PDF di Tab Baru
+                                </a>
+                            </div>
+                        </iframe>
+                    </object>
+                    <div class="mt-2 flex items-center justify-between px-1">
+                        <span class="text-[11px] text-slate-400">Pratinjau Dokumen PDF</span>
+                        <a href="${previewUrl}" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-teal-600 dark:text-teal-400 hover:underline inline-flex items-center gap-1">
+                            Buka Layar Penuh ↗
+                        </a>
+                    </div>
                 </div>
             `;
         } else if (audioExts.includes(cleanExt)) {
@@ -3239,12 +3304,12 @@
             container.innerHTML = `
                 <div class="w-full p-4 flex flex-col items-center justify-center gap-4 text-center">
                     <div class="w-20 h-20 rounded-2xl bg-teal-500/10 text-teal-600 dark:text-teal-400 flex items-center justify-center border border-teal-500/20 shadow-inner">
-                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                        <svg class="w-10 h-10 text-teal-600 dark:text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a.75.75 0 00.532-.72v-4.52m-9.5 4.5v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66A.75.75 0 008.25 15V9" />
                         </svg>
                     </div>
                     <div class="w-full max-w-sm">
-                        <audio controls class="w-full rounded-xl focus:outline-none" src="${previewUrl}">
+                        <audio controls playsinline class="w-full rounded-xl focus:outline-none" src="${previewUrl}">
                             Browser Anda tidak mendukung audio player.
                         </audio>
                     </div>
@@ -3260,7 +3325,7 @@
                 </div>
             `;
         } else if (textExts.includes(cleanExt)) {
-            // TEXT / CODE PREVIEW (Async fetch inline)
+            // TEXT / CODE PREVIEW (Async fetch inline with line limiter)
             fetch(previewUrl, { signal: currentPreviewAbortController.signal })
                 .then(res => {
                     if (!res.ok) throw new Error('Gagal memuat teks');
@@ -3268,15 +3333,23 @@
                 })
                 .then(text => {
                     currentLoadedPreviewText = text;
-                    const escaped = escapeHtml(text);
-                    const lineCount = text.split('\n').length;
+                    const lines = text.split('\n');
+                    const lineCount = lines.length;
+                    let displayText = text;
+                    let truncatedNotice = '';
+                    if (lineCount > 1500) {
+                        displayText = lines.slice(0, 1500).join('\n');
+                        truncatedNotice = `<div class="p-2 text-center text-[10px] text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border-t border-amber-200 dark:border-amber-800">Menampilkan 1.500 baris pertama dari ${lineCount.toLocaleString('id-ID')} baris. Unduh berkas untuk melihat seluruh isi.</div>`;
+                    }
+                    const escaped = escapeHtml(displayText);
                     container.innerHTML = `
                         <div class="w-full h-full flex flex-col text-left">
                             <div class="flex items-center justify-between px-3 py-1.5 bg-slate-200/70 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 rounded-t-xl text-[10px] font-mono text-slate-600 dark:text-slate-400">
                                 <span>.${cleanExt} (${lineCount} baris)</span>
                                 <button type="button" onclick="copyPreviewText(this)" class="px-2 py-0.5 rounded bg-teal-500 hover:bg-teal-600 text-white font-sans font-bold active:scale-95 transition-all cursor-pointer">Salin Teks</button>
                             </div>
-                            <pre class="flex-1 p-3 font-mono text-xs text-slate-800 dark:text-slate-200 overflow-auto whitespace-pre leading-relaxed select-text select-all bg-white dark:bg-slate-950 rounded-b-xl border border-slate-200 dark:border-slate-800">${escaped}</pre>
+                            <pre class="flex-1 max-h-[50vh] p-3 font-mono text-xs text-slate-800 dark:text-slate-200 overflow-auto whitespace-pre leading-relaxed select-text select-all bg-white dark:bg-slate-950 rounded-b-xl border border-slate-200 dark:border-slate-800">${escaped}</pre>
+                            ${truncatedNotice}
                         </div>
                     `;
                 })
@@ -3331,12 +3404,20 @@
         const panel = document.getElementById('preview-panel');
         const container = document.getElementById('pv-content-container');
 
-        // Pause any active audio/video immediately to prevent background playback
+        // Pause and reset any active audio/video immediately to prevent background playback
         if (container) {
             const audio = container.querySelector('audio');
-            if (audio) audio.pause();
+            if (audio) {
+                audio.pause();
+                audio.src = '';
+                audio.load();
+            }
             const video = container.querySelector('video');
-            if (video) video.pause();
+            if (video) {
+                video.pause();
+                video.src = '';
+                video.load();
+            }
         }
 
         backdrop.classList.remove('opacity-100');
@@ -4143,7 +4224,7 @@
                     }, 4000);
 
                     // Automatically open file preview modal
-                    const previewTrigger = targetCard.querySelector('[onclick^="openPreviewModal"]');
+                    const previewTrigger = targetCard.querySelector('[data-preview-json], [onclick^="openPreviewModal"]');
                     if (previewTrigger) {
                         previewTrigger.click();
                     }
