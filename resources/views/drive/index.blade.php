@@ -679,7 +679,7 @@
                         'share_toggle_url' => route('drive.share.toggle', $file),
                         'folder_id' => (string) ($file->folder_id ?? ''),
                     ];
-                    $previewJsonAttr = htmlspecialchars(json_encode($previewPayload, JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8');
+                    $previewJson = json_encode($previewPayload, JSON_UNESCAPED_UNICODE);
                 @endphp
                 <div id="file-{{ $file->id }}" data-file-id="{{ $file->id }}" data-is-public="{{ $file->is_public ? 'true' : 'false' }}" @if($isReceivedFromOther) data-received-from-other="1" @endif class="liquid-card rounded-[24px] {{ $isReceivedFromOther ? 'bg-gradient-to-br from-amber-500/10 via-white/85 to-white/80 dark:from-amber-950/30 dark:via-slate-900/80 dark:to-slate-900/75 border-amber-400/50 dark:border-amber-500/40 shadow-xs ring-1 ring-amber-400/20' : ($file->is_public ? 'bg-white/85 dark:bg-slate-900/80 border border-emerald-300/50 dark:border-emerald-500/30 shadow-sm ring-1 ring-emerald-500/15' : 'bg-white/80 dark:bg-slate-900/75 border border-white/60 dark:border-white/10 shadow-sm') }} hover:shadow-md hover:border-teal-400/40 backdrop-blur-2xl p-4 space-y-3 transition-all duration-300">
                     
@@ -698,7 +698,7 @@
 
                     <div class="flex items-start justify-between gap-3">
                         <!-- Icon + Name (Click to preview) -->
-                        <div data-preview-json="{{ $previewJsonAttr }}"
+                        <div data-preview-json="{{ $previewJson }}"
                              onclick="triggerFilePreview(this)"
                              class="flex items-start gap-3 min-w-0 flex-1 cursor-pointer group">
                             <div class="relative shrink-0">
@@ -810,7 +810,7 @@
                         <div class="grid grid-cols-2 gap-2">
                             <!-- View (Preview) -->
                             <button type="button"
-                                    data-preview-json="{{ $previewJsonAttr }}"
+                                    data-preview-json="{{ $previewJson }}"
                                     onclick="triggerFilePreview(this)"
                                     class="w-full py-2.5 px-3 rounded-[16px] bg-teal-500 hover:bg-teal-400 active:scale-[0.98] text-white text-xs font-black flex items-center justify-center gap-1.5 shadow-sm transition-all cursor-pointer ios-press"
                                     title="Lihat Pratinjau Berkas">
@@ -3138,32 +3138,53 @@
         }, 250);
     }
 
+    function safeParsePreviewPayload(raw) {
+        if (!raw) return null;
+        try {
+            return JSON.parse(raw);
+        } catch (e1) {
+            try {
+                // Defensive fallback: decode HTML entities if double-escaped by template
+                const decoded = raw
+                    .replace(/&quot;/g, '"')
+                    .replace(/&#039;/g, "'")
+                    .replace(/&amp;/g, '&')
+                    .replace(/&lt;/g, '<')
+                    .replace(/&gt;/g, '>');
+                return JSON.parse(decoded);
+            } catch (e2) {
+                console.error('Failed to parse preview data', e1, e2);
+                return null;
+            }
+        }
+    }
+
     function triggerFilePreview(el) {
         if (!el) return;
-        try {
-            const raw = el.getAttribute('data-preview-json');
-            if (!raw) return;
-            const data = JSON.parse(raw);
-            openPreviewModal(
-                data.id,
-                data.title,
-                data.original_name,
-                data.size,
-                data.ext,
-                data.preview_url,
-                data.download_url,
-                data.label,
-                data.notes,
-                data.date,
-                data.delete_url,
-                data.share_url,
-                data.is_public,
-                data.share_toggle_url,
-                data.folder_id
-            );
-        } catch (err) {
-            console.error('Failed to parse preview data', err);
-        }
+        const target = el.closest('[data-preview-json]') || el;
+        const raw = target.getAttribute('data-preview-json');
+        if (!raw) return;
+
+        const data = safeParsePreviewPayload(raw);
+        if (!data) return;
+
+        openPreviewModal(
+            data.id,
+            data.title,
+            data.original_name,
+            data.size,
+            data.ext,
+            data.preview_url,
+            data.download_url,
+            data.label,
+            data.notes,
+            data.date,
+            data.delete_url,
+            data.share_url,
+            data.is_public,
+            data.share_toggle_url,
+            data.folder_id
+        );
     }
 
     function openPreviewModal(id, title, originalName, size, ext, previewUrl, downloadUrl, label, notes, date, deleteUrl, shareUrl, isPublic, shareToggleUrl, folderId) {

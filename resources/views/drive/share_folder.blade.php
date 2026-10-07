@@ -250,13 +250,13 @@
                         'download_url' => $downloadUrl,
                         'notes' => (string) ($file->notes ?? ''),
                     ];
-                    $previewJsonAttr = htmlspecialchars(json_encode($previewPayload, JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8');
+                    $previewJson = json_encode($previewPayload, JSON_UNESCAPED_UNICODE);
                 @endphp
                 <div class="file-item rounded-[22px] bg-white/85 dark:bg-slate-900/75 border border-slate-200/80 dark:border-white/15 hover:border-teal-500/40 p-4 space-y-3 shadow-md backdrop-blur-xl transition-all"
                      data-name="{{ strtolower($file->title . ' ' . $file->original_name) }}"
                      data-category="{{ $file->category }}">
                     <div class="flex items-center justify-between gap-3">
-                        <div data-preview-json="{{ $previewJsonAttr }}"
+                        <div data-preview-json="{{ $previewJson }}"
                              onclick="triggerFolderFilePreview(this)"
                              class="flex items-center gap-3 min-w-0 flex-1 cursor-pointer group">
                             <div class="w-10 h-10 rounded-[16px] {{ $meta['bg'] }} {{ $meta['text'] }} border {{ $meta['border'] }} flex items-center justify-center shrink-0 font-black text-xs uppercase shadow-xs overflow-hidden group-hover:scale-105 transition-transform">
@@ -284,7 +284,7 @@
                         <!-- Action Buttons -->
                         <div class="flex items-center gap-1.5 shrink-0">
                             <button type="button"
-                                    data-preview-json="{{ $previewJsonAttr }}"
+                                    data-preview-json="{{ $previewJson }}"
                                     onclick="triggerFolderFilePreview(this)"
                                     class="py-2 px-3 rounded-[14px] bg-teal-500 hover:bg-teal-400 active:scale-95 text-white text-xs font-black flex items-center gap-1 transition-all shadow-xs cursor-pointer"
                                     title="Lihat Pratinjau">
@@ -455,16 +455,36 @@
             setCategoryFilter('all');
         }
 
+        function safeParseFolderPreviewPayload(raw) {
+            if (!raw) return null;
+            try {
+                return JSON.parse(raw);
+            } catch (e1) {
+                try {
+                    const decoded = raw
+                        .replace(/&quot;/g, '"')
+                        .replace(/&#039;/g, "'")
+                        .replace(/&amp;/g, '&')
+                        .replace(/&lt;/g, '<')
+                        .replace(/&gt;/g, '>');
+                    return JSON.parse(decoded);
+                } catch (e2) {
+                    console.error('Failed to parse folder preview JSON', e1, e2);
+                    return null;
+                }
+            }
+        }
+
         function triggerFolderFilePreview(el) {
             if (!el) return;
-            try {
-                const raw = el.getAttribute('data-preview-json');
-                if (!raw) return;
-                const data = JSON.parse(raw);
-                openFilePreviewModal(data.title, data.size, data.ext, data.preview_url, data.download_url, data.notes);
-            } catch (err) {
-                console.error('Failed to parse folder preview data', err);
-            }
+            const target = el.closest('[data-preview-json]') || el;
+            const raw = target.getAttribute('data-preview-json');
+            if (!raw) return;
+
+            const data = safeParseFolderPreviewPayload(raw);
+            if (!data) return;
+
+            openFilePreviewModal(data.title, data.size, data.ext, data.preview_url, data.download_url, data.notes);
         }
 
         let folderPreviewAbortController = null;
