@@ -44,6 +44,7 @@ class ProfileController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id],
             'whatsapp_number' => ['nullable', 'string', 'max:30'],
+            'fonnte_token' => ['nullable', 'string', 'max:255'],
         ], [
             'name.required' => 'Nama lengkap wajib diisi.',
             'email.required' => 'Email wajib diisi.',

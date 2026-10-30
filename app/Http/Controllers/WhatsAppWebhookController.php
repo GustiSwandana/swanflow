@@ -65,20 +65,35 @@ class WhatsAppWebhookController extends Controller
             ], 400);
         }
 
+        // Log payload to dedicated whatsapp.log so user can debug anytime
+        $logLine = sprintf(
+            "[%s] SENDER: %s | MSG: %s | RAW: %s\n",
+            now()->toDateTimeString(),
+            (string) $sender,
+            (string) $message,
+            json_encode($request->all())
+        );
+        @file_put_contents(storage_path('logs/whatsapp.log'), $logLine, FILE_APPEND);
+
         $result = $this->waService->handleIncoming((string) $sender, $message ? (string) $message : null, $imageUrl ? (string) $imageUrl : null);
 
-        // If Fonnte Token is configured, optionally dispatch outward reply message via Fonnte API
-        $fonnteToken = env('FONNTE_TOKEN');
+        // Dispatched outward reply message via Fonnte API (checks User profile token first, then env)
+        $user = $this->waService->findUserBySender((string) $sender);
+        $fonnteToken = $user?->fonnte_token ?: env('FONNTE_TOKEN');
+
         if (! empty($fonnteToken)) {
             try {
-                Http::timeout(5)->withHeaders([
+                $fonnteRes = Http::timeout(8)->withHeaders([
                     'Authorization' => $fonnteToken,
                 ])->post('https://api.fonnte.com/send', [
                     'target' => $sender,
                     'message' => $result['reply'],
                 ]);
+                $sendOutput = sprintf("[%s] FONNTE SEND RES: %s\n", now()->toDateTimeString(), $fonnteRes->body());
+                @file_put_contents(storage_path('logs/whatsapp.log'), $sendOutput, FILE_APPEND);
             } catch (\Throwable $e) {
-                Log::warning('Fonnte send API notification error: '.$e->getMessage());
+                Log::error('Fonnte send API error: '.$e->getMessage());
+                @file_put_contents(storage_path('logs/whatsapp.log'), '['.now()->toDateTimeString().'] FONNTE ERR: '.$e->getMessage()."\n", FILE_APPEND);
             }
         }
 

@@ -85,6 +85,17 @@ Route::middleware('maintenance.auth')->group(function () {
         return response(implode('', $lastLines), 200, ['Content-Type' => 'text/plain']);
     });
 
+    Route::get('/swanflow-latest-wa-log', function () {
+        $logPath = storage_path('logs/whatsapp.log');
+        if (! file_exists($logPath)) {
+            return response('No WhatsApp log entries recorded yet.', 200, ['Content-Type' => 'text/plain']);
+        }
+        $lines = file($logPath);
+        $lastLines = array_slice($lines, -100);
+
+        return response(implode('', $lastLines), 200, ['Content-Type' => 'text/plain']);
+    });
+
     // Maintenance endpoint to execute pending migrations on Hostinger
     Route::get('/swanflow-migrate', function () {
         try {

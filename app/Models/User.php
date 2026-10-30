@@ -12,7 +12,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 
-#[Fillable(['name', 'email', 'password', 'pin', 'storage_quota_mb', 'whatsapp_number', 'whatsapp_token'])]
+#[Fillable(['name', 'email', 'password', 'pin', 'storage_quota_mb', 'whatsapp_number', 'whatsapp_token', 'fonnte_token'])]
 #[Hidden(['password', 'pin', 'remember_token'])]
 class User extends Authenticatable
 {

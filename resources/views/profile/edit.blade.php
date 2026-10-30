@@ -159,6 +159,20 @@
                 <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-1">Nomor ini yang diizinkan mengirim pesan transaksi ke bot WhatsApp SwanFlow.</p>
             </div>
 
+            <div>
+                <div class="flex items-center justify-between mb-1.5">
+                    <label for="fonnte_token" class="block text-xs font-bold text-slate-600 dark:text-slate-300">Token Fonnte (Device Token)</label>
+                    <span class="text-[10px] font-bold text-amber-600 dark:text-amber-400">Kunci Kirim Balasan</span>
+                </div>
+                <input id="fonnte_token" 
+                       type="text" 
+                       name="fonnte_token" 
+                       value="{{ old('fonnte_token', $user->fonnte_token) }}" 
+                       placeholder="Contoh: xK3l9P0mZbq8..."
+                       class="w-full min-h-[46px] px-4 py-2.5 bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 rounded-[20px] text-xs font-mono font-semibold text-slate-900 dark:text-white placeholder-slate-400 focus:outline-hidden focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 backdrop-blur-md transition-all">
+                <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-1">Salin Token ini dari menu <b>Device</b> di dashboard Fonnte Anda agar bot bisa membalas chat.</p>
+            </div>
+
             <div class="pt-1">
                 <button type="submit" class="w-full min-h-[46px] py-3 px-4 rounded-[20px] bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs shadow-lg shadow-emerald-600/30 ios-press active:scale-98 transition-all flex items-center justify-center gap-2 border border-white/20">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
