@@ -30,4 +30,3 @@ class EnsureMaintenanceAccess
         abort(403, 'Akses ditolak: Endpoint maintenance SwanFlow dilindungi.');
     }
 }
-

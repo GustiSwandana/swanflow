@@ -43,7 +43,7 @@ class ProfileController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id],
-            'whatsapp_number' => ['nullable', 'string', 'max:30'],
+            'whatsapp_number' => ['nullable', 'string', 'max:255'],
             'fonnte_token' => ['nullable', 'string', 'max:255'],
         ], [
             'name.required' => 'Nama lengkap wajib diisi.',
@@ -53,7 +53,14 @@ class ProfileController extends Controller
         ]);
 
         if (! empty($validated['whatsapp_number'])) {
-            $validated['whatsapp_number'] = WhatsAppTransactionService::normalizePhoneNumber($validated['whatsapp_number']);
+            $numbers = preg_split('/[\s,;]+/', (string) $validated['whatsapp_number']);
+            $normalized = [];
+            foreach ($numbers as $num) {
+                if (! empty($num)) {
+                    $normalized[] = WhatsAppTransactionService::normalizePhoneNumber($num);
+                }
+            }
+            $validated['whatsapp_number'] = implode(', ', array_unique($normalized));
         }
 
         $user->update($validated);

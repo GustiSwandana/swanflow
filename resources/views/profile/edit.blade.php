@@ -151,12 +151,12 @@
                     <span class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">Untuk Catat Otomatis</span>
                 </div>
                 <input id="whatsapp_number" 
-                       type="tel" 
+                       type="text" 
                        name="whatsapp_number" 
                        value="{{ old('whatsapp_number', $user->whatsapp_number) }}" 
-                       placeholder="Contoh: 08123456789 atau 628123456789"
+                       placeholder="Contoh: 081330039199, 087777479713"
                        class="w-full min-h-[46px] px-4 py-2.5 bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 rounded-[20px] text-sm font-semibold text-slate-900 dark:text-white placeholder-slate-400 focus:outline-hidden focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 backdrop-blur-md transition-all">
-                <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-1">Nomor ini yang diizinkan mengirim pesan transaksi ke bot WhatsApp SwanFlow.</p>
+                <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-1">Nomor yang diizinkan chat ke bot SwanFlow. Bisa masukkan lebih dari satu nomor (pisahkan dengan koma).</p>
             </div>
 
             <div>

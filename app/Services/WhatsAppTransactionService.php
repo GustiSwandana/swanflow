@@ -35,13 +35,17 @@ class WhatsAppTransactionService
     {
         $norm = self::normalizePhoneNumber($sender);
 
-        $user = User::where('whatsapp_number', $norm)
-            ->orWhere('whatsapp_number', $sender)
-            ->orWhere('whatsapp_number', '0'.substr($norm, 2))
-            ->first();
-
-        if ($user) {
-            return $user;
+        $users = User::whereNotNull('whatsapp_number')->get();
+        foreach ($users as $user) {
+            $numbers = preg_split('/[\s,;]+/', (string) $user->whatsapp_number);
+            foreach ($numbers as $num) {
+                if (empty($num)) {
+                    continue;
+                }
+                if (self::normalizePhoneNumber($num) === $norm) {
+                    return $user;
+                }
+            }
         }
 
         $authEnv = env('WHATSAPP_AUTHORIZED_NUMBER');
