@@ -22,6 +22,8 @@ use App\Http\Controllers\TodoController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\WalletController;
 use App\Http\Controllers\WhatsAppWebhookController;
+use App\Models\Transaction;
+use App\Models\Wallet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
@@ -94,6 +96,30 @@ Route::middleware('maintenance.auth')->group(function () {
         $lastLines = array_slice($lines, -100);
 
         return response(implode('', $lastLines), 200, ['Content-Type' => 'text/plain']);
+    });
+
+    // Maintenance cleanup for dummy transactions recorded during bot test loop
+    Route::get('/swanflow-cleanup-wa-loop', function () {
+        $count = 0;
+        $txs = Transaction::where('description', 'like', '%Pengeluaran Berhasil%')
+            ->orWhere('description', 'like', '%Ringkasan Saldo%')
+            ->get();
+
+        foreach ($txs as $tx) {
+            $tx->delete();
+            $count++;
+        }
+
+        $bca = Wallet::where('name', 'BCA')->first();
+        if ($bca) {
+            $bca->update(['balance' => 551708.00]);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'deleted_transactions' => $count,
+            'bca_balance' => $bca?->balance,
+        ]);
     });
 
     // Maintenance endpoint to execute pending migrations on Hostinger
