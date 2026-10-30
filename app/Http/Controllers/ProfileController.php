@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\WhatsAppTransactionService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -42,12 +43,17 @@ class ProfileController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id],
+            'whatsapp_number' => ['nullable', 'string', 'max:30'],
         ], [
             'name.required' => 'Nama lengkap wajib diisi.',
             'email.required' => 'Email wajib diisi.',
             'email.email' => 'Format email tidak valid.',
             'email.unique' => 'Email tersebut sudah digunakan oleh akun lain.',
         ]);
+
+        if (! empty($validated['whatsapp_number'])) {
+            $validated['whatsapp_number'] = WhatsAppTransactionService::normalizePhoneNumber($validated['whatsapp_number']);
+        }
 
         $user->update($validated);
 

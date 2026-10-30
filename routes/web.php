@@ -21,6 +21,7 @@ use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\TodoController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\WalletController;
+use App\Http\Controllers\WhatsAppWebhookController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
@@ -165,6 +166,10 @@ Route::post('/p/{token}/upload', [ClientPortalController::class, 'uploadProof'])
 
 // Midtrans Payment Gateway Webhook
 Route::post('/api/midtrans/webhook', [MidtransWebhookController::class, 'handleNotification'])->name('midtrans.webhook');
+
+// WhatsApp Gateway Webhook (Fonnte / Meta Cloud API)
+Route::get('/api/webhook/whatsapp', [WhatsAppWebhookController::class, 'verify'])->name('whatsapp.webhook.verify');
+Route::post('/api/webhook/whatsapp', [WhatsAppWebhookController::class, 'handle'])->name('whatsapp.webhook.handle');
 
 // Client File Delivery & Paywall Gateway Admin (/admin & /api/admin/*)
 Route::get('/admin', [PayAdminApiController::class, 'index'])->name('pay.admin');
