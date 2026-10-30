@@ -76,13 +76,13 @@
             @if($order->discount > 0)
               <div id="discountBox" style="display: flex; flex-direction: column; align-items: flex-end; margin-bottom: 4px;">
                 <div style="display: flex; align-items: center; gap: 8px;">
-                  <span id="originalAmountDisplay" style="font-size: 0.95rem; text-decoration: line-through; color: var(--text-muted);">
+                  <span id="originalAmountDisplay" style="font-size: 0.95rem; text-decoration: line-through; color: var(--text-muted); font-variant-numeric: tabular-nums;">
                     Rp {{ number_format($order->amount, 0, ',', '.') }}
                   </span>
                   @php
                     $pct = $order->amount > 0 ? round(($order->discount / $order->amount) * 100) : 0;
                   @endphp
-                  <span id="discountPill" style="font-size: 0.75rem; font-weight: 700; color: #f87171; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); padding: 2px 8px; border-radius: 999px;">
+                  <span id="discountPill" style="font-size: 0.75rem; font-weight: 700; color: #f87171; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); padding: 2px 8px; border-radius: 999px; font-variant-numeric: tabular-nums;">
                     - Rp {{ number_format($order->discount, 0, ',', '.') }} ({{ $pct }}%)
                   </span>
                 </div>
@@ -96,7 +96,7 @@
 
             <div style="display: flex; align-items: baseline; justify-content: flex-end; gap: 6px;">
               <span style="font-size: 0.85rem; color: var(--text-secondary);">Total Tagihan:</span>
-              <div id="amountDisplay" style="font-size: 1.8rem; font-weight: 800; color: #34d399; font-family: var(--font-heading);">
+              <div id="amountDisplay" style="font-size: 1.8rem; font-weight: 800; color: #34d399; font-family: var(--font-heading); font-variant-numeric: tabular-nums;">
                 Rp {{ number_format($order->final_amount, 0, ',', '.') }}
               </div>
             </div>

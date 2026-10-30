@@ -4,7 +4,7 @@
 
 @section('custom_header')
     <!-- Top Header: Apple iOS Liquid Glass SwanDrive Header -->
-    <div class="relative overflow-hidden bg-gradient-to-b from-teal-600/95 via-teal-600/85 to-emerald-700/90 dark:from-slate-900/95 dark:via-teal-950/90 dark:to-slate-950/95 text-white px-5 pb-8 border-b border-white/20 dark:border-white/10 rounded-b-[36px] shadow-2xl backdrop-blur-3xl transition-colors duration-200" style="padding-top: max(3.5rem, calc(var(--sat, 0px) + 0.85rem));">
+    <div class="relative overflow-hidden bg-gradient-to-b from-teal-700/95 via-teal-800/90 to-emerald-900/95 dark:from-[#090A0F]/98 dark:via-[#0D0F17]/95 dark:to-[#12141D]/98 text-white px-5 pb-8 border-b border-white/20 dark:border-white/[0.08] rounded-b-[36px] shadow-2xl backdrop-blur-3xl transition-colors duration-200" style="padding-top: max(3.5rem, calc(var(--sat, 0px) + 0.85rem));">
         <!-- Specular Highlight Line at the Top -->
         <div class="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none"></div>
 
@@ -71,10 +71,10 @@
         </div>
 
         <!-- Storage Summary Card with Apple Liquid Glassmorphism -->
-        <div class="relative z-10 liquid-glass rounded-[26px] p-4 border border-white/25 shadow-xl space-y-3 bg-white/10 backdrop-blur-2xl">
+        <div class="relative z-10 liquid-card rounded-[26px] p-4.5 border border-white/25 dark:border-white/[0.08] dark:border-t-white/[0.15] shadow-xl space-y-3 bg-white/10 dark:bg-[#12141D]/85 backdrop-blur-2xl">
             <!-- Row 1: Label & Ubah Ukuran button -->
             <div class="flex items-center justify-between gap-2 min-w-0">
-                <span class="text-[10px] font-extrabold uppercase tracking-wider text-teal-200/90 truncate">Kapasitas Penyimpanan</span>
+                <span class="label-micro text-teal-200/90 dark:text-zinc-400 truncate">Kapasitas Penyimpanan</span>
                 <div class="flex items-center gap-1.5 shrink-0">
                     @if(! $isGoogleConnected)
                     <a href="{{ route('drive.connect') }}" class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white text-[10px] font-black border border-white/30 active:scale-95 transition-all cursor-pointer shadow-md ios-press backdrop-blur-md animate-pulse" title="Sambungkan Akun Google Drive">
@@ -105,11 +105,11 @@
             <!-- Row 2: Numbers & Percentage Badge -->
             <div class="flex items-baseline justify-between gap-2 min-w-0">
                 <div class="flex items-baseline gap-1.5 min-w-0 truncate">
-                    <span class="text-2xl sm:text-3xl font-black text-white tracking-tight truncate">{{ $formattedTotalSize }}</span>
-                    <span class="text-xs font-bold text-teal-200/80 shrink-0">/ {{ $formattedQuotaSize }}</span>
+                    <span class="text-2xl sm:text-3xl font-black text-white tracking-tight truncate tabular-nums">{{ $formattedTotalSize }}</span>
+                    <span class="text-xs font-bold text-teal-200/80 dark:text-zinc-400 shrink-0 tabular-nums">/ {{ $formattedQuotaSize }}</span>
                 </div>
                 <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                    <span class="text-[10px] text-teal-200/80 font-bold">{{ $totalFiles }} Berkas</span>
+                    <span class="text-[10px] text-teal-200/80 dark:text-zinc-400 font-bold tabular-nums">{{ $totalFiles }} Berkas</span>
                     <span class="text-[10px] font-black px-2.5 py-0.5 rounded-full border shadow-2xs {{ $storagePercent >= 90 ? 'bg-rose-500/30 text-rose-200 border-rose-400/40' : ($storagePercent >= 75 ? 'bg-amber-500/30 text-amber-200 border-amber-400/40' : 'bg-teal-400/30 text-teal-100 border-teal-300/40') }}">
                         {{ $storagePercent }}%
                     </span>
@@ -122,7 +122,7 @@
                     <div class="h-full rounded-full transition-all duration-500 {{ $storagePercent >= 90 ? 'bg-gradient-to-r from-rose-500 to-amber-500' : ($storagePercent >= 75 ? 'bg-gradient-to-r from-amber-400 to-yellow-400' : 'bg-gradient-to-r from-teal-400 via-emerald-400 to-teal-300') }}"
                          style="width: {{ max(3, $storagePercent) }}%"></div>
                 </div>
-                <div class="flex items-center justify-between text-[10px] text-teal-200/80 mt-1 font-semibold">
+                <div class="flex items-center justify-between text-[10px] text-teal-200/80 dark:text-zinc-400 mt-1 font-semibold tabular-nums">
                     <span>{{ $totalBytes >= $quotaBytes ? 'Kapasitas Penuh' : 'Tersisa ' . $formattedRemainingSize }}</span>
                     <span>Batas: {{ $formattedQuotaSize }}</span>
                 </div>
@@ -132,9 +132,9 @@
 @endsection
 
 @section('content')
-<div class="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-2xl rounded-t-[36px] pt-5 px-4 pb-[max(12rem,calc(11rem+var(--sab,0px)))] shadow-2xl -mt-5 relative z-10 border-t border-slate-200/80 dark:border-white/10 flex-1 flex flex-col min-h-full space-y-5 text-slate-800 dark:text-white transition-colors animate-swan-in">
+<div class="bg-slate-50/90 dark:bg-[#090A0F] backdrop-blur-2xl rounded-t-[36px] pt-5 px-4 pb-[max(12rem,calc(11rem+var(--sab,0px)))] shadow-2xl -mt-5 relative z-10 border-t border-slate-200/80 dark:border-white/[0.08] flex-1 flex flex-col min-h-full space-y-5 text-slate-800 dark:text-zinc-100 transition-colors animate-swan-in">
     <!-- Pull handle indicator for authentic iOS sheet aesthetic -->
-    <div class="w-10 h-1.5 bg-slate-300/80 dark:bg-slate-700/80 rounded-full mx-auto mb-1"></div>
+    <div class="drag-handle-pill mx-auto mb-1"></div>
 
     @if(! $isGoogleConnected)
     <!-- Google Drive Connection Card -->
@@ -190,9 +190,9 @@
     @endif
 
     <!-- TAB SWITCHER: Berkas Saya vs Link Terima File (iOS Segmented Control) -->
-    <div class="ios-segmented-track p-1 rounded-[22px] flex items-center gap-1 w-full bg-slate-200/60 dark:bg-white/5 backdrop-blur-xl border border-white/50 dark:border-white/10 shadow-inner">
+    <div class="ios-segmented-track p-1 rounded-[22px] flex items-center gap-1 w-full bg-slate-200/70 dark:bg-white/[0.04] backdrop-blur-xl border border-slate-200/80 dark:border-white/[0.06] shadow-inner">
         <a href="{{ route('drive.index', ['tab' => 'files']) }}"
-           class="flex-1 py-2 rounded-[18px] text-xs font-black text-center transition-all flex items-center justify-center gap-1.5 ios-press {{ $activeTab !== 'drops' ? 'ios-segmented-thumb bg-white dark:bg-slate-800 text-teal-600 dark:text-teal-400 shadow-md ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white font-bold' }}">
+           class="flex-1 py-2 rounded-[18px] text-xs font-black text-center transition-all flex items-center justify-center gap-1.5 ios-press {{ $activeTab !== 'drops' ? 'ios-segmented-thumb bg-white dark:bg-[#181B26] text-teal-700 dark:text-emerald-400 border border-black/5 dark:border-white/[0.1] shadow-md' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white font-bold' }}">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021 18V9.75" />
             </svg>
@@ -200,7 +200,7 @@
             <span class="text-[10px] px-2 py-0.5 rounded-full font-black {{ $activeTab !== 'drops' ? 'bg-teal-100 dark:bg-teal-950/80 text-teal-700 dark:text-teal-300' : 'bg-slate-300/60 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">{{ $totalFiles }}</span>
         </a>
         <a href="{{ route('drive.index', ['tab' => 'drops']) }}"
-           class="flex-1 py-2 rounded-[18px] text-xs font-black text-center transition-all flex items-center justify-center gap-1.5 ios-press {{ $activeTab === 'drops' ? 'ios-segmented-thumb bg-white dark:bg-slate-800 text-teal-600 dark:text-teal-400 shadow-md ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white font-bold' }}">
+           class="flex-1 py-2 rounded-[18px] text-xs font-black text-center transition-all flex items-center justify-center gap-1.5 ios-press {{ $activeTab === 'drops' ? 'ios-segmented-thumb bg-white dark:bg-[#181B26] text-teal-700 dark:text-emerald-400 border border-black/5 dark:border-white/[0.1] shadow-md' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white font-bold' }}">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
             </svg>
@@ -213,7 +213,7 @@
         <!-- TAB 1: BERKAS SAYA -->
 
         <!-- 1. FORM UPLOAD FILE (Interactive Dropzone) -->
-        <div class="liquid-card rounded-[26px] bg-white/80 dark:bg-slate-900/75 border border-white/60 dark:border-white/10 shadow-sm backdrop-blur-2xl p-4">
+        <div class="liquid-card rounded-[26px] bg-white/80 dark:bg-[#12141D]/90 border border-slate-200/80 dark:border-white/[0.08] dark:border-t-white/[0.14] shadow-sm backdrop-blur-2xl p-4">
             <form id="upload-form" action="{{ route('drive.store') }}" method="POST" enctype="multipart/form-data" class="space-y-3" novalidate onsubmit="event.preventDefault(); startQueueUpload();">
                 @csrf
                 
@@ -222,7 +222,7 @@
 
                 <!-- Dropzone Box -->
                 <div id="dropzone" onclick="document.getElementById('upload-input').click()"
-                     class="border-2 border-dashed border-teal-400/50 dark:border-teal-500/40 rounded-[20px] p-4 sm:p-5 flex flex-col items-center justify-center text-center cursor-pointer bg-teal-50/40 dark:bg-teal-500/10 hover:bg-teal-50/80 dark:hover:bg-teal-500/20 active:scale-[0.99] transition-all ios-press">
+                     class="border-2 border-dashed border-teal-500/40 dark:border-emerald-500/30 rounded-[20px] p-4 sm:p-5 flex flex-col items-center justify-center text-center cursor-pointer bg-teal-50/40 dark:bg-[#181B26]/60 hover:bg-teal-50/80 dark:hover:bg-[#181B26]/90 active:scale-[0.99] transition-all ios-press">
                     <div class="w-10 h-10 rounded-[16px] bg-teal-500/15 text-teal-600 dark:text-teal-400 flex items-center justify-center mb-2 shadow-xs">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
@@ -345,7 +345,7 @@
         </div>
 
         <!-- Quick Drop Link Banner -->
-        <div class="flex items-center justify-between p-3.5 rounded-[24px] liquid-card bg-white/80 dark:bg-slate-900/75 border border-white/60 dark:border-white/10 backdrop-blur-2xl shadow-sm hover:shadow-md transition-all">
+        <div class="flex items-center justify-between p-3.5 rounded-[24px] liquid-card bg-white/80 dark:bg-[#12141D]/90 border border-slate-200/80 dark:border-white/[0.08] dark:border-t-white/[0.14] backdrop-blur-2xl shadow-sm hover:shadow-md transition-all">
             <div class="flex items-center gap-3 min-w-0 pr-2">
                 <div class="w-9 h-9 rounded-[16px] bg-teal-500/20 dark:bg-teal-500/30 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0 shadow-2xs">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
@@ -371,7 +371,7 @@
 
         @if($currentFolder)
             <!-- BREADCRUMB & CURRENT FOLDER BANNER -->
-            <div class="liquid-card rounded-[24px] p-4 bg-white/80 dark:bg-slate-900/75 border border-white/60 dark:border-white/10 shadow-sm backdrop-blur-2xl space-y-3">
+            <div class="liquid-card rounded-[24px] p-4 bg-white/80 dark:bg-[#12141D]/90 border border-slate-200/80 dark:border-white/[0.08] dark:border-t-white/[0.14] shadow-sm backdrop-blur-2xl space-y-3">
                 <div class="flex items-center justify-between gap-3">
                     <div class="flex items-center gap-2.5 min-w-0">
                         <a href="{{ $currentFolder->parent_id ? route('drive.index', ['folder_id' => $currentFolder->parent_id]) : route('drive.index') }}"
@@ -459,7 +459,7 @@
                 <input type="hidden" name="category" value="{{ $activeCategory }}">
                 <input type="hidden" name="source" value="{{ $activeSource }}">
                 <input type="text" name="search" value="{{ $search }}" placeholder="Cari nama file, ekstensi, pengirim, atau catatan..."
-                       class="w-full pl-9 pr-8 py-2.5 text-xs rounded-[20px] liquid-card bg-white/80 dark:bg-slate-900/75 border border-white/60 dark:border-white/10 text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 shadow-xs backdrop-blur-2xl font-medium">
+                       class="w-full pl-9 pr-8 py-2.5 text-xs rounded-[20px] liquid-card bg-white/80 dark:bg-[#12141D]/90 border border-slate-200/80 dark:border-white/[0.08] text-slate-800 dark:text-zinc-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 shadow-xs backdrop-blur-2xl font-medium">
                 <span class="absolute left-3.5 top-3 text-slate-400">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
@@ -681,7 +681,7 @@
                     ];
                     $previewJson = json_encode($previewPayload, JSON_UNESCAPED_UNICODE);
                 @endphp
-                <div id="file-{{ $file->id }}" data-file-id="{{ $file->id }}" data-is-public="{{ $file->is_public ? 'true' : 'false' }}" @if($isReceivedFromOther) data-received-from-other="1" @endif class="liquid-card rounded-[24px] {{ $isReceivedFromOther ? 'bg-gradient-to-br from-amber-500/10 via-white/85 to-white/80 dark:from-amber-950/30 dark:via-slate-900/80 dark:to-slate-900/75 border-amber-400/50 dark:border-amber-500/40 shadow-xs ring-1 ring-amber-400/20' : ($file->is_public ? 'bg-white/85 dark:bg-slate-900/80 border border-emerald-300/50 dark:border-emerald-500/30 shadow-sm ring-1 ring-emerald-500/15' : 'bg-white/80 dark:bg-slate-900/75 border border-white/60 dark:border-white/10 shadow-sm') }} hover:shadow-md hover:border-teal-400/40 backdrop-blur-2xl p-4 space-y-3 transition-all duration-300">
+                <div id="file-{{ $file->id }}" data-file-id="{{ $file->id }}" data-is-public="{{ $file->is_public ? 'true' : 'false' }}" @if($isReceivedFromOther) data-received-from-other="1" @endif class="liquid-card rounded-[24px] {{ $isReceivedFromOther ? 'bg-gradient-to-br from-amber-500/10 via-white/85 to-white/80 dark:from-amber-950/30 dark:via-slate-900/80 dark:to-slate-900/75 border-amber-400/50 dark:border-amber-500/40 shadow-xs ring-1 ring-amber-400/20' : ($file->is_public ? 'bg-white/85 dark:bg-slate-900/80 border border-emerald-300/50 dark:border-emerald-500/30 shadow-sm ring-1 ring-emerald-500/15' : 'bg-white/80 dark:bg-[#12141D]/90 border border-slate-200/80 dark:border-white/[0.08] dark:border-t-white/[0.12] shadow-sm') }} hover:shadow-md hover:border-teal-400/40 backdrop-blur-2xl p-4 space-y-3 transition-all duration-300">
                     
                     @if($isReceivedFromOther)
                         <!-- Distinct Header Banner for Files Received from Others -->
@@ -733,12 +733,12 @@
                                     {{ $file->original_name }}
                                 </p>
                                 <div class="flex flex-wrap items-center gap-1.5 mt-1 text-[10px] text-slate-400 dark:text-slate-500 font-medium">
-                                    <span>{{ $file->formatted_size }}</span>
+                                    <span class="tabular-nums font-semibold">{{ $file->formatted_size }}</span>
                                     <span>•</span>
-                                    <span>{{ $file->created_at->format('d M Y, H:i') }}</span>
+                                    <span class="tabular-nums">{{ $file->created_at->format('d M Y, H:i') }}</span>
                                     @if($file->download_count > 0)
                                         <span>•</span>
-                                        <span class="text-teal-600 dark:text-teal-400 font-semibold">⬇ {{ $file->download_count }}x diunduh</span>
+                                        <span class="text-teal-600 dark:text-emerald-400 font-semibold tabular-nums">⬇ {{ $file->download_count }}x diunduh</span>
                                     @endif
                                     @if($file->folder_id && !$currentFolder)
                                         <a href="{{ route('drive.index', ['folder_id' => $file->folder_id]) }}" class="inline-flex items-center gap-0.5 font-bold text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/60 px-2 py-0.5 rounded-md border border-teal-200/60 dark:border-teal-800/60 hover:underline" onclick="event.stopPropagation();">
@@ -1128,8 +1128,8 @@
 <div id="share-modal" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true" role="dialog">
     <div id="share-backdrop" onclick="closeShareModal()" class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity duration-300 opacity-0"></div>
     <div class="fixed bottom-0 left-0 right-0 z-30 flex justify-center pointer-events-none">
-        <div id="share-panel" class="w-full max-w-md bg-white/95 dark:bg-slate-900/95 rounded-t-[36px] backdrop-blur-3xl shadow-2xl p-5 modal-sheet-safe border-t border-white/60 dark:border-white/10 pointer-events-auto transform translate-y-full transition-transform duration-300 space-y-4 max-h-[90vh] overflow-y-auto no-scrollbar">
-            <div class="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-3 cursor-pointer" onclick="closeShareModal()"></div>
+        <div id="share-panel" class="w-full max-w-md bg-white/95 dark:bg-[#12141D]/98 rounded-t-[36px] backdrop-blur-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-200/80 dark:border-white/[0.14] pointer-events-auto transform translate-y-full transition-transform duration-300 space-y-4 max-h-[90vh] overflow-y-auto no-scrollbar">
+            <div class="drag-handle-pill mx-auto mb-3 cursor-pointer" onclick="closeShareModal()"></div>
             
             <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
                 <div class="flex items-center gap-2.5">
@@ -1277,8 +1277,8 @@
 <div id="create-drop-modal" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true" role="dialog">
     <div id="drop-backdrop" onclick="closeCreateDropModal()" class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity duration-300 opacity-0"></div>
     <div class="fixed bottom-0 left-0 right-0 z-30 flex justify-center pointer-events-none">
-        <div id="drop-panel" class="w-full max-w-md bg-white/95 dark:bg-slate-900/95 rounded-t-[36px] backdrop-blur-3xl shadow-2xl p-5 modal-sheet-safe border-t border-white/60 dark:border-white/10 pointer-events-auto transform translate-y-full transition-transform duration-300 space-y-4 max-h-[90vh] overflow-y-auto no-scrollbar">
-            <div class="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-3 cursor-pointer" onclick="closeCreateDropModal()"></div>
+        <div id="drop-panel" class="w-full max-w-md bg-white/95 dark:bg-[#12141D]/98 rounded-t-[36px] backdrop-blur-3xl shadow-2xl p-5 modal-sheet-safe border-t border-slate-200/80 dark:border-white/[0.14] pointer-events-auto transform translate-y-full transition-transform duration-300 space-y-4 max-h-[90vh] overflow-y-auto no-scrollbar">
+            <div class="drag-handle-pill mx-auto mb-3 cursor-pointer" onclick="closeCreateDropModal()"></div>
             
             <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
                 <div>
@@ -1450,7 +1450,7 @@
     <div class="fixed bottom-0 left-0 right-0 z-30 flex justify-center pointer-events-none">
         <div id="quota-panel" class="w-full max-w-md bg-white/95 dark:bg-slate-900/95 rounded-t-[36px] backdrop-blur-3xl shadow-2xl p-5 modal-sheet-safe border-t border-white/60 dark:border-white/10 pointer-events-auto transform translate-y-full transition-transform duration-300 space-y-4 max-h-[90vh] overflow-y-auto no-scrollbar text-slate-800 dark:text-white">
             <!-- Drag Handle -->
-            <div class="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-3 cursor-pointer" onclick="closeQuotaModal()"></div>
+            <div class="drag-handle-pill mx-auto mb-3 cursor-pointer" onclick="closeQuotaModal()"></div>
 
             <!-- Header -->
             <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">

@@ -2,7 +2,7 @@
 
 @section('custom_header')
     <!-- Apple iOS Liquid Glass SwanFlow Header -->
-    <div class="relative overflow-hidden bg-gradient-to-b from-teal-600/95 via-teal-600/85 to-emerald-700/90 dark:from-slate-900/95 dark:via-teal-950/90 dark:to-slate-950/95 text-white px-5 pb-8 border-b border-white/20 dark:border-white/10 rounded-b-[36px] shadow-2xl backdrop-blur-3xl transition-colors duration-200" style="padding-top: max(3.5rem, calc(var(--sat, 0px) + 0.85rem));">
+    <div class="relative overflow-hidden bg-gradient-to-b from-teal-700/95 via-teal-800/90 to-emerald-900/95 dark:from-[#090A0F]/98 dark:via-[#0D0F17]/95 dark:to-[#12141D]/98 text-white px-5 pb-8 border-b border-white/20 dark:border-white/[0.08] rounded-b-[36px] shadow-2xl backdrop-blur-3xl transition-colors duration-200" style="padding-top: max(3.5rem, calc(var(--sat, 0px) + 0.85rem));">
         <!-- Specular Highlight Line -->
         <div class="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none"></div>
 
@@ -50,9 +50,9 @@
         </div>
 
         <!-- Revenue & Stats Card -->
-        <div class="relative z-20 bg-white/12 dark:bg-slate-900/60 backdrop-blur-2xl border border-white/20 dark:border-white/10 rounded-[30px] p-5 shadow-2xl overflow-hidden">
+        <div class="relative z-20 liquid-card bg-white/12 dark:bg-[#12141D]/85 backdrop-blur-2xl border border-white/20 dark:border-white/[0.08] dark:border-t-white/[0.15] rounded-[30px] p-5 shadow-2xl overflow-hidden">
             <div class="flex items-center justify-between mb-3">
-                <span class="text-[11px] font-bold text-teal-100 dark:text-slate-400 uppercase tracking-wider">
+                <span class="label-micro text-teal-100 dark:text-zinc-400 truncate">
                     Total Pembayaran Diterima
                 </span>
                 <div class="flex items-center gap-1.5">
@@ -68,10 +68,10 @@
             </div>
 
             <div>
-                <h2 class="text-3xl font-black text-white tracking-tight">
+                <h2 class="text-3xl font-black text-white tracking-tight tabular-nums">
                     Rp {{ number_format($totalRevenue, 0, ',', '.') }}
                 </h2>
-                <div class="flex items-center gap-4 mt-2 text-[11px] text-teal-100/90 font-medium">
+                <div class="flex items-center gap-4 mt-2 text-[11px] text-teal-100/90 dark:text-zinc-400 font-medium tabular-nums">
                     <span>⏳ Menunggu: <strong>{{ $unpaidCount }}</strong></span>
                     <span>•</span>
                     <span>✅ Lunas: <strong>{{ $totalProjects - $unpaidCount - $waitingCount }}</strong></span>
@@ -91,7 +91,7 @@
                    name="q" 
                    value="{{ request('q') }}" 
                    placeholder="Cari nama klien / proyek..." 
-                   class="w-full bg-slate-100 dark:bg-slate-800/80 text-slate-800 dark:text-white pl-9 pr-4 py-2.5 rounded-2xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-teal-500/50 border border-slate-200/80 dark:border-white/10 transition-all">
+                   class="w-full bg-white/80 dark:bg-[#12141D]/90 text-slate-800 dark:text-zinc-100 pl-9 pr-4 py-2.5 rounded-2xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500/50 border border-slate-200/80 dark:border-white/[0.08] transition-all">
             <svg class="w-4 h-4 text-slate-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
             </svg>
@@ -127,7 +127,7 @@
                 $active = ($statusFilter === $k);
             @endphp
             <a href="{{ route('orders.index', array_merge(request()->query(), ['status' => $k])) }}" 
-               class="px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all {{ $active ? 'bg-teal-600 text-white shadow-xs shadow-teal-500/30' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+               class="px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all {{ $active ? 'bg-teal-600 text-white shadow-xs shadow-teal-500/30' : 'bg-slate-100 dark:bg-[#181B26] text-slate-600 dark:text-zinc-400 border border-slate-200/80 dark:border-white/[0.06] hover:text-slate-900 dark:hover:text-white' }}">
                 {{ $label }}
             </a>
         @endforeach
@@ -136,7 +136,7 @@
     <!-- Orders Cards List -->
     <div class="space-y-3.5">
         @forelse($orders as $order)
-            <div class="bg-white/90 dark:bg-slate-900/90 rounded-[28px] p-4.5 border border-slate-200/80 dark:border-white/10 shadow-xs relative overflow-hidden transition-all backdrop-blur-xl">
+            <div class="liquid-card bg-white/90 dark:bg-[#12141D]/90 rounded-[28px] p-4.5 border border-slate-200/80 dark:border-white/[0.08] dark:border-t-white/[0.12] shadow-xs relative overflow-hidden transition-all backdrop-blur-xl">
                 
                 <!-- Status & Tag Ribbon -->
                 <div class="flex items-center justify-between gap-2 mb-2.5">
@@ -349,8 +349,8 @@
 <div id="modal-add-order" class="fixed inset-0 z-50 overflow-y-auto hidden" aria-modal="true">
     <div class="modal-backdrop fixed inset-0 bg-slate-950/70 backdrop-blur-md transition-opacity duration-300 opacity-0" onclick="closeAddOrderModal()"></div>
     <div class="min-h-screen px-4 text-center flex items-end sm:items-center justify-center p-0">
-        <div class="modal-sheet-safe w-full max-w-lg bg-white dark:bg-slate-900 rounded-t-[36px] sm:rounded-[36px] p-6 text-left shadow-2xl transform transition-transform duration-300 translate-y-full border border-slate-200/80 dark:border-white/10 relative z-30 max-h-[92vh] overflow-y-auto no-scrollbar">
-            <div class="w-12 h-1 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-5 sm:hidden"></div>
+        <div class="modal-sheet-safe w-full max-w-lg bg-white/95 dark:bg-[#12141D]/98 rounded-t-[36px] sm:rounded-[36px] p-6 text-left shadow-2xl transform transition-transform duration-300 translate-y-full border-t border-slate-200/80 dark:border-white/[0.14] relative z-30 max-h-[92vh] overflow-y-auto no-scrollbar">
+            <div class="drag-handle-pill mx-auto mb-4 sm:hidden"></div>
 
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-black text-slate-900 dark:text-white">Buat Link Klien Baru</h3>
@@ -535,7 +535,7 @@
 <div id="modal-edit-order" class="fixed inset-0 z-50 overflow-y-auto hidden" aria-modal="true">
     <div class="modal-backdrop fixed inset-0 bg-slate-950/70 backdrop-blur-md transition-opacity duration-300 opacity-0" onclick="closeEditOrderModal()"></div>
     <div class="min-h-screen px-4 text-center flex items-end sm:items-center justify-center p-0">
-        <div class="modal-sheet-safe w-full max-w-lg bg-white dark:bg-slate-900 rounded-t-[36px] sm:rounded-[36px] p-6 text-left shadow-2xl transform transition-transform duration-300 translate-y-full border border-slate-200/80 dark:border-white/10 relative z-30 max-h-[92vh] overflow-y-auto no-scrollbar">
+        <div class="modal-sheet-safe w-full max-w-lg bg-white/95 dark:bg-[#12141D]/98 rounded-t-[36px] sm:rounded-[36px] p-6 text-left shadow-2xl transform transition-transform duration-300 translate-y-full border-t border-slate-200/80 dark:border-white/[0.14] relative z-30 max-h-[92vh] overflow-y-auto no-scrollbar">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-black text-slate-900 dark:text-white" id="edit_modal_title">Edit Proyek Klien</h3>
                 <button type="button" onclick="closeEditOrderModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white cursor-pointer">✕</button>
@@ -678,7 +678,7 @@
 <div id="modal-verify-proof" class="fixed inset-0 z-50 overflow-y-auto hidden" aria-modal="true">
     <div class="modal-backdrop fixed inset-0 bg-slate-950/70 backdrop-blur-md transition-opacity duration-300 opacity-0" onclick="closeVerifyModal()"></div>
     <div class="min-h-screen px-4 text-center flex items-end sm:items-center justify-center p-0">
-        <div class="modal-sheet-safe w-full max-w-lg bg-white dark:bg-slate-900 rounded-t-[36px] sm:rounded-[36px] p-6 text-left shadow-2xl transform transition-transform duration-300 translate-y-full border border-slate-200/80 dark:border-white/10 relative z-30 max-h-[92vh] overflow-y-auto no-scrollbar">
+        <div class="modal-sheet-safe w-full max-w-lg bg-white/95 dark:bg-[#12141D]/98 rounded-t-[36px] sm:rounded-[36px] p-6 text-left shadow-2xl transform transition-transform duration-300 translate-y-full border-t border-slate-200/80 dark:border-white/[0.14] relative z-30 max-h-[92vh] overflow-y-auto no-scrollbar">
             <div class="flex items-center justify-between mb-3">
                 <h3 class="text-lg font-black text-slate-900 dark:text-white">Verifikasi Bukti Transfer</h3>
                 <button type="button" onclick="closeVerifyModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white cursor-pointer">✕</button>
@@ -742,7 +742,7 @@
 <div id="modal-settings" class="fixed inset-0 z-50 overflow-y-auto hidden" aria-modal="true">
     <div class="modal-backdrop fixed inset-0 bg-slate-950/70 backdrop-blur-md transition-opacity duration-300 opacity-0" onclick="closeSettingsModal()"></div>
     <div class="min-h-screen px-4 text-center flex items-end sm:items-center justify-center p-0">
-        <div class="modal-sheet-safe w-full max-w-lg bg-white dark:bg-slate-900 rounded-t-[36px] sm:rounded-[36px] p-6 text-left shadow-2xl transform transition-transform duration-300 translate-y-full border border-slate-200/80 dark:border-white/10 relative z-30 max-h-[92vh] overflow-y-auto no-scrollbar">
+        <div class="modal-sheet-safe w-full max-w-lg bg-white/95 dark:bg-[#12141D]/98 rounded-t-[36px] sm:rounded-[36px] p-6 text-left shadow-2xl transform transition-transform duration-300 translate-y-full border-t border-slate-200/80 dark:border-white/[0.14] relative z-30 max-h-[92vh] overflow-y-auto no-scrollbar">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-black text-slate-900 dark:text-white">Pengaturan Studio & Pembayaran</h3>
                 <button type="button" onclick="closeSettingsModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white cursor-pointer">✕</button>

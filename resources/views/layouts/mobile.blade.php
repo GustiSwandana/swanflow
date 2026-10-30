@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="bg-slate-100 dark:bg-slate-950">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="bg-slate-100 dark:bg-[#090A0F]">
 <head>
     <meta charset="utf-8">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
-    <meta name="theme-color" content="#020617" id="meta-theme-color-dark" media="(prefers-color-scheme: dark)">
-    <meta name="theme-color" content="#ffffff" id="meta-theme-color-light" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#090A0F" id="meta-theme-color-dark" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#f8fafc" id="meta-theme-color-light" media="(prefers-color-scheme: light)">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -31,12 +31,12 @@
                 if (savedTheme === 'light') {
                     document.documentElement.classList.remove('dark');
                     document.querySelectorAll('meta[name="theme-color"]').forEach(m => {
-                        m.content = '#ffffff';
+                        m.content = '#f8fafc';
                     });
                 } else {
                     document.documentElement.classList.add('dark');
                     document.querySelectorAll('meta[name="theme-color"]').forEach(m => {
-                        m.content = '#020617';
+                        m.content = '#090A0F';
                     });
                 }
             } catch (e) {}
@@ -227,47 +227,47 @@
     </style>
 </head>
 
-<body class="min-h-[100dvh] bg-slate-100 dark:bg-slate-950 flex flex-col items-center text-slate-800 dark:text-slate-100 antialiased selection:bg-emerald-500 selection:text-white transition-colors duration-200 relative">
+<body class="min-h-[100dvh] bg-slate-100 dark:bg-[#090A0F] flex flex-col items-center text-slate-800 dark:text-zinc-100 antialiased selection:bg-emerald-500 selection:text-white transition-colors duration-200 relative no-scroll-leak">
     <!-- Ambient Liquid Aura in Root Background -->
     <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div class="absolute -top-24 -left-20 w-96 h-96 rounded-full bg-gradient-to-br from-emerald-500/15 via-teal-500/10 to-transparent blur-3xl animate-liquid-orb-1"></div>
-        <div class="absolute top-1/3 -right-28 w-96 h-96 rounded-full bg-gradient-to-bl from-teal-500/15 via-indigo-500/10 to-transparent blur-3xl animate-liquid-orb-2"></div>
-        <div class="absolute -bottom-24 left-1/3 w-80 h-80 rounded-full bg-gradient-to-tr from-emerald-500/12 via-cyan-500/10 to-transparent blur-3xl animate-liquid-orb-1"></div>
+        <div class="absolute -top-32 -left-20 w-96 h-96 rounded-full bg-emerald-500/[0.07] blur-3xl animate-liquid-orb-1"></div>
+        <div class="absolute top-1/3 -right-28 w-96 h-96 rounded-full bg-teal-500/[0.05] blur-3xl animate-liquid-orb-2"></div>
+        <div class="absolute -bottom-32 left-1/4 w-80 h-80 rounded-full bg-emerald-500/[0.06] blur-3xl animate-liquid-orb-1"></div>
     </div>
 
     <!-- Mobile Frame Container (Fluid 100% on iPhones, Max-W-MD for desktop preview) -->
-    <div class="mobile-container-frame w-full max-w-md flex-1 min-h-[100dvh] bg-slate-50/90 dark:bg-slate-950/90 backdrop-blur-xl text-slate-800 dark:text-slate-100 relative flex flex-col shadow-2xl border-x border-slate-200/80 dark:border-slate-800/80 transition-colors duration-200 z-10 overflow-x-hidden">
+    <div class="mobile-container-frame w-full max-w-md flex-1 min-h-[100dvh] bg-white/95 dark:bg-[#0B0D14]/95 backdrop-blur-xl text-slate-800 dark:text-zinc-100 relative flex flex-col shadow-2xl border-x border-slate-200/80 dark:border-white/[0.06] transition-colors duration-200 z-10 overflow-x-hidden">
 
         <!-- Dynamic Island & iOS/Android Status Bar Blur Cap (Prevents content collision on scroll) -->
-        <div id="status-bar-scrim" class="bg-slate-50/90 dark:bg-slate-950/90 opacity-0 border-b border-black/5 dark:border-white/5"></div>
+        <div id="status-bar-scrim" class="bg-white/90 dark:bg-[#090A0F]/90 opacity-0 border-b border-black/5 dark:border-white/[0.06]"></div>
 
         <!-- 1. TOP HEADER (Apple iOS Liquid Glass) -->
         @hasSection('custom_header')
             @yield('custom_header')
         @else
-        <header class="sticky top-0 z-30 liquid-glass border-b border-white/60 dark:border-white/10 header-safe pb-3 flex items-center justify-between transition-colors">
+        <header class="sticky top-0 z-30 liquid-glass border-b border-slate-200/80 dark:border-white/[0.08] header-safe pb-3 flex items-center justify-between transition-colors">
             <div class="flex items-center gap-2.5">
                 @section('header_left')
-                    <a href="{{ route('dashboard') }}" class="ios-press" aria-label="Beranda">
+                    <a href="{{ route('dashboard') }}" class="ios-press flex items-center tap-target-44" aria-label="Beranda">
                         <x-app-logo class="w-8 h-8" variant="badge" />
                     </a>
                     <div class="flex flex-col">
-                        <span class="text-xs font-semibold text-emerald-600 dark:text-emerald-400">SwanFlow</span>
-                        <h1 class="text-base font-extrabold text-slate-800 dark:text-white tracking-tight leading-tight">
+                        <span class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 tracking-wider uppercase">SwanFlow</span>
+                        <h1 class="text-base font-extrabold text-slate-800 dark:text-zinc-50 tracking-tight leading-tight">
                             {{ $pageTitle ?? 'Financial Tracker' }}
                         </h1>
                     </div>
                 @show
             </div>
 
-            <!-- Profile, Theme Toggle & Notification Area (Touch-friendly 44x44px) -->
+            <!-- Profile, Theme Toggle & Notification Area (Touch-friendly 44x44px minimum) -->
             <div class="flex items-center gap-1.5">
                 <!-- Theme Toggle Button (Dark / Light Mode) -->
                 <button type="button" 
                         id="theme-toggle-btn"
                         onclick="toggleSwanFlowTheme()" 
                         aria-label="Ganti Tema Gelap atau Terang" 
-                        class="min-w-[42px] min-h-[42px] w-10.5 h-10.5 flex items-center justify-center rounded-2xl liquid-glass text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-amber-300 ios-press transition-all">
+                        class="min-w-[44px] min-h-[44px] w-11 h-11 flex items-center justify-center rounded-2xl liquid-glass text-slate-600 hover:text-slate-900 dark:text-zinc-300 dark:hover:text-amber-300 ios-press transition-all">
                     <!-- Sun Icon (visible in dark mode) -->
                     <svg class="theme-icon-dark w-5 h-5 text-amber-300 transition-transform duration-300 transform rotate-0 hover:rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
@@ -279,7 +279,7 @@
                 </button>
 
                 <!-- Notification Button -->
-                <a href="{{ route('transactions.index') }}" aria-label="Riwayat Notifikasi" class="min-w-[42px] min-h-[42px] w-10.5 h-10.5 flex items-center justify-center rounded-2xl liquid-glass text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white ios-press transition-all">
+                <a href="{{ route('transactions.index') }}" aria-label="Riwayat Notifikasi" class="min-w-[44px] min-h-[44px] w-11 h-11 flex items-center justify-center rounded-2xl liquid-glass text-slate-600 hover:text-slate-900 dark:text-zinc-300 dark:hover:text-white ios-press transition-all">
                     <span class="relative flex items-center justify-center">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
@@ -289,12 +289,12 @@
                 </a>
 
                 <!-- User Profile Avatar (Gusti Swandana) -->
-                <a href="{{ route('profile.edit') }}" class="min-w-[42px] min-h-[42px] flex items-center justify-center ios-press" title="Profil Pengguna" aria-label="Profil Pengguna">
+                <a href="{{ route('profile.edit') }}" class="min-w-[44px] min-h-[44px] w-11 h-11 flex items-center justify-center ios-press" title="Profil Pengguna" aria-label="Profil Pengguna">
                     <div class="relative flex items-center justify-center">
-                        <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white font-extrabold text-xs flex items-center justify-center shadow-xs ring-2 ring-white/80 dark:ring-slate-700 border border-white/50 dark:border-slate-600">
+                        <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white font-extrabold text-xs flex items-center justify-center shadow-xs ring-2 ring-white/80 dark:ring-zinc-800 border border-white/50 dark:border-white/10">
                             GS
                         </div>
-                        <span class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 border-2 border-white dark:border-slate-900 rounded-full"></span>
+                        <span class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 border-2 border-white dark:border-zinc-900 rounded-full"></span>
                     </div>
                 </a>
             </div>
@@ -413,15 +413,15 @@
             {{-- Tab 1: Home --}}
             @php $isHomeActive = request()->routeIs('dashboard'); @endphp
             <a href="{{ route('dashboard') }}"
-               class="flex flex-col items-center justify-center w-full text-center gap-0.5 group relative {{ $isHomeActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200' }} transition-colors"
+               class="flex flex-col items-center justify-center w-full text-center gap-0.5 group relative min-h-[44px] {{ $isHomeActive ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100' }} transition-colors"
                aria-label="Home">
-                <div class="relative z-10 p-1.5 {{ $isHomeActive ? 'bg-emerald-500/15 dark:bg-emerald-400/20 text-emerald-600 dark:text-emerald-400 rounded-2xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.25)]' : '' }} transition-transform active:scale-95">
+                <div class="relative z-10 p-1.5 {{ $isHomeActive ? 'bg-emerald-500/15 dark:bg-emerald-400/15 text-emerald-600 dark:text-emerald-400 rounded-2xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)]' : '' }} transition-transform active:scale-95">
                     <svg class="w-5.5 h-5.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path>
                         <polyline points="9 22 9 12 15 12 15 22"></polyline>
                     </svg>
                 </div>
-                <span class="text-[10px] font-bold tracking-tight truncate max-w-full">Home</span>
+                <span class="text-[10px] tracking-tight truncate max-w-full">Home</span>
             </a>
 
             {{-- Tab 2: Finance --}}
@@ -437,22 +437,22 @@
                     || request()->routeIs('categories.*'); 
             @endphp
             <a href="{{ route('transactions.index') }}"
-               class="flex flex-col items-center justify-center w-full text-center gap-0.5 group relative {{ $isFinanceActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200' }} transition-colors"
+               class="flex flex-col items-center justify-center w-full text-center gap-0.5 group relative min-h-[44px] {{ $isFinanceActive ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100' }} transition-colors"
                aria-label="Finance">
-                <div class="relative z-10 p-1.5 {{ $isFinanceActive ? 'bg-emerald-500/15 dark:bg-emerald-400/20 text-emerald-600 dark:text-emerald-400 rounded-2xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.25)]' : '' }} transition-transform active:scale-95">
+                <div class="relative z-10 p-1.5 {{ $isFinanceActive ? 'bg-emerald-500/15 dark:bg-emerald-400/15 text-emerald-600 dark:text-emerald-400 rounded-2xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)]' : '' }} transition-transform active:scale-95">
                     <svg class="w-5.5 h-5.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                 </div>
-                <span class="text-[10px] font-bold tracking-tight truncate max-w-full">Finance</span>
+                <span class="text-[10px] tracking-tight truncate max-w-full">Finance</span>
             </a>
             
             {{-- Center Action: Quick Add Transaction FAB (+) --}}
             <div class="liquid-dock-fab-col flex items-center justify-center w-full relative z-50">
                 <button type="button"
                         onclick="openTransactionModal('expense')"
-                        class="w-13 h-13 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white flex items-center justify-center cursor-pointer shrink-0 shadow-lg shadow-emerald-500/35 border-[3.5px] border-white/95 dark:border-white/25 ring-4 ring-emerald-500/20 dark:ring-emerald-400/25 transition-transform hover:scale-105 active:scale-95"
-                        aria-label="Quick Action">
+                        class="w-13 h-13 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white flex items-center justify-center cursor-pointer shrink-0 shadow-lg shadow-emerald-500/35 border-[3px] border-white dark:border-white/20 ring-4 ring-emerald-500/20 dark:ring-emerald-400/20 transition-transform hover:scale-105 active:scale-95 tap-target-48"
+                        aria-label="Catat Transaksi Baru">
                     <svg class="w-6.5 h-6.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 4.5v15m7.5-7.5h-15"/>
                     </svg>
@@ -462,21 +462,21 @@
             {{-- Tab 3: Drive --}}
             @php $isDriveActive = request()->routeIs('drive.*'); @endphp
             <a href="{{ route('drive.index') }}"
-               class="flex flex-col items-center justify-center w-full text-center gap-0.5 group relative {{ $isDriveActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200' }} transition-colors"
+               class="flex flex-col items-center justify-center w-full text-center gap-0.5 group relative min-h-[44px] {{ $isDriveActive ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100' }} transition-colors"
                aria-label="Drive">
-                <div class="relative z-10 p-1.5 {{ $isDriveActive ? 'bg-emerald-500/15 dark:bg-emerald-400/20 text-emerald-600 dark:text-emerald-400 rounded-2xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.25)]' : '' }} transition-transform active:scale-95">
+                <div class="relative z-10 p-1.5 {{ $isDriveActive ? 'bg-emerald-500/15 dark:bg-emerald-400/15 text-emerald-600 dark:text-emerald-400 rounded-2xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)]' : '' }} transition-transform active:scale-95">
                     <svg class="w-5.5 h-5.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path>
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 12v6m0 0l-3-3m3 3l3-3M3 15V6a2 2 0 012-2h14a2 2 0 012 2v9"></path>
                     </svg>
                 </div>
-                <span class="text-[10px] font-bold tracking-tight truncate max-w-full">Drive</span>
+                <span class="text-[10px] tracking-tight truncate max-w-full">Drive</span>
             </a>
 
             {{-- Tab 4: Aktivitas --}}
             @php $isTodosActive = request()->routeIs('todos.*'); @endphp
             <a href="{{ route('todos.index') }}"
-               class="flex flex-col items-center justify-center w-full text-center gap-0.5 group relative {{ $isTodosActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200' }} transition-colors"
+               class="flex flex-col items-center justify-center w-full text-center gap-0.5 group relative min-h-[44px] {{ $isTodosActive ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100' }} transition-colors"
                aria-label="Aktivitas">
                 <div class="relative z-10 p-1.5 {{ $isTodosActive ? 'bg-emerald-500/15 dark:bg-emerald-400/20 text-emerald-600 dark:text-emerald-400 rounded-2xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.25)]' : '' }} transition-transform active:scale-95">
                     <svg class="w-5.5 h-5.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -516,10 +516,10 @@
 
             <!-- Bottom Sheet Panel (Apple iOS Liquid Sheet) -->
             <div class="fixed bottom-0 left-0 right-0 z-30 flex justify-center pointer-events-none">
-                <div id="modal-panel" class="w-full max-w-md bg-white/95 dark:bg-slate-900/95 backdrop-blur-3xl rounded-t-[36px] shadow-2xl p-5 modal-sheet-safe border-t border-white/60 dark:border-white/10 pointer-events-auto transform translate-y-full transition-transform duration-300 overflow-y-auto no-scrollbar">
+                <div id="modal-panel" class="w-full max-w-md bg-white/95 dark:bg-[#12141D]/98 backdrop-blur-3xl rounded-t-[32px] shadow-2xl p-5 modal-sheet-safe border-t border-slate-200/80 dark:border-white/[0.12] pointer-events-auto transform translate-y-full transition-transform duration-300 overflow-y-auto no-scrollbar">
 
                     <!-- Drag Handle -->
-                    <div class="w-10 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-4 cursor-pointer" onclick="closeTransactionModal()"></div>
+                    <div class="drag-handle-pill" onclick="closeTransactionModal()"></div>
 
                     <!-- Modal Header -->
                     <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800/80 mb-4">
@@ -872,10 +872,10 @@
 
             <!-- Bottom Sheet Panel (Apple iOS Liquid Sheet) -->
             <div class="fixed bottom-0 left-0 right-0 z-30 flex justify-center pointer-events-none">
-                <div id="edit-modal-panel" class="w-full max-w-md bg-white/95 dark:bg-slate-900/95 backdrop-blur-3xl rounded-t-[36px] shadow-2xl p-5 modal-sheet-safe border-t border-white/60 dark:border-white/10 pointer-events-auto transform translate-y-full transition-transform duration-300 overflow-y-auto no-scrollbar">
+                <div id="edit-modal-panel" class="w-full max-w-md bg-white/95 dark:bg-[#12141D]/98 backdrop-blur-3xl rounded-t-[32px] shadow-2xl p-5 modal-sheet-safe border-t border-slate-200/80 dark:border-white/[0.12] pointer-events-auto transform translate-y-full transition-transform duration-300 overflow-y-auto no-scrollbar">
 
                     <!-- Drag Handle -->
-                    <div class="w-10 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-4 cursor-pointer" onclick="closeEditTransactionModal()"></div>
+                    <div class="drag-handle-pill" onclick="closeEditTransactionModal()"></div>
 
                     <!-- Modal Header -->
                     <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800/80 mb-4">
@@ -1273,9 +1273,9 @@
 
             <!-- Bottom Sheet Panel (Apple iOS Liquid Sheet) -->
             <div class="fixed bottom-0 left-0 right-0 z-30 flex justify-center pointer-events-none">
-                <div id="delete-modal-panel" class="modal-panel modal-sheet-safe w-full max-w-md bg-white/95 dark:bg-slate-900/95 backdrop-blur-3xl rounded-t-[36px] shadow-2xl p-5 border-t border-white/60 dark:border-white/10 pointer-events-auto transform translate-y-full transition-transform duration-300 relative z-35">
+                <div id="delete-modal-panel" class="modal-panel modal-sheet-safe w-full max-w-md bg-white/95 dark:bg-[#12141D]/98 backdrop-blur-3xl rounded-t-[32px] shadow-2xl p-5 border-t border-slate-200/80 dark:border-white/[0.12] pointer-events-auto transform translate-y-full transition-transform duration-300 relative z-35">
                     <!-- Drag Handle -->
-                    <div class="w-10 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-4 cursor-pointer" onclick="closeDeleteTransactionModal()"></div>
+                    <div class="drag-handle-pill" onclick="closeDeleteTransactionModal()"></div>
 
                     <div class="text-center space-y-3 pb-2">
                         <div class="w-14 h-14 mx-auto rounded-3xl bg-rose-500/15 text-rose-600 dark:text-rose-400 flex items-center justify-center shadow-xs border border-rose-500/20">
@@ -1345,8 +1345,8 @@
         <div id="receipt-scanner-modal" class="fixed inset-0 z-50 hidden transition-all duration-300" aria-modal="true" role="dialog">
             <div id="scanner-backdrop" onclick="closeReceiptScannerModal()" class="fixed inset-0 bg-slate-950/75 backdrop-blur-xs transition-opacity duration-300 opacity-0"></div>
             <div class="fixed bottom-0 left-0 right-0 z-30 flex justify-center pointer-events-none">
-                <div id="scanner-panel" class="w-full max-w-md bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl p-4 pt-3 modal-sheet-safe border-t border-slate-100 dark:border-slate-800 pointer-events-auto transform translate-y-full transition-transform duration-300 space-y-3 max-h-[92vh] overflow-y-auto no-scrollbar text-slate-800 dark:text-white">
-                    <div class="w-10 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-1 cursor-pointer" onclick="closeReceiptScannerModal()"></div>
+                <div id="scanner-panel" class="w-full max-w-md bg-white/95 dark:bg-[#12141D]/98 backdrop-blur-3xl rounded-t-[32px] shadow-2xl p-4 pt-3 modal-sheet-safe border-t border-slate-200/80 dark:border-white/[0.12] pointer-events-auto transform translate-y-full transition-transform duration-300 space-y-3 max-h-[92vh] overflow-y-auto no-scrollbar text-slate-800 dark:text-zinc-100">
+                    <div class="drag-handle-pill" onclick="closeReceiptScannerModal()"></div>
 
                     <!-- Modal Header -->
                     <div class="flex items-center justify-between pb-2.5 border-b border-slate-100 dark:border-slate-800">

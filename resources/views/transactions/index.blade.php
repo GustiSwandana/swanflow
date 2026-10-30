@@ -1,19 +1,19 @@
 @extends('layouts.mobile')
 
 @section('custom_header')
-    <!-- Apple iOS Liquid Glass Header -->
-    <div class="relative overflow-hidden bg-gradient-to-b from-emerald-600/95 via-emerald-600/85 to-teal-700/90 dark:from-slate-900/95 dark:via-emerald-950/90 dark:to-slate-950/95 text-white px-5 pb-8 border-b border-white/20 dark:border-white/10 rounded-b-[36px] shadow-2xl backdrop-blur-3xl transition-colors duration-200" style="padding-top: max(3.5rem, calc(var(--sat, 0px) + 0.85rem));">
-        <!-- Specular Rim -->
+    <!-- Apple iOS Liquid Glass Header (Obsidian & Emerald Luxe) -->
+    <div class="relative overflow-hidden bg-gradient-to-br from-emerald-700 via-teal-800 to-emerald-950 dark:from-[#0B0D14] dark:via-[#12141D] dark:to-[#090A0F] text-white px-5 pb-8 border-b border-white/20 dark:border-white/[0.08] rounded-b-[36px] shadow-2xl backdrop-blur-3xl transition-colors duration-200" style="padding-top: max(3.5rem, calc(var(--sat, 0px) + 0.85rem));">
+        <!-- Specular Hairline Rim -->
         <div class="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none"></div>
 
         <!-- Ambient Liquid Orbs -->
-        <div class="absolute -top-10 -right-10 w-48 h-48 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none animate-liquid-orb-1"></div>
-        <div class="absolute -bottom-10 -left-10 w-48 h-48 bg-teal-500/20 rounded-full blur-3xl pointer-events-none animate-liquid-orb-2"></div>
+        <div class="absolute -top-10 -right-10 w-48 h-48 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none animate-liquid-orb-1"></div>
+        <div class="absolute -bottom-10 -left-10 w-48 h-48 bg-teal-500/15 rounded-full blur-3xl pointer-events-none animate-liquid-orb-2"></div>
 
         <!-- Top Navigation Bar -->
         <div class="relative z-10 flex items-center justify-between mb-2">
             <div class="flex items-center gap-3">
-                <a href="{{ route('dashboard') }}" class="w-10 h-10 rounded-[18px] liquid-glass bg-white/15 hover:bg-white/25 active:scale-95 flex items-center justify-center transition-all border border-white/30 shrink-0 shadow-xs ios-press" aria-label="Kembali ke Beranda">
+                <a href="{{ route('dashboard') }}" class="w-11 h-11 min-w-[44px] min-h-[44px] rounded-[18px] liquid-glass bg-white/15 hover:bg-white/25 active:scale-95 flex items-center justify-center transition-all border border-white/30 dark:bg-white/[0.06] dark:border-white/10 shrink-0 shadow-xs ios-press tap-target-44" aria-label="Kembali ke Beranda">
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
                     </svg>
@@ -31,7 +31,7 @@
                     id="theme-toggle-btn"
                     onclick="toggleSwanFlowTheme()" 
                     aria-label="Ganti Tema Gelap atau Terang" 
-                    class="w-10 h-10 flex items-center justify-center rounded-[18px] liquid-glass text-white/90 hover:text-white bg-white/15 hover:bg-white/25 border border-white/30 dark:bg-slate-800/80 dark:border-white/10 active:scale-95 transition-all shadow-xs ios-press">
+                    class="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-[18px] liquid-glass text-white/90 hover:text-white bg-white/15 hover:bg-white/25 border border-white/30 dark:bg-white/[0.06] dark:border-white/10 active:scale-95 transition-all shadow-xs ios-press tap-target-44">
                 <svg class="theme-icon-dark w-5 h-5 text-amber-300 transition-transform duration-300 transform rotate-0 hover:rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
                 </svg>
@@ -44,12 +44,12 @@
 @endsection
 
 @section('content')
-<div class="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-2xl rounded-t-[36px] pt-5 px-4 pb-[max(11rem,calc(10rem+var(--sab,0px)))] shadow-2xl -mt-5 relative z-10 border-t border-slate-200/80 dark:border-white/10 flex-1 flex flex-col min-h-[calc(100dvh-14rem)] space-y-6 text-slate-800 dark:text-white transition-colors animate-swan-in">
+<div class="bg-white/95 dark:bg-[#0B0D14]/95 backdrop-blur-2xl rounded-t-[36px] pt-5 px-4 pb-[max(11rem,calc(10rem+var(--sab,0px)))] shadow-2xl -mt-5 relative z-10 border-t border-slate-200/80 dark:border-white/[0.08] flex-1 flex flex-col min-h-[calc(100dvh-14rem)] space-y-6 text-slate-800 dark:text-zinc-100 transition-colors animate-swan-in">
     <!-- Grab Handle -->
-    <div class="w-10 h-1.5 bg-slate-300/80 dark:bg-slate-700/80 rounded-full mx-auto mb-1"></div>
+    <div class="drag-handle-pill"></div>
 
     <!-- Finance Modules Grid / Scroll (Liquid Glass Style) -->
-    <div class="flex overflow-x-auto no-scrollbar gap-4 pb-2 -mx-1 px-1 snap-x">
+    <div class="flex overflow-x-auto no-scrollbar gap-4 pb-2 -mx-1 px-1 snap-x scroll-momentum">
         @php
             $financeModules = [
                 ['name' => 'Laporan', 'icon' => 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z', 'route' => 'reports.index', 'classes' => 'text-indigo-500 group-hover:bg-indigo-500 dark:text-indigo-400'],
@@ -64,12 +64,12 @@
         @endphp
         @foreach($financeModules as $mod)
             <a href="{{ route($mod['route']) }}" class="flex flex-col items-center gap-2 min-w-[72px] shrink-0 group active:scale-95 transition-all snap-start cursor-pointer">
-                <div class="w-[60px] h-[60px] rounded-[22px] bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl border border-white/60 dark:border-white/10 shadow-xs flex items-center justify-center {{ $mod['classes'] }} group-hover:text-white transition-colors duration-300">
+                <div class="w-[60px] h-[60px] rounded-[22px] bg-white/90 dark:bg-[#12141D]/90 backdrop-blur-2xl border border-slate-200/80 dark:border-white/[0.08] shadow-xs flex items-center justify-center {{ $mod['classes'] }} group-hover:text-white group-hover:border-emerald-500/40 transition-colors duration-300">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="{{ $mod['icon'] }}"></path>
                     </svg>
                 </div>
-                <span class="text-[10px] font-bold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">{{ $mod['name'] }}</span>
+                <span class="text-[10px] font-bold text-slate-600 dark:text-zinc-400 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">{{ $mod['name'] }}</span>
             </a>
         @endforeach
     </div>
@@ -87,7 +87,7 @@
                            name="month" 
                            value="{{ request('month', now()->format('Y-m')) }}" 
                            onchange="document.getElementById('month-form').submit()" 
-                           class="relative w-full h-11 pl-8 pr-1.5 appearance-none bg-white/90 dark:bg-slate-900/90 border border-slate-200/80 dark:border-white/10 rounded-2xl text-[11px] font-bold text-slate-800 dark:text-slate-100 shadow-xs focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all cursor-pointer [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-clear-button]:hidden"
+                           class="relative w-full h-11 pl-8 pr-1.5 appearance-none bg-white/90 dark:bg-[#12141D]/90 border border-slate-200/80 dark:border-white/[0.08] rounded-2xl text-[11px] font-bold text-slate-800 dark:text-zinc-100 shadow-xs focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all cursor-pointer font-tabular tabular-nums [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-clear-button]:hidden"
                            onclick="try { this.showPicker() } catch(e) {}">
                     <div class="absolute left-2.5 top-1/2 -translate-y-1/2 text-emerald-500 pointer-events-none">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
@@ -101,10 +101,10 @@
                 @if(request('category_id'))<input type="hidden" name="category_id" value="{{ request('category_id') }}">@endif
                 @if(request('month'))<input type="hidden" name="month" value="{{ request('month') }}">@endif
                 <div class="relative w-full min-w-0">
-                    <select name="wallet_id" onchange="this.form.submit()" class="w-full h-11 pl-8 pr-5.5 appearance-none bg-white/90 dark:bg-slate-900/90 border border-slate-200/80 dark:border-white/10 rounded-2xl text-[11px] font-bold text-slate-800 dark:text-slate-100 shadow-xs focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all cursor-pointer truncate" style="-webkit-appearance: none; appearance: none;">
-                        <option value="">Semua Dompet</option>
+                    <select name="wallet_id" onchange="this.form.submit()" class="w-full h-11 pl-8 pr-5.5 appearance-none bg-white/90 dark:bg-[#12141D]/90 border border-slate-200/80 dark:border-white/[0.08] rounded-2xl text-[11px] font-bold text-slate-800 dark:text-zinc-100 shadow-xs focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all cursor-pointer truncate" style="-webkit-appearance: none; appearance: none;">
+                        <option value="" class="dark:bg-[#12141D]">Semua Dompet</option>
                         @foreach($wallets as $w)
-                            <option value="{{ $w->id }}" {{ $currentWalletId == $w->id ? 'selected' : '' }}>{{ $w->name }}</option>
+                            <option value="{{ $w->id }}" {{ $currentWalletId == $w->id ? 'selected' : '' }} class="dark:bg-[#12141D]">{{ $w->name }}</option>
                         @endforeach
                     </select>
                     <div class="absolute left-2.5 top-1/2 -translate-y-1/2 text-cyan-500 pointer-events-none">
@@ -117,10 +117,10 @@
             </form>
         </div>
 
-        <!-- AI Receipt Scanner -->
+        <!-- AI Receipt Scanner Banner -->
         <button type="button" 
                 onclick="openReceiptScannerModal()" 
-                class="w-full relative overflow-hidden bg-gradient-to-r from-teal-500 to-emerald-500 p-4 rounded-2xl shadow-lg shadow-emerald-500/20 text-white flex items-center justify-between group active:scale-95 transition-all cursor-pointer">
+                class="w-full relative overflow-hidden bg-gradient-to-r from-teal-600 via-emerald-600 to-teal-700 p-4 rounded-2xl shadow-lg shadow-emerald-500/20 text-white flex items-center justify-between group active:scale-95 transition-all cursor-pointer">
             <div class="absolute -right-4 -top-8 w-24 h-24 bg-white/20 rounded-full blur-2xl pointer-events-none"></div>
             <div class="flex items-center gap-3 relative z-10">
                 <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
@@ -131,7 +131,7 @@
                 </div>
                 <div class="text-left">
                     <span class="block text-sm font-bold leading-tight">Pindai Struk Otomatis (AI)</span>
-                    <span class="block text-[10px] text-teal-50 mt-0.5">Ekstrak otomatis nominal & kategori</span>
+                    <span class="block text-[10px] text-teal-100 mt-0.5">Ekstrak otomatis nominal & kategori struk</span>
                 </div>
             </div>
             <svg class="w-5 h-5 opacity-70 group-hover:opacity-100 group-hover:translate-x-1 transition-all relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -143,36 +143,36 @@
     <!-- Filters: Type & Category -->
     <div class="space-y-3.5 pt-1">
         <!-- Type Segmented Control -->
-        <div class="ios-segmented-track p-1 rounded-2xl flex items-stretch w-full border border-slate-200/80 dark:border-white/10 shadow-inner">
+        <div class="ios-segmented-track p-1 rounded-2xl flex items-stretch w-full border border-slate-200/80 dark:border-white/[0.08] shadow-inner bg-slate-100/70 dark:bg-white/[0.04]">
             <a href="{{ route('transactions.index', array_merge(request()->except('type', 'page'), ['type' => 'all'])) }}"
-               class="flex-1 min-w-0 py-2.5 text-center text-xs font-bold rounded-xl transition-all flex items-center justify-center ios-press {{ $currentType === 'all' ? 'ios-segmented-thumb bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm font-black ring-1 ring-black/5 dark:ring-white/15' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200' }}">
+               class="flex-1 min-w-0 py-2.5 text-center text-xs font-bold rounded-xl transition-all flex items-center justify-center ios-press {{ $currentType === 'all' ? 'ios-segmented-thumb bg-white dark:bg-[#171A26] text-slate-900 dark:text-white shadow-sm font-black ring-1 ring-black/5 dark:ring-white/15' : 'text-slate-500 hover:text-slate-800 dark:text-zinc-400 dark:hover:text-zinc-200' }}">
                 Semua
             </a>
             <a href="{{ route('transactions.index', array_merge(request()->except('type', 'page'), ['type' => 'expense'])) }}"
-               class="flex-1 min-w-0 py-2.5 text-center text-xs font-bold rounded-xl transition-all flex items-center justify-center ios-press {{ $currentType === 'expense' ? 'bg-rose-500 text-white shadow-sm font-black ring-1 ring-rose-400/30' : 'text-slate-500 hover:text-rose-500 dark:text-slate-400 dark:hover:text-rose-400' }}">
+               class="flex-1 min-w-0 py-2.5 text-center text-xs font-bold rounded-xl transition-all flex items-center justify-center ios-press {{ $currentType === 'expense' ? 'bg-rose-500 text-white shadow-sm font-black ring-1 ring-rose-400/30' : 'text-slate-500 hover:text-rose-500 dark:text-zinc-400 dark:hover:text-rose-400' }}">
                 Keluar
             </a>
             <a href="{{ route('transactions.index', array_merge(request()->except('type', 'page'), ['type' => 'income'])) }}"
-               class="flex-1 min-w-0 py-2.5 text-center text-xs font-bold rounded-xl transition-all flex items-center justify-center ios-press {{ $currentType === 'income' ? 'bg-emerald-500 text-white shadow-sm font-black ring-1 ring-emerald-400/30' : 'text-slate-500 hover:text-emerald-500 dark:text-slate-400 dark:hover:text-emerald-400' }}">
+               class="flex-1 min-w-0 py-2.5 text-center text-xs font-bold rounded-xl transition-all flex items-center justify-center ios-press {{ $currentType === 'income' ? 'bg-emerald-500 text-white shadow-sm font-black ring-1 ring-emerald-400/30' : 'text-slate-500 hover:text-emerald-500 dark:text-zinc-400 dark:hover:text-emerald-400' }}">
                 Masuk
             </a>
             <a href="{{ route('transactions.index', array_merge(request()->except('type', 'page'), ['type' => 'transfer'])) }}"
-               class="flex-1 min-w-0 py-2.5 text-center text-xs font-bold rounded-xl transition-all flex items-center justify-center ios-press {{ $currentType === 'transfer' ? 'bg-indigo-500 text-white shadow-sm font-black ring-1 ring-indigo-400/30' : 'text-slate-500 hover:text-indigo-400 dark:text-slate-400 dark:hover:text-indigo-300' }}">
+               class="flex-1 min-w-0 py-2.5 text-center text-xs font-bold rounded-xl transition-all flex items-center justify-center ios-press {{ $currentType === 'transfer' ? 'bg-teal-600 text-white shadow-sm font-black ring-1 ring-teal-400/30' : 'text-slate-500 hover:text-teal-400 dark:text-zinc-400 dark:hover:text-teal-300' }}">
                 Transfer
             </a>
         </div>
 
         <!-- Category Horizontal Scroll -->
-        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 -mx-1 px-1 snap-x">
+        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 -mx-1 px-1 snap-x scroll-momentum">
             @php $isAllActive = empty($currentCategoryId); @endphp
             <a href="{{ route('transactions.index', array_merge(request()->except('category_id', 'page'), [])) }}"
-               class="h-8 px-4 rounded-full text-xs font-bold transition-all shrink-0 flex items-center justify-center ios-press snap-start {{ $isAllActive ? 'bg-emerald-600 dark:bg-emerald-500 text-white shadow-sm shadow-emerald-600/30 border border-emerald-500/40' : 'bg-white/90 dark:bg-slate-900/90 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-slate-800' }}">
+               class="h-8 px-4 rounded-full text-xs font-bold transition-all shrink-0 flex items-center justify-center ios-press snap-start {{ $isAllActive ? 'bg-emerald-600 dark:bg-emerald-500 text-white shadow-sm shadow-emerald-600/30 border border-emerald-500/40' : 'bg-white/90 dark:bg-[#12141D]/90 text-slate-600 dark:text-zinc-300 border border-slate-200/80 dark:border-white/[0.08] hover:bg-slate-100 dark:hover:bg-white/[0.06]' }}">
                 <span>Semua</span>
             </a>
             @foreach($categories as $cat)
                 @php $isActive = (string)$currentCategoryId === (string)$cat->id; @endphp
                 <a href="{{ route('transactions.index', array_merge(request()->except('category_id', 'page'), ['category_id' => $cat->id])) }}"
-                   class="h-8 px-3.5 rounded-full text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 ios-press snap-start {{ $isActive ? 'bg-emerald-600 dark:bg-emerald-500 text-white shadow-sm shadow-emerald-600/30 border border-emerald-500/40' : 'bg-white/90 dark:bg-slate-900/90 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-slate-800' }}">
+                   class="h-8 px-3.5 rounded-full text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 ios-press snap-start {{ $isActive ? 'bg-emerald-600 dark:bg-emerald-500 text-white shadow-sm shadow-emerald-600/30 border border-emerald-500/40' : 'bg-white/90 dark:bg-[#12141D]/90 text-slate-600 dark:text-zinc-300 border border-slate-200/80 dark:border-white/[0.08] hover:bg-slate-100 dark:hover:bg-white/[0.06]' }}">
                     @if(!empty($cat->color))
                         <span class="w-2 h-2 rounded-full shrink-0" style="background-color: {{ $cat->color }};"></span>
                     @endif
@@ -209,15 +209,15 @@
                 @if($currentDate !== null) </div></div> @endif
                 @php $currentDate = $txData['date_formatted']; @endphp
                 <div class="relative">
-                    <div class="sticky top-[140px] z-20 py-1 inline-block bg-slate-100/90 dark:bg-slate-950/90 backdrop-blur-md mb-2 rounded-full px-3">
-                        <span class="text-[10px] font-black tracking-wider text-slate-500 dark:text-slate-400 uppercase">{{ $currentDate }}</span>
+                    <div class="sticky top-[140px] z-20 py-1 inline-block bg-slate-100/90 dark:bg-[#171A26]/90 backdrop-blur-md mb-2 rounded-full px-3 border border-slate-200/60 dark:border-white/[0.08]">
+                        <span class="text-[10px] font-black tracking-wider text-slate-500 dark:text-zinc-400 uppercase font-tabular tabular-nums">{{ $currentDate }}</span>
                     </div>
-                    <div class="liquid-card bg-white/90 dark:bg-slate-900/85 backdrop-blur-2xl rounded-[26px] border border-slate-200/80 dark:border-white/10 shadow-xs overflow-hidden divide-y divide-slate-100 dark:divide-white/5">
+                    <div class="liquid-card bg-white/90 dark:bg-[#12141D]/85 backdrop-blur-2xl rounded-[26px] border border-slate-200/80 dark:border-white/[0.08] shadow-xs overflow-hidden divide-y divide-slate-100 dark:divide-white/[0.05]">
             @endif
 
             <div data-transaction-row="{{ $tx->id }}" 
                  data-tx="{{ json_encode($txData) }}"
-                 class="p-3.5 flex items-center justify-between hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                 class="p-3.5 flex items-center justify-between hover:bg-slate-50/80 dark:hover:bg-white/[0.03] transition-colors">
                 
                 <!-- Left: Icon & Info -->
                 <div class="flex items-center gap-3.5 min-w-0 flex-1 cursor-pointer" onclick="openEditFromDataset(this, event)">
@@ -227,12 +227,12 @@
                             ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-500/20' 
                             : ($isTransfer 
                                 ? 'bg-cyan-50 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-cyan-100 dark:border-cyan-500/20' 
-                                : 'bg-slate-50 dark:bg-slate-800/60 text-slate-600 dark:text-slate-300 border-slate-100 dark:border-slate-700/60') }}">
+                                : 'bg-slate-50 dark:bg-white/[0.04] text-slate-600 dark:text-zinc-300 border-slate-100 dark:border-white/[0.06]') }}">
                         <x-category-icon :category="$tx->category" :type="$tx->type" :name="$tx->description ?: ($tx->category->name ?? '')" class="w-5 h-5" />
                     </div>
                     
                     <div class="min-w-0">
-                        <p class="text-sm font-bold text-slate-900 dark:text-slate-100 truncate">
+                        <p class="text-sm font-bold text-slate-900 dark:text-zinc-100 truncate">
                             @if($isTransfer)
                                 {{ $tx->description ?: 'Transfer Antar Dompet' }}
                             @else
@@ -240,7 +240,7 @@
                             @endif
                         </p>
                         <div class="flex items-center gap-1.5 mt-0.5 flex-wrap">
-                            <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400 truncate">
+                            <span class="text-[11px] font-medium text-slate-500 dark:text-zinc-400 truncate">
                                 @if($isTransfer)
                                     {{ $tx->wallet->name ?? 'Dompet' }} ➔ {{ $tx->targetWallet->name ?? 'Dompet' }}
                                 @else
@@ -248,7 +248,7 @@
                                 @endif
                             </span>
                             @if($isTransfer && (float)($tx->admin_fee ?? 0) > 0)
-                                <span class="inline-flex items-center px-1.5 py-0.5 rounded-md text-[9px] font-extrabold bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">
+                                <span class="inline-flex items-center px-1.5 py-0.5 rounded-md text-[9px] font-extrabold bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 font-tabular tabular-nums">
                                     Fee Rp {{ number_format($tx->admin_fee, 0, ',', '.') }} ({{ $tx->fee_payer === 'destination' ? 'Tujuan' : 'Asal' }})
                                 </span>
                             @endif
@@ -259,11 +259,11 @@
                 <!-- Right: Amount & Actions -->
                 <div class="flex items-center gap-2 shrink-0 pl-3">
                     <div class="text-right cursor-pointer" onclick="openEditFromDataset(this, event)">
-                        <span class="text-xs sm:text-[13px] font-black tracking-tight {{ $isIncome ? 'text-emerald-600 dark:text-emerald-400' : ($isTransfer ? 'text-cyan-600 dark:text-cyan-400' : 'text-slate-900 dark:text-white') }}">
+                        <span class="text-xs sm:text-[13px] font-black tracking-tight font-tabular tabular-nums {{ $isIncome ? 'text-currency-inflow' : ($isTransfer ? 'text-teal-600 dark:text-teal-400' : 'text-currency-outflow') }}">
                             {{ $isIncome ? '+ ' : ($isTransfer ? '' : '- ') }}Rp {{ number_format($tx->amount, 0, ',', '.') }}
                         </span>
                         @if($isTransfer && (float)($tx->admin_fee ?? 0) > 0)
-                            <span class="block text-[10px] font-medium text-slate-400 dark:text-slate-500">
+                            <span class="block text-[10px] font-medium text-slate-400 dark:text-zinc-500 font-tabular tabular-nums">
                                 @if($tx->fee_payer === 'destination')
                                     Terima: Rp {{ number_format(max(0, $tx->amount - $tx->admin_fee), 0, ',', '.') }}
                                 @else
@@ -276,12 +276,12 @@
                     <div class="flex flex-col gap-1 border-l border-slate-200/80 dark:border-white/10 pl-2 ml-1">
                         <!-- Edit -->
                         <button type="button" onclick="openEditFromDataset(this, event)" aria-label="Edit transaksi" 
-                                class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-emerald-500 bg-slate-50 hover:bg-emerald-50 dark:bg-slate-800 dark:hover:bg-emerald-500/20 rounded-lg transition-colors ios-press">
+                                class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-emerald-500 bg-slate-50 hover:bg-emerald-50 dark:bg-white/[0.04] dark:hover:bg-emerald-500/20 rounded-lg transition-colors ios-press">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" /></svg>
                         </button>
                         <!-- Delete -->
                         <button type="button" onclick="openDeleteFromDataset(this, event)" aria-label="Hapus transaksi" 
-                                class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-rose-500 bg-slate-50 hover:bg-rose-50 dark:bg-slate-800 dark:hover:bg-rose-500/20 rounded-lg transition-colors ios-press">
+                                class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-rose-500 bg-slate-50 hover:bg-rose-50 dark:bg-white/[0.04] dark:hover:bg-rose-500/20 rounded-lg transition-colors ios-press">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>
                         </button>
                     </div>

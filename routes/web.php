@@ -26,12 +26,12 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 
-// Public Authentication, PIN & Face ID Login Routes
+// Public Authentication, PIN & Face ID Login Routes (Rate-Limited to Prevent Brute-Force)
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
-Route::post('/auth/pin/verify', [AuthController::class, 'verifyPin'])->name('auth.pin.verify');
-Route::post('/face-id/login/challenge', [FaceIdController::class, 'loginChallenge'])->name('faceid.login.challenge');
-Route::post('/face-id/login/verify', [FaceIdController::class, 'loginVerify'])->name('faceid.login.verify');
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1')->name('login.submit');
+Route::post('/auth/pin/verify', [AuthController::class, 'verifyPin'])->middleware('throttle:10,1')->name('auth.pin.verify');
+Route::post('/face-id/login/challenge', [FaceIdController::class, 'loginChallenge'])->middleware('throttle:10,1')->name('faceid.login.challenge');
+Route::post('/face-id/login/verify', [FaceIdController::class, 'loginVerify'])->middleware('throttle:10,1')->name('faceid.login.verify');
 
 Route::get('/manifest.webmanifest', function () {
     return response(file_get_contents(public_path('manifest.webmanifest')), 200, [
@@ -44,97 +44,100 @@ Route::get('/manifest.json', function () {
     ]);
 });
 
-// Maintenance endpoint to clear view cache and wipe stale compiled templates
-Route::get('/swanflow-clear-view-cache', function () {
-    try {
-        Artisan::call('view:clear');
-        Artisan::call('route:clear');
-        Artisan::call('cache:clear');
-    } catch (Throwable $e) {
-    }
+// Maintenance & Deployment Endpoints (Protected by SWANFLOW_DEPLOY_KEY or authenticated user)
+Route::middleware('maintenance.auth')->group(function () {
+    // Maintenance endpoint to clear view cache and wipe stale compiled templates
+    Route::get('/swanflow-clear-view-cache', function () {
+        try {
+            Artisan::call('view:clear');
+            Artisan::call('route:clear');
+            Artisan::call('cache:clear');
+        } catch (Throwable $e) {
+        }
 
-    $files = glob(storage_path('framework/views/*.php'));
-    $deleted = 0;
-    if ($files) {
-        foreach ($files as $file) {
-            if (is_file($file)) {
-                @unlink($file);
-                $deleted++;
+        $files = glob(storage_path('framework/views/*.php'));
+        $deleted = 0;
+        if ($files) {
+            foreach ($files as $file) {
+                if (is_file($file)) {
+                    @unlink($file);
+                    $deleted++;
+                }
             }
         }
-    }
-
-    return response()->json([
-        'status' => 'success',
-        'deleted_views' => $deleted,
-        'message' => 'View cache and compiled templates purged successfully.',
-    ]);
-});
-
-Route::get('/swanflow-latest-log', function () {
-    $logPath = storage_path('logs/laravel.log');
-    if (! file_exists($logPath)) {
-        return response('No log file found', 200, ['Content-Type' => 'text/plain']);
-    }
-    $lines = file($logPath);
-    $lastLines = array_slice($lines, -60);
-
-    return response(implode('', $lastLines), 200, ['Content-Type' => 'text/plain']);
-});
-
-// Maintenance endpoint to execute pending migrations on Hostinger
-Route::get('/swanflow-migrate', function () {
-    try {
-        Artisan::call('migrate', ['--force' => true]);
-        $output = Artisan::output();
 
         return response()->json([
             'status' => 'success',
-            'output' => trim($output),
+            'deleted_views' => $deleted,
+            'message' => 'View cache and compiled templates purged successfully.',
         ]);
-    } catch (Throwable $e) {
+    });
+
+    Route::get('/swanflow-latest-log', function () {
+        $logPath = storage_path('logs/laravel.log');
+        if (! file_exists($logPath)) {
+            return response('No log file found', 200, ['Content-Type' => 'text/plain']);
+        }
+        $lines = file($logPath);
+        $lastLines = array_slice($lines, -60);
+
+        return response(implode('', $lastLines), 200, ['Content-Type' => 'text/plain']);
+    });
+
+    // Maintenance endpoint to execute pending migrations on Hostinger
+    Route::get('/swanflow-migrate', function () {
+        try {
+            Artisan::call('migrate', ['--force' => true]);
+            $output = Artisan::output();
+
+            return response()->json([
+                'status' => 'success',
+                'output' => trim($output),
+            ]);
+        } catch (Throwable $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    });
+
+    Route::get('/swanflow-status', function () {
+        $buildPath = public_path('build/assets');
+        $buildFiles = is_dir($buildPath) ? array_values(array_diff(scandir($buildPath), ['.', '..'])) : [];
+
+        $gitLog = 'unavailable';
+        try {
+            if (function_exists('shell_exec')) {
+                $gitLog = trim(@shell_exec('git log -1 --oneline 2>&1') ?? 'unavailable');
+            }
+        } catch (Throwable $e) {
+            $gitLog = $e->getMessage();
+        }
+
         return response()->json([
-            'status' => 'error',
-            'message' => $e->getMessage(),
-        ], 500);
-    }
-});
+            'git' => $gitLog,
+            'manifest' => file_exists(public_path('build/manifest.json')) ? json_decode(file_get_contents(public_path('build/manifest.json')), true) : null,
+            'build_assets' => $buildFiles,
+            'public_path' => public_path(),
+        ]);
+    });
 
-Route::get('/swanflow-status', function () {
-    $buildPath = public_path('build/assets');
-    $buildFiles = is_dir($buildPath) ? array_values(array_diff(scandir($buildPath), ['.', '..'])) : [];
-
-    $gitLog = 'unavailable';
-    try {
-        if (function_exists('shell_exec')) {
-            $gitLog = trim(@shell_exec('git log -1 --oneline 2>&1') ?? 'unavailable');
+    Route::get('/swanflow-git-pull', function () {
+        $output = 'unavailable';
+        try {
+            if (function_exists('shell_exec')) {
+                $output = trim(@shell_exec('git pull origin main 2>&1') ?? 'disabled');
+            }
+        } catch (Throwable $e) {
+            $output = $e->getMessage();
         }
-    } catch (Throwable $e) {
-        $gitLog = $e->getMessage();
-    }
 
-    return response()->json([
-        'git' => $gitLog,
-        'manifest' => file_exists(public_path('build/manifest.json')) ? json_decode(file_get_contents(public_path('build/manifest.json')), true) : null,
-        'build_assets' => $buildFiles,
-        'public_path' => public_path(),
-    ]);
-});
-
-Route::get('/swanflow-git-pull', function () {
-    $output = 'unavailable';
-    try {
-        if (function_exists('shell_exec')) {
-            $output = trim(@shell_exec('git pull origin main 2>&1') ?? 'disabled');
-        }
-    } catch (Throwable $e) {
-        $output = $e->getMessage();
-    }
-
-    return response()->json([
-        'status' => 'success',
-        'output' => $output,
-    ]);
+        return response()->json([
+            'status' => 'success',
+            'output' => $output,
+        ]);
+    });
 });
 
 // Public Share & File Transfer Routes (SwanDrive)
@@ -150,8 +153,8 @@ Route::get('/share/folder/{token}/zip', [DriveController::class, 'sharedFolderZi
 
 // Public Drop Portal (Upload file request link)
 Route::get('/drop/{token}', [DropLinkController::class, 'show'])->name('drive.drop.view');
-Route::post('/drop/{token}', [DropLinkController::class, 'upload'])->name('drive.drop.upload');
-Route::post('/drop/{token}/chunk', [DropLinkController::class, 'uploadChunk'])->name('drive.drop.upload-chunk');
+Route::post('/drop/{token}', [DropLinkController::class, 'upload'])->middleware('throttle:30,1')->name('drive.drop.upload');
+Route::post('/drop/{token}/chunk', [DropLinkController::class, 'uploadChunk'])->middleware('throttle:120,1')->name('drive.drop.upload-chunk');
 
 // Public Client Portal & File Deliverables (/p/{token})
 Route::get('/p/{token}', [ClientPortalController::class, 'show'])->name('orders.portal');
@@ -166,7 +169,7 @@ Route::post('/api/midtrans/webhook', [MidtransWebhookController::class, 'handleN
 // Client File Delivery & Paywall Gateway Admin (/admin & /api/admin/*)
 Route::get('/admin', [PayAdminApiController::class, 'index'])->name('pay.admin');
 Route::get('/api/admin/me', [PayAdminApiController::class, 'me']);
-Route::post('/api/admin/login', [PayAdminApiController::class, 'login']);
+Route::post('/api/admin/login', [PayAdminApiController::class, 'login'])->middleware('throttle:5,1');
 Route::post('/api/admin/logout', [PayAdminApiController::class, 'logout']);
 Route::get('/api/admin/settings', [PayAdminApiController::class, 'getSettings']);
 Route::post('/api/admin/settings', [PayAdminApiController::class, 'updateSettings']);

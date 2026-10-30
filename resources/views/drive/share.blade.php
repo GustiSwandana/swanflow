@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
-    <meta name="theme-color" content="#020617" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#090A0F" media="(prefers-color-scheme: dark)">
     <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)">
     <meta name="color-scheme" content="light dark">
     <meta name="mobile-web-app-capable" content="yes">
@@ -42,10 +42,10 @@
         }
     </script>
 </head>
-<body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-dvh flex flex-col justify-between selection:bg-teal-500 selection:text-white antialiased transition-colors duration-200">
+<body class="bg-slate-100 dark:bg-[#090A0F] text-slate-800 dark:text-zinc-100 min-h-dvh flex flex-col justify-between selection:bg-emerald-500 selection:text-white antialiased transition-colors duration-200">
 
     <!-- Dynamic Island & iOS Status Bar Scrim -->
-    <div id="status-bar-scrim" class="fixed top-0 left-0 right-0 z-40 pointer-events-none transition-opacity duration-200 opacity-0 bg-slate-100/90 dark:bg-slate-950/90 backdrop-blur-xl border-b border-black/5 dark:border-white/5" style="height: env(safe-area-inset-top, 0px);"></div>
+    <div id="status-bar-scrim" class="fixed top-0 left-0 right-0 z-40 pointer-events-none transition-opacity duration-200 opacity-0 bg-slate-100/90 dark:bg-[#090A0F]/90 backdrop-blur-xl border-b border-black/5 dark:border-white/5" style="height: env(safe-area-inset-top, 0px);"></div>
 
     <!-- Ambient Liquid Orbs Background -->
     <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
@@ -79,7 +79,7 @@
                     onclick="sharePageNative()" 
                     aria-label="Bagikan Halaman Ini" 
                     title="Bagikan Tautan Berkas"
-                    class="w-10 h-10 flex items-center justify-center rounded-2xl bg-white/90 dark:bg-slate-800/90 hover:bg-white dark:hover:bg-slate-700 text-teal-600 dark:text-teal-400 border border-slate-200 dark:border-white/10 active:scale-95 transition-all shadow-xs cursor-pointer">
+                    class="w-10 h-10 flex items-center justify-center rounded-2xl bg-white/90 dark:bg-[#12141D]/90 hover:bg-white dark:hover:bg-[#181B26] text-teal-600 dark:text-emerald-400 border border-slate-200 dark:border-white/[0.08] active:scale-95 transition-all shadow-xs cursor-pointer tap-target-44">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
                 </svg>
@@ -90,7 +90,7 @@
                     id="theme-toggle-btn"
                     onclick="toggleSwanFlowTheme()" 
                     aria-label="Ganti Tema Gelap atau Terang" 
-                    class="w-10 h-10 flex items-center justify-center rounded-2xl bg-white/90 dark:bg-slate-800/90 hover:bg-white dark:hover:bg-slate-700 text-slate-700 dark:text-amber-300 border border-slate-200 dark:border-white/10 active:scale-95 transition-all shadow-xs cursor-pointer">
+                    class="w-10 h-10 flex items-center justify-center rounded-2xl bg-white/90 dark:bg-[#12141D]/90 hover:bg-white dark:hover:bg-[#181B26] text-slate-700 dark:text-amber-300 border border-slate-200 dark:border-white/[0.08] active:scale-95 transition-all shadow-xs cursor-pointer tap-target-44">
                 <svg class="theme-icon-dark w-5 h-5 text-amber-300 transition-transform duration-300 transform rotate-0 hover:rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
                 </svg>
@@ -118,21 +118,21 @@
 
     <!-- Main Content Container -->
     <main class="relative z-10 flex-1 flex flex-col items-center justify-center p-4 sm:p-6 w-full max-w-xl mx-auto">
-        <div class="w-full rounded-3xl p-5 sm:p-7 shadow-2xl space-y-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl border border-slate-200/80 dark:border-white/15 relative overflow-hidden transition-colors duration-200">
+        <div class="liquid-card w-full rounded-[32px] p-5 sm:p-7 shadow-2xl space-y-4 bg-white/90 dark:bg-[#12141D]/90 backdrop-blur-2xl border border-slate-200/80 dark:border-white/[0.08] dark:border-t-white/[0.14] relative overflow-hidden transition-colors duration-200">
             <!-- Specular Top Rim -->
-            <div class="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-teal-400/50 dark:via-white/40 to-transparent"></div>
+            <div class="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-teal-400/50 dark:via-white/30 to-transparent"></div>
 
             <!-- Header Info: Status & Badges -->
-            <div class="flex items-center justify-between gap-2 border-b border-slate-100 dark:border-white/5 pb-3">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/10 dark:bg-teal-500/15 border border-teal-500/25 dark:border-teal-500/30 text-teal-700 dark:text-teal-400 text-xs font-black tracking-wide">
-                    <span class="w-2 h-2 rounded-full bg-teal-500 dark:bg-teal-400 animate-pulse"></span>
+            <div class="flex items-center justify-between gap-2 border-b border-slate-100 dark:border-white/[0.06] pb-3">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/10 dark:bg-emerald-500/15 border border-teal-500/25 dark:border-emerald-500/30 text-teal-700 dark:text-emerald-400 text-xs font-black tracking-wide">
+                    <span class="w-2 h-2 rounded-full bg-teal-500 dark:bg-emerald-400 animate-pulse"></span>
                     <span>Berkas Siap Diunduh</span>
                 </div>
-                <div class="flex items-center gap-1.5 text-xs font-bold text-slate-500 dark:text-slate-400">
-                    <span class="px-2 py-0.5 rounded-md bg-teal-500/10 dark:bg-teal-500/20 text-teal-700 dark:text-teal-300 uppercase font-black tracking-wider text-[10px] border border-teal-500/25">
+                <div class="flex items-center gap-1.5 text-xs font-bold text-slate-500 dark:text-zinc-400">
+                    <span class="px-2 py-0.5 rounded-md bg-teal-500/10 dark:bg-emerald-500/20 text-teal-700 dark:text-emerald-300 uppercase font-black tracking-wider text-[10px] border border-teal-500/25">
                         {{ strtoupper($file->extension) }}
                     </span>
-                    <span>{{ $file->formatted_size }}</span>
+                    <span class="tabular-nums font-semibold">{{ $file->formatted_size }}</span>
                 </div>
             </div>
 
@@ -142,17 +142,17 @@
                     {{ $cleanTitle }}
                 </h1>
                 
-                <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+                <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 text-[11px] text-slate-500 dark:text-zinc-400 font-medium">
                     @if(! $isTitleSameAsName)
                         <span class="truncate max-w-[200px]" title="{{ $file->original_name }}">
                             {{ $file->original_name }}
                         </span>
                         <span>•</span>
                     @endif
-                    <span>Diunggah {{ $file->created_at->format('d M Y') }}</span>
+                    <span class="tabular-nums">Diunggah {{ $file->created_at->format('d M Y') }}</span>
                     @if($file->download_count > 0)
                         <span>•</span>
-                        <span class="text-teal-600 dark:text-teal-400 font-bold">{{ $file->download_count }}x diunduh</span>
+                        <span class="text-teal-600 dark:text-emerald-400 font-bold tabular-nums">{{ $file->download_count }}x diunduh</span>
                     @endif
                 </div>
             </div>
@@ -273,11 +273,11 @@
                 <!-- Primary Download Button -->
                 <a href="{{ route('drive.shared.download', ['token' => $file->share_token]) }}"
                    download="{{ $file->original_name }}"
-                   class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-teal-500 via-emerald-500 to-teal-600 hover:from-teal-400 hover:to-emerald-400 active:scale-[0.98] text-white font-black text-sm sm:text-base shadow-xl shadow-teal-500/25 hover:shadow-teal-500/35 flex items-center justify-center gap-2.5 border border-white/20 transition-all cursor-pointer">
+                   class="w-full min-h-[48px] py-3.5 px-6 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-400 active:scale-[0.98] text-white font-black text-sm sm:text-base shadow-xl shadow-emerald-500/25 hover:shadow-emerald-500/35 flex items-center justify-center gap-2.5 border border-white/20 transition-all cursor-pointer">
                     <svg class="w-5 h-5 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
                     </svg>
-                    <span>Unduh Berkas ({{ $file->formatted_size }})</span>
+                    <span>Unduh Berkas (<span class="tabular-nums">{{ $file->formatted_size }}</span>)</span>
                 </a>
 
                 <!-- Native Share Sheet CTA -->

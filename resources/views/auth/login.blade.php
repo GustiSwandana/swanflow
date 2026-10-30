@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-slate-100 dark:bg-slate-950">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-slate-100 dark:bg-[#090A0F]">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
-    <meta name="theme-color" content="#020617">
+    <meta name="theme-color" content="#090A0F">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -26,7 +26,7 @@
                 const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
                 if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
                     document.documentElement.classList.add('dark');
-                    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#020617');
+                    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#090A0F');
                 } else {
                     document.documentElement.classList.remove('dark');
                     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#f8fafc');
@@ -76,9 +76,9 @@
         }
     </style>
 </head>
-<body class="min-h-full bg-slate-100 dark:bg-slate-950 flex justify-center text-slate-800 dark:text-slate-100 antialiased selection:bg-emerald-500 selection:text-white">
+<body class="min-h-full bg-slate-100 dark:bg-[#090A0F] flex justify-center text-slate-800 dark:text-zinc-100 antialiased selection:bg-emerald-500 selection:text-white">
     <!-- Frame Container -->
-    <div class="w-full max-w-md min-h-full min-h-[100dvh] bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 relative flex flex-col justify-between p-6 shadow-2xl border-x border-slate-200/80 dark:border-slate-800/80 transition-colors duration-200" style="padding-top: max(1.5rem, calc(var(--sat) + 1rem)); padding-bottom: max(1.5rem, calc(var(--sab) + 1rem));">
+    <div class="w-full max-w-md min-h-full min-h-[100dvh] bg-slate-50 dark:bg-[#090A0F] text-slate-800 dark:text-zinc-100 relative flex flex-col justify-between p-6 shadow-2xl border-x border-slate-200/80 dark:border-white/[0.08] transition-colors duration-200" style="padding-top: max(1.5rem, calc(var(--sat) + 1rem)); padding-bottom: max(1.5rem, calc(var(--sab) + 1rem));">
 
         <!-- Top Header & Theme Switcher -->
         <div class="flex items-center justify-between mb-6">
@@ -134,51 +134,51 @@
             <!-- User Profile Avatar & Greeting -->
             <div class="text-center pt-2">
                 <div class="relative inline-block mx-auto mb-3">
-                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-slate-950 to-slate-800 text-emerald-400 font-extrabold text-xl flex items-center justify-center shadow-lg ring-4 ring-emerald-500/25 border border-slate-700">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#090A0F] to-[#181B26] text-emerald-400 font-extrabold text-xl flex items-center justify-center shadow-lg ring-4 ring-emerald-500/25 border border-white/[0.08]">
                         GS
                     </div>
-                    <span class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full ring-2 ring-white dark:ring-slate-950"></span>
+                    <span class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full ring-2 ring-white dark:ring-[#090A0F]"></span>
                 </div>
-                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Selamat Datang</span>
+                <span class="label-micro text-slate-400 dark:text-zinc-400 block">Selamat Datang</span>
                 <h2 class="text-xl font-bold text-slate-900 dark:text-white mt-0.5 tracking-tight">
                     {{ $enrolledUser->name ?? 'Gusti Swandana' }}
                 </h2>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Masukkan 6-digit PIN Anda untuk membuka</p>
+                <p class="text-xs text-slate-500 dark:text-zinc-400 mt-1">Masukkan 6-digit PIN Anda untuk membuka</p>
             </div>
 
             <!-- PIN Indicator Dots -->
             <div class="py-2">
                 <div id="pin-dots-container" class="flex items-center justify-center gap-3.5 my-2 transition-transform">
-                    <div id="pin-dot-0" class="w-3.5 h-3.5 rounded-full border-2 border-slate-300 dark:border-slate-600 bg-transparent transition-all duration-150"></div>
-                    <div id="pin-dot-1" class="w-3.5 h-3.5 rounded-full border-2 border-slate-300 dark:border-slate-600 bg-transparent transition-all duration-150"></div>
-                    <div id="pin-dot-2" class="w-3.5 h-3.5 rounded-full border-2 border-slate-300 dark:border-slate-600 bg-transparent transition-all duration-150"></div>
-                    <div id="pin-dot-3" class="w-3.5 h-3.5 rounded-full border-2 border-slate-300 dark:border-slate-600 bg-transparent transition-all duration-150"></div>
-                    <div id="pin-dot-4" class="w-3.5 h-3.5 rounded-full border-2 border-slate-300 dark:border-slate-600 bg-transparent transition-all duration-150"></div>
-                    <div id="pin-dot-5" class="w-3.5 h-3.5 rounded-full border-2 border-slate-300 dark:border-slate-600 bg-transparent transition-all duration-150"></div>
+                    <div id="pin-dot-0" class="w-3.5 h-3.5 rounded-full border-2 border-slate-300 dark:border-white/20 bg-transparent transition-all duration-150"></div>
+                    <div id="pin-dot-1" class="w-3.5 h-3.5 rounded-full border-2 border-slate-300 dark:border-white/20 bg-transparent transition-all duration-150"></div>
+                    <div id="pin-dot-2" class="w-3.5 h-3.5 rounded-full border-2 border-slate-300 dark:border-white/20 bg-transparent transition-all duration-150"></div>
+                    <div id="pin-dot-3" class="w-3.5 h-3.5 rounded-full border-2 border-slate-300 dark:border-white/20 bg-transparent transition-all duration-150"></div>
+                    <div id="pin-dot-4" class="w-3.5 h-3.5 rounded-full border-2 border-slate-300 dark:border-white/20 bg-transparent transition-all duration-150"></div>
+                    <div id="pin-dot-5" class="w-3.5 h-3.5 rounded-full border-2 border-slate-300 dark:border-white/20 bg-transparent transition-all duration-150"></div>
                 </div>
                 <div id="pin-error-message" class="text-xs font-semibold text-rose-500 text-center min-h-[18px]"></div>
             </div>
 
             <!-- Mobile Banking Numeric Keypad -->
             <div class="grid grid-cols-3 gap-2.5 max-w-[290px] mx-auto w-full select-none">
-                <button type="button" onclick="appendPinDigit('1')" class="min-h-[56px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xl font-bold text-slate-800 dark:text-white shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-slate-800 transition-all cursor-pointer">1</button>
-                <button type="button" onclick="appendPinDigit('2')" class="min-h-[56px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xl font-bold text-slate-800 dark:text-white shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-slate-800 transition-all cursor-pointer">2</button>
-                <button type="button" onclick="appendPinDigit('3')" class="min-h-[56px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xl font-bold text-slate-800 dark:text-white shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-slate-800 transition-all cursor-pointer">3</button>
+                <button type="button" onclick="appendPinDigit('1')" class="min-h-[58px] rounded-2xl liquid-card bg-white dark:bg-[#12141D]/90 hover:dark:bg-[#181B26] border border-slate-200/80 dark:border-white/[0.08] dark:border-t-white/[0.14] text-xl font-bold text-slate-800 dark:text-zinc-100 shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-[#181B26] transition-all cursor-pointer tabular-nums">1</button>
+                <button type="button" onclick="appendPinDigit('2')" class="min-h-[58px] rounded-2xl liquid-card bg-white dark:bg-[#12141D]/90 hover:dark:bg-[#181B26] border border-slate-200/80 dark:border-white/[0.08] dark:border-t-white/[0.14] text-xl font-bold text-slate-800 dark:text-zinc-100 shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-[#181B26] transition-all cursor-pointer tabular-nums">2</button>
+                <button type="button" onclick="appendPinDigit('3')" class="min-h-[58px] rounded-2xl liquid-card bg-white dark:bg-[#12141D]/90 hover:dark:bg-[#181B26] border border-slate-200/80 dark:border-white/[0.08] dark:border-t-white/[0.14] text-xl font-bold text-slate-800 dark:text-zinc-100 shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-[#181B26] transition-all cursor-pointer tabular-nums">3</button>
 
-                <button type="button" onclick="appendPinDigit('4')" class="min-h-[56px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xl font-bold text-slate-800 dark:text-white shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-slate-800 transition-all cursor-pointer">4</button>
-                <button type="button" onclick="appendPinDigit('5')" class="min-h-[56px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xl font-bold text-slate-800 dark:text-white shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-slate-800 transition-all cursor-pointer">5</button>
-                <button type="button" onclick="appendPinDigit('6')" class="min-h-[56px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xl font-bold text-slate-800 dark:text-white shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-slate-800 transition-all cursor-pointer">6</button>
+                <button type="button" onclick="appendPinDigit('4')" class="min-h-[58px] rounded-2xl liquid-card bg-white dark:bg-[#12141D]/90 hover:dark:bg-[#181B26] border border-slate-200/80 dark:border-white/[0.08] dark:border-t-white/[0.14] text-xl font-bold text-slate-800 dark:text-zinc-100 shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-[#181B26] transition-all cursor-pointer tabular-nums">4</button>
+                <button type="button" onclick="appendPinDigit('5')" class="min-h-[58px] rounded-2xl liquid-card bg-white dark:bg-[#12141D]/90 hover:dark:bg-[#181B26] border border-slate-200/80 dark:border-white/[0.08] dark:border-t-white/[0.14] text-xl font-bold text-slate-800 dark:text-zinc-100 shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-[#181B26] transition-all cursor-pointer tabular-nums">5</button>
+                <button type="button" onclick="appendPinDigit('6')" class="min-h-[58px] rounded-2xl liquid-card bg-white dark:bg-[#12141D]/90 hover:dark:bg-[#181B26] border border-slate-200/80 dark:border-white/[0.08] dark:border-t-white/[0.14] text-xl font-bold text-slate-800 dark:text-zinc-100 shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-[#181B26] transition-all cursor-pointer tabular-nums">6</button>
 
-                <button type="button" onclick="appendPinDigit('7')" class="min-h-[56px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xl font-bold text-slate-800 dark:text-white shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-slate-800 transition-all cursor-pointer">7</button>
-                <button type="button" onclick="appendPinDigit('8')" class="min-h-[56px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xl font-bold text-slate-800 dark:text-white shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-slate-800 transition-all cursor-pointer">8</button>
-                <button type="button" onclick="appendPinDigit('9')" class="min-h-[56px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xl font-bold text-slate-800 dark:text-white shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-slate-800 transition-all cursor-pointer">9</button>
+                <button type="button" onclick="appendPinDigit('7')" class="min-h-[58px] rounded-2xl liquid-card bg-white dark:bg-[#12141D]/90 hover:dark:bg-[#181B26] border border-slate-200/80 dark:border-white/[0.08] dark:border-t-white/[0.14] text-xl font-bold text-slate-800 dark:text-zinc-100 shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-[#181B26] transition-all cursor-pointer tabular-nums">7</button>
+                <button type="button" onclick="appendPinDigit('8')" class="min-h-[58px] rounded-2xl liquid-card bg-white dark:bg-[#12141D]/90 hover:dark:bg-[#181B26] border border-slate-200/80 dark:border-white/[0.08] dark:border-t-white/[0.14] text-xl font-bold text-slate-800 dark:text-zinc-100 shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-[#181B26] transition-all cursor-pointer tabular-nums">8</button>
+                <button type="button" onclick="appendPinDigit('9')" class="min-h-[58px] rounded-2xl liquid-card bg-white dark:bg-[#12141D]/90 hover:dark:bg-[#181B26] border border-slate-200/80 dark:border-white/[0.08] dark:border-t-white/[0.14] text-xl font-bold text-slate-800 dark:text-zinc-100 shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-[#181B26] transition-all cursor-pointer tabular-nums">9</button>
 
                 <!-- Face ID / Biometric Quick Trigger Button -->
                 <button type="button" 
                         id="face-id-keypad-btn"
                         onclick="authenticateWithFaceId()" 
                         aria-label="Buka dengan Biometrik" 
-                        class="min-h-[56px] rounded-2xl bg-emerald-500/10 hover:bg-emerald-500/20 dark:bg-emerald-500/15 dark:hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 shadow-xs active:scale-90 transition-all flex flex-col items-center justify-center gap-0.5 cursor-pointer">
+                        class="min-h-[58px] rounded-2xl liquid-card bg-emerald-500/10 hover:bg-emerald-500/20 dark:bg-emerald-500/15 dark:hover:bg-emerald-500/25 border border-emerald-500/30 dark:border-emerald-400/30 text-emerald-600 dark:text-emerald-400 shadow-xs active:scale-90 transition-all flex flex-col items-center justify-center gap-0.5 cursor-pointer">
                     <div id="face-id-keypad-icon" class="flex items-center justify-center">
                         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M4 8V6a2 2 0 0 1 2-2h2" />
@@ -194,13 +194,13 @@
                     <span id="face-id-keypad-label" class="text-[9px] font-bold">Face ID</span>
                 </button>
 
-                <button type="button" onclick="appendPinDigit('0')" class="min-h-[56px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xl font-bold text-slate-800 dark:text-white shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-slate-800 transition-all cursor-pointer">0</button>
+                <button type="button" onclick="appendPinDigit('0')" class="min-h-[58px] rounded-2xl liquid-card bg-white dark:bg-[#12141D]/90 hover:dark:bg-[#181B26] border border-slate-200/80 dark:border-white/[0.08] dark:border-t-white/[0.14] text-xl font-bold text-slate-800 dark:text-zinc-100 shadow-xs active:scale-90 active:bg-slate-100 dark:active:bg-[#181B26] transition-all cursor-pointer tabular-nums">0</button>
 
                 <!-- Backspace Key -->
                 <button type="button" 
                         onclick="removePinDigit()" 
                         aria-label="Hapus angka" 
-                        class="min-h-[56px] rounded-2xl bg-transparent border border-transparent text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 shadow-none active:scale-90 transition-all flex items-center justify-center cursor-pointer">
+                        class="min-h-[58px] rounded-2xl bg-transparent border border-transparent text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 shadow-none active:scale-90 transition-all flex items-center justify-center cursor-pointer">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9.75L14.25 12m0 0l2.25 2.25M14.25 12l2.25-2.25M14.25 12L12 14.25m-2.58 4.92l-6.375-6.375a1.125 1.125 0 010-1.59L9.42 4.83c.21-.211.497-.33.795-.33H19.5a2.25 2.25 0 012.25 2.25v10.5a2.25 2.25 0 01-2.25 2.25h-9.284c-.298 0-.585-.119-.795-.33z" />
                     </svg>
@@ -212,7 +212,7 @@
                 <button type="button" onclick="toggleLoginView('password')" class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline transition-colors cursor-pointer">
                     Masuk dengan Email & Password
                 </button>
-                <button type="button" onclick="toggleLoginView('password')" class="text-[11px] text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer">
+                <button type="button" onclick="toggleLoginView('password')" class="text-[11px] text-slate-400 hover:text-slate-600 dark:hover:text-zinc-300 transition-colors cursor-pointer">
                     Lupa PIN 6-Digit? Masuk dengan Akun
                 </button>
             </div>
@@ -243,7 +243,7 @@
                                required 
                                autocomplete="email"
                                placeholder="nama@swanflow.com" 
-                               class="w-full min-h-[48px] px-3.5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-sm font-medium text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 transition-all">
+                               class="w-full min-h-[48px] px-3.5 py-2.5 bg-white dark:bg-[#12141D]/90 border border-slate-200 dark:border-white/[0.08] rounded-2xl text-sm font-medium text-slate-800 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 transition-all">
                     </div>
                 </div>
 
@@ -259,7 +259,7 @@
                                required 
                                autocomplete="current-password"
                                placeholder="••••••••" 
-                               class="w-full min-h-[48px] px-3.5 py-2.5 pr-12 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-sm font-medium text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-hidden focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 transition-all">
+                               class="w-full min-h-[48px] px-3.5 py-2.5 pr-12 bg-white dark:bg-[#12141D]/90 border border-slate-200 dark:border-white/[0.08] rounded-2xl text-sm font-medium text-slate-800 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 transition-all">
                         <button type="button" 
                                 onclick="togglePasswordVisibility()" 
                                 aria-label="Lihat Password" 
@@ -282,7 +282,7 @@
 
                 <!-- Submit Button -->
                 <div class="pt-2">
-                    <button type="submit" class="w-full min-h-[48px] py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 text-white font-bold text-sm shadow-md shadow-emerald-600/30 dark:shadow-emerald-500/20 active:scale-98 transition-all flex items-center justify-center gap-2">
+                    <button type="submit" class="w-full min-h-[48px] py-3 px-4 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-400 text-white font-bold text-sm shadow-lg shadow-emerald-500/25 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
                         </svg>
@@ -293,7 +293,7 @@
 
             <!-- Face ID / Biometric Alternate Button -->
             <div class="mt-4 pt-3 border-t border-slate-200/80 dark:border-slate-800">
-                <button type="button" onclick="authenticateWithFaceId()" class="w-full min-h-[44px] py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer">
+                <button type="button" onclick="authenticateWithFaceId()" class="w-full min-h-[44px] py-2.5 px-3 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-[#181B26] dark:hover:bg-[#1E2333] border border-slate-200/80 dark:border-white/[0.08] text-slate-700 dark:text-zinc-200 font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer">
                     <span id="face-id-alt-icon" class="flex items-center">
                         <svg class="w-4 h-4 text-emerald-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M4 8V6a2 2 0 0 1 2-2h2" />

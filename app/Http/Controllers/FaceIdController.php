@@ -48,23 +48,35 @@ class FaceIdController extends Controller
             ], 422);
         }
 
+        if (app()->isProduction() && ! $request->filled('client_data_json')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data biometrik client_data_json wajib disertakan pada mode produksi.',
+            ], 422);
+        }
+
         // If client_data_json is provided (from WebAuthn response), verify challenge
         if ($request->filled('client_data_json')) {
             $rawClientData = base64_decode($request->string('client_data_json'));
             $clientData = json_decode($rawClientData, true);
-            if (is_array($clientData) && isset($clientData['challenge'])) {
-                // Normalize base64url to base64 without padding for reliable comparison
-                $received = rtrim(strtr($clientData['challenge'], '-_', '+/'), '=');
-                $expectedBinary = @hex2bin($storedChallenge);
-                $expectedBase64 = $expectedBinary ? rtrim(base64_encode($expectedBinary), '=') : rtrim($storedChallenge, '=');
-                $expectedHex = rtrim($storedChallenge, '=');
+            if (! is_array($clientData) || ! isset($clientData['challenge'])) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Struktur data biometrik client_data_json tidak valid.',
+                ], 422);
+            }
 
-                if ($received !== $expectedBase64 && $received !== $expectedHex && $clientData['challenge'] !== $storedChallenge) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Verifikasi biometrik gagal (challenge mismatch).',
-                    ], 422);
-                }
+            // Normalize base64url to base64 without padding for reliable comparison
+            $received = rtrim(strtr($clientData['challenge'], '-_', '+/'), '=');
+            $expectedBinary = @hex2bin($storedChallenge);
+            $expectedBase64 = $expectedBinary ? rtrim(base64_encode($expectedBinary), '=') : rtrim($storedChallenge, '=');
+            $expectedHex = rtrim($storedChallenge, '=');
+
+            if ($received !== $expectedBase64 && $received !== $expectedHex && $clientData['challenge'] !== $storedChallenge) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Verifikasi biometrik gagal (challenge mismatch).',
+                ], 422);
             }
         }
 

@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -62,17 +63,29 @@ class PayAdminApiController extends Controller
         $setting = OrderSetting::whereNotNull('admin_pin')->where('admin_pin', '!=', '')->first();
         $expectedPin = $setting?->admin_pin;
 
-        // 2. Fallback to user PIN or master default
-        if (! $expectedPin) {
-            $userWithPin = User::whereNotNull('pin')->first();
-            $expectedPin = $userWithPin?->pin ?? '123456';
+        $isValid = false;
+        $user = null;
+
+        if ($expectedPin) {
+            if (str_starts_with($expectedPin, '$2y$') || str_starts_with($expectedPin, '$argon2')) {
+                $isValid = Hash::check($pin, $expectedPin);
+            } else {
+                $isValid = hash_equals((string) $expectedPin, $pin);
+            }
+            $user = User::find($setting->user_id) ?? User::first();
+        } else {
+            // 2. Fallback to primary user PIN
+            $user = User::whereNotNull('pin')->first() ?? User::first();
+            if ($user && $user->hasPin()) {
+                $isValid = $user->verifyPin($pin);
+            }
         }
 
-        if ($pin === $expectedPin || $pin === '123456') {
-            $defaultUser = User::first();
+        if ($isValid) {
+            $request->session()->regenerate();
             $request->session()->put('pay_admin_authenticated', true);
-            if ($defaultUser) {
-                $request->session()->put('pay_admin_user_id', $defaultUser->id);
+            if ($user) {
+                $request->session()->put('pay_admin_user_id', $user->id);
             }
 
             return response()->json([

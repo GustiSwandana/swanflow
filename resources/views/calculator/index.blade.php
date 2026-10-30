@@ -4,18 +4,18 @@
 
 @section('custom_header')
     <!-- iOS Liquid Glass Header -->
-    <div class="relative overflow-hidden bg-gradient-to-b from-emerald-600/95 via-emerald-600/85 to-teal-700/90 dark:from-slate-900/95 dark:via-emerald-950/90 dark:to-slate-950/95 text-white px-5 pb-8 border-b border-white/20 dark:border-white/10 rounded-b-[36px] shadow-2xl backdrop-blur-3xl transition-colors duration-200" style="padding-top: max(3.5rem, calc(var(--sat, 0px) + 0.75rem));">
+    <div class="relative overflow-hidden bg-gradient-to-b from-emerald-600/95 via-emerald-600/85 to-teal-700/90 dark:from-[#090A0F] dark:via-[#0D0F17] dark:to-[#12141D] text-white px-5 pb-8 border-b border-white/20 dark:border-white/[0.08] rounded-b-[36px] shadow-2xl backdrop-blur-3xl transition-colors duration-200" style="padding-top: max(3.5rem, calc(var(--sat, 0px) + 0.75rem));">
         <!-- Specular Top Rim Line -->
-        <div class="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none"></div>
+        <div class="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-white/50 dark:via-white/20 to-transparent pointer-events-none"></div>
 
         <!-- Ambient Liquid Orbs -->
-        <div class="absolute -top-12 -right-8 w-44 h-44 bg-emerald-500/25 rounded-full blur-3xl pointer-events-none animate-liquid-orb-1"></div>
-        <div class="absolute -bottom-16 -left-10 w-44 h-44 bg-teal-500/20 rounded-full blur-3xl pointer-events-none animate-liquid-orb-2"></div>
+        <div class="absolute -top-12 -right-8 w-44 h-44 bg-emerald-500/25 dark:bg-emerald-500/10 rounded-full blur-3xl pointer-events-none animate-liquid-orb-1"></div>
+        <div class="absolute -bottom-16 -left-10 w-44 h-44 bg-teal-500/20 dark:bg-teal-500/10 rounded-full blur-3xl pointer-events-none animate-liquid-orb-2"></div>
 
         <!-- Top Navigation Bar -->
         <div class="relative z-10 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <a href="{{ route('dashboard') }}" class="min-w-[42px] min-h-[42px] w-10.5 h-10.5 flex items-center justify-center text-white rounded-[18px] liquid-glass border border-white/25 ios-press transition-all shadow-xs" aria-label="Kembali ke Beranda">
+                <a href="{{ route('dashboard') }}" class="tap-target-44 min-w-[44px] min-h-[44px] w-11 h-11 flex items-center justify-center text-white rounded-[18px] liquid-glass border border-white/25 dark:border-white/[0.12] dark:bg-white/[0.06] ios-press transition-all shadow-xs" aria-label="Kembali ke Beranda">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
                     </svg>
@@ -24,7 +24,7 @@
                     <h1 class="text-base font-black text-white tracking-tight leading-tight">
                         Kalkulator &amp; Simulasi
                     </h1>
-                    <p class="text-[11px] text-emerald-200/90 dark:text-slate-400 font-semibold leading-none mt-0.5">
+                    <p class="text-[11px] text-emerald-200/90 dark:text-zinc-400 font-semibold leading-none mt-0.5">
                         Simulasi Skenario &amp; Patungan
                     </p>
                 </div>
@@ -36,7 +36,7 @@
                         onclick="resetCurrentTab()" 
                         title="Reset Kalkulator"
                         aria-label="Reset Kalkulator" 
-                        class="min-w-[40px] min-h-[40px] w-10 h-10 flex items-center justify-center rounded-[18px] text-white/90 hover:text-white liquid-glass border border-white/25 ios-press transition-all shadow-xs">
+                        class="tap-target-44 min-w-[44px] min-h-[44px] w-11 h-11 flex items-center justify-center rounded-[18px] text-white/90 hover:text-white liquid-glass border border-white/25 dark:border-white/[0.12] dark:bg-white/[0.06] ios-press transition-all shadow-xs cursor-pointer">
                     <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
                     </svg>
@@ -45,7 +45,7 @@
                         id="theme-toggle-btn"
                         onclick="toggleSwanFlowTheme()" 
                         aria-label="Ganti Tema Gelap atau Terang" 
-                        class="min-w-[40px] min-h-[40px] w-10 h-10 flex items-center justify-center rounded-[18px] text-white/90 hover:text-white liquid-glass border border-white/25 ios-press transition-all shadow-xs">
+                        class="tap-target-44 min-w-[44px] min-h-[44px] w-11 h-11 flex items-center justify-center rounded-[18px] text-white/90 hover:text-white liquid-glass border border-white/25 dark:border-white/[0.12] dark:bg-white/[0.06] ios-press transition-all shadow-xs cursor-pointer">
                 <svg class="theme-icon-dark w-5 h-5 text-amber-300 transition-transform duration-300 transform rotate-0 hover:rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
                 </svg>
@@ -58,11 +58,11 @@
 
         <!-- Segmented Tab Navigation: [ Simulasi Skenario | Hitung Patungan ] -->
         <div class="relative z-10 mt-5 flex justify-center">
-            <div class="ios-segmented-track p-1 rounded-[22px] flex w-full max-w-sm border border-white/20 dark:border-white/10 shadow-inner backdrop-blur-xl">
+            <div class="ios-segmented-track p-1 rounded-[22px] flex w-full max-w-sm border border-white/20 dark:border-white/[0.08] shadow-inner backdrop-blur-xl dark:bg-[#12141D]/70">
                 <button type="button" 
                         id="tab-btn-simulasi" 
                         onclick="switchTab('simulasi')"
-                        class="flex-1 py-2 text-center text-xs font-extrabold rounded-[18px] transition-all ios-segmented-thumb bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-sm flex items-center justify-center gap-1.5 cursor-pointer ios-press">
+                        class="flex-1 py-2 text-center text-xs font-extrabold rounded-[18px] transition-all ios-segmented-thumb bg-white dark:bg-[#181B26] text-emerald-700 dark:text-emerald-400 shadow-sm flex items-center justify-center gap-1.5 cursor-pointer ios-press">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.4">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
                     </svg>
@@ -71,7 +71,7 @@
                 <button type="button" 
                         id="tab-btn-patungan" 
                         onclick="switchTab('patungan')"
-                        class="flex-1 py-2 text-center text-xs font-bold rounded-[18px] transition-all text-white/80 hover:text-white dark:text-slate-400 dark:hover:text-white flex items-center justify-center gap-1.5 cursor-pointer ios-press">
+                        class="flex-1 py-2 text-center text-xs font-bold rounded-[18px] transition-all text-white/80 hover:text-white dark:text-zinc-400 dark:hover:text-white flex items-center justify-center gap-1.5 cursor-pointer ios-press">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.4">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
                     </svg>
@@ -84,16 +84,16 @@
 
 @section('content')
 <!-- Main Sheet Container (rounded-t-[36px]) -->
-<div class="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-2xl rounded-t-[36px] pt-4 px-4 pb-[max(6.5rem,calc(5.5rem+var(--sab,0px)))] shadow-2xl -mt-5 relative z-10 border-t border-white/60 dark:border-white/10 flex-1 flex flex-col min-h-full space-y-5 text-slate-800 dark:text-white transition-colors animate-swan-in">
+<div class="bg-slate-50/90 dark:bg-[#090A0F] backdrop-blur-2xl rounded-t-[36px] pt-4 px-4 pb-[max(6.5rem,calc(5.5rem+var(--sab,0px)))] shadow-2xl -mt-5 relative z-10 border-t border-white/60 dark:border-white/[0.08] flex-1 flex flex-col min-h-full space-y-5 text-slate-800 dark:text-white transition-colors animate-swan-in">
     <!-- Grab Handle Indicator -->
-    <div class="w-10 h-1.5 bg-slate-300/80 dark:bg-slate-700/80 rounded-full mx-auto mb-1"></div>
+    <div class="drag-handle-pill mb-1"></div>
 
     <!-- ========================================== -->
     <!-- TAB 1: SIMULASI SKENARIO FINANSIAL        -->
     <!-- ========================================== -->
     <div id="section-simulasi" class="space-y-4">
         <!-- 1. Saldo Awal Card -->
-        <div class="liquid-card rounded-[26px] p-4.5 bg-white/80 dark:bg-slate-900/75 border border-white/60 dark:border-white/10 shadow-sm backdrop-blur-2xl space-y-3">
+        <div class="liquid-card rounded-[26px] p-4.5 bg-white/85 dark:bg-[#12141D]/90 border border-slate-200/80 dark:border-white/[0.08] dark:border-t-white/[0.14] shadow-sm backdrop-blur-2xl space-y-3">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2.5">
                     <span class="w-9 h-9 rounded-[16px] bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
@@ -102,20 +102,20 @@
                         </svg>
                     </span>
                     <div>
-                        <span class="text-xs font-bold text-slate-800 dark:text-slate-100 block leading-tight">Saldo Awal Simulasi</span>
-                        <span class="text-[11px] font-medium text-slate-400 dark:text-slate-400">Titik mula perhitungan skenario</span>
+                        <span class="text-xs font-bold text-slate-800 dark:text-zinc-100 block leading-tight">Saldo Awal Simulasi</span>
+                        <span class="text-[11px] font-medium text-slate-400 dark:text-zinc-400">Titik mula perhitungan skenario</span>
                     </div>
                 </div>
 
                 <!-- Quick Button to Reload Actual Balance -->
                 <button type="button" 
                         onclick="useActualBalance()"
-                        class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 liquid-glass border border-emerald-500/30 px-3 py-1.5 rounded-[14px] hover:bg-emerald-500/10 active:scale-95 ios-press transition-all">
+                        class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 liquid-glass border border-emerald-500/30 px-3 py-1.5 rounded-[14px] hover:bg-emerald-500/10 active:scale-95 ios-press transition-all cursor-pointer">
                     Gunakan Saldo Riil
                 </button>
             </div>
 
-            <div class="relative rounded-[20px] bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 p-3 flex items-center focus-within:border-emerald-500 dark:focus-within:border-emerald-400 focus-within:ring-2 focus-within:ring-emerald-500/20 transition-all">
+            <div class="relative rounded-[20px] bg-slate-100/80 dark:bg-white/[0.04] border border-slate-200/80 dark:border-white/[0.08] p-3 flex items-center focus-within:border-emerald-500 dark:focus-within:border-emerald-400 focus-within:ring-2 focus-within:ring-emerald-500/20 transition-all">
                 <span class="text-sm font-extrabold text-slate-400 mr-2">Rp</span>
                 <input id="sim-start-balance" 
                        type="text" 
@@ -125,14 +125,14 @@
                        value="{{ number_format($totalBalance, 0, ',', '.') }}" 
                        oninput="handleStartBalanceInput(this)"
                        placeholder="0"
-                       class="w-full text-lg font-black text-slate-900 dark:text-white bg-transparent border-none outline-hidden focus:ring-0 placeholder-slate-400 dark:placeholder-slate-600">
+                       class="w-full text-lg font-black text-slate-900 dark:text-white bg-transparent border-none outline-hidden focus:ring-0 placeholder-slate-400 dark:placeholder-zinc-600 tabular-nums font-tabular">
             </div>
 
             @if($wallets->count() > 0)
-                <div class="pt-1 flex items-center gap-1.5 overflow-x-auto no-scrollbar text-[11px] text-slate-500 dark:text-slate-400">
+                <div class="pt-1 flex items-center gap-1.5 overflow-x-auto no-scrollbar text-[11px] text-slate-500 dark:text-zinc-400">
                     <span class="font-medium shrink-0">Saldo Riil:</span>
                     @foreach($wallets as $w)
-                        <span class="inline-flex items-center px-2.5 py-1 rounded-[12px] bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700/60 font-semibold shrink-0">
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-[12px] bg-slate-100/80 dark:bg-white/[0.04] border border-slate-200/60 dark:border-white/[0.05] font-semibold shrink-0 tabular-nums font-tabular">
                             {{ $w->name }}: Rp {{ number_format($w->balance, 0, ',', '.') }}
                         </span>
                     @endforeach
@@ -141,16 +141,16 @@
         </div>
 
         <!-- 2. Hero Projection Result Card (Apple Wallet Fluid) -->
-        <div class="relative overflow-hidden rounded-[32px] p-6 text-white shadow-2xl border border-white/20 dark:border-white/10 backdrop-blur-2xl bg-gradient-to-br from-emerald-700 via-teal-800 to-slate-950 dark:from-slate-900 dark:via-emerald-950 dark:to-slate-950">
+        <div class="relative overflow-hidden rounded-[32px] p-6 text-white shadow-2xl border border-white/20 dark:border-white/[0.08] backdrop-blur-2xl bg-gradient-to-br from-emerald-700 via-teal-800 to-slate-950 dark:from-[#0D0F17] dark:via-[#12141D] dark:to-[#090A0F]">
             <!-- Specular top highlight -->
-            <div class="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none"></div>
+            <div class="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-white/50 dark:via-white/20 to-transparent pointer-events-none"></div>
 
             <!-- Background Ambient Glow -->
             <div class="absolute -right-10 -bottom-10 w-44 h-44 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none animate-liquid-orb-1"></div>
 
             <div class="relative z-10 space-y-3.5">
                 <div class="flex items-center justify-between">
-                    <span class="text-[11px] uppercase tracking-wider font-extrabold text-emerald-300">
+                    <span class="text-[11px] uppercase tracking-wider font-extrabold text-emerald-300 dark:text-emerald-400">
                         Proyeksi Saldo Akhir
                     </span>
                     <span id="sim-health-badge" class="text-[10px] font-extrabold px-3 py-1 rounded-full liquid-glass text-emerald-300 border border-emerald-500/40">
@@ -160,28 +160,28 @@
 
                 <div class="flex items-baseline gap-1">
                     <span class="text-base font-bold text-white/70">Rp</span>
-                    <h2 id="sim-projected-display" class="text-3xl font-black tracking-tight text-white leading-none">
+                    <h2 id="sim-projected-display" class="text-3xl font-black tracking-tight text-white leading-none tabular-nums font-tabular">
                         {{ number_format($totalBalance, 0, ',', '.') }}
                     </h2>
                 </div>
 
                 <!-- Simulation Metrics Grid -->
-                <div class="grid grid-cols-3 gap-2 pt-3 border-t border-white/15 text-center">
-                    <div class="liquid-glass rounded-[18px] p-2.5 border border-white/10">
-                        <span class="text-[10px] text-white/60 block font-semibold">Rencana Masuk</span>
-                        <span id="sim-total-income-display" class="text-xs font-bold text-emerald-400 block mt-0.5">
+                <div class="grid grid-cols-3 gap-2 pt-3 border-t border-white/15 dark:border-white/[0.08] text-center">
+                    <div class="liquid-glass rounded-[18px] p-2.5 border border-white/10 dark:border-white/[0.06] dark:bg-white/[0.03]">
+                        <span class="text-[10px] text-white/60 dark:text-zinc-400 block font-semibold uppercase tracking-wider">Rencana Masuk</span>
+                        <span id="sim-total-income-display" class="text-xs font-bold text-emerald-400 block mt-0.5 tabular-nums font-tabular">
                             +Rp 0
                         </span>
                     </div>
-                    <div class="liquid-glass rounded-[18px] p-2.5 border border-white/10">
-                        <span class="text-[10px] text-white/60 block font-semibold">Rencana Keluar</span>
-                        <span id="sim-total-expense-display" class="text-xs font-bold text-rose-400 block mt-0.5">
+                    <div class="liquid-glass rounded-[18px] p-2.5 border border-white/10 dark:border-white/[0.06] dark:bg-white/[0.03]">
+                        <span class="text-[10px] text-white/60 dark:text-zinc-400 block font-semibold uppercase tracking-wider">Rencana Keluar</span>
+                        <span id="sim-total-expense-display" class="text-xs font-bold text-rose-400 block mt-0.5 tabular-nums font-tabular">
                             -Rp 0
                         </span>
                     </div>
-                    <div class="liquid-glass rounded-[18px] p-2.5 border border-white/10">
-                        <span class="text-[10px] text-white/60 block font-semibold">Net Skenario</span>
-                        <span id="sim-net-diff-display" class="text-xs font-bold text-white block mt-0.5">
+                    <div class="liquid-glass rounded-[18px] p-2.5 border border-white/10 dark:border-white/[0.06] dark:bg-white/[0.03]">
+                        <span class="text-[10px] text-white/60 dark:text-zinc-400 block font-semibold uppercase tracking-wider">Net Skenario</span>
+                        <span id="sim-net-diff-display" class="text-xs font-bold text-white block mt-0.5 tabular-nums font-tabular">
                             Rp 0
                         </span>
                     </div>
@@ -191,30 +191,30 @@
 
         <!-- 3. Quick Scenario Presets -->
         <div class="space-y-2">
-            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Pintasan Tambah Cepat</span>
+            <span class="text-[11px] font-bold text-slate-400 dark:text-zinc-400 uppercase tracking-wider">Pintasan Tambah Cepat</span>
             <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
-                <button type="button" onclick="addQuickScenario('income', 'Freelance', 1000)" class="px-3 py-2 rounded-[16px] liquid-card bg-emerald-50/90 text-emerald-800 border border-emerald-400/80 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-700 text-xs font-black shrink-0 ios-press transition-all shadow-2xs">
+                <button type="button" onclick="addQuickScenario('income', 'Freelance', 1000)" class="tap-target-44 px-3.5 py-2 rounded-[16px] liquid-card bg-emerald-50/90 text-emerald-800 border border-emerald-400/80 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-700 text-xs font-black shrink-0 ios-press transition-all shadow-2xs">
                     + Freelance (1.000)
                 </button>
-                <button type="button" onclick="addQuickScenario('expense', 'Makan', 500)" class="px-3 py-2 rounded-[16px] liquid-card bg-rose-50/90 text-rose-800 border border-rose-400/80 dark:bg-rose-950/60 dark:text-rose-300 dark:border-rose-700 text-xs font-black shrink-0 ios-press transition-all shadow-2xs">
+                <button type="button" onclick="addQuickScenario('expense', 'Makan', 500)" class="tap-target-44 px-3.5 py-2 rounded-[16px] liquid-card bg-rose-50/90 text-rose-800 border border-rose-400/80 dark:bg-rose-950/60 dark:text-rose-300 dark:border-rose-700 text-xs font-black shrink-0 ios-press transition-all shadow-2xs">
                     - Makan (500)
                 </button>
-                <button type="button" onclick="addQuickScenario('income', 'Gaji / Inflow', 5000000)" class="px-3 py-2 rounded-[16px] liquid-card bg-emerald-50/80 text-emerald-700 border border-emerald-300/60 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800/60 text-xs font-bold shrink-0 ios-press transition-all">
+                <button type="button" onclick="addQuickScenario('income', 'Gaji / Inflow', 5000000)" class="tap-target-44 px-3.5 py-2 rounded-[16px] liquid-card bg-emerald-50/80 text-emerald-700 border border-emerald-300/60 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800/60 text-xs font-bold shrink-0 ios-press transition-all">
                     + Gaji (5jt)
                 </button>
-                <button type="button" onclick="addQuickScenario('income', 'Freelance / Proyek', 1500000)" class="px-3 py-2 rounded-[16px] liquid-card bg-emerald-50/80 text-emerald-700 border border-emerald-300/60 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800/60 text-xs font-bold shrink-0 ios-press transition-all">
+                <button type="button" onclick="addQuickScenario('income', 'Freelance / Proyek', 1500000)" class="tap-target-44 px-3.5 py-2 rounded-[16px] liquid-card bg-emerald-50/80 text-emerald-700 border border-emerald-300/60 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800/60 text-xs font-bold shrink-0 ios-press transition-all">
                     + Proyek (1.5jt)
                 </button>
-                <button type="button" onclick="addQuickScenario('expense', 'Belanja Bulanan', 1000000)" class="px-3 py-2 rounded-[16px] liquid-card bg-rose-50/80 text-rose-700 border border-rose-300/60 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-800/60 text-xs font-bold shrink-0 ios-press transition-all">
+                <button type="button" onclick="addQuickScenario('expense', 'Belanja Bulanan', 1000000)" class="tap-target-44 px-3.5 py-2 rounded-[16px] liquid-card bg-rose-50/80 text-rose-700 border border-rose-300/60 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-800/60 text-xs font-bold shrink-0 ios-press transition-all">
                     - Belanja (1jt)
                 </button>
-                <button type="button" onclick="addQuickScenario('expense', 'Tagihan & Listrik', 500000)" class="px-3 py-2 rounded-[16px] liquid-card bg-rose-50/80 text-rose-700 border border-rose-300/60 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-800/60 text-xs font-bold shrink-0 ios-press transition-all">
+                <button type="button" onclick="addQuickScenario('expense', 'Tagihan & Listrik', 500000)" class="tap-target-44 px-3.5 py-2 rounded-[16px] liquid-card bg-rose-50/80 text-rose-700 border border-rose-300/60 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-800/60 text-xs font-bold shrink-0 ios-press transition-all">
                     - Tagihan (500rb)
                 </button>
-                <button type="button" onclick="addQuickScenario('expense', 'Hangout / Makan', 250000)" class="px-3 py-2 rounded-[16px] liquid-card bg-rose-50/80 text-rose-700 border border-rose-300/60 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-800/60 text-xs font-bold shrink-0 ios-press transition-all">
+                <button type="button" onclick="addQuickScenario('expense', 'Hangout / Makan', 250000)" class="tap-target-44 px-3.5 py-2 rounded-[16px] liquid-card bg-rose-50/80 text-rose-700 border border-rose-300/60 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-800/60 text-xs font-bold shrink-0 ios-press transition-all">
                     - Makan (250rb)
                 </button>
-                <button type="button" onclick="addQuickScenario('expense', 'Tabungan / Investasi', 1000000)" class="px-3 py-2 rounded-[16px] liquid-card bg-teal-50/80 text-teal-700 border border-teal-300/60 dark:bg-teal-950/40 dark:text-teal-400 dark:border-teal-800/60 text-xs font-bold shrink-0 ios-press transition-all">
+                <button type="button" onclick="addQuickScenario('expense', 'Tabungan / Investasi', 1000000)" class="tap-target-44 px-3.5 py-2 rounded-[16px] liquid-card bg-teal-50/80 text-teal-700 border border-teal-300/60 dark:bg-teal-950/40 dark:text-teal-400 dark:border-teal-800/60 text-xs font-bold shrink-0 ios-press transition-all">
                     - Investasi (1jt)
                 </button>
             </div>
@@ -288,14 +288,14 @@
     <!-- ========================================== -->
     <div id="section-patungan" class="hidden space-y-4">
         <!-- 1. Bill Input Card -->
-        <div class="liquid-card rounded-[26px] p-4.5 bg-white/80 dark:bg-slate-900/75 border border-white/60 dark:border-white/10 shadow-sm backdrop-blur-2xl space-y-4">
+        <div class="liquid-card rounded-[28px] p-5 bg-white/85 dark:bg-[#12141D]/90 border border-slate-200/80 dark:border-white/[0.08] dark:border-t-white/[0.14] shadow-sm backdrop-blur-2xl space-y-4">
             <!-- Subtotal -->
             <div>
-                <label for="split-subtotal" class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1.5">
+                <label for="split-subtotal" class="block text-xs font-bold text-slate-800 dark:text-zinc-200 mb-1.5 uppercase tracking-wider">
                     Subtotal / Tagihan Kotor (Rp)
                 </label>
-                <div class="relative rounded-[20px] bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 p-3 flex items-center focus-within:border-emerald-500 dark:focus-within:border-emerald-400 focus-within:ring-2 focus-within:ring-emerald-500/20 transition-all">
-                    <span class="text-sm font-extrabold text-slate-400 mr-2">Rp</span>
+                <div class="relative rounded-[20px] bg-slate-100/80 dark:bg-white/[0.04] border border-slate-200/80 dark:border-white/[0.08] p-3 flex items-center focus-within:border-emerald-500 dark:focus-within:border-emerald-400 focus-within:ring-2 focus-within:ring-emerald-500/20 transition-all">
+                    <span class="text-sm font-extrabold text-slate-400 dark:text-zinc-500 mr-2">Rp</span>
                     <input id="split-subtotal" 
                            type="text" 
                            inputmode="numeric" 
@@ -304,7 +304,7 @@
                            value="200000" 
                            oninput="recalculateSplit()"
                            placeholder="0"
-                           class="w-full text-xl font-black text-slate-900 dark:text-white bg-transparent border-none outline-hidden focus:ring-0 placeholder-slate-400 dark:placeholder-slate-600">
+                           class="w-full text-xl font-black text-slate-900 dark:text-white bg-transparent border-none outline-hidden focus:ring-0 placeholder-slate-400 dark:placeholder-zinc-600 tabular-nums font-tabular">
                 </div>
             </div>
 
@@ -484,7 +484,7 @@
         </div>
 
         <!-- 2. Split Result Card (Apple Wallet Fluid) -->
-        <div class="relative overflow-hidden rounded-[32px] p-6 text-white shadow-2xl border border-white/20 dark:border-white/10 backdrop-blur-2xl bg-gradient-to-br from-teal-700 via-emerald-800 to-slate-950 dark:from-slate-900 dark:via-teal-950 dark:to-slate-950 space-y-4">
+        <div class="relative overflow-hidden rounded-[32px] p-6 text-white shadow-2xl border border-white/20 dark:border-white/[0.08] backdrop-blur-2xl bg-gradient-to-br from-teal-700 via-emerald-800 to-slate-950 dark:from-[#0D0F17] dark:via-[#12141D] dark:to-[#090A0F] space-y-4">
             <!-- Specular top highlight -->
             <div class="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none"></div>
 
@@ -497,7 +497,7 @@
                 </span>
                 <div class="flex items-baseline gap-1 mt-1.5">
                     <span class="text-base font-bold text-white/70">Rp</span>
-                    <h2 id="split-per-person-display" class="text-3xl font-black tracking-tight text-white leading-none">
+                    <h2 id="split-per-person-display" class="text-3xl font-black tracking-tight text-white leading-none tabular-nums font-tabular">
                         57.500
                     </h2>
                 </div>
@@ -507,23 +507,23 @@
             <div class="relative z-10 space-y-2 text-xs pt-3 border-t border-white/15 text-white/80">
                 <div class="flex justify-between">
                     <span>Subtotal</span>
-                    <span id="split-summary-subtotal" class="font-bold text-white">Rp 200.000</span>
+                    <span id="split-summary-subtotal" class="font-bold text-white tabular-nums font-tabular">Rp 200.000</span>
                 </div>
                 <div class="flex justify-between">
                     <span>Total Pajak & Service</span>
-                    <span id="split-summary-tax-service" class="font-bold text-teal-300">+Rp 30.000</span>
+                    <span id="split-summary-tax-service" class="font-bold text-teal-300 tabular-nums font-tabular">+Rp 30.000</span>
                 </div>
                 <div id="split-summary-discount-row" class="flex justify-between hidden text-rose-300">
                     <span>Diskon / Potongan</span>
-                    <span id="split-summary-discount" class="font-bold">-Rp 0</span>
+                    <span id="split-summary-discount" class="font-bold tabular-nums font-tabular">-Rp 0</span>
                 </div>
                 <div id="split-summary-fee-row" class="flex justify-between hidden text-amber-300">
                     <span>Ongkir / Biaya Tambahan</span>
-                    <span id="split-summary-fee" class="font-bold">+Rp 0</span>
+                    <span id="split-summary-fee" class="font-bold tabular-nums font-tabular">+Rp 0</span>
                 </div>
                 <div class="flex justify-between pt-2 border-t border-white/15 text-sm font-extrabold text-white">
                     <span>Total Tagihan Bersih</span>
-                    <span id="split-summary-total">Rp 230.000</span>
+                    <span id="split-summary-total" class="tabular-nums font-tabular">Rp 230.000</span>
                 </div>
             </div>
 
@@ -531,11 +531,11 @@
             <div class="relative z-10 grid grid-cols-2 gap-2.5 pt-2 border-t border-white/15">
                 <div class="liquid-glass rounded-[18px] p-3 border border-white/10">
                     <span class="text-[10px] text-teal-200 block font-semibold">Porsi Gusti</span>
-                    <span id="split-gusti-share" class="text-xs font-black text-white block mt-0.5">Rp 57.500</span>
+                    <span id="split-gusti-share" class="text-xs font-black text-white block mt-0.5 tabular-nums font-tabular">Rp 57.500</span>
                 </div>
                 <div class="liquid-glass rounded-[18px] p-3 border border-white/10">
                     <span class="text-[10px] text-amber-200 block font-semibold">Tagih Teman (<span id="split-friends-count">3</span> org)</span>
-                    <span id="split-friends-total" class="text-xs font-black text-white block mt-0.5">Rp 172.500</span>
+                    <span id="split-friends-total" class="text-xs font-black text-white block mt-0.5 tabular-nums font-tabular">Rp 172.500</span>
                 </div>
             </div>
         </div>
@@ -544,7 +544,7 @@
         <div class="pt-2 flex flex-col gap-2.5">
             <button type="button" 
                     onclick="copySplitWhatsAppMessage()" 
-                    class="w-full min-h-[48px] flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-[20px] text-xs font-black ios-press transition-all shadow-lg shadow-emerald-500/25">
+                    class="tap-target-48 w-full min-h-[50px] flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white rounded-[20px] text-xs font-black ios-press active:scale-[0.98] transition-all shadow-lg shadow-emerald-500/25 cursor-pointer">
                 <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 9.75a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 01.778-.332 48.294 48.294 0 005.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v5.998z" />
                 </svg>
@@ -571,7 +571,7 @@
 
 <!-- Copy Toast Notification (Dynamic Island & Notch Safe) -->
 <div id="calc-toast" class="fixed ios-safe-toast inset-x-0 z-50 flex justify-center pointer-events-none transition-all duration-300 opacity-0 -translate-y-4" style="top: max(1.25rem, calc(var(--sat, 0px) + 0.75rem));">
-    <div class="liquid-glass bg-slate-900/95 dark:bg-white/95 text-white dark:text-slate-900 px-5 py-3 rounded-[20px] shadow-2xl border border-white/20 dark:border-slate-200/20 text-xs font-bold flex items-center gap-2">
+    <div class="liquid-glass bg-slate-900/95 dark:bg-[#12141D]/95 text-white px-5 py-3 rounded-[20px] shadow-2xl border border-white/20 dark:border-white/[0.14] text-xs font-bold flex items-center gap-2">
         <svg class="w-4 h-4 text-emerald-400 dark:text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
         </svg>

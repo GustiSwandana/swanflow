@@ -35,4 +35,7 @@ upload_to_hostinger.ps1
 .htaccess_hostinger
 /public/uploads/*
 !/public/uploads/.gitkeep
+/.gemini/
+GEMINI.md
+/.agents/
 

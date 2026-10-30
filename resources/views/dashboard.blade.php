@@ -38,15 +38,15 @@
 @endphp
 
 @section('custom_header')
-    <!-- Apple iOS Liquid Glass Hero Header -->
-    <div class="relative overflow-hidden bg-gradient-to-br from-emerald-600 via-teal-600 to-emerald-800 dark:from-slate-900 dark:via-emerald-950/90 dark:to-slate-950 text-white px-5 pt-10 pb-12 rounded-b-[36px] shadow-2xl backdrop-blur-3xl transition-colors duration-300 border-b border-white/20 dark:border-white/10" style="padding-top: max(3.5rem, calc(var(--sat, 0px) + 0.75rem));">
+    <!-- Apple iOS Liquid Glass Hero Header (Obsidian & Emerald Luxe) -->
+    <div class="relative overflow-hidden bg-gradient-to-br from-emerald-700 via-teal-800 to-emerald-950 dark:from-[#0B0D14] dark:via-[#12141D] dark:to-[#090A0F] text-white px-5 pt-10 pb-12 rounded-b-[36px] shadow-2xl backdrop-blur-3xl transition-colors duration-300 border-b border-white/20 dark:border-white/[0.08]" style="padding-top: max(3.5rem, calc(var(--sat, 0px) + 0.75rem));">
         
-        <!-- Specular Rim -->
+        <!-- Specular Hairline Rim -->
         <div class="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none"></div>
 
-        <!-- Ambient Liquid Blobs -->
-        <div class="absolute -right-12 -top-12 w-56 h-56 bg-white/20 dark:bg-emerald-500/15 rounded-full blur-[40px] pointer-events-none mix-blend-screen"></div>
-        <div class="absolute -left-12 top-24 w-48 h-48 bg-teal-300/20 dark:bg-teal-500/10 rounded-full blur-[40px] pointer-events-none mix-blend-screen"></div>
+        <!-- Ambient Liquid Glows -->
+        <div class="absolute -right-12 -top-12 w-56 h-56 bg-emerald-400/20 dark:bg-emerald-500/10 rounded-full blur-[40px] pointer-events-none mix-blend-screen"></div>
+        <div class="absolute -left-12 top-24 w-48 h-48 bg-teal-300/15 dark:bg-teal-500/[0.07] rounded-full blur-[40px] pointer-events-none mix-blend-screen"></div>
 
         <!-- Top Bar: Greeting & Liquid Action Pills -->
         <div class="relative z-10 flex items-center justify-between mb-8">
@@ -57,7 +57,7 @@
                     <div class="absolute -inset-1 rounded-[20px] bg-gradient-to-tr from-emerald-400/50 via-teal-300/40 to-emerald-500/50 blur-md opacity-65 group-hover:opacity-95 transition duration-500 pointer-events-none"></div>
                     
                     <!-- Glass Squircle Container -->
-                    <div class="relative w-12 h-12 rounded-[20px] bg-gradient-to-b from-white/30 via-white/15 to-white/10 dark:from-slate-800/90 dark:via-slate-900/90 dark:to-slate-950 backdrop-blur-2xl border border-white/40 dark:border-white/20 shadow-xl shadow-emerald-950/30 flex items-center justify-center">
+                    <div class="relative w-12 h-12 rounded-[20px] bg-gradient-to-b from-white/30 via-white/15 to-white/10 dark:from-[#171A26] dark:via-[#12141D] dark:to-[#090A0F] backdrop-blur-2xl border border-white/40 dark:border-white/20 shadow-xl shadow-emerald-950/30 flex items-center justify-center">
                         <x-app-logo class="w-8 h-8" variant="icon" />
                     </div>
                 </a>
@@ -65,7 +65,7 @@
                 <!-- User Greeting & Name -->
                 <div class="flex flex-col min-w-0">
                     <!-- Dynamic Time Pill -->
-                    <div class="inline-flex items-center gap-1.5 self-start px-2.5 py-0.5 rounded-full bg-white/15 dark:bg-white/10 backdrop-blur-md border border-white/20 dark:border-white/10 shadow-xs mb-1">
+                    <div class="inline-flex items-center gap-1.5 self-start px-2.5 py-0.5 rounded-full bg-white/15 dark:bg-white/[0.08] backdrop-blur-md border border-white/20 dark:border-white/10 shadow-xs mb-1">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                         <span id="dynamic-greeting-text" class="text-[10px] font-bold tracking-wider uppercase text-emerald-100 dark:text-emerald-300 select-none">
                             {{ $greetingTime }}
@@ -86,13 +86,13 @@
                 </div>
             </div>
             
-            <div class="flex items-center gap-2.5">
+            <div class="flex items-center gap-2">
                 <!-- Theme Toggle Button -->
                 <button type="button" 
                         id="theme-toggle-btn"
                         onclick="toggleSwanFlowTheme()" 
                         aria-label="Toggle Theme" 
-                        class="w-10 h-10 flex items-center justify-center rounded-[14px] liquid-glass bg-white/15 hover:bg-white/25 border border-white/30 dark:bg-slate-800/80 dark:border-white/10 active:scale-95 transition-all shadow-xs ios-press">
+                        class="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-[16px] liquid-glass bg-white/15 hover:bg-white/25 border border-white/30 dark:bg-white/[0.06] dark:border-white/10 active:scale-95 transition-all shadow-xs ios-press">
                     <svg class="theme-icon-dark w-5 h-5 text-amber-300 transition-transform duration-300 transform rotate-0 hover:rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
                     </svg>
@@ -102,7 +102,7 @@
                 </button>
 
                 <!-- Notification / History -->
-                <a href="{{ route('transactions.index') }}" aria-label="Notifikasi" class="w-10 h-10 flex items-center justify-center rounded-[14px] liquid-glass text-white/90 hover:text-white bg-white/15 hover:bg-white/25 border border-white/30 dark:bg-slate-800/80 dark:border-white/10 active:scale-95 transition-all shadow-xs ios-press">
+                <a href="{{ route('transactions.index') }}" aria-label="Notifikasi" class="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-[16px] liquid-glass text-white/90 hover:text-white bg-white/15 hover:bg-white/25 border border-white/30 dark:bg-white/[0.06] dark:border-white/10 active:scale-95 transition-all shadow-xs ios-press">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
                     </svg>
@@ -110,19 +110,23 @@
                 </a>
 
                 <!-- User Avatar -->
-                <a href="{{ route('profile.edit') }}" aria-label="Profil Pengguna" class="w-10 h-10 flex items-center justify-center rounded-[14px] liquid-glass bg-white/20 dark:bg-slate-800 text-white font-black text-xs border border-white/30 dark:border-white/10 shadow-xs ios-press">
+                <a href="{{ route('profile.edit') }}" aria-label="Profil Pengguna" class="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-[16px] liquid-glass bg-white/20 dark:bg-white/[0.08] text-white font-black text-xs border border-white/30 dark:border-white/10 shadow-xs ios-press">
                     GS
                 </a>
             </div>
         </div>
 
-        <!-- Centralized Finance Card -->
-        <div class="relative z-20 bg-white/10 dark:bg-slate-900/60 backdrop-blur-2xl border border-white/30 dark:border-white/10 rounded-[30px] p-5 shadow-2xl overflow-hidden">
+        <!-- Centralized Finance Card (Liquid Glass Obsidian) -->
+        <div class="relative z-20 bg-white/12 dark:bg-[#12141D]/90 backdrop-blur-2xl border border-white/30 dark:border-white/[0.12] rounded-[30px] p-5 shadow-2xl overflow-hidden">
+            <!-- Specular top highlight inside the card -->
+            <div class="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent pointer-events-none"></div>
+
             <div class="flex items-center justify-between mb-3">
-                <span class="text-xs font-semibold text-emerald-100 dark:text-slate-400 uppercase tracking-wider">Total Saldo Aktif</span>
+                <span class="text-xs font-semibold text-emerald-100 dark:text-zinc-400 uppercase tracking-wider">Total Saldo Aktif</span>
                 <button type="button" 
                         onclick="toggleBalanceVisibility()" 
-                        class="p-2 rounded-full text-emerald-100 hover:text-white dark:text-slate-300 dark:hover:text-white bg-white/10 hover:bg-white/20 dark:bg-slate-800/60 dark:hover:bg-slate-700/60 transition-all cursor-pointer">
+                        aria-label="Sembunyikan/Tampilkan Saldo"
+                        class="min-w-[44px] min-h-[44px] p-2.5 rounded-full text-emerald-100 hover:text-white dark:text-zinc-300 dark:hover:text-white bg-white/10 hover:bg-white/20 dark:bg-white/[0.06] dark:hover:bg-white/[0.12] transition-all cursor-pointer flex items-center justify-center tap-target-44">
                     <svg id="eye-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -131,76 +135,76 @@
             </div>
             
             <div class="relative z-10 mb-6">
-                <p id="balance-display" class="text-4xl sm:text-5xl font-black tracking-tight text-white drop-shadow-sm">
+                <p id="balance-display" class="text-4xl sm:text-5xl font-black tracking-tight text-white drop-shadow-sm font-tabular tabular-nums">
                     Rp {{ number_format($totalBalance ?? 0, 0, ',', '.') }}
                 </p>
-                <p id="hidden-balance" class="text-4xl sm:text-5xl font-black tracking-tight text-white/50 hidden">
+                <p id="hidden-balance" class="text-4xl sm:text-5xl font-black tracking-tight text-white/50 hidden font-tabular tabular-nums">
                     ••••••••••
                 </p>
             </div>
 
             <!-- Income/Expense Summary (Clickable to Add Transactions) -->
-            <div class="flex items-center justify-between pt-4 border-t border-white/20 dark:border-white/10">
+            <div class="flex items-center justify-between pt-4 border-t border-white/20 dark:border-white/[0.08]">
                 <button type="button" 
                         onclick="openTransactionModal('income')"
-                        class="flex items-center gap-3 text-left p-2 -m-2 rounded-2xl hover:bg-white/10 dark:hover:bg-white/5 active:scale-95 transition-all cursor-pointer group ios-press"
+                        class="flex items-center gap-3 text-left p-2 -m-2 rounded-2xl hover:bg-white/10 dark:hover:bg-white/[0.06] active:scale-95 transition-all cursor-pointer group ios-press min-h-[44px]"
                         title="Catat Pemasukan Baru">
                     <div class="w-9 h-9 rounded-full bg-white/20 dark:bg-emerald-500/20 text-emerald-100 dark:text-emerald-400 flex items-center justify-center group-hover:scale-110 group-hover:bg-emerald-500 group-hover:text-white transition-all shadow-xs">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
                     </div>
                     <div>
                         <div class="flex items-center gap-1">
-                            <span class="text-[10px] text-emerald-100/90 dark:text-slate-400 font-bold uppercase tracking-wider block">Pemasukan</span>
+                            <span class="text-[10px] text-emerald-100/90 dark:text-zinc-400 font-bold uppercase tracking-wider block">Pemasukan</span>
                             <span class="text-[10px] text-emerald-300 font-black opacity-60 group-hover:opacity-100 transition-opacity">+</span>
                         </div>
-                        <span class="text-sm font-bold text-white">+Rp {{ number_format($thisMonthIncome ?? 0, 0, ',', '.') }}</span>
+                        <span class="text-sm font-bold text-white font-tabular tabular-nums">+Rp {{ number_format($thisMonthIncome ?? 0, 0, ',', '.') }}</span>
                     </div>
                 </button>
                 <button type="button" 
                         onclick="openTransactionModal('expense')"
-                        class="flex items-center gap-3 text-left p-2 -m-2 rounded-2xl hover:bg-white/10 dark:hover:bg-white/5 active:scale-95 transition-all cursor-pointer group ios-press"
+                        class="flex items-center gap-3 text-left p-2 -m-2 rounded-2xl hover:bg-white/10 dark:hover:bg-white/[0.06] active:scale-95 transition-all cursor-pointer group ios-press min-h-[44px]"
                         title="Catat Pengeluaran Baru">
                     <div class="w-9 h-9 rounded-full bg-white/20 dark:bg-rose-500/20 text-rose-100 dark:text-rose-400 flex items-center justify-center group-hover:scale-110 group-hover:bg-rose-500 group-hover:text-white transition-all shadow-xs">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
                     </div>
                     <div>
                         <div class="flex items-center gap-1">
-                            <span class="text-[10px] text-emerald-100/90 dark:text-slate-400 font-bold uppercase tracking-wider block">Pengeluaran</span>
+                            <span class="text-[10px] text-emerald-100/90 dark:text-zinc-400 font-bold uppercase tracking-wider block">Pengeluaran</span>
                             <span class="text-[10px] text-rose-300 font-black opacity-60 group-hover:opacity-100 transition-opacity">+</span>
                         </div>
-                        <span class="text-sm font-bold text-white">-Rp {{ number_format($thisMonthExpense ?? 0, 0, ',', '.') }}</span>
+                        <span class="text-sm font-bold text-white font-tabular tabular-nums">-Rp {{ number_format($thisMonthExpense ?? 0, 0, ',', '.') }}</span>
                     </div>
                 </button>
             </div>
 
             <!-- Anggaran Pengeluaran (Horizontal Donut Progress Cards) -->
-            <div class="relative z-10 space-y-2.5 pt-3 mt-3 border-t border-white/15 dark:border-white/10">
+            <div class="relative z-10 space-y-2.5 pt-3 mt-3 border-t border-white/15 dark:border-white/[0.08]">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-xs font-bold text-white/90 dark:text-slate-200 tracking-wide uppercase">Anggaran Pengeluaran</h3>
+                    <h3 class="text-xs font-bold text-white/90 dark:text-zinc-300 tracking-wide uppercase">Anggaran Pengeluaran</h3>
                     <a href="{{ route('budgets.index') }}" class="text-xs font-semibold text-emerald-100 hover:text-white dark:text-emerald-400 dark:hover:text-emerald-300 underline-offset-2 hover:underline">Kelola & Detail</a>
                 </div>
-                <div class="flex items-center gap-3 overflow-x-auto no-scrollbar pb-1 -mx-1 px-1 snap-x">
+                <div class="flex items-center gap-3 overflow-x-auto no-scrollbar pb-1 -mx-1 px-1 snap-x scroll-momentum">
                     @forelse($categoryBudgets as $budget)
-                        <a href="{{ route('budgets.index') }}" class="bg-white/95 dark:bg-slate-900/90 rounded-[20px] p-3 min-w-[110px] flex flex-col items-center justify-center text-center shadow-md border border-white/20 dark:border-white/10 shrink-0 backdrop-blur-md active:scale-95 transition-all group ios-press snap-start">
+                        <a href="{{ route('budgets.index') }}" class="bg-white/95 dark:bg-[#171A26]/90 rounded-[20px] p-3 min-w-[110px] flex flex-col items-center justify-center text-center shadow-md border border-white/20 dark:border-white/[0.08] shrink-0 backdrop-blur-md active:scale-95 transition-all group ios-press snap-start">
                             <!-- Circular Donut SVG Ring with Category Icon in Center -->
                             <div class="relative w-12 h-12 flex items-center justify-center">
                                 <svg class="w-12 h-12 transform -rotate-90" viewBox="0 0 36 36">
-                                    <path class="text-slate-100 dark:text-slate-800" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    <path class="text-slate-100 dark:text-zinc-800" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                                     <path class="{{ $budget->percent >= 100 ? 'text-rose-500' : ($budget->percent >= 75 ? 'text-amber-500' : 'text-emerald-500') }} transition-all duration-500" stroke-width="3.5" stroke-dasharray="{{ min(100, $budget->percent ?? 50) }}, 100" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                                 </svg>
-                                <div class="absolute inset-0 flex items-center justify-center text-slate-700 dark:text-slate-200 group-hover:scale-110 transition-transform">
+                                <div class="absolute inset-0 flex items-center justify-center text-slate-700 dark:text-zinc-200 group-hover:scale-110 transition-transform">
                                     <x-category-icon :name="$budget->name" class="w-5 h-5" />
                                 </div>
                             </div>
-                            <span class="text-xs font-bold text-slate-800 dark:text-slate-200 mt-2 truncate max-w-[95px]">
+                            <span class="text-xs font-bold text-slate-800 dark:text-zinc-200 mt-2 truncate max-w-[95px]">
                                 {{ $budget->name }}
                             </span>
-                            <span class="text-[10px] font-semibold {{ $budget->percent >= 100 ? 'text-rose-600 dark:text-rose-400' : 'text-slate-500 dark:text-slate-400' }} mt-0.5">
+                            <span class="text-[10px] font-semibold {{ $budget->percent >= 100 ? 'text-rose-600 dark:text-rose-400' : 'text-slate-500 dark:text-zinc-400' }} mt-0.5 font-tabular tabular-nums">
                                 {{ $budget->percent ?? 0 }}%
                             </span>
                         </a>
                     @empty
-                        <div class="w-full py-3 px-3 text-center text-xs text-white/90 dark:text-slate-400 bg-white/15 dark:bg-slate-900/60 rounded-2xl border border-white/20 dark:border-slate-800">
+                        <div class="w-full py-3 px-3 text-center text-xs text-white/90 dark:text-zinc-400 bg-white/15 dark:bg-[#12141D]/60 rounded-2xl border border-white/20 dark:border-white/10">
                             Belum ada anggaran bulanan. <a href="{{ route('budgets.index') }}" class="underline font-bold text-white dark:text-emerald-400 ml-1">+ Atur Anggaran</a>
                         </div>
                     @endforelse
@@ -211,15 +215,15 @@
 @endsection
 
 @section('content')
-<div class="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-2xl rounded-t-[36px] pt-5 px-4 pb-[max(7.5rem,calc(6.75rem+var(--sab,0px)))] shadow-2xl -mt-5 relative z-10 border-t border-slate-200/80 dark:border-white/10 flex-1 flex flex-col min-h-full space-y-6 text-slate-800 dark:text-white transition-colors animate-swan-in">
+<div class="bg-white/95 dark:bg-[#0B0D14]/95 backdrop-blur-2xl rounded-t-[36px] pt-5 px-4 pb-[max(7.5rem,calc(6.75rem+var(--sab,0px)))] shadow-2xl -mt-5 relative z-10 border-t border-slate-200/80 dark:border-white/[0.08] flex-1 flex flex-col min-h-full space-y-6 text-slate-800 dark:text-zinc-100 transition-colors animate-swan-in">
     <!-- Pull handle indicator -->
-    <div class="w-10 h-1.5 bg-slate-300/80 dark:bg-slate-700/80 rounded-full mx-auto mb-2"></div>
+    <div class="drag-handle-pill"></div>
 
     <!-- QUICK ACCESS MODULES (2 ROWS GRID) -->
     <section>
         <div class="flex items-center justify-between mb-2.5 px-0.5">
-            <span class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Akses Cepat</span>
-            <button type="button" onclick="openShortcutModal()" class="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:opacity-80 transition-opacity flex items-center gap-1 active:scale-95 cursor-pointer" aria-label="Atur Pintasan">
+            <span class="label-micro text-slate-400 dark:text-zinc-500 uppercase tracking-wider">Akses Cepat</span>
+            <button type="button" onclick="openShortcutModal()" class="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:opacity-80 transition-opacity flex items-center gap-1 active:scale-95 cursor-pointer min-h-[44px] tap-target-44" aria-label="Atur Pintasan">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"></path>
                 </svg>
@@ -230,23 +234,23 @@
         <div class="grid grid-cols-4 gap-y-3.5 gap-x-2">
             @foreach($dashboardModules as $mod)
                 <a href="{{ route($mod['route']) }}" data-route="{{ $mod['route'] }}" class="dashboard-module flex flex-col items-center gap-1.5 group active:scale-95 transition-all cursor-pointer">
-                    <div class="w-[58px] h-[58px] rounded-[22px] bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl border border-white/60 dark:border-white/10 shadow-xs flex items-center justify-center {{ $mod['classes'] }} group-hover:text-white transition-colors duration-300">
+                    <div class="w-[58px] h-[58px] rounded-[22px] bg-white/90 dark:bg-[#12141D]/90 backdrop-blur-2xl border border-slate-200/80 dark:border-white/[0.08] shadow-xs flex items-center justify-center {{ $mod['classes'] }} group-hover:text-white group-hover:border-emerald-500/40 transition-colors duration-300">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="{{ $mod['icon'] }}"></path>
                         </svg>
                     </div>
-                    <span class="text-[11px] font-bold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white transition-colors text-center truncate max-w-full">{{ $mod['name'] }}</span>
+                    <span class="text-[11px] font-semibold text-slate-700 dark:text-zinc-400 group-hover:text-slate-900 dark:group-hover:text-white transition-colors text-center truncate max-w-full">{{ $mod['name'] }}</span>
                 </a>
             @endforeach
 
             <!-- Tombol Semua Menu -->
             <button type="button" onclick="window.openSheetModal('modal-all-menus')" class="flex flex-col items-center gap-1.5 group active:scale-95 transition-all cursor-pointer">
-                <div class="w-[58px] h-[58px] rounded-[22px] bg-slate-100 dark:bg-slate-800/80 backdrop-blur-2xl border border-white/60 dark:border-white/10 shadow-xs flex items-center justify-center text-slate-500 dark:text-slate-400 group-hover:bg-slate-200 dark:group-hover:bg-slate-700 transition-colors duration-300">
+                <div class="w-[58px] h-[58px] rounded-[22px] bg-slate-100 dark:bg-[#171A26]/80 backdrop-blur-2xl border border-slate-200/80 dark:border-white/[0.08] shadow-xs flex items-center justify-center text-slate-500 dark:text-zinc-400 group-hover:bg-slate-200 dark:group-hover:bg-slate-700 transition-colors duration-300">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"></path>
                     </svg>
                 </div>
-                <span class="text-[11px] font-bold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white transition-colors text-center truncate max-w-full">Semua Menu</span>
+                <span class="text-[11px] font-semibold text-slate-700 dark:text-zinc-400 group-hover:text-slate-900 dark:group-hover:text-white transition-colors text-center truncate max-w-full">Semua Menu</span>
             </button>
         </div>
     </section>
@@ -255,9 +259,9 @@
     <section class="space-y-3 pt-1">
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-                <span class="w-1.5 h-4 bg-emerald-500 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.6)]"></span>
-                <h3 class="text-sm font-bold text-slate-900 dark:text-white">Dompet & Rekening</h3>
-                <span class="text-xs font-semibold text-slate-400">
+                <span class="w-1.5 h-4 bg-emerald-500 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
+                <h3 class="text-sm font-bold text-slate-900 dark:text-zinc-50">Dompet & Rekening</h3>
+                <span class="text-xs font-semibold text-slate-400 dark:text-zinc-500 font-tabular tabular-nums">
                     ({{ count($wallets ?? []) }})
                 </span>
             </div>
@@ -267,36 +271,36 @@
                 </a>
                 <button type="button" 
                         onclick="openDashboardAddWalletModal()" 
-                        class="px-2.5 py-1 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold text-[11px] active:scale-95 transition-all ios-press">
+                        class="px-2.5 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold text-[11px] active:scale-95 transition-all ios-press min-h-[36px] flex items-center justify-center">
                     + Tambah
                 </button>
             </div>
         </div>
 
-        <div class="flex items-center gap-3 overflow-x-auto no-scrollbar pb-1 -mx-1 px-1 snap-x">
+        <div class="flex items-center gap-3 overflow-x-auto no-scrollbar pb-1 -mx-1 px-1 snap-x scroll-momentum">
             @forelse($wallets ?? [] as $wallet)
-                <a href="{{ route('wallets.index') }}" class="min-w-[135px] liquid-card bg-white/80 dark:bg-slate-900/75 p-3.5 rounded-[22px] border border-white/60 dark:border-white/10 shadow-xs flex flex-col justify-between min-h-[90px] snap-start shrink-0 ios-press hover:border-emerald-500/50 transition-all">
+                <a href="{{ route('wallets.index') }}" class="min-w-[145px] liquid-card bg-white/90 dark:bg-[#12141D]/85 p-3.5 rounded-[22px] border border-slate-200/80 dark:border-white/[0.08] shadow-xs flex flex-col justify-between min-h-[96px] snap-start shrink-0 ios-press hover:border-emerald-500/50 transition-all">
                     <div class="flex items-center justify-between mb-2">
-                        <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">{{ $wallet->type }}</span>
-                        <span class="w-2 h-2 rounded-full {{ $wallet->type === 'bank' ? 'bg-emerald-500' : ($wallet->type === 'ewallet' ? 'bg-teal-500' : 'bg-amber-500') }}"></span>
+                        <span class="label-micro text-slate-400 dark:text-zinc-500 uppercase tracking-wider">{{ $wallet->type }}</span>
+                        <span class="w-2 h-2 rounded-full {{ $wallet->type === 'bank' ? 'bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.5)]' : ($wallet->type === 'ewallet' ? 'bg-teal-500 shadow-[0_0_6px_rgba(20,184,166,0.5)]' : 'bg-amber-500 shadow-[0_0_6px_rgba(245,158,11,0.5)]') }}"></span>
                     </div>
                     <div>
-                        <h4 class="text-xs font-black text-slate-900 dark:text-white truncate">{{ $wallet->name }}</h4>
-                        <p class="text-[11px] font-bold text-slate-600 dark:text-slate-300 mt-0.5">
+                        <h4 class="text-xs font-bold text-slate-900 dark:text-zinc-100 truncate">{{ $wallet->name }}</h4>
+                        <p class="text-xs font-extrabold text-slate-700 dark:text-zinc-200 mt-1 font-tabular tabular-nums">
                             Rp {{ number_format($wallet->balance, 0, ',', '.') }}
                         </p>
                     </div>
                 </a>
             @empty
-                <div class="w-full py-4 text-center text-xs text-slate-400 bg-white/60 dark:bg-slate-900/60 rounded-2xl border border-dashed border-slate-300 dark:border-slate-800">
+                <div class="w-full py-4 text-center text-xs text-slate-400 bg-white/60 dark:bg-[#12141D]/60 rounded-2xl border border-dashed border-slate-300 dark:border-white/10">
                     Belum ada dompet terdaftar.
                 </div>
             @endforelse
 
             <button type="button" 
                     onclick="openDashboardAddWalletModal()" 
-                    class="min-w-[100px] min-h-[90px] rounded-[22px] border-2 border-dashed border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 dark:hover:border-emerald-500/50 flex flex-col items-center justify-center gap-1.5 text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 shrink-0 active:scale-95 transition-all cursor-pointer">
-                <div class="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400">
+                    class="min-w-[110px] min-h-[96px] rounded-[22px] border-2 border-dashed border-slate-200 dark:border-white/10 hover:border-emerald-500/50 dark:hover:border-emerald-500/50 flex flex-col items-center justify-center gap-1.5 text-slate-400 dark:text-zinc-500 hover:text-emerald-600 dark:hover:text-emerald-400 shrink-0 active:scale-95 transition-all cursor-pointer">
+                <div class="w-7 h-7 rounded-full bg-slate-100 dark:bg-white/[0.06] flex items-center justify-center text-slate-500 dark:text-zinc-400">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
                 </div>
                 <span class="text-[10px] font-bold">+ Dompet</span>
@@ -319,20 +323,20 @@
         @if(isset($todayTodos) && $todayTodos->isNotEmpty())
             <div class="space-y-2.5">
                 @foreach($todayTodos->take(3) as $todo)
-                    <label class="liquid-card flex items-center gap-3.5 p-3.5 bg-white/80 dark:bg-slate-900/75 border border-white/60 dark:border-white/10 rounded-2xl shadow-xs hover:shadow-sm cursor-pointer transition-all group">
+                    <label class="liquid-card flex items-center gap-3.5 p-3.5 bg-white/90 dark:bg-[#12141D]/80 border border-slate-200/80 dark:border-white/[0.08] rounded-2xl shadow-xs hover:border-emerald-500/30 cursor-pointer transition-all group">
                         <form action="{{ route('todos.toggle', $todo) }}" method="POST" class="shrink-0 flex items-center" id="form-todo-{{ $todo->id }}">
                             @csrf
                             @method('PATCH')
-                            <input type="checkbox" onchange="document.getElementById('form-todo-{{ $todo->id }}').submit()" {{ $todo->is_completed ? 'checked' : '' }} class="w-5 h-5 rounded-full border-2 border-slate-300 dark:border-slate-600 text-emerald-500 focus:ring-emerald-500 checked:bg-emerald-500 transition-all cursor-pointer">
+                            <input type="checkbox" onchange="document.getElementById('form-todo-{{ $todo->id }}').submit()" {{ $todo->is_completed ? 'checked' : '' }} class="w-5 h-5 rounded-full border-2 border-slate-300 dark:border-zinc-700 text-emerald-500 focus:ring-emerald-500 checked:bg-emerald-500 transition-all cursor-pointer">
                         </form>
-                        <span class="text-sm font-medium transition-colors {{ $todo->is_completed ? 'text-slate-400 dark:text-slate-500 line-through' : 'text-slate-700 dark:text-slate-200 group-hover:text-slate-950 dark:group-hover:text-white' }}">
+                        <span class="text-sm font-medium transition-colors {{ $todo->is_completed ? 'text-slate-400 dark:text-zinc-500 line-through' : 'text-slate-700 dark:text-zinc-200 group-hover:text-slate-950 dark:group-hover:text-white' }}">
                             {{ $todo->title }}
                         </span>
                     </label>
                 @endforeach
             </div>
         @else
-            <div class="py-5 text-center text-xs font-medium text-slate-500 dark:text-slate-400 bg-white/60 dark:bg-slate-900/60 rounded-2xl border border-dashed border-slate-300 dark:border-slate-800 shadow-xs">
+            <div class="py-5 text-center text-xs font-medium text-slate-500 dark:text-zinc-400 bg-white/60 dark:bg-[#12141D]/60 rounded-2xl border border-dashed border-slate-300 dark:border-white/10 shadow-xs">
                 Belum ada prioritas hari ini.<br>
                 <a href="{{ route('todos.index') }}" class="text-emerald-600 dark:text-emerald-400 font-bold hover:underline mt-1.5 inline-block">Tambah Aktivitas</a>
             </div>
@@ -344,9 +348,9 @@
         <div class="flex items-center justify-between mb-3.5">
             <div class="flex items-center gap-2">
                 <span class="w-1.5 h-4 bg-teal-500 rounded-full shadow-[0_0_8px_rgba(20,184,166,0.6)]"></span>
-                <h3 class="text-sm font-bold text-slate-900 dark:text-white">SwanDrive Vault</h3>
+                <h3 class="text-sm font-bold text-slate-900 dark:text-zinc-50">SwanDrive Vault</h3>
                 @if(($activeLinksCount ?? 0) > 0)
-                    <span class="text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-400/30 flex items-center gap-1">
+                    <span class="text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-400/30 flex items-center gap-1 font-tabular tabular-nums">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                         <span>{{ $activeLinksCount }} Link Aktif</span>
                     </span>
@@ -357,7 +361,7 @@
             </a>
         </div>
         
-        <div class="flex gap-4 overflow-x-auto no-scrollbar pb-3 snap-x px-1 -mx-1">
+        <div class="flex gap-4 overflow-x-auto no-scrollbar pb-3 snap-x px-1 -mx-1 scroll-momentum">
             <!-- Drive Storage Summary Card -->
             <div class="min-w-[140px] bg-gradient-to-br from-teal-500 to-emerald-600 text-white rounded-[24px] p-4 shadow-lg shadow-teal-500/20 snap-start shrink-0 flex flex-col justify-between">
                 <svg class="w-6 h-6 opacity-90 mb-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -365,7 +369,7 @@
                 </svg>
                 <div>
                     <div class="text-[10px] uppercase font-bold tracking-wider text-teal-100">Storage</div>
-                    <div class="text-xl font-black mt-0.5">{{ $storedFilesCount ?? 0 }} <span class="text-sm font-medium opacity-80">Berkas</span></div>
+                    <div class="text-xl font-black mt-0.5 font-tabular tabular-nums">{{ $storedFilesCount ?? 0 }} <span class="text-sm font-medium opacity-80">Berkas</span></div>
                 </div>
             </div>
 
@@ -376,7 +380,7 @@
                     $isPdf = strtolower($stFile->extension) === "pdf";
                 @endphp
                 <a href="{{ route('drive.index', array_filter(['folder_id' => $stFile->folder_id, 'file_id' => $stFile->id])) }}#file-{{ $stFile->id }}" 
-                   class="min-w-[130px] max-w-[150px] liquid-card bg-white/80 dark:bg-slate-900/75 border border-white/60 dark:border-white/10 rounded-[24px] p-3.5 shadow-xs hover:shadow-md hover:border-teal-400/40 snap-start shrink-0 flex flex-col justify-between cursor-pointer transition-all ios-press group">
+                   class="min-w-[130px] max-w-[150px] liquid-card bg-white/90 dark:bg-[#12141D]/80 border border-slate-200/80 dark:border-white/[0.08] rounded-[24px] p-3.5 shadow-xs hover:shadow-md hover:border-teal-400/40 snap-start shrink-0 flex flex-col justify-between cursor-pointer transition-all ios-press group">
                     <div class="w-10 h-10 rounded-2xl {{ $isPdf ? 'bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400' : ($isImage ? 'bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400' : 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400') }} flex items-center justify-center mb-2.5 group-hover:scale-105 transition-transform">
                         @if($isPdf)
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
@@ -387,24 +391,24 @@
                         @endif
                     </div>
                     <div class="min-w-0">
-                        <div class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors" title="{{ $stFile->original_name }}">
+                        <div class="text-xs font-bold text-slate-800 dark:text-zinc-100 truncate group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors" title="{{ $stFile->original_name }}">
                             {{ $stFile->title ?: $stFile->original_name }}
                         </div>
-                        <div class="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 truncate">
+                        <div class="text-[10px] text-slate-400 dark:text-zinc-500 mt-0.5 truncate">
                             {{ $stFile->created_at->diffForHumans(['parts' => 1]) }}
                         </div>
                     </div>
                 </a>
             @empty
                 <a href="{{ route('drive.index') }}" 
-                   class="min-w-[170px] liquid-card bg-white/70 dark:bg-slate-900/60 border border-dashed border-teal-400/40 dark:border-teal-500/30 rounded-[24px] p-3.5 snap-start shrink-0 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-teal-50/40 dark:hover:bg-teal-950/20 transition-all group ios-press">
+                   class="min-w-[170px] liquid-card bg-white/70 dark:bg-[#12141D]/60 border border-dashed border-teal-400/40 dark:border-teal-500/30 rounded-[24px] p-3.5 snap-start shrink-0 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-teal-50/40 dark:hover:bg-teal-950/20 transition-all group ios-press">
                     <div class="w-9 h-9 rounded-2xl bg-teal-500/15 text-teal-600 dark:text-teal-400 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
                         <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                         </svg>
                     </div>
-                    <div class="text-xs font-bold text-slate-700 dark:text-slate-200">Unggah Berkas</div>
-                    <div class="text-[10px] text-slate-400 mt-0.5">Mulai simpan file Anda</div>
+                    <div class="text-xs font-bold text-slate-700 dark:text-zinc-200">Unggah Berkas</div>
+                    <div class="text-[10px] text-slate-400 dark:text-zinc-500 mt-0.5">Mulai simpan file Anda</div>
                 </a>
             @endforelse
         </div>
@@ -413,8 +417,8 @@
     <!-- 5. SECTION TRANSAKSI TERAKHIR -->
     <section class="space-y-3 pt-2">
         <div class="flex items-center justify-between">
-            <h2 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <span class="w-1.5 h-4 bg-emerald-500 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.6)]"></span>
+            <h2 class="text-sm font-bold text-slate-900 dark:text-zinc-50 flex items-center gap-2">
+                <span class="w-1.5 h-4 bg-emerald-500 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
                 Transaksi Terakhir
             </h2>
             <a href="{{ route('transactions.index') }}" class="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:opacity-80 transition-opacity">
@@ -442,34 +446,34 @@
                     })'
                     role="button"
                     tabindex="0"
-                    class="liquid-card p-3.5 flex items-center justify-between rounded-[22px] bg-white/80 dark:bg-slate-900/75 hover:bg-white dark:hover:bg-slate-900 active:scale-[0.98] cursor-pointer transition-all border border-white/60 dark:border-white/10 shadow-xs ios-press">
+                    class="liquid-card p-3.5 flex items-center justify-between rounded-[22px] bg-white/90 dark:bg-[#12141D]/80 hover:bg-white dark:hover:bg-[#171A26] active:scale-[0.98] cursor-pointer transition-all border border-slate-200/80 dark:border-white/[0.08] shadow-xs ios-press">
                     <div class="flex items-center gap-3 min-w-0">
-                        <div class="w-11 h-11 rounded-[16px] {{ $isIncome ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400' : ($isTransfer ? 'bg-teal-50 text-teal-600 dark:bg-teal-500/15 dark:text-teal-400' : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200') }} flex items-center justify-center shrink-0 shadow-2xs">
+                        <div class="w-11 h-11 rounded-[16px] {{ $isIncome ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400' : ($isTransfer ? 'bg-teal-50 text-teal-600 dark:bg-teal-500/15 dark:text-teal-400' : 'bg-slate-100 text-slate-700 dark:bg-white/[0.06] dark:text-zinc-200') }} flex items-center justify-center shrink-0 shadow-2xs">
                             <x-category-icon :category="$tx->category" :type="$tx->type" :name="$tx->description ?: ($tx->category->name ?? '')" class="w-5 h-5" />
                         </div>
                         <div class="min-w-0">
-                            <p class="text-xs font-black text-slate-900 dark:text-white truncate">
+                            <p class="text-xs font-bold text-slate-900 dark:text-zinc-100 truncate">
                                 @if($isTransfer)
                                     {{ $tx->description ?: 'Transfer Antar Dompet' }}
                                 @else
                                     {{ $tx->description ?: ($tx->category->name ?? 'Transaksi') }}
                                 @endif
                             </p>
-                            <p class="text-[11px] font-semibold text-slate-400 dark:text-slate-500 mt-0.5 truncate">
+                            <p class="text-[11px] font-semibold text-slate-400 dark:text-zinc-500 mt-0.5 truncate">
                                 {{ \Carbon\Carbon::parse($tx->date)->translatedFormat('d F Y') }}
                             </p>
                         </div>
                     </div>
                     <div class="text-right shrink-0 pl-2">
-                        <span class="text-xs font-black {{ $isIncome ? 'text-emerald-600 dark:text-emerald-400' : ($isTransfer ? 'text-teal-600 dark:text-teal-400' : 'text-rose-600 dark:text-rose-400') }} block">
+                        <span class="text-xs font-black {{ $isIncome ? 'text-currency-inflow' : ($isTransfer ? 'text-teal-600 dark:text-teal-400' : 'text-currency-outflow') }} block font-tabular tabular-nums">
                             {{ $isIncome ? '+ ' : ($isTransfer ? '' : '- ') }}Rp {{ number_format($tx->amount, 0, ',', '.') }}
                         </span>
                     </div>
                 </div>
             @empty
-                <div class="p-6 text-center space-y-1.5 liquid-card bg-white/60 dark:bg-slate-900/60 rounded-[22px] border border-dashed border-slate-300 dark:border-slate-800">
-                    <p class="text-xs font-bold text-slate-700 dark:text-slate-300">Belum ada transaksi</p>
-                    <p class="text-[11px] text-slate-400">Tekan tombol (+) untuk mencatat transaksi baru.</p>
+                <div class="p-6 text-center space-y-1.5 liquid-card bg-white/60 dark:bg-[#12141D]/60 rounded-[22px] border border-dashed border-slate-300 dark:border-white/10">
+                    <p class="text-xs font-bold text-slate-700 dark:text-zinc-300">Belum ada transaksi</p>
+                    <p class="text-[11px] text-slate-400 dark:text-zinc-500">Tekan tombol (+) untuk mencatat transaksi baru.</p>
                 </div>
             @endforelse
         </div>
@@ -483,36 +487,36 @@
 <div id="shortcutModal" class="fixed inset-0 z-50 hidden transition-all duration-300" style="z-index: 9999;" aria-modal="true" role="dialog">
     <div class="modal-backdrop fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity opacity-0 duration-300 z-10" id="shortcutModalBg" onclick="closeShortcutModal()"></div>
     <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none z-20">
-        <div class="modal-panel modal-sheet-safe w-full max-w-md bg-white/95 dark:bg-slate-900/95 backdrop-blur-3xl rounded-t-[36px] p-5 border-t border-white/60 dark:border-white/10 shadow-2xl transition-transform duration-300 transform translate-y-full flex flex-col max-h-[85vh] pointer-events-auto relative z-20" id="shortcutModalContent">
-            <div class="w-10 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-4 cursor-pointer" onclick="closeShortcutModal()"></div>
+        <div class="modal-panel modal-sheet-safe w-full max-w-md bg-white/95 dark:bg-[#12141D]/98 backdrop-blur-3xl rounded-t-[32px] p-5 border-t border-slate-200/80 dark:border-white/[0.12] shadow-2xl transition-transform duration-300 transform translate-y-full flex flex-col max-h-[85vh] pointer-events-auto relative z-20" id="shortcutModalContent">
+            <div class="drag-handle-pill" onclick="closeShortcutModal()"></div>
             <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800/80 mb-3">
                 <div>
                     <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 block -mb-0.5">Personalisasi</span>
                     <h3 class="text-base font-extrabold text-slate-800 dark:text-white tracking-tight">Atur Pintasan</h3>
                 </div>
-                <button type="button" onclick="closeShortcutModal()" class="w-9 h-9 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800/80 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors ios-press cursor-pointer" aria-label="Tutup">
+                <button type="button" onclick="closeShortcutModal()" class="w-10 h-10 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-slate-100 dark:bg-white/[0.06] text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors ios-press cursor-pointer" aria-label="Tutup">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
             
-            <p class="text-xs text-slate-500 dark:text-slate-400 mb-3">Pilih modul yang ingin ditampilkan di beranda (Dashboard).</p>
+            <p class="text-xs text-slate-500 dark:text-zinc-400 mb-3">Pilih modul yang ingin ditampilkan di beranda (Dashboard).</p>
             
             <div class="space-y-2 mb-4 overflow-y-auto no-scrollbar flex-1 pb-1">
                 @foreach($dashboardModules as $mod)
-                <label class="flex items-center justify-between p-3 border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 rounded-2xl cursor-pointer hover:bg-slate-100/70 dark:hover:bg-slate-800/70 transition-colors">
+                <label class="flex items-center justify-between p-3 border border-slate-200/80 dark:border-white/[0.06] bg-slate-50/60 dark:bg-white/[0.03] rounded-2xl cursor-pointer hover:bg-slate-100/70 dark:hover:bg-white/[0.06] transition-colors">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center {{ $mod['classes'] }} shadow-xs">
+                        <div class="w-10 h-10 rounded-xl bg-white dark:bg-[#171A26] flex items-center justify-center {{ $mod['classes'] }} shadow-xs border border-slate-100 dark:border-white/[0.06]">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="{{ $mod['icon'] }}"></path>
                             </svg>
                         </div>
-                        <span class="text-sm font-bold text-slate-800 dark:text-slate-100">{{ $mod['name'] }}</span>
+                        <span class="text-sm font-bold text-slate-800 dark:text-zinc-100">{{ $mod['name'] }}</span>
                     </div>
-                    <input type="checkbox" value="{{ $mod['route'] }}" class="shortcut-checkbox w-5 h-5 rounded-[6px] border-slate-300 dark:border-slate-600 text-emerald-500 focus:ring-emerald-500 dark:bg-slate-900 focus:ring-offset-0 cursor-pointer">
+                    <input type="checkbox" value="{{ $mod['route'] }}" class="shortcut-checkbox w-5 h-5 rounded-[6px] border-slate-300 dark:border-zinc-700 text-emerald-500 focus:ring-emerald-500 dark:bg-slate-900 focus:ring-offset-0 cursor-pointer">
                 </label>
                 @endforeach
             </div>
-            <button type="button" onclick="saveShortcuts()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-3.5 rounded-2xl active:scale-95 transition-all shadow-lg shadow-emerald-500/25 shrink-0 ios-press cursor-pointer">Simpan Pintasan</button>
+            <button type="button" onclick="saveShortcuts()" class="w-full min-h-[46px] bg-emerald-600 hover:bg-emerald-500 text-white font-black py-3.5 rounded-2xl active:scale-95 transition-all shadow-lg shadow-emerald-500/25 shrink-0 ios-press cursor-pointer">Simpan Pintasan</button>
         </div>
     </div>
 </div>
@@ -521,15 +525,15 @@
 <div id="modal-dashboard-add-wallet" class="fixed inset-0 z-50 hidden transition-all duration-300" style="z-index: 9999;" aria-modal="true" role="dialog">
     <div class="modal-backdrop fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity duration-300 opacity-0 z-10" id="modal-dashboard-add-wallet-bg" onclick="closeDashboardAddWalletModal()"></div>
     <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none z-20">
-        <div class="modal-panel modal-sheet-safe w-full max-w-md bg-white/95 dark:bg-slate-900/95 backdrop-blur-3xl rounded-t-[36px] shadow-2xl p-6 border-t border-white/60 dark:border-white/10 pointer-events-auto transform translate-y-full transition-transform duration-300 overflow-y-auto max-h-[85vh] no-scrollbar flex flex-col text-slate-800 dark:text-slate-100 relative z-20" id="modal-dashboard-add-wallet-content">
-            <div class="w-10 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-4 cursor-pointer" onclick="closeDashboardAddWalletModal()"></div>
+        <div class="modal-panel modal-sheet-safe w-full max-w-md bg-white/95 dark:bg-[#12141D]/98 backdrop-blur-3xl rounded-t-[32px] shadow-2xl p-6 border-t border-slate-200/80 dark:border-white/[0.12] pointer-events-auto transform translate-y-full transition-transform duration-300 overflow-y-auto max-h-[85vh] no-scrollbar flex flex-col text-slate-800 dark:text-zinc-100 relative z-20" id="modal-dashboard-add-wallet-content">
+            <div class="drag-handle-pill" onclick="closeDashboardAddWalletModal()"></div>
             
             <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800/80 mb-4">
                 <div>
                     <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 block -mb-0.5">Kelola Keuangan</span>
                     <h3 class="text-base font-extrabold text-slate-800 dark:text-white tracking-tight">Tambah Dompet Baru</h3>
                 </div>
-                <button type="button" onclick="closeDashboardAddWalletModal()" aria-label="Tutup modal" class="w-9 h-9 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800/80 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors ios-press cursor-pointer">
+                <button type="button" onclick="closeDashboardAddWalletModal()" aria-label="Tutup modal" class="w-10 h-10 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-slate-100 dark:bg-white/[0.06] text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors ios-press cursor-pointer">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
             </div>
@@ -537,19 +541,19 @@
             <form action="{{ route('wallets.store') }}" method="POST" class="space-y-4">
                 @csrf
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Nama Rekening / Dompet</label>
-                    <input type="text" name="name" required placeholder="Contoh: BCA Utama, GoPay, Dompet Tunai" class="w-full min-h-[46px] px-4 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
+                    <label class="block text-xs font-bold text-slate-700 dark:text-zinc-300 mb-1.5">Nama Rekening / Dompet</label>
+                    <input type="text" name="name" required placeholder="Contoh: BCA Utama, GoPay, Dompet Tunai" class="w-full min-h-[46px] px-4 py-2.5 bg-slate-50 dark:bg-white/[0.04] border border-slate-200/80 dark:border-white/[0.08] rounded-2xl text-sm font-semibold text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Jenis Akun</label>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-zinc-300 mb-1.5">Jenis Akun</label>
                     <div class="relative">
-                        <select name="type" required class="w-full min-h-[46px] px-4 py-2.5 appearance-none bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all cursor-pointer">
-                            <option value="bank">Rekening Bank (BCA, Mandiri, BNI, BRI, dll)</option>
-                            <option value="ewallet">E-Wallet (GoPay, OVO, DANA, ShopeePay)</option>
-                            <option value="cash">Uang Tunai / Cash Fisik</option>
-                            <option value="investment">Investasi (Bibit, Stockbit, dll)</option>
-                            <option value="other">Lainnya</option>
+                        <select name="type" required class="w-full min-h-[46px] px-4 py-2.5 appearance-none bg-slate-50 dark:bg-white/[0.04] border border-slate-200/80 dark:border-white/[0.08] rounded-2xl text-sm font-semibold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all cursor-pointer">
+                            <option value="bank" class="dark:bg-[#12141D]">Rekening Bank (BCA, Mandiri, BNI, BRI, dll)</option>
+                            <option value="ewallet" class="dark:bg-[#12141D]">E-Wallet (GoPay, OVO, DANA, ShopeePay)</option>
+                            <option value="cash" class="dark:bg-[#12141D]">Uang Tunai / Cash Fisik</option>
+                            <option value="investment" class="dark:bg-[#12141D]">Investasi (Bibit, Stockbit, dll)</option>
+                            <option value="other" class="dark:bg-[#12141D]">Lainnya</option>
                         </select>
                         <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
@@ -558,8 +562,8 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Saldo Awal (Rp)</label>
-                    <input type="number" name="balance" step="any" min="0" required placeholder="0" class="w-full min-h-[46px] px-4 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
+                    <label class="block text-xs font-bold text-slate-700 dark:text-zinc-300 mb-1.5">Saldo Awal (Rp)</label>
+                    <input type="number" name="balance" step="any" min="0" required placeholder="0" class="w-full min-h-[46px] px-4 py-2.5 bg-slate-50 dark:bg-white/[0.04] border border-slate-200/80 dark:border-white/[0.08] rounded-2xl text-sm font-semibold text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all font-tabular tabular-nums">
                 </div>
 
                 <div class="pt-2">
@@ -576,14 +580,14 @@
 <div id="modal-all-menus" class="fixed inset-0 z-50 hidden transition-all duration-300" style="z-index: 9999;" aria-modal="true" role="dialog">
     <div class="modal-backdrop fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity opacity-0 duration-300 z-10" id="modal-all-menus-bg" onclick="window.closeSheetModal('modal-all-menus')"></div>
     <div class="fixed bottom-0 left-0 right-0 flex justify-center pointer-events-none z-20">
-        <div class="modal-panel modal-sheet-safe w-full max-w-md bg-white/95 dark:bg-slate-900/95 backdrop-blur-3xl rounded-t-[36px] p-5 border-t border-white/60 dark:border-white/10 shadow-2xl transition-transform duration-300 transform translate-y-full flex flex-col max-h-[85vh] pointer-events-auto relative z-20" id="modal-all-menus-content">
-            <div class="w-10 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-4 cursor-pointer" onclick="window.closeSheetModal('modal-all-menus')"></div>
+        <div class="modal-panel modal-sheet-safe w-full max-w-md bg-white/95 dark:bg-[#12141D]/98 backdrop-blur-3xl rounded-t-[32px] p-5 border-t border-slate-200/80 dark:border-white/[0.12] shadow-2xl transition-transform duration-300 transform translate-y-full flex flex-col max-h-[85vh] pointer-events-auto relative z-20" id="modal-all-menus-content">
+            <div class="drag-handle-pill" onclick="window.closeSheetModal('modal-all-menus')"></div>
             <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800/80 mb-4">
                 <div>
                     <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 block -mb-0.5">Eksplorasi</span>
                     <h3 class="text-base font-extrabold text-slate-800 dark:text-white tracking-tight">Semua Fitur</h3>
                 </div>
-                <button type="button" onclick="window.closeSheetModal('modal-all-menus')" class="w-9 h-9 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800/80 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors ios-press cursor-pointer" aria-label="Tutup">
+                <button type="button" onclick="window.closeSheetModal('modal-all-menus')" class="w-10 h-10 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-slate-100 dark:bg-white/[0.06] text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors ios-press cursor-pointer" aria-label="Tutup">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
@@ -591,12 +595,12 @@
             <div class="grid grid-cols-4 gap-y-4 gap-x-2 overflow-y-auto no-scrollbar flex-1 pb-4">
                 @foreach($dashboardModules as $mod)
                     <a href="{{ route($mod['route']) }}" class="flex flex-col items-center gap-1.5 group active:scale-95 transition-all cursor-pointer">
-                        <div class="w-[58px] h-[58px] rounded-[22px] bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-white/5 shadow-xs flex items-center justify-center {{ $mod['classes'] }} group-hover:text-white transition-colors duration-300">
+                        <div class="w-[58px] h-[58px] rounded-[22px] bg-slate-50 dark:bg-[#171A26] border border-slate-200/60 dark:border-white/[0.06] shadow-xs flex items-center justify-center {{ $mod['classes'] }} group-hover:text-white group-hover:border-emerald-500/40 transition-colors duration-300">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="{{ $mod['icon'] }}"></path>
                             </svg>
                         </div>
-                        <span class="text-[11px] font-bold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white transition-colors text-center truncate max-w-full">{{ $mod['name'] }}</span>
+                        <span class="text-[11px] font-semibold text-slate-700 dark:text-zinc-400 group-hover:text-slate-900 dark:group-hover:text-white transition-colors text-center truncate max-w-full">{{ $mod['name'] }}</span>
                     </a>
                 @endforeach
             </div>

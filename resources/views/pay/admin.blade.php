@@ -23,7 +23,7 @@
       <form id="loginForm">
         <div class="form-group" style="text-align: left;">
           <label class="form-label" for="pinInput">PIN Admin</label>
-          <input type="password" id="pinInput" class="form-control" placeholder="Default PIN: 123456" required autofocus style="letter-spacing: 4px; font-size: 1.2rem; text-align: center;">
+          <input type="password" id="pinInput" class="form-control" placeholder="••••••••" required autofocus style="letter-spacing: 4px; font-size: 1.2rem; text-align: center;">
         </div>
         <button type="submit" class="btn btn-primary btn-full btn-lg" id="btnLoginSubmit" style="margin-top: 10px;">
           <span>Buka Dashboard</span>
